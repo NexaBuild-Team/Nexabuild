@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate, Link } from 'react-router'
 
 // ─── Color Palette (for reference) ───────────────────────────────────────────
 // Primary Brick Accent : #be5d3f
@@ -37,7 +38,7 @@ interface Partner {
 
 interface ConstructionPartner {
   id: number
-  icon: JSX.Element
+  icon: React.ReactElement
   name: string
   type: string
   description: string
@@ -362,10 +363,11 @@ function Home() {
   const [propertyType, setPropertyType] = useState('')
   const [location, setLocation] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   const navLinks = [
-    { label: 'Home', href: '#' },
-    { label: 'Property Search', href: '#' },
+    { label: 'Home', href: '/'},
+    { label: 'Property Search', href: '/property-listing' },
     { label: 'Land Search', href: '#' },
     { label: 'Architecture Companies', href: '#' },
     { label: 'Construction Companies', href: '#' },
@@ -380,25 +382,25 @@ function Home() {
           <div className="flex items-center justify-between h-[60px]">
 
             {/* Logo */}
-            <div className="flex items-center gap-2.5 flex-shrink-0">
+            <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 no-underline">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#be5d3f' }}>
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
               </div>
               <span className="text-lg font-bold tracking-tight text-white">NexaBuild</span>
-            </div>
+            </Link>
 
             {/* Desktop Nav Links — centred */}
             <div className="hidden lg:flex items-center gap-0.5">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="px-3 py-2 text-[13px] font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-150 whitespace-nowrap"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -435,13 +437,14 @@ function Home() {
         {mobileMenuOpen && (
           <div className="lg:hidden px-4 pb-5 pt-2 space-y-1 border-t border-white/15" style={{ backgroundColor: '#2d4f69' }}>
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className="block py-2.5 px-3 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <div className="flex gap-3 pt-3 border-t border-white/15 mt-2">
               <button className="flex-1 py-2.5 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-colors">
@@ -530,7 +533,6 @@ function Home() {
                     borderColor: '#ccb7a3',
                     color: '#928d64',
                     backgroundColor: '#f9f7f4',
-                    focusRingColor: '#345b79',
                   }}
                 >
                   <option value="">Property Type</option>
@@ -563,6 +565,7 @@ function Home() {
 
                 <button
                   id="search-btn"
+                  onClick={() => navigate('/property-listing')}
                   className="text-white font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:opacity-90 hover:shadow-lg whitespace-nowrap"
                   style={{ backgroundColor: '#345b79' }}
                 >
@@ -579,6 +582,7 @@ function Home() {
                 {['Colombo 3', 'Galle Fort', 'Mirissa Beach', 'Kandy Hills', 'Negombo'].map((tag) => (
                   <button
                     key={tag}
+                    onClick={() => navigate('/property-listing')}
                     className="text-xs font-medium px-3 py-1 rounded-full transition-colors hover:opacity-80"
                     style={{ color: '#345b79', backgroundColor: '#e6e0d4' }}
                   >
@@ -601,8 +605,8 @@ function Home() {
                 Premium Properties In Sri Lanka
               </h2>
             </div>
-            <a
-              href="#"
+            <Link
+              to="/property-listing"
               className="hidden md:flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2"
               style={{ color: '#345b79' }}
             >
@@ -610,7 +614,7 @@ function Home() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -620,12 +624,12 @@ function Home() {
           </div>
 
           <div className="mt-8 text-center md:hidden">
-            <a href="#" className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: '#345b79' }}>
+            <Link to="/property-listing" className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: '#345b79' }}>
               Explore All Properties
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -712,6 +716,7 @@ function Home() {
               <div className="flex flex-wrap gap-4">
                 <button
                   id="ai-match-btn"
+                  onClick={() => navigate('/property-listing')}
                   className="font-bold text-white px-8 py-4 rounded-xl transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5 shadow-lg"
                   style={{ backgroundColor: '#be5d3f' }}
                 >
@@ -804,14 +809,12 @@ function Home() {
                 className="rounded-2xl p-8 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
                 style={{ backgroundColor: '#e6e0d4', border: '1px solid #ccb7a3' }}
               >
-                {/* Large quote */}
                 <div
                   className="text-7xl font-serif leading-none absolute top-3 right-5 select-none pointer-events-none"
                   style={{ color: 'rgba(190,93,63,0.15)' }}
                 >
                   "
                 </div>
-
                 <div className="mb-4">
                   <StarRating rating={testimonial.rating} />
                 </div>
@@ -845,7 +848,6 @@ function Home() {
               NexaBuild by the Numbers
             </h2>
           </div>
-
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { value: '12,400+', label: 'Properties Listed', desc: 'Verified listings island-wide', color: '#345b79' },
@@ -853,17 +855,8 @@ function Home() {
               { value: '340+', label: 'Construction Firms', desc: 'Trusted build partners', color: '#928d64' },
               { value: '35,000+', label: 'Happy Clients', desc: 'Satisfied property seekers', color: '#495d38' },
             ].map((stat, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5"
-                style={{ border: '1px solid rgba(204,183,163,0.4)' }}
-              >
-                <p
-                  className="text-4xl font-extrabold mb-2 tracking-tight"
-                  style={{ color: stat.color }}
-                >
-                  {stat.value}
-                </p>
+              <div key={i} className="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5" style={{ border: '1px solid rgba(204,183,163,0.4)' }}>
+                <p className="text-4xl font-extrabold mb-2 tracking-tight" style={{ color: stat.color }}>{stat.value}</p>
                 <p className="font-semibold text-sm mb-1" style={{ color: '#1d1d1d' }}>{stat.label}</p>
                 <p className="text-xs" style={{ color: '#928d64' }}>{stat.desc}</p>
               </div>
@@ -873,13 +866,13 @@ function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="pt-16 pb-8 text-white" style={{ backgroundColor: '#1d1d1d' }}>
+      <footer className="pt-14 pb-8" style={{ backgroundColor: '#1d1d1d' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
 
             {/* Brand */}
             <div>
-              <div className="flex items-center gap-2.5 mb-5">
+              <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#be5d3f' }}>
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
@@ -887,25 +880,18 @@ function Home() {
                 </div>
                 <span className="text-xl font-bold text-white">NexaBuild</span>
               </div>
-              <p className="text-sm leading-relaxed mb-6" style={{ color: '#928d64' }}>
-                Sri Lanka's premier AI-powered real estate platform connecting buyers, sellers,
-                architects, and builders seamlessly.
+              <p className="text-sm leading-relaxed mb-5" style={{ color: '#928d64' }}>
+                Sri Lanka's AI-powered property and construction platform. Connecting buyers, architects, and builders.
               </p>
-              <div className="flex gap-2.5">
+              <div className="flex gap-2">
                 {[
-                  { label: 'fb', d: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
-                  { label: 'tw', d: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
-                  { label: 'ig', d: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 21h9a4.5 4.5 0 004.5-4.5v-9A4.5 4.5 0 0016.5 3h-9A4.5 4.5 0 003 7.5v9A4.5 4.5 0 007.5 21z' },
-                  { label: 'li', d: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z' },
-                ].map((s) => (
-                  <a
-                    key={s.label}
-                    href="#"
-                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-150 hover:opacity-80"
-                    style={{ backgroundColor: '#345b79' }}
-                  >
+                  { d: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
+                  { d: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 21h9a4.5 4.5 0 004.5-4.5v-9A4.5 4.5 0 0016.5 3h-9A4.5 4.5 0 003 7.5v9A4.5 4.5 0 007.5 21z' },
+                  { d: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z' },
+                ].map((s, i) => (
+                  <a key={i} href="#" className="w-9 h-9 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity" style={{ backgroundColor: '#345b79' }}>
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.d} />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={s.d} />
                     </svg>
                   </a>
                 ))}
@@ -914,58 +900,62 @@ function Home() {
 
             {/* Properties */}
             <div>
-              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Properties</h4>
-              <ul className="space-y-3">
-                {['Buy Property', 'Rent Property', 'Sell Property', 'New Developments', 'Commercial'].map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
-                      {link}
-                    </a>
-                  </li>
+              <h4 className="font-bold text-xs uppercase tracking-widest mb-4" style={{ color: '#d59b86' }}>PROPERTIES</h4>
+              <ul className="space-y-2.5">
+                {['Buy Property', 'Rent Property', 'Land for Sale', 'Commercial', 'New Projects'].map((l) => (
+                  <li key={l}><a href="#" className="text-sm hover:opacity-80 transition-opacity" style={{ color: '#928d64' }}>{l}</a></li>
                 ))}
               </ul>
             </div>
 
-            {/* Partners */}
+            {/* Services */}
             <div>
-              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Partners</h4>
-              <ul className="space-y-3">
-                {['Find Architect', 'Find Builder', 'Interior Design', 'Legal Services', 'Valuation'].map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
-                      {link}
-                    </a>
-                  </li>
+              <h4 className="font-bold text-xs uppercase tracking-widest mb-4" style={{ color: '#d59b86' }}>SERVICES</h4>
+              <ul className="space-y-2.5">
+                {['Architecture Designs', 'Construction Companies', 'AI Matching', 'Property Valuation', 'Legal Guidance'].map((l) => (
+                  <li key={l}><a href="#" className="text-sm hover:opacity-80 transition-opacity" style={{ color: '#928d64' }}>{l}</a></li>
                 ))}
               </ul>
             </div>
 
-            {/* Company */}
+            {/* Contact Us */}
             <div>
-              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Company</h4>
+              <h4 className="font-bold text-xs uppercase tracking-widest mb-4" style={{ color: '#d59b86' }}>CONTACT US</h4>
               <ul className="space-y-3">
-                {['About Us', 'How It Works', 'Careers', 'Press', 'Privacy Policy', 'Terms of Service'].map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
-                      {link}
-                    </a>
-                  </li>
-                ))}
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#928d64]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-sm" style={{ color: '#928d64' }}>42 Galle Road, Colombo 03, Sri Lanka</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 flex-shrink-0 text-[#928d64]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <span className="text-sm" style={{ color: '#928d64' }}>+94 11 234 5678</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-4 h-4 flex-shrink-0 text-[#928d64]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm" style={{ color: '#928d64' }}>hello@nexabuild.lk</span>
+                </li>
               </ul>
             </div>
           </div>
 
-          {/* Footer Bottom Bar */}
+          {/* Bottom bar */}
           <div
-            className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
-            style={{ borderTop: '1px solid rgba(146,141,100,0.25)' }}
+            className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4"
+            style={{ borderTop: '1px solid rgba(146,141,100,0.2)' }}
           >
-            <p className="text-sm" style={{ color: '#928d64' }}>
-              © 2025 NexaBuild. All rights reserved. Built with ❤️ in Sri Lanka.
+            <p className="text-xs" style={{ color: '#928d64' }}>
+              © 2026 NEXABUILD (PVT) LTD. ALL RIGHTS RESERVED.
             </p>
-            <div className="flex gap-6">
-              {['Privacy', 'Terms', 'Cookies'].map((l) => (
-                <a key={l} href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
+            <div className="flex gap-5">
+              {['PRIVACY POLICY', 'TERMS OF USE', 'COOKIE POLICY'].map((l) => (
+                <a key={l} href="#" className="text-xs hover:opacity-80 transition-opacity uppercase tracking-wide" style={{ color: '#928d64' }}>
                   {l}
                 </a>
               ))}
