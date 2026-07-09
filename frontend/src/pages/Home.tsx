@@ -1,8 +1,978 @@
-function Home() {
+import { useState } from 'react'
+
+// ─── Color Palette (for reference) ───────────────────────────────────────────
+// Primary Brick Accent : #be5d3f
+// Primary Blue         : #345b79
+// Primary Background   : #e6e0d4
+// Secondary Background : #ccb7a3
+// Secondary Blue       : #6b879c
+// Light Accent         : #d59b86
+// Olive Accent         : #928d64
+// Dark Text            : #1d1d1d
+// Green Accent         : #495d38
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+interface Property {
+  id: number
+  image: string
+  badge: string
+  badgeStyle: string
+  price: string
+  location: string
+  title: string
+  beds: number
+  baths: number
+  area: string
+}
+
+interface Partner {
+  id: number
+  image: string
+  badge?: string
+  name: string
+  specialty: string
+  rating: number
+  projects: number
+}
+
+interface ConstructionPartner {
+  id: number
+  icon: JSX.Element
+  name: string
+  type: string
+  description: string
+}
+
+interface Testimonial {
+  id: number
+  rating: number
+  text: string
+  name: string
+  role: string
+  avatar: string
+}
+
+// ─── Icon helpers ─────────────────────────────────────────────────────────────
+const IconHome = ({ cls = 'w-5 h-5' }: { cls?: string }) => (
+  <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+  </svg>
+)
+const IconBuilding = ({ cls = 'w-5 h-5' }: { cls?: string }) => (
+  <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21" />
+  </svg>
+)
+const IconTool = ({ cls = 'w-5 h-5' }: { cls?: string }) => (
+  <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
+  </svg>
+)
+const IconDesign = ({ cls = 'w-5 h-5' }: { cls?: string }) => (
+  <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+  </svg>
+)
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+const premiumProperties: Property[] = [
+  {
+    id: 1,
+    image: '/property_card_1.png',
+    badge: 'Featured',
+    badgeStyle: 'bg-[#345b79]',
+    price: 'LKR 45,000,000',
+    location: 'Colombo 03',
+    title: 'Luxury Sky Residences',
+    beds: 3,
+    baths: 2,
+    area: '1,800 sq ft',
+  },
+  {
+    id: 2,
+    image: '/property_card_2.png',
+    badge: 'New',
+    badgeStyle: 'bg-[#495d38]',
+    price: 'LKR 78,500,000',
+    location: 'Mirissa, Southern',
+    title: 'Beachfront Paradise Villa',
+    beds: 4,
+    baths: 3,
+    area: '3,200 sq ft',
+  },
+  {
+    id: 3,
+    image: '/property_card_3.png',
+    badge: 'Premium',
+    badgeStyle: 'bg-[#be5d3f]',
+    price: 'LKR 120,000,000',
+    location: 'Galle, Southern',
+    title: 'Infinity Pool Clifftop Villa',
+    beds: 5,
+    baths: 4,
+    area: '4,500 sq ft',
+  },
+  {
+    id: 4,
+    image: '/property_card_4.png',
+    badge: 'Heritage',
+    badgeStyle: 'bg-[#928d64]',
+    price: 'LKR 55,000,000',
+    location: 'Kandy, Central',
+    title: 'Colonial Heritage Bungalow',
+    beds: 4,
+    baths: 3,
+    area: '2,800 sq ft',
+  },
+]
+
+const architecturePartners: Partner[] = [
+  {
+    id: 1,
+    image: '/property_card_4.png',
+    badge: 'Top Rated',
+    name: 'Geoffrey Bawa Studio',
+    specialty: 'Tropical Modern Design',
+    rating: 4.9,
+    projects: 120,
+  },
+  {
+    id: 2,
+    image: '/property_card_1.png',
+    name: 'Ney & Partners',
+    specialty: 'High-Rise Architecture',
+    rating: 4.8,
+    projects: 85,
+  },
+  {
+    id: 3,
+    image: '/property_card_3.png',
+    badge: 'Certified',
+    name: 'Colombo Architects',
+    specialty: 'Contemporary Residential',
+    rating: 4.7,
+    projects: 200,
+  },
+  {
+    id: 4,
+    image: '/property_card_2.png',
+    name: 'DCAL Design',
+    specialty: 'Eco-Sustainable Builds',
+    rating: 4.9,
+    projects: 65,
+  },
+]
+
+const constructionPartners: ConstructionPartner[] = [
+  {
+    id: 1,
+    icon: <IconBuilding cls="w-6 h-6" />,
+    name: 'BuildRight Lanka',
+    type: 'General Contractor',
+    description: 'End-to-end construction with 20+ years of experience',
+  },
+  {
+    id: 2,
+    icon: <IconTool cls="w-6 h-6" />,
+    name: 'ElectroPro SL',
+    type: 'Electrical Services',
+    description: 'Licensed electrical installations for residential & commercial',
+  },
+  {
+    id: 3,
+    icon: <IconHome cls="w-6 h-6" />,
+    name: 'Trusted Builders Co.',
+    type: 'Construction & Renovation',
+    description: 'Quality renovation and new-build specialists island-wide',
+  },
+  {
+    id: 4,
+    icon: <IconDesign cls="w-6 h-6" />,
+    name: 'Lanka Interiors',
+    type: 'Interior Design',
+    description: 'Premium interior solutions, furniture & fit-outs',
+  },
+]
+
+const testimonials: Testimonial[] = [
+  {
+    id: 1,
+    rating: 5,
+    text: 'NexaBuild helped me find the perfect property in Colombo 3. The AI matching system was incredibly accurate — it suggested exactly what I was looking for within minutes. Exceptional service!',
+    name: 'Nimal Perera',
+    role: 'Property Investor, Colombo',
+    avatar: 'NP',
+  },
+  {
+    id: 2,
+    rating: 5,
+    text: 'The platform gave me access to pre-vetted builders and architects in one place. The whole process from search to purchase was seamless. I found my dream beach villa in just two weeks!',
+    name: 'Dilani Jayawardena',
+    role: 'Homeowner, Galle',
+    avatar: 'DJ',
+  },
+  {
+    id: 3,
+    rating: 5,
+    text: "As a first-time buyer, I was nervous about the process. NexaBuild's team and AI tools guided me every step of the way. I saved over LKR 3 million through their negotiation support.",
+    name: 'Kasun Fernando',
+    role: 'First-time Buyer, Kandy',
+    avatar: 'KF',
+  },
+]
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Welcome to Nexabuild 🏗️</h1>
-      <p className="text-gray-600 mt-2">Your project's home page.</p>
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <svg
+          key={star}
+          className={`w-4 h-4 ${star <= rating ? 'text-amber-400' : 'text-[#ccb7a3]'}`}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
+  )
+}
+
+function PropertyCard({ property }: { property: Property }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <div
+      className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer group"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="relative overflow-hidden h-48">
+        <img
+          src={property.image}
+          alt={property.title}
+          className={`w-full h-full object-cover transition-transform duration-500 ${hovered ? 'scale-110' : 'scale-100'}`}
+        />
+        <span className={`absolute top-3 left-3 ${property.badgeStyle} text-white text-xs font-semibold px-3 py-1 rounded-full tracking-wide`}>
+          {property.badge}
+        </span>
+        <button className="absolute top-3 right-3 w-8 h-8 bg-white/85 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow">
+          <svg className="w-4 h-4 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
+      </div>
+      <div className="p-4">
+        <p className="text-[#be5d3f] font-bold text-sm mb-1">{property.price}</p>
+        <div className="flex items-center gap-1 text-[#928d64] text-xs mb-2">
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          {property.location}
+        </div>
+        <h3 className="font-semibold text-[#1d1d1d] text-sm mb-3 leading-tight">{property.title}</h3>
+        <div className="flex items-center gap-3 text-[#6b879c] text-xs border-t border-[#e6e0d4] pt-3">
+          <span className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            {property.beds} Beds
+          </span>
+          <span className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            {property.baths} Baths
+          </span>
+          <span className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+            {property.area}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ArchitecturePartnerCard({ partner }: { partner: Partner }) {
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer">
+      <div className="relative h-40 overflow-hidden">
+        <img
+          src={partner.image}
+          alt={partner.name}
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+        />
+        {partner.badge && (
+          <span className="absolute top-3 left-3 bg-[#be5d3f] text-white text-xs font-semibold px-3 py-1 rounded-full">
+            {partner.badge}
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-[#1d1d1d] text-sm mb-1">{partner.name}</h3>
+        <p className="text-[#6b879c] text-xs mb-3">{partner.specialty}</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <StarRating rating={Math.floor(partner.rating)} />
+            <span className="text-xs text-[#928d64] ml-1">{partner.rating}</span>
+          </div>
+          <span className="text-xs text-[#ccb7a3] font-medium">{partner.projects}+ Projects</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ConstructionPartnerCard({ partner }: { partner: ConstructionPartner }) {
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 cursor-pointer border border-[#e6e0d4]">
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 text-white" style={{ background: '#345b79' }}>
+        {partner.icon}
+      </div>
+      <h3 className="font-semibold text-[#1d1d1d] text-sm mb-1">{partner.name}</h3>
+      <p className="text-[#be5d3f] text-xs font-semibold mb-2 uppercase tracking-wide">{partner.type}</p>
+      <p className="text-[#928d64] text-xs leading-relaxed mb-5">{partner.description}</p>
+      <button className="text-xs text-[#345b79] font-semibold flex items-center gap-1.5 group hover:gap-2.5 transition-all">
+        View Profile
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  )
+}
+
+// ─── Section Label ─────────────────────────────────────────────────────────────
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span className="w-6 h-0.5 bg-[#be5d3f] rounded-full inline-block" />
+      <p className="text-[#be5d3f] text-xs font-bold uppercase tracking-widest">{text}</p>
+    </div>
+  )
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+function Home() {
+  const [searchType, setSearchType] = useState('Buy')
+  const [propertyType, setPropertyType] = useState('')
+  const [location, setLocation] = useState('')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const navLinks = [
+    { label: 'Home', href: '#' },
+    { label: 'Property Search', href: '#' },
+    { label: 'Land Search', href: '#' },
+    { label: 'Architecture Companies', href: '#' },
+    { label: 'Construction Companies', href: '#' },
+  ]
+
+  return (
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
+
+      {/* ── Navbar ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 text-white" style={{ backgroundColor: '#345b79' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-[60px]">
+
+            {/* Logo */}
+            <div className="flex items-center gap-2.5 flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#be5d3f' }}>
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+              </div>
+              <span className="text-lg font-bold tracking-tight text-white">NexaBuild</span>
+            </div>
+
+            {/* Desktop Nav Links — centred */}
+            <div className="hidden lg:flex items-center gap-0.5">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="px-3 py-2 text-[13px] font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-150 whitespace-nowrap"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            {/* Right: Login + Register */}
+            <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+              <button className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150">
+                Login
+              </button>
+              <button
+                className="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all duration-150 hover:opacity-90 shadow"
+                style={{ backgroundColor: '#be5d3f' }}
+              >
+                Register
+              </button>
+            </div>
+
+            {/* Mobile hamburger (shown below lg) */}
+            <button
+              className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileMenuOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                }
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile dropdown (shown below lg) */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden px-4 pb-5 pt-2 space-y-1 border-t border-white/15" style={{ backgroundColor: '#2d4f69' }}>
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="block py-2.5 px-3 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="flex gap-3 pt-3 border-t border-white/15 mt-2">
+              <button className="flex-1 py-2.5 text-sm font-medium text-white border border-white/30 rounded-lg hover:bg-white/10 transition-colors">
+                Login
+              </button>
+              <button className="flex-1 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors" style={{ backgroundColor: '#be5d3f' }}>
+                Register
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* ── Hero Section ── */}
+      <section className="relative min-h-screen flex items-center pt-[60px]">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="/hero_property.png"
+            alt="Find Your Dream Property in Sri Lanka"
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient overlay using primary blue */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(90deg, rgba(52,91,121,0.90) 0%, rgba(52,91,121,0.70) 45%, rgba(52,91,121,0.20) 100%)',
+            }}
+          />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+          <div className="max-w-xl">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm mb-6" style={{ color: '#d59b86' }}>
+              <span>Home</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <span>Find Property</span>
+            </div>
+
+            <h1 className="text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-5 tracking-tight">
+              Find Your Dream<br />
+              Property{' '}
+              <span style={{ color: '#d59b86' }}>in Sri Lanka</span>
+            </h1>
+            <p className="text-base mb-10 leading-relaxed" style={{ color: 'rgba(230,224,212,0.85)' }}>
+              Discover premium homes, villas, and commercial spaces across Sri Lanka.
+              Powered by AI to match you with your perfect property faster than ever.
+            </p>
+
+            {/* Search Box */}
+            <div className="bg-white rounded-2xl p-4 shadow-2xl">
+              {/* Buy / Rent / Sell tabs */}
+              <div
+                className="flex gap-1 mb-4 p-1 rounded-xl w-fit"
+                style={{ backgroundColor: '#e6e0d4' }}
+              >
+                {['Buy', 'Rent', 'Sell'].map((type) => (
+                  <button
+                    key={type}
+                    id={`search-tab-${type.toLowerCase()}`}
+                    onClick={() => setSearchType(type)}
+                    className="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                    style={
+                      searchType === type
+                        ? { backgroundColor: '#be5d3f', color: '#fff' }
+                        : { color: '#928d64', backgroundColor: 'transparent' }
+                    }
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+
+              {/* Fields */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <select
+                  id="search-property-type"
+                  value={propertyType}
+                  onChange={(e) => setPropertyType(e.target.value)}
+                  className="flex-1 px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-shadow"
+                  style={{
+                    borderColor: '#ccb7a3',
+                    color: '#928d64',
+                    backgroundColor: '#f9f7f4',
+                    focusRingColor: '#345b79',
+                  }}
+                >
+                  <option value="">Property Type</option>
+                  <option value="house">House</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="villa">Villa</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="land">Land</option>
+                </select>
+
+                <div className="flex-1 relative">
+                  <svg
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                    style={{ color: '#ccb7a3' }}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <input
+                    id="search-location"
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Location (e.g. Colombo, Galle)"
+                    className="w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-shadow"
+                    style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#f9f7f4' }}
+                  />
+                </div>
+
+                <button
+                  id="search-btn"
+                  className="text-white font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:opacity-90 hover:shadow-lg whitespace-nowrap"
+                  style={{ backgroundColor: '#345b79' }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Search
+                </button>
+              </div>
+
+              {/* Quick filters */}
+              <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: '1px solid #e6e0d4' }}>
+                <span className="text-xs self-center" style={{ color: '#ccb7a3' }}>Popular:</span>
+                {['Colombo 3', 'Galle Fort', 'Mirissa Beach', 'Kandy Hills', 'Negombo'].map((tag) => (
+                  <button
+                    key={tag}
+                    className="text-xs font-medium px-3 py-1 rounded-full transition-colors hover:opacity-80"
+                    style={{ color: '#345b79', backgroundColor: '#e6e0d4' }}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Premium Properties ── */}
+      <section className="py-20" style={{ backgroundColor: '#e6e0d4' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <SectionLabel text="Premium Listings" />
+              <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#1d1d1d' }}>
+                Premium Properties In Sri Lanka
+              </h2>
+            </div>
+            <a
+              href="#"
+              className="hidden md:flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2"
+              style={{ color: '#345b79' }}
+            >
+              Explore All Properties
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {premiumProperties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+
+          <div className="mt-8 text-center md:hidden">
+            <a href="#" className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: '#345b79' }}>
+              Explore All Properties
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Architecture Partners ── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <SectionLabel text="Architecture & Design" />
+              <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#1d1d1d' }}>
+                Trusted Architecture Partners
+              </h2>
+            </div>
+            <a href="#" className="hidden md:flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all" style={{ color: '#345b79' }}>
+              Learn More
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {architecturePartners.map((partner) => (
+              <ArchitecturePartnerCard key={partner.id} partner={partner} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Construction Partners ── */}
+      <section className="py-20" style={{ backgroundColor: '#ccb7a3' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <SectionLabel text="Build & Renovate" />
+              <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#1d1d1d' }}>
+                Top Construction Partners
+              </h2>
+            </div>
+            <a href="#" className="hidden md:flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all" style={{ color: '#345b79' }}>
+              Browse All Partners
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {constructionPartners.map((partner) => (
+              <ConstructionPartnerCard key={partner.id} partner={partner} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI Property Match CTA ── */}
+      <section className="py-20 relative overflow-hidden" style={{ backgroundColor: '#345b79' }}>
+        {/* Decorative blobs */}
+        <div
+          className="absolute top-0 right-0 w-[480px] h-[480px] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"
+          style={{ backgroundColor: 'rgba(190,93,63,0.18)' }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none"
+          style={{ backgroundColor: 'rgba(146,141,100,0.15)' }}
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-14 items-center">
+
+            {/* Left Text */}
+            <div>
+              <SectionLabel text="AI-Powered Search" />
+              <h2 className="text-4xl font-extrabold text-white mb-5 leading-tight tracking-tight">
+                Let AI Find Your Perfect{' '}
+                <span style={{ color: '#d59b86' }}>Property Match</span>
+              </h2>
+              <p className="text-base leading-relaxed mb-8 max-w-lg" style={{ color: 'rgba(230,224,212,0.80)' }}>
+                Our advanced AI analyzes your lifestyle preferences, budget, and requirements to suggest
+                properties that truly match your dream. Smarter search, better results — saving you
+                hundreds of hours of browsing.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  id="ai-match-btn"
+                  className="font-bold text-white px-8 py-4 rounded-xl transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5 shadow-lg"
+                  style={{ backgroundColor: '#be5d3f' }}
+                >
+                  Find My Match Now
+                </button>
+                <button
+                  className="font-semibold px-8 py-4 rounded-xl border transition-all duration-200 hover:bg-white/10"
+                  style={{ color: '#e6e0d4', borderColor: 'rgba(230,224,212,0.35)' }}
+                >
+                  Learn More
+                </button>
+              </div>
+            </div>
+
+            {/* Right Stat Cards */}
+            <div className="grid grid-cols-1 gap-4 max-w-sm ml-auto">
+              {/* Accuracy ring card */}
+              <div
+                className="rounded-2xl p-6 flex items-center gap-5 backdrop-blur-sm"
+                style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)' }}
+              >
+                <div className="relative w-16 h-16 flex-shrink-0">
+                  <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="6" />
+                    <circle
+                      cx="32" cy="32" r="28" fill="none"
+                      stroke="#be5d3f" strokeWidth="6"
+                      strokeDasharray="175.9" strokeDashoffset="26.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">85%</span>
+                </div>
+                <div>
+                  <p className="text-white font-bold text-base">85% Match Rate</p>
+                  <p className="text-sm mt-0.5" style={{ color: '#d59b86' }}>AI accuracy score</p>
+                </div>
+              </div>
+
+              {/* Listings card */}
+              <div
+                className="rounded-2xl p-6 flex items-center gap-5 backdrop-blur-sm"
+                style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)' }}
+              >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#be5d3f' }}>
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-bold text-base">1,264+ Listings</p>
+                  <p className="text-sm mt-0.5" style={{ color: '#d59b86' }}>Active properties island-wide</p>
+                </div>
+              </div>
+
+              {/* Happy clients card */}
+              <div
+                className="rounded-2xl p-6 flex items-center gap-5 backdrop-blur-sm"
+                style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)' }}
+              >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#495d38' }}>
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-bold text-base">10,200+ Happy Clients</p>
+                  <p className="text-sm mt-0.5" style={{ color: '#d59b86' }}>Successful property matches</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <SectionLabel text="Client Stories" />
+            <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#1d1d1d' }}>
+              What Our Clients Say
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.id}
+                className="rounded-2xl p-8 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
+                style={{ backgroundColor: '#e6e0d4', border: '1px solid #ccb7a3' }}
+              >
+                {/* Large quote */}
+                <div
+                  className="text-7xl font-serif leading-none absolute top-3 right-5 select-none pointer-events-none"
+                  style={{ color: 'rgba(190,93,63,0.15)' }}
+                >
+                  "
+                </div>
+
+                <div className="mb-4">
+                  <StarRating rating={testimonial.rating} />
+                </div>
+                <p className="text-sm leading-relaxed mb-6 relative z-10" style={{ color: '#1d1d1d' }}>
+                  "{testimonial.text}"
+                </p>
+                <div className="flex items-center gap-3 pt-5" style={{ borderTop: '1px solid #ccb7a3' }}>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #be5d3f, #345b79)' }}
+                  >
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>{testimonial.name}</p>
+                    <p className="text-xs" style={{ color: '#928d64' }}>{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats / Numbers ── */}
+      <section className="py-20" style={{ backgroundColor: '#ccb7a3' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <SectionLabel text="Our Impact" />
+            <h2 className="text-3xl font-extrabold tracking-tight" style={{ color: '#1d1d1d' }}>
+              NexaBuild by the Numbers
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { value: '12,400+', label: 'Properties Listed', desc: 'Verified listings island-wide', color: '#345b79' },
+              { value: '860+', label: 'Architecture Partners', desc: 'Certified design professionals', color: '#be5d3f' },
+              { value: '340+', label: 'Construction Firms', desc: 'Trusted build partners', color: '#928d64' },
+              { value: '35,000+', label: 'Happy Clients', desc: 'Satisfied property seekers', color: '#495d38' },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5"
+                style={{ border: '1px solid rgba(204,183,163,0.4)' }}
+              >
+                <p
+                  className="text-4xl font-extrabold mb-2 tracking-tight"
+                  style={{ color: stat.color }}
+                >
+                  {stat.value}
+                </p>
+                <p className="font-semibold text-sm mb-1" style={{ color: '#1d1d1d' }}>{stat.label}</p>
+                <p className="text-xs" style={{ color: '#928d64' }}>{stat.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="pt-16 pb-8 text-white" style={{ backgroundColor: '#1d1d1d' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
+
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#be5d3f' }}>
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                  </svg>
+                </div>
+                <span className="text-xl font-bold text-white">NexaBuild</span>
+              </div>
+              <p className="text-sm leading-relaxed mb-6" style={{ color: '#928d64' }}>
+                Sri Lanka's premier AI-powered real estate platform connecting buyers, sellers,
+                architects, and builders seamlessly.
+              </p>
+              <div className="flex gap-2.5">
+                {[
+                  { label: 'fb', d: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
+                  { label: 'tw', d: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
+                  { label: 'ig', d: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 21h9a4.5 4.5 0 004.5-4.5v-9A4.5 4.5 0 0016.5 3h-9A4.5 4.5 0 003 7.5v9A4.5 4.5 0 007.5 21z' },
+                  { label: 'li', d: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z' },
+                ].map((s) => (
+                  <a
+                    key={s.label}
+                    href="#"
+                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-150 hover:opacity-80"
+                    style={{ backgroundColor: '#345b79' }}
+                  >
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.d} />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Properties */}
+            <div>
+              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Properties</h4>
+              <ul className="space-y-3">
+                {['Buy Property', 'Rent Property', 'Sell Property', 'New Developments', 'Commercial'].map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Partners */}
+            <div>
+              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Partners</h4>
+              <ul className="space-y-3">
+                {['Find Architect', 'Find Builder', 'Interior Design', 'Legal Services', 'Valuation'].map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="font-semibold mb-5 text-sm uppercase tracking-widest" style={{ color: '#d59b86' }}>Company</h4>
+              <ul className="space-y-3">
+                {['About Us', 'How It Works', 'Careers', 'Press', 'Privacy Policy', 'Terms of Service'].map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Footer Bottom Bar */}
+          <div
+            className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
+            style={{ borderTop: '1px solid rgba(146,141,100,0.25)' }}
+          >
+            <p className="text-sm" style={{ color: '#928d64' }}>
+              © 2025 NexaBuild. All rights reserved. Built with ❤️ in Sri Lanka.
+            </p>
+            <div className="flex gap-6">
+              {['Privacy', 'Terms', 'Cookies'].map((l) => (
+                <a key={l} href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: '#928d64' }}>
+                  {l}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
