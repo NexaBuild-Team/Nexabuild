@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-// Design SVG assets from Figma
-// Buyer Icon
+
 
 
 const SRI_LANKA_DISTRICTS = [
@@ -150,88 +149,130 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="w-full h-full min-h-screen flex justify-start items-start overflow-x-hidden">
+    <div className="w-full h-full min-h-screen flex justify-start items-stretch overflow-x-hidden">
       
       {/* LEFT SIDE HERO PANEL - Hidden on mobile/tablet, visible on desktop */}
-      <div className="hidden lg:flex w-1/2 h-screen relative flex-col justify-between items-start p-16 overflow-hidden shrink-0">
-        <div className="absolute inset-0 flex flex-col justify-center items-start z-0">
-          <img
-            className="w-full h-full object-cover"
-            src="https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg"
-            alt="NexaBuild Banner"
-          />
-          <div className="w-full h-full absolute left-0 top-0 bg-slate-800/50" />
+      <div 
+        className="hidden lg:flex lg:w-[499.77px] relative shrink-0 overflow-hidden" 
+        data-node-id="9:3" 
+        data-name="Section - LEFT SIDE: HERO OVERLAY"
+      >
+        <div className="absolute inset-0">
+          <img alt="Background" className="w-full h-full object-cover" src={'https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg'} />
         </div>
+        <div className="absolute bg-slate-800/50 inset-0 z-10" data-node-id="9:4" data-name="Overlay" />
         
-        {/* Top Tagline */}
-        <div className="self-stretch inline-flex justify-start items-center gap-3 z-20">
-          <div className="w-1 h-8 bg-[#be5d3f]" />
-          <div className="inline-flex flex-col justify-start items-start">
-            <div className="justify-center text-white text-xs font-bold uppercase leading-3 tracking-wider">
-              AI-POWERED INTELLIGENCE
-            </div>
-          </div>
-        </div>
-
-        {/* Title and Subtitle */}
-        <div className="w-full max-w-[576px] flex flex-col justify-start items-start gap-6 z-20 mt-12 mb-auto">
-          <div className="self-stretch flex flex-col justify-start items-start">
-            <h1 className="self-stretch justify-center text-white text-6xl font-semibold leading-[61.60px]">
-              Sri Lanka&apos;s Premier
-              <br />
-              Property &amp;
-              <br />
-              Construction
-              <br />
-              Platform
-            </h1>
-          </div>
-          <div className="self-stretch pt-2 flex flex-col justify-start items-start">
-            <p className="self-stretch justify-center text-white/90 text-lg font-normal leading-7">
-              Connect with verified architects, builders, and property
-              listings — all powered by AI.
-            </p>
-          </div>
-        </div>
-
-        {/* Stats & Testimonial at bottom */}
-        <div className="self-stretch flex flex-col justify-start items-start gap-12 z-20 mt-8">
-          <div className="self-start w-full inline-flex justify-center items-start gap-6">
-            <div className="flex-1 p-6 bg-white/10 rounded-xl shadow-[0px_8px_32px_0px_rgba(0,0,0,0.15)] outline outline-offset-[-1px] outline-white/20 backdrop-blur-md inline-flex flex-col justify-start items-start gap-1">
-              <span className="text-white text-xl font-normal leading-6">12,400+</span>
-              <span className="text-white/70 text-xs font-bold leading-4">Properties Listed</span>
-            </div>
-            <div className="flex-1 p-6 bg-white/10 rounded-xl shadow-[0px_8px_32px_0px_rgba(0,0,0,0.15)] outline outline-1 outline-offset-[-1px] outline-white/20 backdrop-blur-md inline-flex flex-col justify-start items-start gap-1">
-              <span className="text-white text-xl font-normal leading-6">340+</span>
-              <span className="text-white/70 text-xs font-bold leading-4">Architecture Designs</span>
-            </div>
-            <div className="flex-1 p-6 bg-white/10 rounded-xl shadow-[0px_8px_32px_0px_rgba(0,0,0,0.15)] outline outline-1 outline-offset-[-1px] outline-white/20 backdrop-blur-md inline-flex flex-col justify-start items-start gap-1">
-              <span className="text-white text-xl font-normal leading-6">200+</span>
-              <span className="text-white/70 text-xs font-bold leading-4">Verified Builders</span>
-            </div>
-          </div>
+        <div 
+          className="flex flex-col gap-[24px] items-start sticky top-[60px] w-full h-[calc(100vh-60px)] justify-end p-[48px] z-20" 
+          data-node-id="9:5" 
+          data-name="Container"
+        >
           
-          <div className="w-full max-w-[672px] p-8 bg-white/10 rounded-2xl shadow-[0px_8px_32px_0px_rgba(0,0,0,0.15)] outline outline-1 outline-offset-[-1px] outline-white/20 backdrop-blur-md inline-flex justify-start items-center gap-6">
-            <img
-              className="w-14 h-14 rounded-full border-2 border-white/30"
-              src="https://placehold.co/56x56"
-              alt="Nimali Fernando"
-            />
-            <div className="inline-flex flex-col justify-start items-start gap-2">
-              <p className="text-white text-base font-normal leading-5">
-                &quot;NexaBuild helped me find my dream plot in Kandy and connect with an incredible architect — all in one place.&quot;
-              </p>
-              <span className="text-white/60 text-[10px] font-normal leading-4">
-                Nimali Fernando, Kandy
+          {/* AI Badge */}
+          <div className="backdrop-blur-[6px] bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.2)] border-solid flex gap-[8px] items-center px-[17px] py-[7px] relative rounded-[9999px] shrink-0" data-node-id="9:6" data-name="AI Badge">
+            <div className="bg-[#be5d3f] rounded-[9999px] shrink-0 size-[8px]" data-node-id="9:7" data-name="Background" />
+            <div className="relative shrink-0" data-node-id="9:8" data-name="Container">
+              <span className="text-[10px] font-bold text-[rgba(255,255,255,0.9)] tracking-[1px] uppercase whitespace-nowrap leading-[15px]" data-node-id="9:9">
+                AI-POWERED PLATFORM
               </span>
             </div>
           </div>
+
+          {/* Heading */}
+          <div className="flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="9:10" data-name="Heading 1">
+            <div className="flex flex-col font-extrabold justify-center leading-[75px] text-[60px] text-white w-full" data-node-id="9:11">
+              <p className="mb-0">Build Your</p>
+              <p className="mb-0 text-[#be5d3f]">Dream</p>
+              <p className="mb-0">in Sri Lanka</p>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="flex flex-col items-start max-w-[448px] relative shrink-0 w-full" data-node-id="9:12" data-name="Container">
+            <p className="text-[18px] font-normal leading-[28px] text-[rgba(255,255,255,0.8)] w-full" data-node-id="9:13">
+              Sri Lanka's premier AI-powered property and construction platform. Join thousands of buyers, architects, and builders.
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="flex gap-[32px] h-[100px] items-start py-[24px] relative shrink-0 w-full" data-node-id="9:14" data-name="Stats">
+            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[116.48px]" data-node-id="9:15" data-name="Container">
+              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:17">
+                12,000+
+              </span>
+              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:19">
+                PROPERTIES
+              </span>
+            </div>
+            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[83.5px]" data-node-id="9:20" data-name="Container">
+              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:22">
+                340+
+              </span>
+              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:24">
+                ARCHITECTS
+              </span>
+            </div>
+            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[68.41px]" data-node-id="9:25" data-name="Container">
+              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:27">
+                180+
+              </span>
+              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:29">
+                BUILDERS
+              </span>
+            </div>
+          </div>
+
+          {/* Testimonial Glass Card */}
+          <div className="backdrop-blur-[6px] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex flex-col gap-[14.75px] items-start max-w-[384px] p-[25px] relative rounded-[16px] shrink-0 w-[384px]" data-node-id="9:30" data-name="Testimonial Glass Card">
+            <div className="flex items-start justify-between relative w-full" data-node-id="9:31" data-name="Container">
+              <div className="flex gap-[12px] items-center relative shrink-0" data-node-id="9:32" data-name="Container">
+                <div className="bg-[#9ca3af] border-2 border-[rgba(255,255,255,0.5)] border-solid flex flex-col items-start justify-center overflow-clip p-[2px] relative rounded-full shrink-0 w-[40px] h-[40px]" data-node-id="9:33">
+                  <img alt="Kasun Jayawardena" className="w-full h-full object-cover rounded-full" src={'/img/kasun-jayawardena.jpg'} />
+                </div>
+                <div className="flex flex-col items-start relative shrink-0" data-node-id="9:35">
+                  <span className="text-[14px] font-bold text-white whitespace-nowrap leading-[20px]" data-node-id="9:37">
+                    Kasun Jayawardena
+                  </span>
+                  <span className="text-[10px] font-normal text-[rgba(255,255,255,0.6)] whitespace-nowrap leading-[15px]" data-node-id="9:39">
+                    Property Buyer — Colombo
+                  </span>
+                </div>
+              </div>
+              
+              {/* Stars rating */}
+              <div className="flex items-center gap-[2px] h-[10.03px]" data-node-id="9:40">
+                {[...Array(5)].map((_, i) => (
+                  <img key={i} alt="Star" className="w-[10.52px] h-[10.03px]" src={'/svg/star.svg'} />
+                ))}
+              </div>
+            </div>
+            
+            <div className="relative shrink-0 w-full" data-node-id="9:51">
+              <p className="text-[14px] font-normal leading-[22.75px] text-[rgba(255,255,255,0.9)] w-full" data-node-id="9:52">
+                "NexaBuild helped me find my perfect villa in Kandy within a week. The AI matching is incredibly accurate."
+              </p>
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="flex gap-[24px] h-[40px] items-start pt-[24px] relative shrink-0 w-full border-t border-white/10" data-node-id="9:53" data-name="Trust Badges">
+            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:55">
+              ✓ SSL SECURED
+            </span>
+            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:57">
+              ✓ VERIFIED LISTINGS
+            </span>
+            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:59">
+              ✓ AI MATCHED
+            </span>
+          </div>
+
         </div>
       </div>
 
       {/* RIGHT SIDE REGISTRATION FORM */}
       <div 
-        className="w-full lg:w-1/2 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center py-12 px-6 md:px-16 overflow-y-auto"
+        className="w-full lg:flex-1 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center py-12 px-6 md:px-16 overflow-y-auto"
         data-node-id="9:60"
         data-name="Section - RIGHT SIDE: REGISTRATION FORM"
       >
