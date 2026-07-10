@@ -94,12 +94,9 @@ export default function AdminUserManagement() {
     <div className="h-full overflow-y-auto p-[20px] md:p-[32px] space-y-[32px] bg-[#e6e0d4]">
       
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-[16px]">
-        <div>
-          <h3 className="text-[28px] font-extrabold text-[#1d1d1d]">User Management</h3>
-          <p className="text-[14px] text-gray-500 font-medium">Manage all registered users, roles, and account statuses across NexaBuild.</p>
-        </div>
-        <div className="flex items-center gap-[12px] self-start sm:self-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-[16px]">
+        {/*  */}
+        <div className="flex items-center gap-[12px] self-end sm:self-auto">
           <button className="flex items-center gap-[8px] border border-[#ccb7a3]/40 rounded-[8px] bg-white px-[20px] py-[10px] text-[13px] font-bold text-[#1d1d1d] hover:bg-gray-50">
             <svg className="size-[16px] text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
