@@ -17,7 +17,7 @@ const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Property Search', href: '/property-listing' },
   { label: 'Land Search', href: '/land' },
-  { label: 'Architecture Companies', href: '#' },
+  { label: 'Architecture Companies', href: '/architecture' },
   { label: 'Construction Companies', href: '#' },
 ]
 
