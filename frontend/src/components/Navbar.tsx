@@ -18,7 +18,7 @@ const navLinks: NavLink[] = [
   { label: 'Property Search', href: '/property-listing' },
   { label: 'Land Search', href: '#' },
   { label: 'Architecture Companies', href: '#' },
-  { label: 'Construction Companies', href: '#' },
+  { label: 'Construction Companies', href: '/construction-companies' },
 ]
 
 export default function Navbar() {
