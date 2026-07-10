@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Primary Brick Accent  : #be5d3f
@@ -741,8 +741,7 @@ export default function PropertyListing() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <Footer />
+      
     </div>
   )
 }

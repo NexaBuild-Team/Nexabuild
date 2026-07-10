@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 
 // ─── Color Palette (for reference) ───────────────────────────────────────────
 // Primary Brick Accent : #be5d3f
@@ -781,8 +781,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <Footer />
+   
     </div>
   )
 }
