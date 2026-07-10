@@ -37,24 +37,26 @@ export default function Navbar() {
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[60px]">
+        <div className="grid grid-cols-3 items-center h-[60px]">
 
           {/* ── Logo ── */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 flex-shrink-0 no-underline"
+            className="flex items-center gap-2.5 flex-shrink-0 no-underline justify-self-start"
             aria-label="NexaBuild home"
-          >
+>
+
            
             <img
               src={nexaBuildLogo}
               alt="NexaBuild"
               className="h-7 w-auto object-contain"
             />
+
           </Link>
 
           {/* ── Desktop Nav Links ── */}
-          <div className="hidden lg:flex items-center gap-0.5" role="menubar">
+          <div className="hidden lg:flex items-center gap-0.5 justify-self-center" role="menubar">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -85,7 +87,7 @@ export default function Navbar() {
           </div>
 
           {/* ── Desktop: Login + Register ── */}
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+         <div className="hidden lg:flex items-center gap-2 flex-shrink-0 justify-self-end">
             <button
               id="nav-login-btn"
               className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150 border border-white/50 hover:border-white"
