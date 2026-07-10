@@ -1,1 +1,121 @@
 @import "tailwindcss";
+
+/* ── NexaBuild Official Brand Tokens (Tailwind v4 @theme) ──────────── */
+@theme {
+  /* ── Core Palette ─────────────────────────────────────────────── */
+  --color-nb-brick:        #be5d3f;   /* Primary Brick Accent / Secondary Button  */
+  --color-nb-blue:         #345b79;   /* Primary Blue / Primary Button            */
+  --color-nb-bg-main:      #e6e0d4;   /* Primary Page Background                  */
+  --color-nb-bg-sub:       #ccb7a3;   /* Secondary Background                     */
+  --color-nb-blue-light:   #6b879c;   /* Secondary Blue                           */
+  --color-nb-accent-light: #d59b86;   /* Light Accent                             */
+  --color-nb-olive:        #928d64;   /* Olive Accent                             */
+  --color-nb-green:        #495d38;   /* Green Accent                             */
+  --color-nb-text:         #1d1d1d;   /* Dark Text                                */
+  --color-nb-card:         #ffffff;   /* Cards background with soft shadows       */
+
+  --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Global Resets ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background-color: #e6e0d4;
+  color: #1d1d1d;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* ── Scrollbar Styling ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #ccb7a3; }
+::-webkit-scrollbar-thumb { background: #6b879c; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #345b79; }
+
+/* ── Architecture Module Utilities ───────────────────────────────── */
+.nb-gradient-hero {
+  background: linear-gradient(135deg, #1d1d1d 0%, #345b79 55%, #6b879c 100%);
+}
+
+.nb-card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.nb-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(52,91,121,0.18);
+}
+
+/* Primary Button — Blue */
+.nb-btn-primary {
+  background: #345b79;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 22px;
+  transition: background 0.2s ease, transform 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+.nb-btn-primary:hover {
+  background: #2a4a63;
+  transform: translateY(-1px);
+}
+
+/* Secondary / Outline Button — Brick accent border */
+.nb-btn-outline {
+  background: transparent;
+  color: #345b79;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 9px 22px;
+  transition: all 0.2s ease;
+  border: 1.5px solid #be5d3f;
+  cursor: pointer;
+}
+.nb-btn-outline:hover {
+  background: #be5d3f;
+  border-color: #be5d3f;
+  color: #fff;
+}
+
+/* Pill / Tag filters */
+.nb-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1.5px solid #ccb7a3;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.nb-pill:hover, .nb-pill.active {
+  background: #345b79;
+  border-color: #345b79;
+  color: #fff;
+}
+
+/* Form inputs */
+.nb-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #ccb7a3;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+  background: #fff;
+}
+.nb-input:focus {
+  border-color: #345b79;
+}
+
+/* Card shadow wrapper */
+.nb-card-shadow {
+  box-shadow: 0 4px 16px rgba(52,91,121,0.10), 0 1px 4px rgba(52,91,121,0.06);
+}
