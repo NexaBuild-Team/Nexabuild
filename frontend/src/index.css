@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @import "tailwindcss";
+
+
+@theme {
+  --color-nb-brick: #be5d3f;
+  --color-nb-blue: #345b79;
+  --color-nb-bg-main: #e6e0d4;
+  --color-nb-bg-sub: #ccb7a3;
+  --color-nb-blue-light: #6b879c;
+  --color-nb-accent-light: #d59b86;
+  --color-nb-olive: #928d64;
+  --color-nb-green: #495d38;
+  --color-nb-text: #1d1d1d;
+  --color-nb-card: #ffffff;
+
+  --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
 
 :root {
   --color-brick: #be5d3f;
@@ -13,12 +31,47 @@
   --color-green: #495d38;
 }
 
-* {
-  font-family: 'Inter', sans-serif;
+
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
+
 body {
-  background-color: var(--color-bg);
-  color: var(--color-dark);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background-color: #e6e0d4;
+  color: #1d1d1d;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* Architecture utilities */
+
+.nb-gradient-hero {
+  background: linear-gradient(135deg, #1d1d1d 0%, #345b79 55%, #6b879c 100%);
+}
+
+.nb-card-hover {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.nb-card-hover:hover {
+  transform: translateY(-4px);
+}
+
+
+.nb-btn-primary {
+  background:#345b79;
+  color:white;
+  font-weight:600;
+  border-radius:8px;
+  padding:10px 22px;
+}
+
+
+.nb-btn-outline {
+  background:transparent;
+  color:#345b79;
+  border:1.5px solid #be5d3f;
 }
