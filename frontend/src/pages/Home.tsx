@@ -225,6 +225,14 @@ const testimonials: Testimonial[] = [
 ]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+function SparklesIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
+  )
+}
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
@@ -361,9 +369,9 @@ function SectionLabel({ text }: { text: string }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 function Home() {
-  const [searchType, setSearchType] = useState('Buy')
   const [propertyType, setPropertyType] = useState('')
-  const [location, setLocation] = useState('')
+  const [location, setLocation]         = useState('')
+  const [budget, setBudget]             = useState('')  // preset key e.g. '0-30'
   const navigate = useNavigate()
 
 
@@ -394,62 +402,46 @@ function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
-          <div className="max-w-xl">
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm mb-6" style={{ color: '#d59b86' }}>
-              <span>Home</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-              <span>Find Property</span>
+          <div className="flex flex-col items-center text-center">
+
+            {/* AI Badge */}
+            <div className="mb-5">
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest px-4 py-1.5 rounded-full border uppercase"
+                style={{ color: '#d59b86', borderColor: 'rgba(213,155,134,0.4)', backgroundColor: 'rgba(213,155,134,0.12)' }}
+              >
+                <SparklesIcon />
+                AI-Powered Intelligence
+              </span>
             </div>
 
-            <h1 className="text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-5 tracking-tight">
-              Find Your Dream<br />
-              Property{' '}
-              <span style={{ color: '#d59b86' }}>in Sri Lanka</span>
-            </h1>
-            <p className="text-base mb-10 leading-relaxed" style={{ color: 'rgba(230,224,212,0.85)' }}>
-              Discover premium homes, villas, and commercial spaces across Sri Lanka.
-              Powered by AI to match you with your perfect property faster than ever.
-            </p>
+            {/* Heading + subtitle + search bar — auto-width wrapper matching h1 */}
+            <div className="inline-flex flex-col items-stretch">
+              <h1 className="text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-5 tracking-tight text-center whitespace-nowrap">
+                Find Your Dream Property<br />
+                <span style={{ color: '#d59b86' }}>in Sri Lanka</span>
+              </h1>
+              <p className="text-base mb-8 leading-relaxed text-center" style={{ color: 'rgba(230,224,212,0.85)' }}>
+                Connect with top architects, construction companies and premium<br />
+                all-in-one intelligent platform
+              </p>
 
-            {/* Search Box */}
-            <div className="bg-white rounded-2xl p-4 shadow-2xl">
-              {/* Buy / Rent / Sell tabs */}
-              <div
-                className="flex gap-1 mb-4 p-1 rounded-xl w-fit"
-                style={{ backgroundColor: '#e6e0d4' }}
-              >
-                {['Buy', 'Rent', 'Sell'].map((type) => (
-                  <button
-                    key={type}
-                    id={`search-tab-${type.toLowerCase()}`}
-                    onClick={() => setSearchType(type)}
-                    className="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-                    style={
-                      searchType === type
-                        ? { backgroundColor: '#be5d3f', color: '#fff' }
-                        : { color: '#928d64', backgroundColor: 'transparent' }
-                    }
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-
-              {/* Fields */}
-              <div className="flex flex-col sm:flex-row gap-3">
+            {/* Search Box — compact horizontal pill bar */}
+            <div
+              className="flex items-center bg-white shadow-2xl overflow-hidden w-full"
+              style={{ borderRadius: '12px' }}
+            >
+              {/* Property Type dropdown */}
+              <div className="flex items-center gap-2 px-6 py-5 flex-shrink-0" style={{ minWidth: '200px' }}>
+                <svg className="w-4 h-4 flex-shrink-0" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
                 <select
                   id="search-property-type"
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
-                  className="flex-1 px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-shadow"
-                  style={{
-                    borderColor: '#ccb7a3',
-                    color: '#928d64',
-                    backgroundColor: '#f9f7f4',
-                  }}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-4"
+                  style={{ color: propertyType ? '#1d1d1d' : '#928d64' }}
                 >
                   <option value="">Property Type</option>
                   <option value="house">House</option>
@@ -458,56 +450,82 @@ function Home() {
                   <option value="commercial">Commercial</option>
                   <option value="land">Land</option>
                 </select>
+                <svg className="w-3.5 h-3.5 flex-shrink-0 -ml-3" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
 
-                <div className="flex-1 relative">
-                  <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                    style={{ color: '#ccb7a3' }}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <input
-                    id="search-location"
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Location (e.g. Colombo, Galle)"
-                    className="w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-shadow"
-                    style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#f9f7f4' }}
-                  />
-                </div>
+              {/* Divider */}
+              <div className="w-px self-stretch my-2" style={{ backgroundColor: '#e6e0d4' }} />
 
-                <button
-                  id="search-btn"
-                  onClick={() => navigate('/property-listing')}
-                  className="text-white font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:opacity-90 hover:shadow-lg whitespace-nowrap"
-                  style={{ backgroundColor: '#345b79' }}
+              {/* Location input */}
+              <div className="flex items-center gap-2 px-6 py-5 flex-1 min-w-0">
+                <svg className="w-4 h-4 flex-shrink-0" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <input
+                  id="search-location"
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Location"
+                  className="w-full text-sm bg-transparent outline-none"
+                  style={{ color: '#1d1d1d' }}
+                />
+              </div>
+
+              {/* Divider */}
+              <div className="w-px self-stretch my-2" style={{ backgroundColor: '#e6e0d4' }} />
+
+              {/* Budget dropdown */}
+              <div className="flex items-center gap-2 px-6 py-5 flex-shrink-0" style={{ minWidth: '190px' }}>
+                <svg className="w-4 h-4 flex-shrink-0" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <select
+                  id="search-budget"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-4"
+                  style={{ color: budget ? '#1d1d1d' : '#928d64' }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  Search
-                </button>
+                  <option value="">Budget Range</option>
+                  <option value="0-30">Under LKR 30M</option>
+                  <option value="30-60">LKR 30M – 60M</option>
+                  <option value="60-100">LKR 60M – 100M</option>
+                  <option value="100-200">LKR 100M – 200M</option>
+                  <option value="200-500">Above LKR 200M</option>
+                </select>
+                <svg className="w-3.5 h-3.5 flex-shrink-0 -ml-3" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
-
-              {/* Quick filters */}
-              <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: '1px solid #e6e0d4' }}>
-                <span className="text-xs self-center" style={{ color: '#ccb7a3' }}>Popular:</span>
-                {['Colombo 3', 'Galle Fort', 'Mirissa Beach', 'Kandy Hills', 'Negombo'].map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => navigate('/property-listing')}
-                    className="text-xs font-medium px-3 py-1 rounded-full transition-colors hover:opacity-80"
-                    style={{ color: '#345b79', backgroundColor: '#e6e0d4' }}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
+              <button
+                id="search-btn"
+                onClick={() => {
+                  const params = new URLSearchParams()
+                  if (location.trim()) params.set('query', location.trim())
+                  if (propertyType)    params.set('type',  propertyType)
+                  if (budget) {
+                    const [min, max] = budget.split('-')
+                    params.set('minBudget', min)
+                    params.set('maxBudget', max)
+                  }
+                  const qs = params.toString()
+                  navigate(`/property-listing${qs ? `?${qs}` : ''}`)
+                }}
+                className="flex items-center gap-2 text-white font-bold px-8 py-5 transition-all duration-200 hover:opacity-90 whitespace-nowrap flex-shrink-0 active:scale-95"
+                style={{ backgroundColor: '#be5d3f' }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Search
+              </button>
             </div>
-          </div>
+            </div>{/* end inline-flex col */}
+          </div>{/* end flex-col items-center */}
         </div>
       </section>
 
@@ -526,7 +544,7 @@ function Home() {
               className="hidden md:flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2"
               style={{ color: '#345b79' }}
             >
-              Explore All Properties
+              View All Properties
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -561,7 +579,7 @@ function Home() {
               </h2>
             </div>
             <a href="#" className="hidden md:flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all" style={{ color: '#345b79' }}>
-              Learn More
+              View All Architecture Companies
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -587,7 +605,7 @@ function Home() {
               </h2>
             </div>
             <a href="#" className="hidden md:flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all" style={{ color: '#345b79' }}>
-              Browse All Partners
+              View All Construction Companies
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
