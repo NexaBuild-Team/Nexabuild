@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Property {
   id: string;
@@ -30,6 +30,12 @@ export default function AdminPropertyManagement() {
   const [newPrice, setNewPrice] = useState('');
   const [newType, setNewType] = useState<'RESIDENTIAL' | 'COMMERCIAL' | 'LAND'>('RESIDENTIAL');
   const [newOwner, setNewOwner] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
 
   // Handle Approve
   const handleApprove = (id: string) => {
@@ -55,6 +61,12 @@ export default function AdminPropertyManagement() {
                           p.owner.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
+
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+  const paginatedProperties = filteredProperties.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleAddProperty = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,11 +95,7 @@ export default function AdminPropertyManagement() {
     <div className="h-full overflow-y-auto p-[20px] md:p-[32px] space-y-[32px] bg-[#e6e0d4]">
       
       {/* Top Banner section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-[16px]">
-        <div>
-          <h3 className="text-[28px] font-extrabold text-[#1d1d1d]">Property Moderation</h3>
-          <p className="text-[14px] text-gray-500 font-medium">Review, approve, or reject property listings submitted to NexaBuild.</p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-[16px]">
         <button
           onClick={() => setShowAddPropertyModal(true)}
           className="flex items-center gap-[8px] rounded-[8px] bg-[#be5d3f] px-[24px] py-[12px] text-[13px] font-bold text-white hover:bg-[#be5d3f]/90 shadow-sm self-start sm:self-auto"
@@ -187,7 +195,7 @@ export default function AdminPropertyManagement() {
 
       {/* Properties Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px]">
-        {filteredProperties.map((prop) => (
+        {paginatedProperties.map((prop) => (
           <div
             key={prop.id}
             className="bg-white border border-[#ccb7a3]/20 rounded-[12px] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
@@ -269,6 +277,67 @@ export default function AdminPropertyManagement() {
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-[16px] bg-white border border-[#ccb7a3]/20 rounded-[12px] p-[16px] shadow-sm select-none">
+          <div className="text-[13px] font-semibold text-gray-500">
+            Showing <span className="font-bold text-[#1d1d1d]">{Math.min((currentPage - 1) * itemsPerPage + 1, filteredProperties.length)}</span> to{' '}
+            <span className="font-bold text-[#1d1d1d]">{Math.min(currentPage * itemsPerPage, filteredProperties.length)}</span> of{' '}
+            <span className="font-bold text-[#1d1d1d]">{filteredProperties.length}</span> properties
+          </div>
+          <div className="flex items-center gap-[8px]">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-[6px] px-[16px] py-[8px] rounded-[8px] text-[12px] font-bold tracking-[0.6px] transition-all border ${
+                currentPage === 1
+                  ? 'border-[#ccb7a3]/10 bg-[#ccb7a3]/5 text-[#ccb7a3]/50 cursor-not-allowed'
+                  : 'border-[#ccb7a3]/40 bg-white text-[#345b79] hover:bg-[#345b79]/5'
+              }`}
+            >
+              <svg className="size-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </button>
+            
+            <div className="flex items-center gap-[4px]">
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`size-[36px] flex items-center justify-center rounded-[8px] text-[12px] font-bold transition-all border ${
+                      currentPage === pageNum
+                        ? 'bg-[#345b79] text-white border-[#345b79] shadow-sm'
+                        : 'border-[#ccb7a3]/40 bg-white text-[#1d1d1d] hover:bg-gray-50'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-[6px] px-[16px] py-[8px] rounded-[8px] text-[12px] font-bold tracking-[0.6px] transition-all border ${
+                currentPage === totalPages
+                  ? 'border-[#ccb7a3]/10 bg-[#ccb7a3]/5 text-[#ccb7a3]/50 cursor-not-allowed'
+                  : 'border-[#ccb7a3]/40 bg-white text-[#345b79] hover:bg-[#345b79]/5'
+              }`}
+            >
+              Next
+              <svg className="size-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Add Property Modal */}
       {showAddPropertyModal && (
