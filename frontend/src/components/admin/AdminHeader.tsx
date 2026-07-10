@@ -11,7 +11,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
-  const [currentDateString, setCurrentDateString] = useState('Wednesday, Dec 12, 2024');
+  const [currentDateString, setCurrentDateString] = useState('Whatsday , xxx xx, 2026');
 
   // Format date nicely
   useEffect(() => {

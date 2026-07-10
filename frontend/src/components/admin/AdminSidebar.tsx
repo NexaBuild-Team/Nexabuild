@@ -221,17 +221,6 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
               </NavLink>
             ))}
           </div>
-
-          {/* User Profile Footer Card */}
-          <div className="flex items-center gap-[12px] p-[10px] rounded-[8px] bg-white/5">
-            <div className="flex size-[36px] shrink-0 items-center justify-center rounded-[8px] bg-[#be5d3f] text-white text-[13px] font-bold uppercase">
-              AM
-            </div>
-            <div className="flex flex-col items-start overflow-hidden leading-tight">
-              <span className="text-[12px] font-bold text-white truncate w-full">Admin Manager</span>
-              <span className="text-[10px] text-white/60 truncate w-full">Super Admin</span>
-            </div>
-          </div>
         </div>
       </aside>
     </>
