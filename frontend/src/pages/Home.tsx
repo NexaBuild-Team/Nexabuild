@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 
 // ─── Color Palette (for reference) ───────────────────────────────────────────
@@ -799,7 +800,7 @@ function Home() {
         </div>
       </section>
 
-   
+      <Footer />
     </div>
   )
 }

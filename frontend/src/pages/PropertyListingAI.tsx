@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import { allPropertiesPool, type RecommendedProperty } from '../data/recommendedProperties'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Primary Brick Accent : #be5d3f  |  Primary Blue  : #345b79
@@ -8,131 +11,10 @@ import { useSearchParams } from 'react-router'
 // Olive Accent         : #928d64  |  Dark Text     : #1d1d1d
 // Green Accent         : #495d38
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-type PropertyType = 'House' | 'Apartment' | 'Villa' | 'Commercial'
-
-interface AIProperty {
-  id: number
-  image: string
-  price: string
-  priceNum: number       // raw LKR value for budget filtering
-  title: string
-  location: string
-  district: string       // matches district filter pills
-  type: PropertyType
-  beds: number
-  baths: number
-  area: string
-  badge: string
-  badgeColor: string
-  matchScore: number     // 0-100, used for "Recommended" ranking
-  reason: string
-  isFavorite?: boolean
-}
+type AIProperty = RecommendedProperty
 
 // ─── Full Property Pool ───────────────────────────────────────────────────────
-const allPropertiesPool: AIProperty[] = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80',
-    price: 'LKR 85,000,000', priceNum: 85_000_000,
-    title: 'Luxury Villa, Colombo',
-    location: 'Colombo 7, Western Province', district: 'Colombo',
-    type: 'Villa', beds: 4, baths: 3, area: '4,900 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 98,
-    reason: 'Matches your lifestyle & location preference for Western Province with pool and garden.',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80',
-    price: 'LKR 32,500,000', priceNum: 32_500_000,
-    title: 'Modern Apartment, Kandy',
-    location: 'Kandy, Central Province', district: 'Kandy',
-    type: 'Apartment', beds: 3, baths: 2, area: '1,800 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 91,
-    reason: 'Great match for city-living preference; within budget and top school zone.',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&q=80',
-    price: 'LKR 125,000,000', priceNum: 125_000_000,
-    title: 'Beachfront Residence, Galle',
-    location: 'Galle, Southern Province', district: 'Galle',
-    type: 'Villa', beds: 5, baths: 4, area: '6,400 sq ft',
-    badge: 'PREMIUM', badgeColor: '#495d38',
-    matchScore: 87,
-    reason: 'Premium coastal property — ideal for investment and holiday rental income.',
-    isFavorite: true,
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
-    price: 'LKR 55,000,000', priceNum: 55_000_000,
-    title: 'Premium Townhouse, Negombo',
-    location: 'Negombo, Western Province', district: 'Negombo',
-    type: 'House', beds: 3, baths: 2, area: '2,800 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 84,
-    reason: 'Well within budget with strong resale value in Negombo growth corridor.',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1605146769289-440113cc3d00?w=600&q=80',
-    price: 'LKR 48,000,000', priceNum: 48_000_000,
-    title: 'Luxury Modern Villa #12',
-    location: 'Colombo 5, Western Province', district: 'Colombo',
-    type: 'Villa', beds: 4, baths: 3, area: '3,200 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 80,
-    reason: 'Central Colombo location with modern finishes, suits urban lifestyle.',
-  },
-  {
-    id: 6,
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80',
-    price: 'LKR 220,000,000', priceNum: 220_000_000,
-    title: 'Penthouse, Colombo 3',
-    location: 'Colombo 3, Western Province', district: 'Colombo',
-    type: 'Apartment', beds: 5, baths: 4, area: '4,200 sq ft',
-    badge: 'PREMIUM', badgeColor: '#495d38',
-    matchScore: 76,
-    reason: 'Iconic penthouse offering panoramic views — top-tier investment asset.',
-  },
-  {
-    id: 7,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
-    price: 'LKR 38,000,000', priceNum: 38_000_000,
-    title: 'Garden Bungalow, Nugegoda',
-    location: 'Nugegoda, Western Province', district: 'Colombo',
-    type: 'House', beds: 4, baths: 3, area: '3,200 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 73,
-    reason: 'Spacious garden home in quiet suburb, excellent for families.',
-  },
-  {
-    id: 8,
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80',
-    price: 'LKR 18,500,000', priceNum: 18_500_000,
-    title: 'City Apartment, Kandy',
-    location: 'Kandy City, Central Province', district: 'Kandy',
-    type: 'Apartment', beds: 2, baths: 1, area: '950 sq ft',
-    badge: 'FOR RENT', badgeColor: '#6b879c',
-    matchScore: 69,
-    reason: 'Affordable city-centre apartment — great entry-level investment.',
-  },
-  {
-    id: 9,
-    image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80',
-    price: 'LKR 62,000,000', priceNum: 62_000_000,
-    title: 'Colonial Heritage Bungalow',
-    location: 'Kandy, Central Province', district: 'Kandy',
-    type: 'House', beds: 4, baths: 3, area: '2,800 sq ft',
-    badge: 'FOR SALE', badgeColor: '#be5d3f',
-    matchScore: 65,
-    reason: 'Heritage character with modern upgrades in a sought-after Kandy address.',
-  },
-]
+// (imported from shared data — see data/recommendedProperties.ts)
 
 const marketInsights = [
   { city: 'Colombo 7', trend: '+2.3%', trendUp: true,  value: 'LKR 48M avg' },
@@ -267,6 +149,7 @@ function RecommendedCard({
   displayReason: string
 }) {
   const [fav, setFav] = useState(property.isFavorite ?? false)
+  const navigate = useNavigate()
   const circumference = 113.1
   const dash = (displayScore / 100) * circumference
 
@@ -342,6 +225,7 @@ function RecommendedCard({
         </div>
 
         <button
+          onClick={() => navigate(`/property-detail/${property.id}`)}
           className="mt-3 w-full text-xs font-bold py-2 rounded-lg text-white transition-all hover:opacity-90"
           style={{ backgroundColor: '#345b79' }}
         >
@@ -355,6 +239,7 @@ function RecommendedCard({
 // ─── Browse Card ───────────────────────────────────────────────────────────────
 function BrowseCard({ property }: { property: AIProperty }) {
   const [fav, setFav] = useState(property.isFavorite ?? false)
+  const navigate = useNavigate()
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group">
@@ -391,6 +276,7 @@ function BrowseCard({ property }: { property: AIProperty }) {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => navigate(`/property-detail/${property.id}`)}
             className="flex-1 text-[10px] font-bold py-1.5 rounded-lg text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
@@ -426,6 +312,7 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function PropertyListingAI() {
+  const navigate = useNavigate()
   // ── Read URL params passed from PropertyListing "AI Smart Recommend" ──
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -633,7 +520,10 @@ export default function PropertyListingAI() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
+    <>
+      <Navbar />
+
+      <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
       {/* ── Hero / Search Bar ── */}
       <section className="pt-[60px]" style={{ backgroundColor: '#345b79' }}>
@@ -1215,6 +1105,7 @@ export default function PropertyListingAI() {
             <div className="flex gap-3 flex-shrink-0">
               <button
                 id="ai-cta-view-matches-btn"
+                onClick={() => navigate('/property-ai-recommended')}
                 className="flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all hover:opacity-90 shadow"
                 style={{ backgroundColor: '#be5d3f' }}
               >
@@ -1233,6 +1124,9 @@ export default function PropertyListingAI() {
         </div>
       </section>
 
-    </div>
+      </div>
+
+      <Footer />
+    </>
   )
 }

@@ -21,12 +21,17 @@ const navLinks: NavLink[] = [
   { label: 'Construction Companies', href: '#' },
 ]
 
+const propertySearchRoutes = ['/property-listing', '/property-listing-ai', '/property-ai-recommended', '/property-detail']
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
 
   const isActive = (href: string) => {
     if (href === '/') return location.pathname === '/'
+    if (href === '/property-listing') {
+      return propertySearchRoutes.some((route) => location.pathname.startsWith(route))
+    }
     return location.pathname.startsWith(href)
   }
 
@@ -44,15 +49,12 @@ export default function Navbar() {
             to="/"
             className="flex items-center gap-2.5 flex-shrink-0 no-underline justify-self-start"
             aria-label="NexaBuild home"
->
-
-           
+          >
             <img
               src={nexaBuildLogo}
               alt="NexaBuild"
               className="h-7 w-auto object-contain"
             />
-
           </Link>
 
           {/* ── Desktop Nav Links ── */}
@@ -87,7 +89,7 @@ export default function Navbar() {
           </div>
 
           {/* ── Desktop: Login + Register ── */}
-         <div className="hidden lg:flex items-center gap-2 flex-shrink-0 justify-self-end">
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0 justify-self-end">
             <button
               id="nav-login-btn"
               className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150 border border-white/50 hover:border-white"

@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 
 
@@ -804,7 +805,7 @@ export default function PropertyListing() {
         </div>
       </section>
 
-      
+      <Footer />
     </div>
   )
 }
