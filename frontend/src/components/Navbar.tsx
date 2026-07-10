@@ -18,9 +18,8 @@ const navLinks: NavLink[] = [
   { label: 'Property Search', href: '/property-listing' },
   { label: 'Land Search', href: '/land' },
   { label: 'Architecture Companies', href: '/architecture' },
-  { label: 'Construction Companies', href: '#' },
+  { label: 'Construction Companies', href: '/construction-companies' },
 ]
-
 
 const propertySearchRoutes = ['/property-listing', '/property-listing-ai', '/property-ai-recommended', '/property-detail']
 

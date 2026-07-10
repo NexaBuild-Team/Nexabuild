@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Dark Background      : #1d1d1d
@@ -64,15 +65,11 @@ export default function Footer() {
           {/* ── Brand Column ── */}
           <div>
             <Link to="/" className="flex items-center gap-2.5 mb-4 no-underline" aria-label="NexaBuild home">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: '#be5d3f' }}
-              >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                </svg>
-              </div>
-              <span className="text-xl font-bold text-white tracking-tight">NexaBuild</span>
+              <img
+                src={nexaBuildLogo}
+                alt="NexaBuild"
+                className="h-8 w-auto object-contain"
+              />
             </Link>
 
             <p className="text-sm leading-relaxed mb-5" style={{ color: '#928d64' }}>

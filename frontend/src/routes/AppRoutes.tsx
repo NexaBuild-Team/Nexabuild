@@ -23,6 +23,10 @@ import ArchitectsPage from '../pages/ArchitectsPage'
 import DesignsPage from '../pages/DesignsPage'
 import DesignDetailPage from '../pages/DesignDetailPage'
 
+// Construction Module
+import ConstructionListing from '../pages/ConstructionListing'
+import ConstructionProfile from '../pages/ConstructionProfile'
+
 
 function AppRoutes() {
   return (
@@ -30,6 +34,7 @@ function AppRoutes() {
       <Navbar />
 
       <Routes>
+
         {/* Home */}
         <Route path="/" element={<Home />} />
 
@@ -53,6 +58,11 @@ function AppRoutes() {
         <Route path="/architects" element={<ArchitectsPage />} />
         <Route path="/designs" element={<DesignsPage />} />
         <Route path="/designs/:id" element={<DesignDetailPage />} />
+
+
+        {/* Construction Routes */}
+        <Route path="/construction-companies" element={<ConstructionListing />} />
+        <Route path="/construction-companies/:id" element={<ConstructionProfile />} />
 
       </Routes>
 
