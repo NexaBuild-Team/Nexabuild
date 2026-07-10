@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 
 
 // ─── Color Palette (for reference) ───────────────────────────────────────────
@@ -380,8 +379,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
-      {/* ── Navbar ── */}
-      <Navbar />
+    
 
       {/* ── Hero Section ── */}
       <section className="relative min-h-screen flex items-center pt-[60px]">
@@ -800,7 +798,7 @@ function Home() {
         </div>
       </section>
 
-      <Footer />
+
     </div>
   )
 }

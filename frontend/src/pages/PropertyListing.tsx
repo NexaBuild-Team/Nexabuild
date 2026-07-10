@@ -1,7 +1,6 @@
 import { useState, lazy, Suspense, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 
 
@@ -364,8 +363,7 @@ export default function PropertyListing() {
         input[type='range'].appearance-none::-moz-range-track { background: transparent; }
       `}</style>
 
-      {/* ── Navbar ── */}
-      <Navbar />
+
 
       {/* ── Hero / Search Bar ── */}
       <section className="pt-[60px]" style={{ backgroundColor: '#345b79' }}>
@@ -731,10 +729,14 @@ export default function PropertyListing() {
                 <p className="text-xs mb-5" style={{ color: '#928d64' }}>Try adjusting your search criteria or clearing some filters.</p>
                 <button
                   onClick={() => {
-                    setSearchQuery(''); setHeroType(''); setHeroBudgetIndex(0)
-                    setPropertyType('All Types'); setSelectedBeds('All')
-                    setSelectedDistricts([]); setMinBudget(''); setMaxBudget('')
-                  }}
+                                      setSearchQuery('');
+                                      setPropertyType('All Types');
+                                      setMinBudgetM(0);
+                                      setMaxBudgetM(SLIDER_MAX);
+                                      setSelectedBeds('All');
+                                      setSelectedDistricts([]);
+                                      setCurrentPage(1);
+}}
                   className="text-xs font-bold px-6 py-2.5 rounded-xl text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: '#345b79' }}
                 >
@@ -805,7 +807,7 @@ export default function PropertyListing() {
         </div>
       </section>
 
-      <Footer />
+ 
     </div>
   )
 }

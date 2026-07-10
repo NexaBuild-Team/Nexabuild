@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 import { allPropertiesPool, type RecommendedProperty } from '../data/recommendedProperties'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
@@ -521,7 +520,7 @@ export default function PropertyListingAI() {
 
   return (
     <>
-      <Navbar />
+   
 
       <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
@@ -1126,7 +1125,7 @@ export default function PropertyListingAI() {
 
       </div>
 
-      <Footer />
+
     </>
   )
 }

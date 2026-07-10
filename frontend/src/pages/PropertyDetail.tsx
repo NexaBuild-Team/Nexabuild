@@ -1,7 +1,6 @@
 import { useState, lazy, Suspense } from 'react'
 import { Link, useParams, Navigate } from 'react-router'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 import { getPropertyById, getSimilarProperties, type RecommendedProperty } from '../data/recommendedProperties'
 
 const PropertyLocationMap = lazy(() => import('../components/PropertyLocationMap'))
@@ -116,7 +115,7 @@ export default function PropertyDetail() {
 
   return (
     <>
-      <Navbar />
+    
 
       <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
@@ -444,7 +443,7 @@ export default function PropertyDetail() {
         </section>
       </div>
 
-      <Footer />
+
     </>
   )
 }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 import { recommendedProperties, type RecommendedProperty } from '../data/recommendedProperties'
 
 const matchMetrics = [
@@ -224,7 +223,7 @@ export default function PropertyAIrecommended() {
 
   return (
     <>
-      <Navbar />
+    
 
       <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
@@ -493,7 +492,7 @@ export default function PropertyAIrecommended() {
       </section>
       </div>
 
-      <Footer />
+
     </>
   )
 }

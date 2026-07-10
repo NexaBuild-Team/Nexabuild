@@ -16,12 +16,14 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Property Search', href: '/property-listing' },
-  { label: 'Land Search', href: '#' },
+  { label: 'Land Search', href: '/land' },
   { label: 'Architecture Companies', href: '#' },
   { label: 'Construction Companies', href: '#' },
 ]
 
+
 const propertySearchRoutes = ['/property-listing', '/property-listing-ai', '/property-ai-recommended', '/property-detail']
+
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
