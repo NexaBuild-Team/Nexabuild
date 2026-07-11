@@ -64,12 +64,14 @@ export default function Footer() {
 
           {/* ── Brand Column ── */}
           <div>
-            <Link to="/" className="flex items-center gap-2.5 mb-4 no-underline" aria-label="NexaBuild home">
-              <img
-                src={nexaBuildLogo}
-                alt="NexaBuild"
-                className="h-8 w-auto object-contain"
-              />
+            <Link to="/" className="inline-flex items-center mb-4 no-underline" aria-label="NexaBuild home">
+              <span className="inline-flex items-center bg-white rounded-lg px-3 py-2 shadow-sm">
+                <img
+                  src={nexaBuildLogo}
+                  alt="NexaBuild"
+                  className="h-11 w-auto object-contain block"
+                />
+              </span>
             </Link>
 
             <p className="text-sm leading-relaxed mb-5" style={{ color: '#928d64' }}>
