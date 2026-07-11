@@ -324,7 +324,7 @@ const LoginPage = () => {
                   Don't have an account?{' '}
                 </span>
                 <Link 
-                  to="/register" 
+                  to="/auth/register" 
                   className="text-[#be5d3f] text-[14px] font-bold hover:underline inline-flex items-center gap-[4px] leading-[20px]"
                   data-node-id="4:140"
                 >

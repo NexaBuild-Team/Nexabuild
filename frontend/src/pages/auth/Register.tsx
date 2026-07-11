@@ -321,7 +321,7 @@ const RegisterPage = () => {
                 <div className="flex flex-col items-start w-full" data-node-id="9:69" data-name="Container">
                   <div className="text-[#6b7280] text-[16px]" data-node-id="9:70">
                     <span className="leading-[24px]">Already have an account? </span>
-                    <Link to="/login" className="font-bold leading-[24px] text-[#be5d3f] hover:underline">
+                    <Link to="/auth/login" className="font-bold leading-[24px] text-[#be5d3f] hover:underline">
                       Sign In
                     </Link>
                   </div>

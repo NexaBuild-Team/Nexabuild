@@ -163,7 +163,7 @@ const ForgotPasswordPage = () => {
           
           {/* Back to Login Link */}
           <Link 
-            to="/login"
+            to="/auth/login"
             className="flex gap-[8px] items-center hover:opacity-85 duration-150 select-none group" 
             data-node-id="9:262" 
             data-name="Back Link"
@@ -332,7 +332,7 @@ const ForgotPasswordPage = () => {
                 <div className="flex flex-col items-center w-full" data-node-id="9:307">
                   <span className="text-[#64748b] text-[14px] font-normal leading-[20px]" data-node-id="9:308">
                     Remembered your password?{' '}
-                    <Link to="/login" className="font-bold text-[#345b79] hover:underline">
+                    <Link to="/auth/login" className="font-bold text-[#345b79] hover:underline">
                       Sign In
                     </Link>
                   </span>
@@ -340,7 +340,7 @@ const ForgotPasswordPage = () => {
                 <div className="flex flex-col items-center w-full" data-node-id="9:309">
                   <span className="text-[#64748b] text-[14px] font-normal leading-[20px]" data-node-id="9:310">
                     Don't have an account?{' '}
-                    <Link to="/register" className="font-bold text-[#be5d3f] hover:underline">
+                    <Link to="/auth/register" className="font-bold text-[#be5d3f] hover:underline">
                       Register Free
                     </Link>
                   </span>
