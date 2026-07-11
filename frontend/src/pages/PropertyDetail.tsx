@@ -131,9 +131,9 @@ export default function PropertyDetail() {
               <span className="text-[#345b79] font-medium">{property.title}</span>
             </nav>
 
-            {/* Image Gallery */}
+            {/* Image Gallery — single col mobile, 3-col on md+ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:h-[360px] mb-8">
-              <div className="relative rounded-2xl overflow-hidden h-56 md:h-full min-h-0">
+              <div className="relative rounded-2xl overflow-hidden h-48 sm:h-56 md:h-full min-h-0">
                 <img
                   src={galleryMain.src}
                   alt={galleryMain.alt}
@@ -154,7 +154,7 @@ export default function PropertyDetail() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-3 h-44 md:h-full min-h-0">
+              <div className="grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-3 h-32 sm:h-44 md:h-full min-h-0">
                 <div className="rounded-2xl overflow-hidden h-full min-h-0">
                   <img src={galleryMid.src} alt={galleryMid.alt} className="w-full h-full object-cover" />
                 </div>
@@ -164,7 +164,7 @@ export default function PropertyDetail() {
               </div>
 
               {galleryExtra && (
-                <div className="relative rounded-2xl overflow-hidden h-56 md:h-full min-h-0">
+                <div className="relative rounded-2xl overflow-hidden h-48 sm:h-56 md:h-full min-h-0">
                   <img
                     src={galleryExtra.src}
                     alt={galleryExtra.alt}
@@ -187,7 +187,7 @@ export default function PropertyDetail() {
                 {/* Title & Price */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                   <div>
-                    <h1 className="text-2xl lg:text-3xl font-extrabold text-[#1d1d1d] tracking-tight mb-2">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#1d1d1d] tracking-tight mb-2">
                       {property.title}
                     </h1>
                     <div className="flex items-center gap-1.5 text-sm text-[#928d64]">
@@ -422,7 +422,7 @@ export default function PropertyDetail() {
         {/* ── Similar Properties ── */}
         <section className="pb-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
               <h2 className="text-xl font-extrabold text-[#1d1d1d]">Similar Properties</h2>
               <Link
                 to="/property-listing"

@@ -380,7 +380,7 @@ export default function PropertyListing() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-white text-center leading-tight mb-3 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white text-center leading-tight mb-3 tracking-tight">
             Find Your Perfect Property with AI
           </h1>
           <p className="text-center text-sm mb-8 max-w-md mx-auto leading-relaxed" style={{ color: 'rgba(230,224,212,0.70)' }}>
@@ -463,7 +463,7 @@ export default function PropertyListing() {
           </div>
 
           {/* Stats Row */}
-          <div className="flex items-center justify-center gap-8 mt-8 pb-2">
+          <div className="flex items-center justify-center gap-5 sm:gap-8 mt-8 pb-2 flex-wrap">
             {[
               { value: '24,000+', label: 'Properties Listed' },
               { value: '98%', label: 'AI Match Accuracy' },
@@ -756,7 +756,7 @@ export default function PropertyListing() {
       {/* ── Explore on Map ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         {/* Section header */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="w-5 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#be5d3f' }} />
