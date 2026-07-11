@@ -538,11 +538,11 @@ export default function PropertyListingAI() {
             </span>
           </div>
 
-          <h1 className="text-3xl lg:text-4xl font-extrabold text-white text-center leading-tight mb-2 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white text-center leading-tight mb-2 tracking-tight">
             Find Your Perfect Property with AI
           </h1>
           <p className="text-center text-xs mb-6 max-w-md mx-auto leading-relaxed" style={{ color: 'rgba(230,224,212,0.70)' }}>
-            Search thousands of properties and receive personalised recommendations<br />
+            Search thousands of properties and receive personalised recommendations{' '}
             based on your lifestyle and goals.
           </p>
 
@@ -588,7 +588,7 @@ export default function PropertyListingAI() {
           </div>
 
           {/* Stats Row */}
-          <div className="flex items-center justify-center gap-10 mt-6 pb-2">
+          <div className="flex items-center justify-center gap-5 sm:gap-10 mt-6 pb-2 flex-wrap">
             {[
               { value: `${filteredPool.length}`, label: 'Properties Matched' },
               { value: '98%',                    label: 'AI Match Accuracy' },
@@ -1101,7 +1101,7 @@ export default function PropertyListingAI() {
                 Expand your criteria to unlock even more personalised matches from across Sri Lanka.
               </p>
             </div>
-            <div className="flex gap-3 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0 w-full sm:w-auto">
               <button
                 id="ai-cta-view-matches-btn"
                 onClick={() => navigate('/property-ai-recommended')}

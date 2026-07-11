@@ -247,7 +247,7 @@ export default function PropertyAIrecommended() {
                   AI-Powered Intelligence
                 </span>
               </div>
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-[#1d1d1d] tracking-tight mb-3">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1d1d1d] tracking-tight mb-3">
                 Your AI Property Matches
               </h1>
               <p className="text-sm text-[#928d64] leading-relaxed max-w-xl">
@@ -256,7 +256,7 @@ export default function PropertyAIrecommended() {
             </div>
 
             {/* Quick Stats */}
-            <div className="flex gap-3 flex-shrink-0">
+            <div className="grid grid-cols-3 sm:flex sm:flex-shrink-0 gap-3">
               {[
                 { value: '98%', label: 'Top Match Score' },
                 { value: '24', label: 'Properties Found' },
@@ -264,9 +264,9 @@ export default function PropertyAIrecommended() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="bg-white rounded-xl px-5 py-4 text-center shadow-sm min-w-[100px]"
+                  className="bg-white rounded-xl px-3 sm:px-5 py-3 sm:py-4 text-center shadow-sm"
                 >
-                  <p className="text-xl font-extrabold text-[#345b79]">{stat.value}</p>
+                  <p className="text-lg sm:text-xl font-extrabold text-[#345b79]">{stat.value}</p>
                   <p className="text-[10px] text-[#928d64] mt-0.5 leading-tight">{stat.label}</p>
                 </div>
               ))}
