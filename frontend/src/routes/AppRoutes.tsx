@@ -18,7 +18,7 @@ function AppRoutes() {
 
   return (
     <>
-      {!isAdminPath || !isAuthPath && <Navbar />}
+      {(!isAdminPath && !isAuthPath) && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
 
@@ -36,7 +36,7 @@ function AppRoutes() {
           <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
       </Routes>
-      {!isAdminPath || !isAuthPath && <Footer />}
+      {(!isAdminPath && !isAuthPath) && <Footer />}
     </>
   );
 }
