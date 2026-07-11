@@ -91,19 +91,19 @@ export default function Navbar() {
 
           {/* ── Desktop: Login + Register ── */}
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0 justify-self-end">
-            <button
+            <a href="/auth/login"
               id="nav-login-btn"
               className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150 border border-white/50 hover:border-white"
             >
               Login
-            </button>
-            <button
+            </a  >
+            < a href="/auth/register"
               id="nav-register-btn"
-              className="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all duration-150 hover:opacity-90 shadow"
+              className="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all duration-150 hover:opacity-90 shadow inline-block text-center"
               style={{ backgroundColor: '#be5d3f' }}
-            >
-              Register
-            </button>
+                            >
+                      Register
+                    </a>
           </div>
 
           {/* ── Mobile Hamburger ── */}
