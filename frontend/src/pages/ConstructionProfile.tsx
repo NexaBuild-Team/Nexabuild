@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
@@ -411,13 +412,14 @@ export default function ConstructionProfile() {
                           <span style={{ color: '#6b879c' }}>📍 {proj.location}</span>
                           <span className="font-semibold" style={{ color: '#be5d3f' }}>{proj.budget}</span>
                         </div>
-                        <button
+                        <Link
+                          to={`/construction-companies/1/projects/${proj.id}`}
                           id={`view-project-${proj.id}`}
-                          className="w-full py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                          className="w-full block text-center py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90 no-underline"
                           style={{ backgroundColor: '#345b79' }}
                         >
                           View Details
-                        </button>
+                        </Link>
                       </div>
                     </article>
                   ))}
