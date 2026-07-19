@@ -161,7 +161,7 @@ export const architectFirms: ArchitectFirm[] = [
     id: 'heritage-design',
     name: 'Heritage Design Associates',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
-    coverImage: 'https://images.unsplash.com/photo-1490274456255-cb7c8e66e7be?w=600&h=360&fit=crop',
+    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=360&fit=crop&auto=format',
     rating: 4.9,
     reviewCount: 104,
     location: 'Colombo 07',
@@ -339,7 +339,7 @@ export const designDetail: DesignDetail = {
   
   The 4,200 sq ft layout encompasses five en-suite bedrooms, a chef's kitchen with Calacatta marble finishes, a sky-deck pool, and a home theatre — all orchestrated around a double-height living pavilion flooded with natural light.`,
   gallery: [
-    'https://images.unsplash.com/photo-1560185127-6a7a1b5e7e1f?w=400&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop',
     'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
     'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=400&h=300&fit=crop',
     'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop',
