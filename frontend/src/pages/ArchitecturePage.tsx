@@ -242,7 +242,7 @@ function ArchitecturePage() {
             }}
           >
             <span>⚡</span>
-            <span>AI-Powered Architecture Discovery</span>
+            <span>AI-Powered Intelligence</span>
           </div>
 
           {/* ── Headline ── */}

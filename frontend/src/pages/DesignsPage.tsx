@@ -1,7 +1,7 @@
 // src/pages/DesignsPage.tsx
 // Route: /designs
 // Architect Profile View — Silva & Associates Architecture
-import { useState } from 'react'
+
 import { Link, } from 'react-router'
 import { architectFirms, houseDesigns } from '../services/architectureMockData'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
@@ -175,7 +175,7 @@ function Stars({ count }: { count: number }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DesignsPage() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  
   
 
   const featuredProject = latestProjects.find((p) => p.id === 'pearl-residence')
@@ -636,11 +636,23 @@ export default function DesignsPage() {
               </li>
             </ul>
 
-                        {/* Live Interactive Colombo, Sri Lanka Map API Container */}
-            <div
-              className="rounded-2xl overflow-hidden relative z-10"
-              style={{ height: '200px', boxShadow: '0 4px 20px rgba(52,91,121,0.10)' }}
-            >
+            
+            
+
+          </div>
+
+                    {/* ── Right: Edge-to-Edge Premium Live Location Map ── */}
+          <div 
+            className="w-full h-full min-h-[420px] rounded-2xl overflow-hidden relative shadow-sm border border-gray-200"
+            style={{ boxShadow: '0 4px 20px rgba(52,91,121,0.05)' }}
+          >
+            {/* 📍 Floating Location Badge (Cleanly layered right on top of map canvas layout tracks) */}
+            <div className="absolute top-4 left-4 z-[400] bg-white px-4 py-2 rounded-xl text-xs font-semibold shadow-md border border-gray-100 text-gray-800 flex items-center gap-1.5 pointer-events-none">
+              <span className="text-sm">📍</span> Office Location — Colombo 03
+            </div>
+
+            {/* Live Interactive Map Core */}
+            <div className="w-full h-full absolute inset-0 z-10">
               <MapContainer 
                 center={[6.9271, 79.8612]} 
                 zoom={14} 
@@ -652,119 +664,15 @@ export default function DesignsPage() {
                   attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                  <Marker position={[6.9271, 79.8612]} icon={customMarkerIcon}>
+                <Marker position={[6.9271, 79.8612]} icon={customMarkerIcon}>
                   <Popup>
                     Silva & Associates Architecture <br /> Colombo 03, Sri Lanka.
                   </Popup>
                 </Marker>
               </MapContainer>
             </div>
-
           </div>
-
-          {/* ── Right: Consultation form ── */}
-          <div
-            className="rounded-2xl p-8"
-            style={{ background: '#faf7f4', border: '1px solid #e6e0d4' }}
-          >
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
-              Get in Touch
-            </span>
-            <h3 className="text-xl font-bold mt-2 mb-6" style={{ color: '#1d1d1d' }}>
-              Book a Consultation
-            </h3>
-
-            <div className="space-y-4">
-              {/* Row: Name + Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="consult-name"
-                    className="block text-xs font-semibold mb-1.5"
-                    style={{ color: '#6b879c' }}
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    id="consult-name"
-                    type="text"
-                    placeholder="Your name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
-                    style={{ background: '#fff', border: '1px solid #e6e0d4', color: '#1d1d1d' }}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="consult-email"
-                    className="block text-xs font-semibold mb-1.5"
-                    style={{ color: '#6b879c' }}
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    id="consult-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
-                    style={{ background: '#fff', border: '1px solid #e6e0d4', color: '#1d1d1d' }}
-                  />
-                </div>
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label
-                  htmlFor="consult-phone"
-                  className="block text-xs font-semibold mb-1.5"
-                  style={{ color: '#6b879c' }}
-                >
-                  Phone Number
-                </label>
-                <input
-                  id="consult-phone"
-                  type="tel"
-                  placeholder="+94 77 000 0000"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
-                  style={{ background: '#fff', border: '1px solid #e6e0d4', color: '#1d1d1d' }}
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label
-                  htmlFor="consult-message"
-                  className="block text-xs font-semibold mb-1.5"
-                  style={{ color: '#6b879c' }}
-                >
-                  Message
-                </label>
-                <textarea
-                  id="consult-message"
-                  placeholder="Describe your project requirements…"
-                  rows={4}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm outline-none resize-none"
-                  style={{ background: '#fff', border: '1px solid #e6e0d4', color: '#1d1d1d' }}
-                />
-              </div>
-
-              {/* Submit */}
-              <button
-                id="submit-consultation-btn"
-                className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95"
-                style={{ background: '#be5d3f' }}
-              >
-                Submit Consultation Request
-              </button>
-            </div>
-          </div>
+          
 
         </div>
       </section>
