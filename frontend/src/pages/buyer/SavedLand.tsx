@@ -181,7 +181,7 @@ export default function SavedLand() {
     : "0";
 
   return (
-    <div className="flex flex-col p-[24px] lg:p-[32px] w-full">
+    <div className="flex flex-col gap-[32px] p-[24px] lg:p-[32px] w-full">
           
           {/* Summary Statistics Row */}
           <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[24px] w-full">
