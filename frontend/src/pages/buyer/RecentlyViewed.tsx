@@ -4,50 +4,12 @@ const imgImage2 = "http://localhost:3845/assets/2bc95550d5387fc2cb710f35e0c1f397
 const imgImage3 = "http://localhost:3845/assets/eab313018d15a93f5d650cbfae5bd60d11f2e8f0.png";
 const imgImage4 = "http://localhost:3845/assets/5c7b259645283d75d78b2ff5e859a22b0e8ffc54.png";
 const imgImage5 = "http://localhost:3845/assets/b6dfbb0aa5e2abfed65978ea02f448ad7416416d.png";
-const imgAb6AXuA1QLlSGHh33KDJySt1OTuoTGqeffU0XGqLdkrldtKsnDw9EhbiskdMb3CC9OVkuQIffWn40HzN0YVja7Dv9Zu2Y1N1Ag2DbXfFhZSoKlnkiPpHam81Cqk6UTzy9DKsuQbYiUjTpcIuZjtuxXoV7V2MeOx9EBdkpfcrktnu6YiqXXmO1A6XQhaFfq5ZVpMfiVqmYpIhoSHkunJlJn8UEEpVyZe9A3Gpwj7SDbyXgzpstFFiQb = "http://localhost:3845/assets/b0fe1ebf08492c05f2ed60aba309772a2e77b86c.png";
-const imgContainer = "http://localhost:3845/assets/4e646e67ce9fc2d08dbe912111f1752caaf7737a.svg";
-const imgContainer1 = "http://localhost:3845/assets/120947f0d6cf008635aa22c9f885d93247f9154d.svg";
-const imgContainer2 = "http://localhost:3845/assets/14471659d984ff509d8dfaead429bccb786c3c14.svg";
-const imgContainer3 = "http://localhost:3845/assets/6b4b3a54bad473cfb0a30d64a2028e94f9a0d3ad.svg";
-const imgContainer4 = "http://localhost:3845/assets/604ac663850573d93ef72a0c39d382394a72ae9c.svg";
-const imgContainer5 = "http://localhost:3845/assets/f9021907869ff66d9dd4ae0353f3c3210ab336e0.svg";
-const imgContainer6 = "http://localhost:3845/assets/8f85c35421a2b29cf4d7588149483dc1ff621c1f.svg";
-const imgContainer7 = "http://localhost:3845/assets/a1f032f4df4e029a2e206ebcc667548d2471fe6d.svg";
-const imgContainer8 = "http://localhost:3845/assets/dd007dd3e536412c359c9f6b201798589845e3af.svg";
-const imgContainer9 = "http://localhost:3845/assets/87654c05993c295cce265b460fc9c02b1b94a01b.svg";
-const imgContainer10 = "http://localhost:3845/assets/c29e8a08e8de0ac9a235bd610da30108600c7426.svg";
-const imgContainer11 = "http://localhost:3845/assets/8239bc3a4a0bd757a43de968a9382875fe0c2fcb.svg";
-const imgContainer12 = "http://localhost:3845/assets/a10c5160bb7f13b862334a74d4ae9e036158568d.svg";
-const imgContainer13 = "http://localhost:3845/assets/4dfae2cdf1d26fe7b122d268785b2b7e72c10196.svg";
-const imgContainer14 = "http://localhost:3845/assets/c6a64a8c7fdf735dabe1a33f9c57fad1e12939b5.svg";
-const imgContainer15 = "http://localhost:3845/assets/c3af0758c479e4a831a482ab5aafc3c997ea8307.svg";
-const imgContainer16 = "http://localhost:3845/assets/c4f09e459cdb43c61ea781e7ccd7c47ecd357071.svg";
-const imgContainer17 = "http://localhost:3845/assets/20bfc9b47e189973ac3d6f6c6e0094604c28af7e.svg";
-const imgContainer18 = "http://localhost:3845/assets/47b6f710b33746f56127f8fdcfefa86d7a019749.svg";
-const imgContainer19 = "http://localhost:3845/assets/a3a04fe7363f446b96eff7bcdd68428362a2cc8e.svg";
-const imgContainer20 = "http://localhost:3845/assets/dcb02533a5b20a091388c657d316b7eb9fe68049.svg";
-const imgContainer21 = "http://localhost:3845/assets/db86569556b7199971bd4e97f3009fc6b247be4c.svg";
-const imgContainer22 = "http://localhost:3845/assets/77d85b75bb86de46678035968ec5861643921517.svg";
-const imgIcon = "http://localhost:3845/assets/d29f0f4174923aef1d867a9ba19ac63a0feaff3e.svg";
-const imgContainer23 = "http://localhost:3845/assets/009789b58423e56c452ac5cafd6e6f520221adf6.svg";
-const imgContainer24 = "http://localhost:3845/assets/1b6c4795a499f687ab0723ab5cabd1a5ab2c3927.svg";
-const imgContainer25 = "http://localhost:3845/assets/5a3b9aec44099c259238e1e9a9ad53d32265a6b8.svg";
-const imgContainer26 = "http://localhost:3845/assets/13a0292de6c711c92bccb9d40d91e14881f8ef0e.svg";
-const imgContainer27 = "http://localhost:3845/assets/93b4270e439cb55d702f64d97c9be4cda51ffee4.svg";
-const imgContainer28 = "http://localhost:3845/assets/cd90b2e5401cc94d0803232544d3d2b27b13bc97.svg";
-const imgContainer29 = "http://localhost:3845/assets/dbfd94b3016938a24dde6631d2063d69e9ddae1c.svg";
-const imgContainer30 = "http://localhost:3845/assets/4fb33d20c7cafc772f8dabea6a6dea9952ab9492.svg";
-const imgContainer31 = "http://localhost:3845/assets/83747260c578a451476714eaec9137af27e8c2d1.svg";
-const imgContainer32 = "http://localhost:3845/assets/ec16c33aa0d46086d99f407b1f6931a334c3d91b.svg";
-const imgContainer33 = "http://localhost:3845/assets/4345262e8aff592640b1a13000b22193beb28c9b.svg";
-const imgContainer34 = "http://localhost:3845/assets/31b094efd6ce251431b28a1248e49535c75eda89.svg";
-const imgContainer35 = "http://localhost:3845/assets/fbf3407eb1c39df8fe592578019d8dad300d73ce.svg";
 
 export default function RecentlyViewed() {
   return (
-    <div className="content-stretch flex flex-col items-start pl-[280px] relative size-full" style={{ backgroundImage: "linear-gradient(90deg, rgb(252, 249, 248) 0%, rgb(252, 249, 248) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)" }}>
-      <div className="h-[1970.39px] min-h-[1970px] relative shrink-0 w-full">
-        <div className="absolute content-stretch flex flex-col gap-[32px] items-start left-0 p-[40px] right-0 top-[64px]">
+    <div className="w-full relative" style={{ backgroundImage: "linear-gradient(90deg, rgb(252, 249, 248) 0%, rgb(252, 249, 248) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)" }}>
+      <div className="min-h-[1970px] relative shrink-0 w-full">
+        <div className="flex flex-col gap-[32px] items-start p-[24px] lg:p-[40px] w-full">
           <div className="content-stretch flex items-end justify-between relative shrink-0 w-full">
             <div className="content-stretch flex flex-col gap-[7px] items-start relative shrink-0 w-[516.13px]">
               <div className="content-stretch flex gap-[8px] items-center relative shrink-0 w-full">
@@ -57,7 +19,7 @@ export default function RecentlyViewed() {
                   </div>
                 </div>
                 <div className="h-[6px] relative shrink-0 w-[3.7px]">
-                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/arrowRight.svg"} />
                 </div>
                 <div className="content-stretch flex flex-col items-start relative shrink-0">
                   <div className="[word-break:break-word] flex flex-col font-medium justify-center leading-[0] not-italic relative shrink-0 text-[#194360] text-[12px] tracking-[1.2px] uppercase whitespace-nowrap">
@@ -78,7 +40,7 @@ export default function RecentlyViewed() {
             </div>
             <div className="bg-[rgba(190,93,63,0.1)] content-stretch flex gap-[8px] items-center px-[16px] py-[8px] relative rounded-[9999px] shrink-0">
               <div className="h-[11.25px] relative shrink-0 w-[16.5px]">
-                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer1} />
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/eye.svg"} />
               </div>
               <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#be5d3f] text-[16px] whitespace-nowrap">
                 <p className="leading-[24px]">34 Items Viewed</p>
@@ -90,7 +52,7 @@ export default function RecentlyViewed() {
               <div className="bg-[rgba(52,91,121,0.1)] relative rounded-[12px] shrink-0 size-[48px]">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                   <div className="relative shrink-0 size-[20px]">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer2} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/eye.svg"} />
                   </div>
                 </div>
               </div>
@@ -113,7 +75,7 @@ export default function RecentlyViewed() {
               <div className="bg-[rgba(190,93,63,0.1)] h-[48px] relative rounded-[12px] shrink-0 w-[38.36px]">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                   <div className="h-[18px] relative shrink-0 w-[16px]">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer3} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/home.svg"} />
                   </div>
                 </div>
               </div>
@@ -137,7 +99,7 @@ export default function RecentlyViewed() {
               <div className="bg-[rgba(178,172,129,0.1)] h-[48px] relative rounded-[12px] shrink-0 w-[38.14px]">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                   <div className="h-[12px] relative shrink-0 w-[22px]">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer4} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/land-plot-icon.svg"} />
                   </div>
                 </div>
               </div>
@@ -161,7 +123,7 @@ export default function RecentlyViewed() {
               <div className="bg-[rgba(25,67,96,0.05)] h-[48px] relative rounded-[12px] shrink-0 w-[43.5px]">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                   <div className="h-[20px] relative shrink-0 w-[18px]">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer5} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                   </div>
                 </div>
               </div>
@@ -219,7 +181,7 @@ export default function RecentlyViewed() {
                   <div className="relative shrink-0">
                     <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[8px] items-center relative size-full">
                       <div className="h-[9px] relative shrink-0 w-[13.5px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer6} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/filter-icon.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[16px] text-center whitespace-nowrap">
                         <p className="leading-[24px]">Most Recent</p>
@@ -227,7 +189,7 @@ export default function RecentlyViewed() {
                     </div>
                   </div>
                   <div className="h-[5.55px] relative shrink-0 w-[9px]">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer7} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/dropdown2.svg"} />
                   </div>
                 </div>
               </div>
@@ -235,14 +197,14 @@ export default function RecentlyViewed() {
                 <div className="bg-[#f0eded] relative rounded-[8px] shrink-0">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center justify-center pb-[14px] pt-[8px] px-[8px] relative size-full">
                     <div className="relative shrink-0 size-[18px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer8} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/grid-view-icon.svg"} />
                     </div>
                   </div>
                 </div>
                 <div className="relative rounded-[8px] shrink-0">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-center justify-center pb-[14px] pt-[8px] px-[8px] relative size-full">
                     <div className="h-[16px] relative shrink-0 w-[20px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer9} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/list-view-icon.svg"} />
                     </div>
                   </div>
                 </div>
@@ -261,7 +223,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(25,67,96,0.9)] content-stretch flex gap-[4px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="h-[10.5px] relative shrink-0 w-[9.333px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer10} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/home.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">PROPERTY</p>
@@ -270,7 +232,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[6px] items-center px-[12px] py-[6px] right-[16.02px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed 2 hours ago</p>
@@ -290,7 +252,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[4px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Colombo 7, Western</p>
@@ -306,7 +268,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[7.33px] relative size-full">
                         <div className="h-[9.333px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer13} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bedroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">4</p>
@@ -317,7 +279,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[6.49px] relative size-full">
                         <div className="relative shrink-0 size-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer14} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bathroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">3</p>
@@ -328,7 +290,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[29.35px] relative size-full">
                         <div className="h-[8px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer15} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/l-ruler-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">4,200</p>
@@ -345,7 +307,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -363,7 +325,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(190,93,63,0.9)] content-stretch flex gap-[3.99px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="h-[7px] relative shrink-0 w-[12.833px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer17} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/land-plot-icon.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">LAND</p>
@@ -372,7 +334,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[6px] items-center px-[12px] py-[6px] right-[16px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed 4 hours ago</p>
@@ -392,7 +354,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[3.99px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Homagama, Western</p>
@@ -408,7 +370,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center relative size-full">
                         <div className="relative shrink-0 size-[11.345px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer18} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/perch-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px]">12.5 PERCHES</p>
@@ -418,7 +380,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center relative size-full">
                         <div className="relative shrink-0 size-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer19} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/side-road-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px]">NORTH FACING</p>
@@ -434,7 +396,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -452,7 +414,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(25,67,96,0.9)] content-stretch flex gap-[3.99px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="relative shrink-0 size-[10.5px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer20} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/home.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">PROPERTY</p>
@@ -461,7 +423,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[6px] items-center px-[12px] py-[6px] right-[16.02px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed Yesterday</p>
@@ -482,7 +444,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[3.99px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Nugegoda, Colombo</p>
@@ -498,7 +460,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[7.17px] relative size-full">
                         <div className="h-[9.333px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer13} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bedroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">3</p>
@@ -509,7 +471,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[6.53px] relative size-full">
                         <div className="relative shrink-0 size-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer14} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bathroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">2</p>
@@ -520,7 +482,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[29.57px] relative size-full">
                         <div className="h-[8px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer15} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/l-ruler-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">2,200</p>
@@ -537,7 +499,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -555,7 +517,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(25,67,96,0.9)] content-stretch flex gap-[4px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="h-[10.5px] relative shrink-0 w-[9.333px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer10} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/home.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">PROPERTY</p>
@@ -564,7 +526,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[5.99px] items-center px-[12px] py-[6px] right-[16px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed Yesterday</p>
@@ -584,7 +546,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[4px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Rajagiriya, Western</p>
@@ -600,7 +562,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[8.09px] relative size-full">
                         <div className="h-[9.333px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer13} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bedroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">4</p>
@@ -611,7 +573,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[7.66px] relative size-full">
                         <div className="relative shrink-0 size-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer14} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bathroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">4</p>
@@ -622,7 +584,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[30.43px] relative size-full">
                         <div className="h-[8px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer15} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/l-ruler-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">4,100</p>
@@ -639,7 +601,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -657,7 +619,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(190,93,63,0.9)] content-stretch flex gap-[3.99px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="h-[7px] relative shrink-0 w-[12.833px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer17} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/land-plot-icon.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">LAND</p>
@@ -666,7 +628,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[5.99px] items-center px-[12px] py-[6px] right-[15.99px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed 2 days ago</p>
@@ -686,7 +648,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[3.99px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Kaduwela, Western</p>
@@ -702,7 +664,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center relative size-full">
                         <div className="relative shrink-0 size-[11.345px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer18} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/perch-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px]">15 PERCHES</p>
@@ -712,7 +674,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center relative size-full">
                         <div className="relative shrink-0 size-[12px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer21} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/corner-dual-access-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px]">CORNER LOT</p>
@@ -728,7 +690,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -746,7 +708,7 @@ export default function RecentlyViewed() {
                   <div className="absolute content-stretch flex h-[23px] items-start left-[16px] top-[16px]">
                     <div className="bg-[rgba(25,67,96,0.9)] content-stretch flex gap-[3.99px] items-center pb-[4.5px] pt-[3.5px] px-[12px] relative rounded-[9999px] self-stretch shrink-0">
                       <div className="h-[10.5px] relative shrink-0 w-[9.333px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer10} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/home.svg"} />
                       </div>
                       <div className="[word-break:break-word] flex flex-col font-bold justify-center leading-[0] not-italic relative shrink-0 text-[10px] text-white tracking-[0.5px] uppercase whitespace-nowrap">
                         <p className="leading-[15px]">PROPERTY</p>
@@ -755,7 +717,7 @@ export default function RecentlyViewed() {
                   </div>
                   <div className="absolute backdrop-blur-[6px] bg-[rgba(255,255,255,0.6)] bottom-[16px] content-stretch flex gap-[6px] items-center px-[12px] py-[6px] right-[16.02px] rounded-[9999px]">
                     <div className="relative shrink-0 size-[11.667px]">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/clock.svg"} />
                     </div>
                     <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[11px] whitespace-nowrap">
                       <p className="leading-[16.5px]">Viewed 2 days ago</p>
@@ -776,7 +738,7 @@ export default function RecentlyViewed() {
                       </div>
                       <div className="content-stretch flex gap-[3.99px] items-center relative shrink-0 w-full">
                         <div className="h-[11.667px] relative shrink-0 w-[9.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/location-pin-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[12px] whitespace-nowrap">
                           <p className="leading-[16px] mb-0">Kottawa, Colombo</p>
@@ -792,7 +754,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[7.12px] relative size-full">
                         <div className="h-[9.333px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer13} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bedroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">3</p>
@@ -803,7 +765,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[6.6px] relative size-full">
                         <div className="relative shrink-0 size-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer14} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bathroom-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">3</p>
@@ -814,7 +776,7 @@ export default function RecentlyViewed() {
                     <div className="relative shrink-0">
                       <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[4px] items-center pr-[29.51px] relative size-full">
                         <div className="h-[8px] relative shrink-0 w-[13.333px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer15} />
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/l-ruler-icon.svg"} />
                         </div>
                         <div className="[word-break:break-word] flex flex-col font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#42474d] text-[11px] tracking-[0.55px] uppercase whitespace-nowrap">
                           <p className="leading-[16.5px] mb-0">2,900</p>
@@ -831,7 +793,7 @@ export default function RecentlyViewed() {
                     </div>
                     <div className="border border-[#c2c7ce] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[48px]">
                       <div className="h-[18.35px] relative shrink-0 w-[20px]">
-                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer16} />
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/bookmark.svg"} />
                       </div>
                     </div>
                   </div>
@@ -845,11 +807,12 @@ export default function RecentlyViewed() {
                 <p className="leading-[24px]">Load More</p>
               </div>
               <div className="h-[5.55px] relative shrink-0 w-[9px]">
-                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer22} />
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={"/svg/dropdown2.svg"} />
               </div>
             </div>
           </div>
         </div>
+        {/*
         <div className="absolute bg-[#345b79] border-[#e5e7eb] border-solid border-t content-stretch flex flex-col h-[64px] items-start left-[-282px] pb-[24px] pt-[25px] px-[16px] right-0 top-[1970px]">
           <div className="absolute left-[16px] max-w-[1280px] right-[18px] top-[24px]">
             <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-between max-w-[inherit] relative size-full">
@@ -1056,6 +1019,7 @@ export default function RecentlyViewed() {
             </div>
           </div>
         </div>
+        */}
       </div>
     </div>
   );
