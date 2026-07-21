@@ -2,35 +2,27 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 // ─── Figma Image & SVG Asset Constants ───────────────────────────────────────
-const imgKasunPerera = "http://localhost:3845/assets/1ea9e5d563ba530ba5b4b10e0f36837d1c6dcea5.png";
-const imgBeachfrontLand = "http://localhost:3845/assets/a47ef9bb56b3356aa04cf0b4ae8465e638649271.png";
-const imgUrbanPlotKelaniya = "http://localhost:3845/assets/2ed2447bf74ea29f3b40889948538e6a16365b9d.png";
-const imgSvg = "http://localhost:3845/assets/f028177494de90f1e058719668a57e0f6346787b.svg";
-const imgSvg1 = "http://localhost:3845/assets/8c5da6e1319f1bc9b0444b0a9e191ef71b29f78a.svg";
-const imgSvg2 = "http://localhost:3845/assets/1022348fd69604ccbe29e20c150adf4c663abb2d.svg";
-const imgSvg3 = "http://localhost:3845/assets/102161d6525debd5d3724da9007d85985811c34a.svg";
-const imgSvg4 = "http://localhost:3845/assets/6d4a19538e0d221bec676f56d6ef1b21647f48a2.svg";
-const imgSvg5 = "http://localhost:3845/assets/23cf91de90bed12ddc32f87d624391a19289544f.svg";
-const imgSvg6 = "http://localhost:3845/assets/eb9b9d79ca02dda3d985edbb9e946e9f7cfc26f2.svg";
-const imgSvg7 = "http://localhost:3845/assets/8fee21a47c02b6382dc84344fc3da54fdcf0a212.svg";
-const imgSvg8 = "http://localhost:3845/assets/9d57572d1f456de9cc9272c71dfabc22d2df151d.svg";
-const imgSvg9 = "http://localhost:3845/assets/1a3115996b43d0ddb980a85ab5b621335392b321.svg";
-const imgSvg10 = "http://localhost:3845/assets/105ab0d45deea94af1c4d6339773f36e69abb3e6.svg";
-const imgContainer = "http://localhost:3845/assets/5a3b9aec44099c259238e1e9a9ad53d32265a6b8.svg";
-const imgSvg11 = "http://localhost:3845/assets/a73307a58fc456d0419becc191906179d4551957.svg";
-const imgButtonSvg = "http://localhost:3845/assets/7a22bb9a441c332ef8f356b8ede94cba8829d0c4.svg";
-const imgSvg12 = "http://localhost:3845/assets/434af1f37b6e7253d9b1c43bcf05372eddcfce0b.svg";
-const imgSvg13 = "http://localhost:3845/assets/d1ea43f722fa1b109735998c908334a2be10da35.svg";
-const imgSvg14 = "http://localhost:3845/assets/c62fd04dec1c304d94fc867eb1a68ea68d11695c.svg";
-const imgSvg15 = "http://localhost:3845/assets/a985582b0a089ee9fe95a0d1a4dc3ce1384bbf53.svg";
-const imgSvg16 = "http://localhost:3845/assets/1c38bf90b306800b96b2c3d2f114ccc7594775dd.svg";
-const imgSvg17 = "http://localhost:3845/assets/e9d4b1e744f080dc510327a4b7a2a033421461ff.svg";
-const imgImage = "http://localhost:3845/assets/6a98ae7e73edbee01d12e6e35671bc421030f0e5.svg";
-const imgSvg18 = "http://localhost:3845/assets/ce5746b0b5be56c386a881edd14538653ed14142.svg";
-const imgSvg19 = "http://localhost:3845/assets/1ce0fcd818d293793ab707abf2ba5542c47ffb91.svg";
-const imgSvg20 = "http://localhost:3845/assets/22869099d64f76edc86b84fd87b603d53ff26c47.svg";
-const imgSvg22 = "http://localhost:3845/assets/bddc922a179504d55d279dfb10148091a3e4c9e5.svg";
-const imgSvg23 = "http://localhost:3845/assets/b9d776c2b14619ba09ec5d10f2bd94eaa30e3954.svg";
+const imgBeachfrontLand =
+  "http://localhost:3845/assets/a47ef9bb56b3356aa04cf0b4ae8465e638649271.png";
+const imgUrbanPlotKelaniya =
+  "http://localhost:3845/assets/2ed2447bf74ea29f3b40889948538e6a16365b9d.png";
+const imgSvg =
+  "http://localhost:3845/assets/f028177494de90f1e058719668a57e0f6346787b.svg";
+const imgSvg16 =
+  "http://localhost:3845/assets/1c38bf90b306800b96b2c3d2f114ccc7594775dd.svg";
+
+const imgSvg18 =
+  "http://localhost:3845/assets/ce5746b0b5be56c386a881edd14538653ed14142.svg";
+
+
+const getRoadTagIcon = (tag: string) => {
+  const normalized = tag.toLowerCase();
+  if (normalized.includes("main road")) return "/svg/main-road-icon.svg";
+  if (normalized.includes("side road")) return "/svg/side-road-icon.svg";
+  if (normalized.includes("beach road") || normalized.includes("beachfront")) return "/svg/beach-road-icon.svg";
+  if (normalized.includes("corner") || normalized.includes("dual access")) return "/svg/corner-dual-access-icon.svg";
+  return "/svg/side-road-icon.svg"; // fallback
+};
 
 interface LandProperty {
   id: number;
@@ -59,7 +51,7 @@ const initialLands: LandProperty[] = [
     match: 96,
     potential: "HIGH POTENTIAL",
     tags: ["Main Road", "Residential"],
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+    image: imgUrbanPlotKelaniya,
     isSaved: true
   },
   {
@@ -73,7 +65,7 @@ const initialLands: LandProperty[] = [
     match: 89,
     potential: "HIGH POTENTIAL",
     tags: ["Side Road", "Residential"],
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80",
+    image: imgBeachfrontLand,
     isSaved: true
   },
   {
@@ -87,7 +79,7 @@ const initialLands: LandProperty[] = [
     match: 84,
     potential: "MEDIUM POTENTIAL",
     tags: ["Corner Dual Access", "Mixed Use"],
-    image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
+    image: imgUrbanPlotKelaniya,
     isSaved: true
   },
   {
@@ -115,7 +107,7 @@ const initialLands: LandProperty[] = [
     match: 75,
     potential: "HIGH POTENTIAL",
     tags: ["Main Road", "Residential"],
-    image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80",
+    image: imgBeachfrontLand,
     isSaved: true
   },
   {
@@ -137,11 +129,10 @@ const initialLands: LandProperty[] = [
 export default function SavedLand() {
   const navigate = useNavigate();
   const [lands, setLands] = useState<LandProperty[]>(initialLands);
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = "";
   const [activeFilter, setActiveFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Recently Saved");
   const [isGridView, setIsGridView] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
   // Toggle saved bookmark state
@@ -190,186 +181,14 @@ export default function SavedLand() {
     : "0";
 
   return (
-    <div 
-      className="min-h-screen w-full relative flex flex-row items-start font-normal text-on-surface"
-      style={{ backgroundImage: "linear-gradient(90deg, rgb(230, 224, 212) 0%, rgb(230, 224, 212) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)" }}
-    >
-      
-      {/* ─── 1. Left Sidebar ─────────────────────────────────────────────────── */}
-      <aside 
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[256px] bg-[#345b79] flex flex-col justify-between pt-[76px] pb-[24px] px-[16px] transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* NexaBuild Logo Header inside Sidebar */}
-        <div className="absolute top-[11px] left-0 right-0 px-[32px] flex items-center gap-[12px]">
-          <div className="bg-white/20 flex items-center justify-center rounded-[12px] size-[40px]">
-            <img alt="NexaBuild Logo" className="size-[20px] object-contain" src={imgContainer} />
-          </div>
-          <span className="text-[24px] font-extrabold text-white tracking-[-0.6px] leading-[32px]">
-            NexaBuild
-          </span>
-        </div>
-
-        {/* Sidebar Navigation */}
-        <nav className="flex-1 flex flex-col gap-[4px] mt-[20px] overflow-y-auto">
-          <Link 
-            to="/buyer-dashboard" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Dashboard" className="size-[20px] filter brightness-200" src={imgSvg} />
-            <span className="leading-[20px]">Dashboard</span>
-          </Link>
-          <Link 
-            to="/property-ai-recommended" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="AI Property Matches" className="size-[20px] filter brightness-200" src={imgSvg1} />
-            <span className="leading-[20px] whitespace-normal">AI Property Recommendations</span>
-          </Link>
-          <Link 
-            to="/land/ai-recommendations" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="AI Land Matches" className="size-[20px] filter brightness-200" src={imgSvg2} />
-            <span className="leading-[20px]">AI Land Recommendations</span>
-          </Link>
-          <Link 
-            to="/auth/test" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Saved Properties" className="size-[20px] filter brightness-200" src={imgSvg3} />
-            <span className="leading-[20px]">Saved Properties</span>
-          </Link>
-          <Link 
-            to="/saved-lands" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] bg-[#52748c] text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Saved Lands" className="size-[20px]" src={imgSvg4} />
-            <span className="leading-[20px]">Saved Lands</span>
-          </Link>
-          <Link 
-            to="/recently-viewed" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Recently Viewed" className="size-[20px] filter brightness-200" src={imgSvg5} />
-            <span className="leading-[20px]">Recently Viewed</span>
-          </Link>
-          <Link 
-            to="/auth/test" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Recent Searches" className="size-[20px] filter brightness-200" src={imgSvg6} />
-            <span className="leading-[20px]">Recent Searches</span>
-          </Link>
-          <Link 
-            to="#" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Notifications" className="size-[20px] filter brightness-200" src={imgSvg7} />
-            <span className="leading-[20px]">Notifications</span>
-          </Link>
-          <Link 
-            to="#" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="My Profile" className="size-[20px] filter brightness-200" src={imgSvg8} />
-            <span className="leading-[20px]">My Profile</span>
-          </Link>
-          <Link 
-            to="#" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Settings" className="size-[20px] filter brightness-200" src={imgSvg9} />
-            <span className="leading-[20px]">Settings</span>
-          </Link>
-        </nav>
-
-        {/* Sidebar Footer - Logout */}
-        <div className="border-t border-white/10 pt-[25px] px-[8px]">
-          <Link 
-            to="/auth/login" 
-            className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]"
-          >
-            <img alt="Logout" className="size-[20px] filter brightness-200" src={imgSvg10} />
-            <span className="leading-[20px]">Logout</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Mobile Drawer Sidebar Backdrop */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/45 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* ─── 2. Main Content Area ───────────────────────────────────────────── */}
-      <main className="flex-1 lg:pl-[256px] min-w-0 flex flex-col h-full min-h-screen">
-        
-        {/* Sticky Top Header */}
-        <header className="bg-white border-b border-[#e5e7eb] px-[24px] lg:px-[32px] py-[16px] flex items-center justify-between sticky top-0 z-30 shadow-sm gap-[16px]">
-          <div className="flex items-center gap-[16px] flex-1 max-w-[576px]">
-            {/* Mobile menu trigger */}
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-[8px] border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none"
-              aria-label="Open sidebar menu"
-            >
-              <svg className="size-[20px] text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            {/* Search Input Bar */}
-            <div className="relative w-full">
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search properties, lands, areas..."
-                className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] py-[10px] pl-[44px] pr-[16px] text-[14px] text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#345b79]/60 focus:bg-white transition-all shadow-inner"
-              />
-              <div className="absolute left-[14px] top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                <img alt="Search" className="size-[20px] opacity-60" src={imgSvg11} />
-              </div>
-            </div>
-          </div>
-
-          {/* Right Top Header Actions */}
-          <div className="flex items-center gap-[24px] shrink-0">
-            {/* Notifications icon */}
-            <div className="relative cursor-pointer p-[4px] hover:bg-gray-100 rounded-full transition-colors">
-              <img alt="Notifications" className="size-[24px] filter invert-0" src={imgButtonSvg} />
-              <div className="absolute bg-[#be5d3f] rounded-full size-[16px] -top-[4px] -right-[4px] flex items-center justify-center shadow">
-                <span className="text-[10px] font-bold text-white leading-none">3</span>
-              </div>
-            </div>
-
-            {/* Profile badge */}
-            <div className="flex items-center gap-[12px] border-l border-gray-200 pl-[16px]">
-              <div className="text-right hidden sm:block">
-                <p className="text-[14px] font-semibold text-[#111827] leading-[17.5px]">Kasun Perera</p>
-                <p className="text-[10px] text-[#6b7280] leading-[15px]">Property Buyer</p>
-              </div>
-              <div className="relative rounded-[9999px] overflow-hidden border border-[#e5e7eb] size-[40px]">
-                <img alt="Kasun Perera" className="size-full object-cover" src={imgKasunPerera} />
-              </div>
-              <img alt="Dropdown arrow" className="size-[16px] opacity-60 cursor-pointer" src={imgSvg12} />
-            </div>
-          </div>
-        </header>
-
-        {/* Content Body */}
-        <div className="p-[24px] lg:p-[32px] flex flex-col gap-[24px] w-full max-w-[1400px] mx-auto">
+    <div className="flex flex-col p-[24px] lg:p-[32px] w-full">
           
           {/* Summary Statistics Row */}
           <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[24px] w-full">
             {/* Stat Card 1: Saved Lands */}
             <div className="bg-white border border-[#f3f4f6] rounded-[16px] p-[25px] flex items-center gap-[16px] shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-[#f9fafb] p-[16px] rounded-[12px] flex items-center justify-center shrink-0">
-                <img alt="Bookmark" className="size-[24px]" src={imgSvg13} />
+                <img alt="Bookmark" className="size-[24px]" src={"/svg/bookmark.svg"} />
               </div>
               <div>
                 <p className="text-[24px] font-bold text-[#1f2937] leading-[32px]">
@@ -382,7 +201,7 @@ export default function SavedLand() {
             {/* Stat Card 2: Added This Week */}
             <div className="bg-white border border-[#f3f4f6] rounded-[16px] p-[25px] flex items-center gap-[16px] shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-[#f9fafb] p-[16px] rounded-[12px] flex items-center justify-center shrink-0">
-                <img alt="Trend" className="size-[24px]" src={imgSvg14} />
+                <img alt="Trend" className="size-[24px]" src={"/svg/sparks-icon.svg"} />
               </div>
               <div>
                 <p className="text-[24px] font-bold text-[#1f2937] leading-[32px]">
@@ -395,7 +214,7 @@ export default function SavedLand() {
             {/* Stat Card 3: Total Perches */}
             <div className="bg-white border border-[#f3f4f6] rounded-[16px] p-[25px] flex items-center gap-[16px] shadow-sm hover:shadow-md transition-shadow">
               <div className="bg-[#f9fafb] p-[16px] rounded-[12px] flex items-center justify-center shrink-0">
-                <img alt="Total Perches" className="size-[24px]" src={imgSvg15} />
+                <img alt="Total Perches" className="size-[24px]" src={"/svg/perch-icon.svg"} />
               </div>
               <div>
                 <p className="text-[24px] font-bold text-[#1f2937] leading-[32px]">
@@ -432,7 +251,7 @@ export default function SavedLand() {
                 <div className="flex items-center gap-[12px]">
                   <h2 className="text-[30px] font-bold text-[#111827] leading-[36px]">Saved Lands</h2>
                   <div className="bg-[#be5d3f]/10 px-[16px] py-[6px] rounded-full flex items-center gap-[8px]">
-                    <img alt="Bookmark Tag" className="size-[16px]" src={imgSvg17} />
+                    <img alt="Bookmark Tag" className="size-[16px]" src={"/svg/bookmark.svg"} />
                     <span className="text-[14px] font-semibold text-[#be5d3f] whitespace-nowrap">
                       {savedCount} Saved
                     </span>
@@ -473,9 +292,9 @@ export default function SavedLand() {
                   onClick={() => setSortDropdownOpen(prev => !prev)}
                   className="bg-white border border-[#e5e7eb] rounded-[8px] px-[16px] py-[9px] flex items-center gap-[12px] shadow-sm hover:bg-gray-50 text-[12px] font-semibold text-[#1f2937] transition-all cursor-pointer min-w-[150px]"
                 >
-                  <img alt="" className="size-[18px] opacity-75" src={imgImage} />
+                  <img alt="" className="size-[18px] opacity-75" src={"/svg/filter-icon.svg"} />
                   <span>{sortBy}</span>
-                  <img alt="Chevron" className="size-[16px] opacity-60 ml-auto" src={imgSvg12} />
+                  <img alt="Chevron" className="size-[16px] opacity-60 ml-auto" src={"/svg/dropdown2.svg"} />
                 </button>
 
                 {sortDropdownOpen && (
@@ -592,7 +411,7 @@ export default function SavedLand() {
                         <img 
                           alt="Bookmark" 
                           className={`size-[16px] ${land.isSaved ? "filter sepia hue-rotate-[320deg] saturate-200" : "opacity-60"}`} 
-                          src={imgSvg19} 
+                          src={"/svg/bookmark.svg"} 
                         />
                       </button>
                     </div>
@@ -617,11 +436,11 @@ export default function SavedLand() {
                         {/* Location & Size details */}
                         <div className="flex items-center gap-[16px] text-gray-500 text-[12px] mt-[4px]">
                           <div className="flex items-center gap-[4px]">
-                            <img alt="" className="size-[14px] opacity-75" src={imgSvg20} />
+                            <img alt="" className="size-[14px] opacity-75" src={"/svg/location-pin-icon.svg"} />
                             <span>{land.location}</span>
                           </div>
                           <div className="flex items-center gap-[4px]">
-                            <img alt="" className="size-[14px] opacity-75" src={imgSvg23} />
+                            <img alt="" className="size-[14px] opacity-75" src={"/svg/perch-icon.svg"} />
                             <span>{land.size} Perches</span>
                           </div>
                         </div>
@@ -640,7 +459,7 @@ export default function SavedLand() {
                                   : "bg-gray-100 text-gray-600 border-transparent"
                               }`}
                             >
-                              {isRoadTag && <img alt="" className="size-[12px] opacity-75 animate-pulse" src={imgSvg22} />}
+                              {isRoadTag && <img alt="" className="size-[12px] opacity-75" src={getRoadTagIcon(tag)} />}
                               <span>{tag}</span>
                             </div>
                           );
@@ -707,11 +526,11 @@ export default function SavedLand() {
                             
                             <div className="flex flex-wrap items-center gap-[16px] text-gray-500 text-[12px]">
                               <div className="flex items-center gap-[4px]">
-                                <img alt="" className="size-[14px] opacity-75" src={imgSvg20} />
+                                <img alt="" className="size-[14px] opacity-75" src={"/svg/location-pin-icon.svg"} />
                                 <span>{land.location}</span>
                               </div>
                               <div className="flex items-center gap-[4px]">
-                                <img alt="" className="size-[14px] opacity-75" src={imgSvg23} />
+                                <img alt="" className="size-[14px] opacity-75" src={"/svg/perch-icon.svg"} />
                                 <span>{land.size} Perches</span>
                               </div>
                             </div>
@@ -735,7 +554,7 @@ export default function SavedLand() {
                               <img 
                                 alt="Bookmark" 
                                 className={`size-[16px] ${land.isSaved ? "filter sepia hue-rotate-[320deg] saturate-200" : "opacity-60"}`} 
-                                src={imgSvg19} 
+                                src={"/svg/bookmark.svg"} 
                               />
                             </button>
                           </div>
@@ -755,7 +574,7 @@ export default function SavedLand() {
                                   : "bg-gray-100 text-gray-600 border-transparent"
                               }`}
                             >
-                              {isRoadTag && <img alt="" className="size-[12px] opacity-75 animate-pulse" src={imgSvg22} />}
+                              {isRoadTag && <img alt="" className="size-[12px] opacity-75" src={getRoadTagIcon(tag)} />}
                               <span>{tag}</span>
                             </div>
                           );
@@ -779,7 +598,5 @@ export default function SavedLand() {
           )}
 
         </div>
-      </main>
-    </div>
   );
 }
