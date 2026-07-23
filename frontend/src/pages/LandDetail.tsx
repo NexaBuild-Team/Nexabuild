@@ -1,5 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { useParams, useNavigate, Link } from 'react-router'
+
+const PropertyLocationMap = lazy(() => import('../components/PropertyLocationMap'))
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const HeartIcon = ({ filled }: { filled: boolean }) => (
+  <svg className="w-4 h-4" fill={filled ? '#be5d3f' : 'none'} stroke={filled ? '#be5d3f' : 'currentColor'} viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+)
+
+function MatchScoreRing({ score }: { score: number }) {
+  const circumference = 163.36
+  const dash = (score / 100) * circumference
+
+  return (
+    <div className="relative w-20 h-20 mx-auto">
+      <svg className="w-20 h-20 -rotate-90" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="5" />
+        <circle
+          cx="32" cy="32" r="26" fill="none"
+          stroke="#ffffff" strokeWidth="5"
+          strokeDasharray={`${dash} ${circumference}`}
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-xl font-extrabold text-white">
+        {score}%
+      </span>
+    </div>
+  )
+}
+
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const landDetailsData: Record<string, {
@@ -19,6 +51,7 @@ const landDetailsData: Record<string, {
   facing: string
   terrain: string
   titleType: string
+  mapCenter: [number, number]
   description: string
   highlights: string[]
   matchScore: number
@@ -56,6 +89,7 @@ const landDetailsData: Record<string, {
     facing: 'East Facing',
     terrain: 'Flat',
     titleType: 'Freehold',
+    mapCenter: [6.8939, 79.8650] as [number, number],
     description: 'This exceptional residential land parcel is located in the heart of Colombo 5, one of Sri Lanka\'s most sought-after residential addresses. The 15-perch flat terrain plot offers 20ft road frontage with easy access to major arterial roads, schools, and hospitals.\n\nFully serviced with electricity, water and sewage connections available at the boundary. The land is freehold and comes with a clear title, making it ideal for constructing a luxury family residence or boutique development.',
     highlights: [
       '20ft paved road access',
@@ -117,6 +151,7 @@ const landDetailsData: Record<string, {
     facing: 'North Facing',
     terrain: 'Hilly / Stepped',
     titleType: 'Freehold Sinnakkara Title',
+    mapCenter: [7.2906, 80.6337] as [number, number],
     description: 'Beautiful stepped plot overlooking Kandy valley. Ideal for an eco-villa, holiday cottage, or unique multi-level home design. Located just 15 minutes away from the main Kandy city center with peaceful and calm surroundings.',
     highlights: [
       'Stunning mountain views',
@@ -174,6 +209,7 @@ const landDetailsData: Record<string, {
     facing: 'South Facing',
     terrain: 'Valley Vista',
     titleType: 'Freehold Sinnakkara',
+    mapCenter: [6.9497, 80.7891] as [number, number],
     description: 'Perfect commercial or high-end residential land plot in cool Nuwara Eliya. Ideal for a tea garden villa, boutique resort, or retirement home. The site enjoys scenic panoramic valley vistas and cold mountain climate year-round.',
     highlights: [
       'Panoramic tea estate vistas',
@@ -227,6 +263,7 @@ const landDetailsData: Record<string, {
     facing: 'West Facing Sea View',
     terrain: 'Flat Leveled Beachfront',
     titleType: 'Freehold Sinnakkara Title',
+    mapCenter: [6.0535, 80.2210] as [number, number],
     description: 'Stunning beach access commercial land plot in Galle. Located in an extremely high-traffic tourist zone, this is a prime asset for building a boutique hotel, restaurant, surf retreat, or upscale luxury villa.',
     highlights: [
       'Immediate beach road access',
@@ -281,6 +318,7 @@ const landDetailsData: Record<string, {
     facing: 'North-East Facing',
     terrain: 'Leveled Coconut Fields',
     titleType: 'Freehold Sinnakkara Title Deeds',
+    mapCenter: [7.4863, 80.3623] as [number, number],
     description: 'Fully active coconut plantation field in Kurunegala. Yields approx 3,000 coconuts per harvest cycle. Contains fertile sandy loam soil with excellent drainage, border fences, and standard security locks.',
     highlights: [
       'Active coconut plantation yield',
@@ -332,6 +370,7 @@ const landDetailsData: Record<string, {
     facing: 'West Facing Lake View',
     terrain: 'Flat Leveled Lakefront',
     titleType: 'Freehold Sinnakkara Title',
+    mapCenter: [6.9220, 79.8570] as [number, number],
     description: 'Prime lakefront land parcel in the heart of Colombo 10. Perfect for building a premium corporate office, residential complex, or large commercial venture with beautiful water views.',
     highlights: [
       'Stunning lakefront vistas',
@@ -384,6 +423,7 @@ const landDetailsData: Record<string, {
     facing: 'West Facing Sea Vista',
     terrain: 'Flat Beach Access',
     titleType: 'Freehold Sinnakkara Title Deeds',
+    mapCenter: [7.2095, 79.8368] as [number, number],
     description: 'Prime beach access land plot in Negombo. Ideal for building a luxury boutique hotel, tourist retreat, or private holiday home. Excellent connection to airport expressway.',
     highlights: [
       'Direct beach road frontage',
@@ -437,6 +477,7 @@ export default function LandDetail() {
     window.scrollTo(0, 0)
   }, [id])
   const [saved, setSaved] = useState(false)
+  const [agentSaved, setAgentSaved] = useState(false)
   const [showContact, setShowContact] = useState(false)
   const [contactMessage, setContactMessage] = useState('')
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -653,12 +694,46 @@ export default function LandDetail() {
                   🗺️ Open Full Map
                 </button>
               </div>
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
-                <img alt="Location Map" className="w-full h-full object-cover opacity-60" src={land.mapImg} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-10 h-10 bg-red-500 rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-bounce">
-                    <span className="text-white">📍</span>
-                  </div>
+
+              {/* NexaBuild / land type label */}
+              <div className="flex items-center gap-2 mb-3">
+                <span
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider text-white"
+                  style={{ backgroundColor: '#345b79' }}
+                >
+                  {land.type}
+                </span>
+                <span className="text-xs text-slate-400 font-medium">{land.location}</span>
+              </div>
+
+              {/* Live Leaflet map */}
+              <div className="w-full rounded-xl overflow-hidden border border-slate-200" style={{ height: '320px' }}>
+                <Suspense
+                  fallback={
+                    <div
+                      className="w-full h-full flex items-center justify-center text-sm font-semibold"
+                      style={{ backgroundColor: '#e6e0d4', color: '#928d64' }}
+                    >
+                      Loading map…
+                    </div>
+                  }
+                >
+                  <PropertyLocationMap center={land.mapCenter} />
+                </Suspense>
+              </div>
+
+              {/* Legend */}
+              <div className="flex items-center gap-4 mt-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#345b79' }} />
+                  <span className="text-[11px] font-medium text-slate-500">Land Location</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-3 h-3" fill="none" stroke="#928d64" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-[11px] font-medium text-slate-500">Exact pin on parcel</span>
                 </div>
               </div>
             </section>
@@ -667,45 +742,35 @@ export default function LandDetail() {
           {/* ── SIDEBAR ── */}
           <aside className="lg:col-span-4 space-y-6">
             
-            {/* Action Buttons & Match Score */}
-            <div className="space-y-3">
+            {/* Action Buttons */}
+            <div className="bg-white rounded-2xl shadow-sm p-5 space-y-3">
               <button
                 id="save-land-btn"
                 onClick={() => setSaved(!saved)}
-                className="w-full py-4 border-2 font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
-                style={saved
-                  ? { backgroundColor: '#be5d3f', color: '#fff', borderColor: '#be5d3f' }
-                  : { color: '#be5d3f', borderColor: '#be5d3f', backgroundColor: '#fff' }
-                }
+                className="w-full flex items-center justify-center gap-2 text-sm font-bold py-3 rounded-xl border-2 transition-all hover:bg-[#be5d3f]/5 cursor-pointer"
+                style={{ color: '#be5d3f', borderColor: '#be5d3f' }}
               >
-                {saved ? '❤️ Saved Land' : '🤍 Save Land'}
+                <HeartIcon filled={saved} />
+                Save Land
               </button>
-              
               <button
                 id="share-land-btn"
                 onClick={() => navigator.clipboard.writeText(window.location.href)}
-                className="w-full py-4 text-slate-700 font-bold rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
-                style={{ backgroundColor: '#ccb7a3' }}
+                className="w-full flex items-center justify-center gap-2 text-sm font-bold py-3 rounded-xl transition-all hover:opacity-90 cursor-pointer"
+                style={{ backgroundColor: '#ccb7a3', color: '#1d1d1d' }}
               >
-                🔗 Share This Land
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Share This Land
               </button>
+            </div>
 
-              {/* AI Match score widget */}
-              <div className="rounded-xl p-6 text-white" style={{ backgroundColor: '#345b79' }}>
-                <div className="flex items-center gap-4">
-                  <div className="relative w-16 h-16">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                      <path className="text-slate-600/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3"></path>
-                      <path className="text-orange-500" style={{ stroke: '#be5d3f' }} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray={`${land.matchScore}, 100`} strokeLinecap="round" strokeWidth="3"></path>
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center font-bold text-sm">{land.matchScore}%</div>
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">AI Match Score</p>
-                    <p className="text-xs text-slate-300 font-medium">Based on your preferences</p>
-                  </div>
-                </div>
-              </div>
+            {/* AI Match Score */}
+            <div className="rounded-2xl shadow-sm p-6 text-center" style={{ backgroundColor: '#345b79' }}>
+              <MatchScoreRing score={land.matchScore} />
+              <p className="text-white font-bold text-sm mt-3">AI Match Score</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(230,224,212,0.75)' }}>Based on your preferences</p>
             </div>
 
             {/* Agent Info Card */}
@@ -754,11 +819,27 @@ export default function LandDetail() {
               <button
                 id="contact-agent-btn"
                 onClick={() => setShowContact(!showContact)}
-                className="w-full py-4 text-white font-bold rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
+                className="w-full text-sm font-bold py-3 rounded-xl text-white mb-2 transition-all hover:opacity-90 cursor-pointer"
                 style={{ backgroundColor: '#345b79' }}
               >
                 Contact Agent
               </button>
+              <button
+                id="save-agent-land-btn"
+                onClick={() => setAgentSaved(!agentSaved)}
+                className="w-full flex items-center justify-center gap-2 text-sm font-bold py-3 rounded-xl border-2 transition-all hover:bg-[#be5d3f]/5 cursor-pointer"
+                style={{ color: '#be5d3f', borderColor: '#be5d3f' }}
+              >
+                <HeartIcon filled={agentSaved} />
+                Save Land
+              </button>
+
+              <div
+                className="mt-4 text-center text-xs font-bold text-white py-2 rounded-lg"
+                style={{ backgroundColor: '#345b79' }}
+              >
+                AI Match Score {land.matchScore}%
+              </div>
             </div>
 
             {/* Quick Facts List */}
@@ -819,13 +900,15 @@ export default function LandDetail() {
                   </div>
                   <div className="pt-4 border-t border-slate-100 flex gap-2">
                     <button
-                      id={`compare-btn-${s.id}`}
-                      onClick={e => {
+                      id={`view-details-btn-${s.id}`}
+                      onClick={(e) => {
                         e.stopPropagation()
+                        navigate(`/land/detail/${s.id}`)
                       }}
-                      className="w-full py-2 bg-slate-50 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="w-full py-2 text-white text-xs font-bold rounded-lg hover:opacity-90 transition-all cursor-pointer"
+                      style={{ backgroundColor: '#345b79' }}
                     >
-                      Compare
+                      View Details
                     </button>
                   </div>
                 </div>
