@@ -1,52 +1,52 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-// ─── Figma Image Assets ──────────────────────────────────────────────────────
-const imgZenithResidence = "http://localhost:3845/assets/644000319552fa9ef3491289aade2ba93dda46fe.png";
-const imgSkylineTower = "http://localhost:3845/assets/216985719de9fbbf8d984500e5e93727b274521b.png";
-const imgPalmCourt = "http://localhost:3845/assets/c503a0abfc81cb10932ef374a0598e37851d4045.png";
-const imgMostViewed = "http://localhost:3845/assets/cc4ee6926452243403abf44eac60b6b19b454867.png";
-const imgBlueprint = "http://localhost:3845/assets/dc6cb8d7e299d6de10af4e2c5bea773f098ee691.png";
-const imgBlueprint1 = "http://localhost:3845/assets/cb4375533c6e1073855fc23e3bdc0c95f6a5d714.png";
+// ─── Local Saved Image Assets ────────────────────────────────────────────────
+const imgZenithResidence = "/property_card_1.png";
+const imgSkylineTower = "/property_card_2.png";
+const imgPalmCourt = "/property_card_3.png";
+const imgMostViewed = "/hero_property.png";
+const imgBlueprint = "/property_card_4.png";
+const imgBlueprint1 = "/property_card_1.png";
 
-const imgLivingRoom = "http://localhost:3845/assets/e5b518a08c3d284c2930a640b307e0f845d2eace.png";
-const imgKitchen = "http://localhost:3845/assets/5f0ee9ba3c7f80dd41b70b57ce87de3aa541c227.png";
-const imgMasterSuite = "http://localhost:3845/assets/f340480dfad900a4274718d4d94c5f876b0742a7.png";
-const imgOffice = "http://localhost:3845/assets/9d38b7a65aefb28a8c126cd68128649139d4d09f.png";
-const imgRooftop = "http://localhost:3845/assets/0bbf409c431ced2aaaa74ea1cb972c1b97ccd936.png";
+const imgLivingRoom = "/property_card_1.png";
+const imgKitchen = "/property_card_2.png";
+const imgMasterSuite = "/property_card_3.png";
+const imgOffice = "/property_card_4.png";
+const imgRooftop = "/hero_property.png";
 
-const imgContainer = "http://localhost:3845/assets/49233cb96be3af37cd985ab94ae06214afcf0819.svg"; // Add project plus icon
-const imgContainer1 = "http://localhost:3845/assets/771dabeee8f95da615ada9c943cc85fd1d1c02f3.svg"; // Upload design upload icon
-const imgContainer2 = "http://localhost:3845/assets/693a9a1164be1e3005e5c64be33c8a5dbdfeecdd.svg"; // Header Bell Icon
-const imgContainer3 = "http://localhost:3845/assets/3b51bc25992508275b71ec45e6eee3f4a6eaddcd.svg"; // views eye icon
-const imgContainer4 = "http://localhost:3845/assets/b0a4b516cb5f446303ae0e131ead01a0375d376f.svg"; // project card folder icon
-const imgContainer5 = "http://localhost:3845/assets/4917d8dff866a017deb480e64cb1e94994a0d8d8.svg"; // house plans floorplan icon
-const imgContainer6 = "http://localhost:3845/assets/747ee7ae803cdea070d2f8f7c069dc43bc5b1a26.svg"; // 3d design cube icon
-const imgContainer7 = "http://localhost:3845/assets/814ae3cdcd4bbbca1cfad8f3f67d305e99adbccb.svg"; // followers people icon
-const imgContainer8 = "http://localhost:3845/assets/4d160fdfde8bfb261c2a9f19a1b3736d0f6be744.svg"; // small eye icon
-const imgContainer9 = "http://localhost:3845/assets/87022f10ff01051b6662e5283c3ab6f974029fe9.svg"; // small heart icon
-const imgContainer10 = "http://localhost:3845/assets/9bcffc3d4f90be9ffdfd950020f21ec3f4e88de3.svg"; // eye icon trending
-const imgContainer11 = "http://localhost:3845/assets/24dbe1aa436fe545961801737f316d440d587923.svg"; // heart icon trending
-const imgContainer12 = "http://localhost:3845/assets/693f96432f1942536f36721285a02937aa5ed21b.svg"; // download icon trending
-const imgContainer13 = "http://localhost:3845/assets/458aae3580d1abbfd0d6caee0449cb77da6ae0f4.svg"; // trending badge check
-const imgContainer14 = "http://localhost:3845/assets/cd4118f46c7833b34e2b41493c9780482e11dd67.svg"; // bed icon blueprint
-const imgContainer15 = "http://localhost:3845/assets/81a8c0b24969f4a60ba0097a097135e9a3c99695.svg"; // bath icon blueprint
-const imgContainer16 = "http://localhost:3845/assets/fa65253db8d83dd1718cd73099cb23c64cd98922.svg"; // area icon blueprint
-const imgContainer19 = "http://localhost:3845/assets/6b06dab36b959f60f540c188b76c3f6165f34533.svg"; // project table row 3 icon
-const imgContainer20 = "http://localhost:3845/assets/fcbe9c0c931c3636573e85bcc1054433227015fe.svg"; // edit pencil icon
-const imgContainer21 = "http://localhost:3845/assets/d9da36c09d4d78e349a4fcf7cc65aa4dfc6b735b.svg"; // delete trash icon
-const imgContainer22 = "http://localhost:3845/assets/ca992435e118df398e85a75e892f5a15fea7fe2c.svg"; // project table row 4 icon
-const imgContainer23 = "http://localhost:3845/assets/05dfca36dac7d6a6057b468d0db7ae523b44afc5.svg"; // project table row 5 icon
-const imgContainer24 = "http://localhost:3845/assets/87fe7a72325823e28512fec2d606f0fdf5cf2e50.svg"; // project table row 6 icon
-const imgContainer25 = "http://localhost:3845/assets/0ceacaefd70fbd8444412bb2566cfbc7ffd88073.svg"; // logo icon sidebar
-const imgContainer26 = "http://localhost:3845/assets/13a0292de6c711c92bccb9d40d91e14881f8ef0e.svg"; // dashboard icon sidebar
-const imgContainer27 = "http://localhost:3845/assets/849198114f469d4bfafaf6da7eb723f6c6ca9a32.svg"; // portfolio icon sidebar
-const imgContainer28 = "http://localhost:3845/assets/f3b0bfe65a5d4afc1417cb83f54c17035ea5db1c.svg"; // projects icon sidebar
-const imgContainer29 = "http://localhost:3845/assets/e75f212fc3094c624dd50743b32f2302c3499c1c.svg"; // 3d design icon sidebar
-const imgContainer30 = "http://localhost:3845/assets/2e847641e65360a2dad698e8762225d7458e3f5f.svg"; // testimonials icon sidebar
-const imgContainer31 = "http://localhost:3845/assets/4345262e8aff592640b1a13000b22193beb28c9b.svg"; // profile icon sidebar
-const imgContainer32 = "http://localhost:3845/assets/31b094efd6ce251431b28a1248e49535c75eda89.svg"; // settings icon sidebar
-const imgContainer33 = "http://localhost:3845/assets/be2ee240bc4c730a64dea8146e94dac0ead135e5.svg"; // logout icon sidebar
+const imgContainer = "/svg/sparks-icon.svg"; // Add project plus icon
+const imgContainer1 = "/svg/arrow-send.svg"; // Upload design upload icon
+const imgContainer2 = "/svg/email.svg"; // Header Bell Icon
+const imgContainer3 = "/svg/eye.svg"; // views eye icon
+const imgContainer4 = "/svg/home.svg"; // project card folder icon
+const imgContainer5 = "/svg/architect.svg"; // house plans floorplan icon
+const imgContainer6 = "/svg/construction.svg"; // 3d design cube icon
+const imgContainer7 = "/svg/agent.svg"; // followers people icon
+const imgContainer8 = "/svg/eye.svg"; // small eye icon
+const imgContainer9 = "/svg/heart.svg"; // small heart icon
+const imgContainer10 = "/svg/eye.svg"; // eye icon trending
+const imgContainer11 = "/svg/heart.svg"; // heart icon trending
+const imgContainer12 = "/svg/bookmark.svg"; // download icon trending
+const imgContainer13 = "/svg/checkMark.svg"; // trending badge check
+const imgContainer14 = "/svg/bedroom-icon.svg"; // bed icon blueprint
+const imgContainer15 = "/svg/bathroom-icon.svg"; // bath icon blueprint
+const imgContainer16 = "/svg/l-ruler-icon.svg"; // area icon blueprint
+const imgContainer19 = "/svg/architect.svg"; // project table row 3 icon
+const imgContainer20 = "/svg/sparks-settings-icon.svg"; // edit pencil icon
+const imgContainer21 = "/svg/clock.svg"; // delete trash icon
+const imgContainer22 = "/svg/architect.svg"; // project table row 4 icon
+const imgContainer23 = "/svg/architect.svg"; // project table row 5 icon
+const imgContainer24 = "/svg/architect.svg"; // project table row 6 icon
+const imgContainer25 = "/src/assets/logo.png"; // logo icon sidebar
+const imgContainer26 = "/svg/home.svg"; // dashboard icon sidebar
+const imgContainer27 = "/svg/architect.svg"; // portfolio icon sidebar
+const imgContainer28 = "/svg/construction.svg"; // projects icon sidebar
+const imgContainer29 = "/svg/sparks-icon.svg"; // 3d design icon sidebar
+const imgContainer30 = "/svg/agent.svg"; // testimonials icon sidebar
+const imgContainer31 = "/svg/agent.svg"; // profile icon sidebar
+const imgContainer32 = "/svg/sparks-settings-icon.svg"; // settings icon sidebar
+const imgContainer33 = "/svg/sign-in.svg"; // logout icon sidebar
 
 interface TableProject {
   id: number;
@@ -262,7 +262,7 @@ export default function ArchitectureDashboard() {
       )}
 
       {/* ─── 2. Main Content Area ───────────────────────────────────────────── */}
-      <main className="flex-grow lg:pl-[260px] min-w-0 flex flex-col pt-[40px] pb-[80px] px-[24px] lg:px-[40px] gap-[40px]">
+      <main className="flex-1 lg:pl-[260px] min-w-0 flex flex-col pt-[32px] pb-[60px] px-[16px] sm:px-[24px] lg:px-[32px] gap-[32px] max-w-[1400px] w-full mx-auto">
         
         {/* Header */}
         <header className="flex items-center justify-between w-full">
