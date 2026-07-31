@@ -1,8 +1,42 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
 
+// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
+export type UserRole = 'buyer' | 'agent' | 'architect' | 'construction';
 
+export interface RegisterFormData {
+  role: UserRole;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+  district: string;
+  agreeToTerms: boolean;
+}
+
+export interface RegisterPageData {
+  heroTagline?: string;
+  heroHeadingLine1?: string;
+  heroHeadingLine2?: string;
+  heroHeadingLine3?: string;
+  heroSubheading?: string;
+  testimonial?: {
+    avatarUrl: string;
+    quote: string;
+    authorName: string;
+    authorLocation: string;
+  };
+}
+
+export interface RegisterPageProps {
+  data?: RegisterPageData | null;
+  isLoading?: boolean;
+  error?: string | null;
+  onSubmit?: (formData: RegisterFormData) => void;
+}
 
 const SRI_LANKA_DISTRICTS = [
   "Colombo, Western Province",
@@ -32,9 +66,15 @@ const SRI_LANKA_DISTRICTS = [
   "Kegalle, Sabaragamuwa Province"
 ];
 
-const RegisterPage = () => {
-  const [role, setRole] = useState<'buyer' | 'agent' | 'architect' | 'construction'>('buyer');
-  const [formData, setFormData] = useState({
+const RegisterPage: React.FC<RegisterPageProps> = ({
+  data = null,
+  isLoading = false,
+  error = null,
+  onSubmit
+}) => {
+  const [role, setRole] = useState<UserRole>('buyer');
+  const [formData, setFormData] = useState<RegisterFormData>({
+    role: 'buyer',
     firstName: '',
     lastName: '',
     email: '',
@@ -53,6 +93,19 @@ const RegisterPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Fallbacks for data props
+  const heroTagline = data?.heroTagline || "AI-POWERED PLATFORM";
+  const heroHeadingLine1 = data?.heroHeadingLine1 || "Build Your";
+  const heroHeadingLine2 = data?.heroHeadingLine2 || "Dream";
+  const heroHeadingLine3 = data?.heroHeadingLine3 || "in Sri Lanka";
+  const heroSubheading = data?.heroSubheading || "Sri Lanka's premier AI-powered property and construction platform. Join thousands of buyers, architects, and builders.";
+  const testimonial = data?.testimonial || {
+    avatarUrl: "/hero_property.png",
+    quote: '"NexaBuild helped me find my perfect villa in Kandy within a week. The AI matching is incredibly accurate."',
+    authorName: "Kasun Jayawardena",
+    authorLocation: "Property Buyer — Colombo"
+  };
 
   // Password strength calculation
   const getPasswordStrength = (pwd: string) => {
@@ -90,7 +143,7 @@ const RegisterPage = () => {
 
   const pwdStrength = getPasswordStrength(formData.password);
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: keyof RegisterFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => {
@@ -99,6 +152,11 @@ const RegisterPage = () => {
         return copy;
       });
     }
+  };
+
+  const handleRoleSelect = (selectedRole: UserRole) => {
+    setRole(selectedRole);
+    setFormData(prev => ({ ...prev, role: selectedRole }));
   };
 
   const validateForm = () => {
@@ -136,16 +194,19 @@ const RegisterPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
-    // Simulate API registration
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 1500);
+    if (onSubmit) {
+      onSubmit(formData);
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSuccess(true);
+      }, 1200);
+    }
   };
 
   return (
@@ -153,118 +214,82 @@ const RegisterPage = () => {
       
       {/* LEFT SIDE HERO PANEL - Hidden on mobile/tablet, visible on desktop */}
       <div 
-        className="hidden lg:flex lg:w-[499.77px] relative shrink-0 overflow-hidden" 
+        className="hidden lg:flex lg:w-[499px] xl:w-[540px] relative shrink-0 overflow-hidden" 
         data-node-id="9:3" 
         data-name="Section - LEFT SIDE: HERO OVERLAY"
       >
-        <div className="absolute inset-0">
-          <img alt="Background" className="w-full h-full object-cover" src={'https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg'} />
+        <div className="absolute inset-0 z-0">
+          <img alt="Background" className="w-full h-full object-cover" src="https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg" />
         </div>
         <div className="absolute bg-slate-800/50 inset-0 z-10" data-node-id="9:4" data-name="Overlay" />
         
         <div 
-          className="flex flex-col gap-[24px] items-start sticky top-[60px] w-full h-[calc(100vh-60px)] justify-end p-[48px] z-20" 
+          className="flex flex-col gap-[20px] items-start sticky top-0 w-full h-screen justify-end p-[40px] xl:p-[48px] z-20 overflow-y-auto" 
           data-node-id="9:5" 
           data-name="Container"
         >
           
           {/* AI Badge */}
-          <div className="backdrop-blur-[6px] bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.2)] border-solid flex gap-[8px] items-center px-[17px] py-[7px] relative rounded-[9999px] shrink-0" data-node-id="9:6" data-name="AI Badge">
-            <div className="bg-[#be5d3f] rounded-[9999px] shrink-0 size-[8px]" data-node-id="9:7" data-name="Background" />
-            <div className="relative shrink-0" data-node-id="9:8" data-name="Container">
-              <span className="text-[10px] font-bold text-[rgba(255,255,255,0.9)] tracking-[1px] uppercase whitespace-nowrap leading-[15px]" data-node-id="9:9">
-                AI-POWERED PLATFORM
-              </span>
-            </div>
+          <div className="backdrop-blur-[6px] bg-black/40 border border-white/20 flex gap-[8px] items-center px-[17px] py-[7px] relative rounded-full shrink-0" data-node-id="9:6" data-name="AI Badge">
+            <div className="bg-[#be5d3f] rounded-full shrink-0 size-[8px]" data-node-id="9:7" data-name="Background" />
+            <span className="text-[10px] font-bold text-white/90 tracking-[1px] uppercase whitespace-nowrap leading-[15px]" data-node-id="9:9">
+              {heroTagline}
+            </span>
           </div>
 
           {/* Heading */}
-          <div className="flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="9:10" data-name="Heading 1">
-            <div className="flex flex-col font-extrabold justify-center leading-[75px] text-[60px] text-white w-full" data-node-id="9:11">
-              <p className="mb-0">Build Your</p>
-              <p className="mb-0 text-[#be5d3f]">Dream</p>
-              <p className="mb-0">in Sri Lanka</p>
-            </div>
+          <div className="flex flex-col items-start pt-[4px] relative shrink-0 w-full" data-node-id="9:10" data-name="Heading 1">
+            <h1 className="flex flex-col font-extrabold text-[48px] xl:text-[54px] leading-[1.15] text-white w-full" data-node-id="9:11">
+              <p className="mb-0">{heroHeadingLine1}</p>
+              <p className="mb-0 text-[#be5d3f]">{heroHeadingLine2}</p>
+              <p className="mb-0">{heroHeadingLine3}</p>
+            </h1>
           </div>
 
           {/* Description */}
           <div className="flex flex-col items-start max-w-[448px] relative shrink-0 w-full" data-node-id="9:12" data-name="Container">
-            <p className="text-[18px] font-normal leading-[28px] text-[rgba(255,255,255,0.8)] w-full" data-node-id="9:13">
-              Sri Lanka's premier AI-powered property and construction platform. Join thousands of buyers, architects, and builders.
+            <p className="text-[15px] xl:text-[16px] font-normal leading-[26px] text-white/80 w-full" data-node-id="9:13">
+              {heroSubheading}
             </p>
           </div>
 
           {/* Stats */}
-          <div className="flex gap-[32px] h-[100px] items-start py-[24px] relative shrink-0 w-full" data-node-id="9:14" data-name="Stats">
-            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[116.48px]" data-node-id="9:15" data-name="Container">
-              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:17">
-                12,000+
-              </span>
-              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:19">
-                PROPERTIES
-              </span>
+          <div className="flex gap-[24px] xl:gap-[32px] items-start py-[16px] relative shrink-0 w-full border-t border-b border-white/10" data-node-id="9:14" data-name="Stats">
+            <div className="flex flex-col items-start shrink-0" data-node-id="9:15">
+              <span className="text-[26px] xl:text-[28px] font-bold text-white leading-[32px]">12,000+</span>
+              <span className="text-[11px] font-semibold text-white/60 tracking-[1.2px] uppercase">PROPERTIES</span>
             </div>
-            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[83.5px]" data-node-id="9:20" data-name="Container">
-              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:22">
-                340+
-              </span>
-              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:24">
-                ARCHITECTS
-              </span>
+            <div className="flex flex-col items-start shrink-0" data-node-id="9:20">
+              <span className="text-[26px] xl:text-[28px] font-bold text-white leading-[32px]">340+</span>
+              <span className="text-[11px] font-semibold text-white/60 tracking-[1.2px] uppercase">ARCHITECTS</span>
             </div>
-            <div className="flex flex-col items-start relative self-stretch shrink-0 w-[68.41px]" data-node-id="9:25" data-name="Container">
-              <span className="text-[30px] font-bold text-white leading-[36px] whitespace-nowrap" data-node-id="9:27">
-                180+
-              </span>
-              <span className="text-[12px] font-normal text-[rgba(255,255,255,0.6)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]" data-node-id="9:29">
-                BUILDERS
-              </span>
+            <div className="flex flex-col items-start shrink-0" data-node-id="9:25">
+              <span className="text-[26px] xl:text-[28px] font-bold text-white leading-[32px]">180+</span>
+              <span className="text-[11px] font-semibold text-white/60 tracking-[1.2px] uppercase">BUILDERS</span>
             </div>
           </div>
 
           {/* Testimonial Glass Card */}
-          <div className="backdrop-blur-[6px] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex flex-col gap-[14.75px] items-start max-w-[384px] p-[25px] relative rounded-[16px] shrink-0 w-[384px]" data-node-id="9:30" data-name="Testimonial Glass Card">
-            <div className="flex items-start justify-between relative w-full" data-node-id="9:31" data-name="Container">
-              <div className="flex gap-[12px] items-center relative shrink-0" data-node-id="9:32" data-name="Container">
-                <div className="bg-[#9ca3af] border-2 border-[rgba(255,255,255,0.5)] border-solid flex flex-col items-start justify-center overflow-clip p-[2px] relative rounded-full shrink-0 w-[40px] h-[40px]" data-node-id="9:33">
-                  <img alt="Kasun Jayawardena" className="w-full h-full object-cover rounded-full" src={'/img/kasun-jayawardena.jpg'} />
+          <div className="backdrop-blur-[6px] bg-white/10 border border-white/20 flex flex-col gap-[12px] items-start p-[20px] relative rounded-[16px] shrink-0 w-full max-w-[384px]" data-node-id="9:30" data-name="Testimonial Glass Card">
+            <div className="flex items-center justify-between relative w-full" data-node-id="9:31">
+              <div className="flex gap-[12px] items-center shrink-0" data-node-id="9:32">
+                <div className="border-2 border-white/50 rounded-full overflow-hidden size-[40px] shrink-0">
+                  <img alt={testimonial.authorName} className="size-full object-cover" src={testimonial.avatarUrl} />
                 </div>
-                <div className="flex flex-col items-start relative shrink-0" data-node-id="9:35">
-                  <span className="text-[14px] font-bold text-white whitespace-nowrap leading-[20px]" data-node-id="9:37">
-                    Kasun Jayawardena
-                  </span>
-                  <span className="text-[10px] font-normal text-[rgba(255,255,255,0.6)] whitespace-nowrap leading-[15px]" data-node-id="9:39">
-                    Property Buyer — Colombo
-                  </span>
+                <div className="flex flex-col items-start">
+                  <span className="text-[14px] font-bold text-white leading-[20px]">{testimonial.authorName}</span>
+                  <span className="text-[10px] text-white/60 leading-[15px]">{testimonial.authorLocation}</span>
                 </div>
               </div>
-              
-              {/* Stars rating */}
-              <div className="flex items-center gap-[2px] h-[10.03px]" data-node-id="9:40">
+              <div className="flex items-center gap-[2px]">
                 {[...Array(5)].map((_, i) => (
-                  <img key={i} alt="Star" className="w-[10.52px] h-[10.03px]" src={'/svg/star.svg'} />
+                  <img key={i} alt="Star" className="size-[12px]" src="/svg/star.svg" />
                 ))}
               </div>
             </div>
-            
-            <div className="relative shrink-0 w-full" data-node-id="9:51">
-              <p className="text-[14px] font-normal leading-[22.75px] text-[rgba(255,255,255,0.9)] w-full" data-node-id="9:52">
-                "NexaBuild helped me find my perfect villa in Kandy within a week. The AI matching is incredibly accurate."
-              </p>
-            </div>
-          </div>
-
-          {/* Trust Badges */}
-          <div className="flex gap-[24px] h-[40px] items-start pt-[24px] relative shrink-0 w-full border-t border-white/10" data-node-id="9:53" data-name="Trust Badges">
-            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:55">
-              ✓ SSL SECURED
-            </span>
-            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:57">
-              ✓ VERIFIED LISTINGS
-            </span>
-            <span className="text-[10px] font-semibold text-[rgba(255,255,255,0.6)] tracking-[1px] uppercase whitespace-nowrap" data-node-id="9:59">
-              ✓ AI MATCHED
-            </span>
+            <p className="text-[13px] font-normal leading-[20px] text-white/90">
+              {testimonial.quote}
+            </p>
           </div>
 
         </div>
@@ -272,26 +297,32 @@ const RegisterPage = () => {
 
       {/* RIGHT SIDE REGISTRATION FORM */}
       <div 
-        className="w-full lg:flex-1 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center py-12 px-6 md:px-16 overflow-y-auto"
+        className="w-full lg:flex-1 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center py-10 px-4 sm:px-8 lg:px-12 overflow-y-auto"
         data-node-id="9:60"
         data-name="Section - RIGHT SIDE: REGISTRATION FORM"
       >
-        <div className="w-full max-w-[672px] flex flex-col gap-[32px] items-start" data-node-id="9:61" data-name="Container">
+        <div className="w-full max-w-[672px] flex flex-col gap-[24px] items-start" data-node-id="9:61" data-name="Container">
           
+          {/* Global Backend Error Alert */}
+          {error && (
+            <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-3.5 rounded-xl flex items-center gap-2 shadow-sm">
+              <img src="/svg/info.svg" alt="Error" className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           {isSuccess ? (
             /* Registration Success Screen */
-            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100">
+            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#16a34a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                </svg>
+                <img src="/svg/checkMark.svg" alt="Success" className="size-8" />
               </div>
               <h2 className="text-[#345b79] text-3xl font-extrabold">Account Created!</h2>
               <p className="text-[#6b7280] text-base max-w-md">
                 Thank you for joining NexaBuild, {formData.firstName}. Your registration as a <strong>{role}</strong> was successful.
               </p>
               <Link
-                to="/login"
+                to="/auth/login"
                 className="mt-4 bg-[#345b79] hover:bg-[#25465e] py-[16px] px-8 rounded-[12px] text-white font-bold uppercase tracking-[1.4px] text-[14px] shadow-lg transition-colors duration-200"
               >
                 Sign In to Your Account
@@ -299,166 +330,150 @@ const RegisterPage = () => {
             </div>
           ) : (
             /* Main Form */
-            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[32px]">
+            <form onSubmit={handleFormSubmit} className="w-full flex flex-col gap-[24px]">
               
               {/* Header Title Section */}
-              <div className="flex flex-col gap-[8px] items-start w-full" data-node-id="9:62" data-name="Container">
+              <div className="flex flex-col gap-[6px] items-start w-full" data-node-id="9:62" data-name="Container">
                 <div className="flex gap-[8px] items-center w-full" data-node-id="9:63" data-name="Container">
-                  <div className="bg-[#be5d3f] h-[24px] w-[4px]" data-node-id="9:64" data-name="Background" />
-                  <div className="flex flex-col items-start" data-node-id="9:65" data-name="Container">
-                    <span className="text-[#be5d3f] text-[12px] font-bold tracking-[1.2px] uppercase whitespace-nowrap" data-node-id="9:66">
-                      CREATE ACCOUNT
-                    </span>
-                  </div>
+                  <div className="bg-[#be5d3f] h-[20px] w-[4px]" data-node-id="9:64" data-name="Background" />
+                  <span className="text-[#be5d3f] text-[12px] font-bold tracking-[1.2px] uppercase">
+                    CREATE ACCOUNT
+                  </span>
                 </div>
                 
-                <div className="flex flex-col items-start w-full" data-node-id="9:67" data-name="Heading 2">
-                  <h2 className="text-[#345b79] text-[36px] font-extrabold leading-[40px] w-full" data-node-id="9:68">
-                    Join NexaBuild
-                  </h2>
-                </div>
+                <h2 className="text-[#345b79] text-[32px] sm:text-[36px] font-extrabold leading-[40px] w-full" data-node-id="9:68">
+                  Join NexaBuild
+                </h2>
                 
-                <div className="flex flex-col items-start w-full" data-node-id="9:69" data-name="Container">
-                  <div className="text-[#6b7280] text-[16px]" data-node-id="9:70">
-                    <span className="leading-[24px]">Already have an account? </span>
-                    <Link to="/auth/login" className="font-bold leading-[24px] text-[#be5d3f] hover:underline">
-                      Sign In
-                    </Link>
-                  </div>
+                <div className="text-[#6b7280] text-[15px]" data-node-id="9:70">
+                  <span>Already have an account? </span>
+                  <Link to="/auth/login" className="font-bold text-[#be5d3f] hover:underline">
+                    Sign In
+                  </Link>
                 </div>
               </div>
 
               {/* Role Selection */}
-              <div className="flex flex-col gap-[16px] items-start w-full" data-node-id="9:71" data-name="Role Selection">
-                <div className="flex flex-col items-start w-full" data-node-id="9:72" data-name="Label">
-                  <span className="text-[#374151] text-[14px] font-bold leading-[20px] w-full" data-node-id="9:73">
-                    I am a...
-                  </span>
-                </div>
+              <div className="flex flex-col gap-[12px] items-start w-full" data-node-id="9:71" data-name="Role Selection">
+                <span className="text-[#374151] text-[14px] font-bold leading-[20px] w-full">
+                  I am a...
+                </span>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px] w-full" data-node-id="9:74" data-name="Container">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-[12px] w-full" data-node-id="9:74" data-name="Container">
                   
                   {/* Property Buyer Card */}
                   <div 
-                    onClick={() => setRole('buyer')}
-                    className={`bg-white content-stretch flex flex-col justify-between items-center p-[18px] rounded-[12px] h-[174px] cursor-pointer border-2 transition-all relative ${
+                    onClick={() => handleRoleSelect('buyer')}
+                    className={`bg-white flex flex-col justify-between items-center p-[14px] sm:p-[16px] rounded-[12px] min-h-[160px] cursor-pointer border-2 transition-all relative ${
                       role === 'buyer' ? 'border-[#345b79] shadow-md' : 'border-transparent hover:border-gray-300'
                     }`}
-                    data-node-id="9:75"
-                    data-name="Property Buyer Card"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <div className={`w-[40px] h-[40px] flex items-center justify-center rounded-[8px] transition-all ${
-                        role === 'buyer' ? 'bg-[rgba(52,91,121,0.1)]' : 'bg-[#f3f4f6]'
-                      }`} data-node-id="9:78">
-                        <img className="w-[24px] h-[24px]" src={'/svg/home.svg'} alt="Buyer" />
+                      <div className={`size-[38px] flex items-center justify-center rounded-[8px] transition-all ${
+                        role === 'buyer' ? 'bg-[#345b79]/10' : 'bg-[#f3f4f6]'
+                      }`}>
+                        <img className="size-[20px]" src="/svg/home.svg" alt="Buyer" />
                       </div>
-                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px] whitespace-nowrap" data-node-id="9:83">
+                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px]">
                         Property Buyer
                       </span>
-                      <p className="text-[#6b7280] text-[9px] text-center leading-[11.25px]" data-node-id="9:85">
+                      <p className="text-[#6b7280] text-[9px] text-center leading-[12px]">
                         Find your dream property or land across SL
                       </p>
                     </div>
                     {role === 'buyer' ? (
-                      <div className="bg-[#345b79] flex items-center justify-center rounded-full w-[16px] h-[16px]" data-node-id="9:87">
-                        <img className="w-[12px] h-[12px]" src={'/svg/check.svg'} alt="Checked" />
+                      <div className="bg-[#345b79] flex items-center justify-center rounded-full size-[16px] mt-1">
+                        <img className="size-[10px] filter invert" src="/svg/check.svg" alt="Checked" />
                       </div>
                     ) : (
-                      <div className="w-[16px] h-[16px]" />
+                      <div className="size-[16px] mt-1" />
                     )}
                   </div>
 
                   {/* Agent Card */}
                   <div 
-                    onClick={() => setRole('agent')}
-                    className={`bg-white content-stretch flex flex-col justify-between items-center p-[18px] rounded-[12px] h-[174px] cursor-pointer border-2 transition-all relative ${
+                    onClick={() => handleRoleSelect('agent')}
+                    className={`bg-white flex flex-col justify-between items-center p-[14px] sm:p-[16px] rounded-[12px] min-h-[160px] cursor-pointer border-2 transition-all relative ${
                       role === 'agent' ? 'border-[#345b79] shadow-md' : 'border-transparent hover:border-gray-300'
                     }`}
-                    data-node-id="9:90"
-                    data-name="Agent Card"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <div className={`w-[40px] h-[40px] flex items-center justify-center rounded-[8px] transition-all ${
-                        role === 'agent' ? 'bg-[rgba(52,91,121,0.1)]' : 'bg-[#f3f4f6]'
-                      }`} data-node-id="9:92">
-                        <img className="w-[24px] h-[24px]" src={'/svg/agent.svg'} alt="Agent" />
+                      <div className={`size-[38px] flex items-center justify-center rounded-[8px] transition-all ${
+                        role === 'agent' ? 'bg-[#345b79]/10' : 'bg-[#f3f4f6]'
+                      }`}>
+                        <img className="size-[20px]" src="/svg/agent.svg" alt="Agent" />
                       </div>
-                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px] whitespace-nowrap" data-node-id="9:97">
+                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px]">
                         Agent / Realtor
                       </span>
-                      <p className="text-[#6b7280] text-[9px] text-center leading-[11.25px]" data-node-id="9:99">
+                      <p className="text-[#6b7280] text-[9px] text-center leading-[12px]">
                         List and manage properties for clients
                       </p>
                     </div>
                     {role === 'agent' ? (
-                      <div className="bg-[#345b79] flex items-center justify-center rounded-full w-[16px] h-[16px]">
-                        <img className="w-[12px] h-[12px]" src={'/svg/check.svg'} alt="Checked" />
+                      <div className="bg-[#345b79] flex items-center justify-center rounded-full size-[16px] mt-1">
+                        <img className="size-[10px] filter invert" src="/svg/check.svg" alt="Checked" />
                       </div>
                     ) : (
-                      <div className="w-[16px] h-[16px]" />
+                      <div className="size-[16px] mt-1" />
                     )}
                   </div>
 
                   {/* Architect Card */}
                   <div 
-                    onClick={() => setRole('architect')}
-                    className={`bg-white content-stretch flex flex-col justify-between items-center p-[18px] rounded-[12px] h-[174px] cursor-pointer border-2 transition-all relative ${
+                    onClick={() => handleRoleSelect('architect')}
+                    className={`bg-white flex flex-col justify-between items-center p-[14px] sm:p-[16px] rounded-[12px] min-h-[160px] cursor-pointer border-2 transition-all relative ${
                       role === 'architect' ? 'border-[#345b79] shadow-md' : 'border-transparent hover:border-gray-300'
                     }`}
-                    data-node-id="9:100"
-                    data-name="Architect Card"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <div className={`w-[40px] h-[40px] flex items-center justify-center rounded-[8px] transition-all ${
-                        role === 'architect' ? 'bg-[rgba(52,91,121,0.1)]' : 'bg-[#f3f4f6]'
-                      }`} data-node-id="9:102">
-                        <img className="w-[24px] h-[24px]" src={'/svg/architect.svg'} alt="Architect" />
+                      <div className={`size-[38px] flex items-center justify-center rounded-[8px] transition-all ${
+                        role === 'architect' ? 'bg-[#345b79]/10' : 'bg-[#f3f4f6]'
+                      }`}>
+                        <img className="size-[20px]" src="/svg/architect.svg" alt="Architect" />
                       </div>
-                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px] whitespace-nowrap" data-node-id="9:107">
+                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px]">
                         Architect
                       </span>
-                      <p className="text-[#6b7280] text-[9px] text-center leading-[11.25px]" data-node-id="9:109">
+                      <p className="text-[#6b7280] text-[9px] text-center leading-[12px]">
                         Showcase designs and connect with clients
                       </p>
                     </div>
                     {role === 'architect' ? (
-                      <div className="bg-[#345b79] flex items-center justify-center rounded-full w-[16px] h-[16px]">
-                        <img className="w-[12px] h-[12px]" src={'/svg/check.svg'} alt="Checked" />
+                      <div className="bg-[#345b79] flex items-center justify-center rounded-full size-[16px] mt-1">
+                        <img className="size-[10px] filter invert" src="/svg/check.svg" alt="Checked" />
                       </div>
                     ) : (
-                      <div className="w-[16px] h-[16px]" />
+                      <div className="size-[16px] mt-1" />
                     )}
                   </div>
 
                   {/* Construction Card */}
                   <div 
-                    onClick={() => setRole('construction')}
-                    className={`bg-white content-stretch flex flex-col justify-between items-center p-[18px] rounded-[12px] h-[174px] cursor-pointer border-2 transition-all relative ${
+                    onClick={() => handleRoleSelect('construction')}
+                    className={`bg-white flex flex-col justify-between items-center p-[14px] sm:p-[16px] rounded-[12px] min-h-[160px] cursor-pointer border-2 transition-all relative ${
                       role === 'construction' ? 'border-[#345b79] shadow-md' : 'border-transparent hover:border-gray-300'
                     }`}
-                    data-node-id="9:110"
-                    data-name="Construction Card"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <div className={`w-[40px] h-[40px] flex items-center justify-center rounded-[8px] transition-all ${
-                        role === 'construction' ? 'bg-[rgba(52,91,121,0.1)]' : 'bg-[#f3f4f6]'
-                      }`} data-node-id="9:112">
-                        <img className="w-[24px] h-[24px]" src={'/svg/construction.svg'} alt="Construction" />
+                      <div className={`size-[38px] flex items-center justify-center rounded-[8px] transition-all ${
+                        role === 'construction' ? 'bg-[#345b79]/10' : 'bg-[#f3f4f6]'
+                      }`}>
+                        <img className="size-[20px]" src="/svg/construction.svg" alt="Construction" />
                       </div>
-                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px] whitespace-nowrap" data-node-id="9:117">
+                      <span className="text-[#1f2937] text-[12px] font-bold text-center leading-[15px]">
                         Construction
                       </span>
-                      <p className="text-[#6b7280] text-[9px] text-center leading-[11.25px]" data-node-id="9:119">
+                      <p className="text-[#6b7280] text-[9px] text-center leading-[12px]">
                         Offer construction services to owners
                       </p>
                     </div>
                     {role === 'construction' ? (
-                      <div className="bg-[#345b79] flex items-center justify-center rounded-full w-[16px] h-[16px]">
-                        <img className="w-[12px] h-[12px]" src={'/svg/check.svg'} alt="Checked" />
+                      <div className="bg-[#345b79] flex items-center justify-center rounded-full size-[16px] mt-1">
+                        <img className="size-[10px] filter invert" src="/svg/check.svg" alt="Checked" />
                       </div>
                     ) : (
-                      <div className="w-[16px] h-[16px]" />
+                      <div className="size-[16px] mt-1" />
                     )}
                   </div>
 
@@ -466,25 +481,24 @@ const RegisterPage = () => {
               </div>
 
               {/* Registration Form inputs */}
-              <div className="flex flex-col gap-[24px] items-start w-full" data-node-id="9:120" data-name="Registration Form">
+              <div className="flex flex-col gap-[18px] items-start w-full" data-node-id="9:120" data-name="Registration Form">
                 
                 {/* First Name & Last Name */}
-                <div className="flex flex-col md:flex-row gap-[24px] w-full" data-node-id="9:121" data-name="Container">
+                <div className="flex flex-col sm:flex-row gap-[16px] w-full">
                   
                   {/* First Name */}
-                  <div className="flex flex-col gap-[8px] items-start flex-1" data-node-id="9:122" data-name="Container">
-                    <div className="flex flex-col items-start w-full" data-node-id="9:123" data-name="Label">
-                      <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:124">
-                        First Name
-                      </label>
-                    </div>
-                    <div className="w-full" data-node-id="9:125" data-name="Input">
+                  <div className="flex flex-col gap-[6px] items-start flex-1">
+                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                      First Name
+                    </label>
+                    <div className="w-full">
                       <input
                         type="text"
                         placeholder="Kasun"
                         value={formData.firstName}
+                        disabled={isLoading || isSubmitting}
                         onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        className={`bg-white w-full px-[16px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] transition-colors ${
+                        className={`bg-white w-full px-[14px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] transition-colors ${
                           errors.firstName ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                         }`}
                       />
@@ -495,19 +509,18 @@ const RegisterPage = () => {
                   </div>
 
                   {/* Last Name */}
-                  <div className="flex flex-col gap-[8px] items-start flex-1" data-node-id="9:128" data-name="Container">
-                    <div className="flex flex-col items-start w-full" data-node-id="9:129" data-name="Label">
-                      <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:130">
-                        Last Name
-                      </label>
-                    </div>
-                    <div className="w-full" data-node-id="9:131" data-name="Input">
+                  <div className="flex flex-col gap-[6px] items-start flex-1">
+                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                      Last Name
+                    </label>
+                    <div className="w-full">
                       <input
                         type="text"
                         placeholder="Jayawardena"
                         value={formData.lastName}
+                        disabled={isLoading || isSubmitting}
                         onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className={`bg-white w-full px-[16px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] transition-colors ${
+                        className={`bg-white w-full px-[14px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] transition-colors ${
                           errors.lastName ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                         }`}
                       />
@@ -520,27 +533,22 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Email Address */}
-                <div className="flex flex-col gap-[8px] items-start w-full" data-node-id="9:134" data-name="Container">
-                  <div className="flex flex-col items-start w-full" data-node-id="9:135" data-name="Label">
-                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:136">
-                      Email Address
-                    </label>
-                  </div>
-                  <div className="w-full relative" data-node-id="9:137" data-name="Container">
+                <div className="flex flex-col gap-[6px] items-start w-full">
+                  <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                    Email Address
+                  </label>
+                  <div className="w-full relative">
                     <input
                       type="email"
                       placeholder="kasun@example.com"
                       value={formData.email}
+                      disabled={isLoading || isSubmitting}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`bg-white w-full pl-[40px] pr-[16px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] transition-colors ${
+                      className={`bg-white w-full pl-[38px] pr-[14px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] transition-colors ${
                         errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                       }`}
                     />
-                    <div className="absolute bottom-0 flex items-center left-0 pl-[12px] top-0 pointer-events-none" data-node-id="9:141">
-                      <div className="w-[16px] h-[16px]" data-node-id="9:142">
-                        <img className="w-full h-full object-contain" src={'/svg/email.svg'} alt="Email Icon" />
-                      </div>
-                    </div>
+                    <img className="size-[16px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" src="/svg/email.svg" alt="Email Icon" />
                   </div>
                   {errors.email && (
                     <p className="text-red-500 text-[11px] mt-1">{errors.email}</p>
@@ -548,33 +556,28 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Phone Number */}
-                <div className="flex flex-col gap-[8px] items-start w-full" data-node-id="9:144" data-name="Container">
-                  <div className="flex flex-col items-start w-full" data-node-id="9:145" data-name="Label">
-                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:146">
-                      Phone Number
-                    </label>
-                  </div>
-                  <div className="flex gap-[8px] items-start w-full" data-node-id="9:147" data-name="Container">
-                    <div className="bg-white drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] border border-gray-200 flex items-center pb-[12.5px] pt-[11.5px] px-[12px] rounded-[8px] shrink-0 h-[46px]" data-node-id="9:148">
-                      <span className="text-[#6b7280] text-[14px] font-bold leading-[20px] whitespace-nowrap" data-node-id="9:149">
+                <div className="flex flex-col gap-[6px] items-start w-full">
+                  <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                    Phone Number
+                  </label>
+                  <div className="flex gap-[8px] items-start w-full">
+                    <div className="bg-white border border-gray-200 flex items-center px-[12px] rounded-[8px] shrink-0 h-[44px]">
+                      <span className="text-[#6b7280] text-[14px] font-bold">
                         +94
                       </span>
                     </div>
-                    <div className="relative flex-1" data-node-id="9:150">
+                    <div className="relative flex-1">
                       <input
                         type="text"
                         placeholder="077 123 4567"
                         value={formData.phoneNumber}
+                        disabled={isLoading || isSubmitting}
                         onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                        className={`bg-white w-full pl-[48px] pr-[16px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] h-[46px] transition-colors ${
+                        className={`bg-white w-full pl-[38px] pr-[14px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] h-[44px] transition-colors ${
                           errors.phoneNumber ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                         }`}
                       />
-                      <div className="absolute border-[#f3f4f6] border-r bottom-0 flex items-center left-0 pl-[12px] pr-[13px] top-0 pointer-events-none" data-node-id="9:154">
-                        <div className="w-[16px] h-[16px]" data-node-id="9:155">
-                          <img className="w-full h-full object-contain" src={'/svg/phone.svg'} alt="Phone Icon" />
-                        </div>
-                      </div>
+                      <img className="size-[16px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" src="/svg/phone.svg" alt="Phone Icon" />
                     </div>
                   </div>
                   {errors.phoneNumber && (
@@ -583,34 +586,31 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Password & Confirm Password */}
-                <div className="flex flex-col md:flex-row gap-[24px] w-full" data-node-id="9:157" data-name="Container">
+                <div className="flex flex-col sm:flex-row gap-[16px] w-full">
                   
                   {/* Password */}
-                  <div className="flex flex-col gap-[8px] items-start flex-1" data-node-id="9:158" data-name="Container">
-                    <div className="flex flex-col items-start w-full" data-node-id="9:159" data-name="Label">
-                      <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:160">
-                        Password
-                      </label>
-                    </div>
-                    <div className="w-full relative" data-node-id="9:161" data-name="Container">
+                  <div className="flex flex-col gap-[6px] items-start flex-1">
+                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                      Password
+                    </label>
+                    <div className="w-full relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="********"
                         value={formData.password}
+                        disabled={isLoading || isSubmitting}
                         onChange={(e) => handleInputChange('password', e.target.value)}
-                        className={`bg-white w-full pl-[16px] pr-[40px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] transition-colors ${
+                        className={`bg-white w-full pl-[14px] pr-[38px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] transition-colors ${
                           errors.password ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                         }`}
                       />
                       <button
                         type="button"
+                        disabled={isLoading || isSubmitting}
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute bottom-0 flex items-center pr-[12px] py-[14px] right-0 top-0 cursor-pointer" 
-                        data-node-id="9:165"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                       >
-                        <div className="w-[16px] h-[16px]" data-node-id="9:166">
-                          <img className={`w-full h-full object-contain ${showPassword ? 'opacity-100' : 'opacity-60'}`} src={'/svg/eye.svg'} alt="Eye Icon" />
-                        </div>
+                        <img className={`size-[16px] ${showPassword ? 'opacity-100' : 'opacity-60'}`} src="/svg/eye.svg" alt="Eye Icon" />
                       </button>
                     </div>
                     {errors.password && (
@@ -619,31 +619,28 @@ const RegisterPage = () => {
                   </div>
 
                   {/* Confirm Password */}
-                  <div className="flex flex-col gap-[8px] items-start flex-1" data-node-id="9:169" data-name="Container">
-                    <div className="flex flex-col items-start w-full" data-node-id="9:170" data-name="Label">
-                      <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:171">
-                        Confirm Password
-                      </label>
-                    </div>
-                    <div className="w-full relative" data-node-id="9:172" data-name="Container">
+                  <div className="flex flex-col gap-[6px] items-start flex-1">
+                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                      Confirm Password
+                    </label>
+                    <div className="w-full relative">
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="********"
                         value={formData.confirmPassword}
+                        disabled={isLoading || isSubmitting}
                         onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                        className={`bg-white w-full pl-[16px] pr-[40px] py-[12px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] border outline-none text-[#1e293b] text-[14px] leading-[20px] transition-colors ${
+                        className={`bg-white w-full pl-[14px] pr-[38px] py-[11px] rounded-[8px] shadow-sm border outline-none text-[#1e293b] text-[14px] transition-colors ${
                           errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-[#345b79]'
                         }`}
                       />
                       <button
                         type="button"
+                        disabled={isLoading || isSubmitting}
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute bottom-0 flex items-center pr-[12px] py-[14px] right-0 top-0 cursor-pointer"
-                        data-node-id="9:176"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                       >
-                        <div className="w-[16px] h-[16px]" data-node-id="9:177">
-                          <img className={`w-full h-full object-contain ${showConfirmPassword ? 'opacity-100' : 'opacity-60'}`} src={'/svg/eye.svg'} alt="Eye Icon" />
-                        </div>
+                        <img className={`size-[16px] ${showConfirmPassword ? 'opacity-100' : 'opacity-60'}`} src="/svg/eye.svg" alt="Eye Icon" />
                       </button>
                     </div>
                     {errors.confirmPassword && (
@@ -654,34 +651,23 @@ const RegisterPage = () => {
                 </div>
 
                 {/* District / City Dropdown */}
-                <div className="flex flex-col gap-[8px] items-start w-full relative" data-node-id="9:180" data-name="Container">
-                  <div className="flex flex-col items-start w-full" data-node-id="9:181" data-name="Label">
-                    <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full" data-node-id="9:182">
-                      District / City
-                    </label>
-                  </div>
-                  <div className="w-full relative" data-node-id="9:183" data-name="Container">
+                <div className="flex flex-col gap-[6px] items-start w-full relative">
+                  <label className="text-[#374151] text-[12px] font-bold leading-[16px] w-full">
+                    District / City
+                  </label>
+                  <div className="w-full relative">
                     <div
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="bg-white border border-gray-200 cursor-pointer drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center justify-between pl-[40px] pr-[40px] py-[12px] rounded-[8px] w-full text-[14px] text-[#1e293b] select-none min-h-[46px]"
-                      data-node-id="9:184"
+                      onClick={() => !isLoading && !isSubmitting && setIsDropdownOpen(!isDropdownOpen)}
+                      className="bg-white border border-gray-200 cursor-pointer shadow-sm flex items-center justify-between pl-[38px] pr-[38px] py-[11px] rounded-[8px] w-full text-[14px] text-[#1e293b] select-none min-h-[44px]"
                     >
                       <span>{formData.district}</span>
                     </div>
-                    <div className="absolute bottom-0 flex items-center left-0 pl-[12px] top-0 pointer-events-none" data-node-id="9:190">
-                      <div className="w-[16px] h-[16px]" data-node-id="9:191">
-                        <img className="w-full h-full object-contain" src={'/svg/location.svg'} alt="Location Pin" />
-                      </div>
-                    </div>
-                    <div className="absolute bottom-0 flex items-center px-[16px] right-0 top-0 pointer-events-none" data-node-id="9:194">
-                      <div className="w-[16px] h-[16px]" data-node-id="9:195">
-                        <img className={`w-full h-full object-contain transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} src={'/svg/dropdown.svg'} alt="Dropdown Chevron" />
-                      </div>
-                    </div>
+                    <img className="size-[16px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" src="/svg/location.svg" alt="Location Pin" />
+                    <img className={`size-[16px] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} src="/svg/dropdown.svg" alt="Dropdown Chevron" />
 
-                    {/* Custom drop-down list */}
+                    {/* Dropdown menu */}
                     {isDropdownOpen && (
-                      <div className="absolute top-[48px] left-0 w-full max-h-[220px] overflow-y-auto bg-white border border-gray-200 rounded-[8px] shadow-lg z-50 py-1">
+                      <div className="absolute top-[48px] left-0 w-full max-h-[200px] overflow-y-auto bg-white border border-gray-200 rounded-[8px] shadow-lg z-50 py-1">
                         {SRI_LANKA_DISTRICTS.map((district) => (
                           <div
                             key={district}
@@ -702,80 +688,68 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Password Strength Indicator */}
-                <div className="flex flex-col gap-[8px] items-start w-full" data-node-id="9:197" data-name="Password Strength">
-                  <div className="flex items-center justify-between w-full" data-node-id="9:198" data-name="Container">
-                    <span className="text-[#6b7280] text-[10px] font-bold uppercase tracking-wider" data-node-id="9:200">
+                <div className="flex flex-col gap-[6px] items-start w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-[#6b7280] text-[10px] font-bold uppercase tracking-wider">
                       PASSWORD STRENGTH
                     </span>
-                    <span className={`text-[10px] uppercase ${pwdStrength.color}`} data-node-id="9:202">
+                    <span className={`text-[10px] uppercase ${pwdStrength.color}`}>
                       {pwdStrength.text}
                     </span>
                   </div>
                   
-                  {/* Strength Bar Segments */}
-                  <div className="flex gap-[4px] h-[6px] w-full mt-1" data-node-id="9:203" data-name="Container">
+                  <div className="flex gap-[4px] h-[5px] w-full">
                     {pwdStrength.barColors.map((colorClass, idx) => (
                       <div
                         key={idx}
-                        className={`flex-1 h-full rounded-[9999px] ${colorClass} transition-all duration-300`}
-                        data-node-id={`9:20${4+idx}`}
+                        className={`flex-1 h-full rounded-full ${colorClass} transition-all duration-300`}
                       />
                     ))}
                   </div>
                 </div>
 
                 {/* Terms of Service agreement */}
-                <div className="flex flex-col w-full">
-                  <div className="flex gap-[12px] items-start pb-[16px] w-full select-none" data-node-id="9:208" data-name="Terms">
+                <div className="flex flex-col w-full mt-1">
+                  <div className="flex gap-[10px] items-start w-full select-none">
                     <button
                       type="button"
+                      disabled={isLoading || isSubmitting}
                       onClick={() => handleInputChange('agreeToTerms', !formData.agreeToTerms)}
-                      className={`flex flex-col items-center justify-center overflow-clip relative rounded-[4px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] shrink-0 size-[20px] cursor-pointer border ${
+                      className={`flex items-center justify-center rounded-[4px] border shrink-0 size-[18px] cursor-pointer mt-0.5 transition-colors ${
                         formData.agreeToTerms ? 'bg-[#345b79] border-[#345b79]' : 'bg-white border-gray-300'
                       }`}
-                      data-node-id="9:209"
-                      data-name="Input"
                     >
                       {formData.agreeToTerms && (
-                        <div className="relative shrink-0 size-[20px]" data-node-id="9:210">
-                          <img className="absolute block inset-0 max-w-none size-full" src={'/svg/checkMark.svg'} alt="Checked" />
-                        </div>
+                        <img className="size-[10px] filter invert" src="/svg/checkMark.svg" alt="Checked" />
                       )}
                     </button>
                     
-                    <div className="flex flex-col items-start flex-1" data-node-id="9:212" data-name="Label">
-                      <span className="text-[#4b5563] text-[12px] leading-[16px]" data-node-id="9:213">
-                        I agree to the{' '}
-                        <a href="#" className="font-bold text-[#345b79] hover:underline" onClick={(e) => e.preventDefault()}>
-                          Terms of Service
-                        </a>{' '}
-                        and{' '}
-                        <a href="#" className="font-bold text-[#345b79] hover:underline" onClick={(e) => e.preventDefault()}>
-                          Privacy Policy
-                        </a>{' '}
-                        of NexaBuild (Pvt) Ltd, Sri Lanka.
-                      </span>
-                    </div>
+                    <span className="text-[#4b5563] text-[12px] leading-[16px]">
+                      I agree to the{' '}
+                      <a href="#" className="font-bold text-[#345b79] hover:underline" onClick={(e) => e.preventDefault()}>
+                        Terms of Service
+                      </a>{' '}
+                      and{' '}
+                      <a href="#" className="font-bold text-[#345b79] hover:underline" onClick={(e) => e.preventDefault()}>
+                        Privacy Policy
+                      </a>{' '}
+                      of NexaBuild (Pvt) Ltd.
+                    </span>
                   </div>
                   {errors.agreeToTerms && (
-                    <p className="text-red-500 text-[11px] mt-[-8px] mb-4">{errors.agreeToTerms}</p>
+                    <p className="text-red-500 text-[11px] mt-1">{errors.agreeToTerms}</p>
                   )}
                 </div>
 
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#345b79] hover:bg-[#25465e] flex items-center justify-center py-[16px] rounded-[12px] w-full text-white text-[14px] font-bold tracking-[1.4px] uppercase whitespace-nowrap transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-[0px_10px_15px_-3px_rgba(52,91,121,0.3),0px_4px_6px_-4px_rgba(52,91,121,0.3)] cursor-pointer"
-                  data-node-id="9:214"
-                  data-name="Action → Button"
+                  disabled={isLoading || isSubmitting}
+                  className="bg-[#345b79] hover:bg-[#25465e] flex items-center justify-center py-[14px] rounded-[12px] w-full text-white text-[14px] font-bold tracking-[1.2px] uppercase transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-md cursor-pointer mt-2"
                 >
-                  {isSubmitting ? (
+                  {(isLoading || isSubmitting) ? (
                     <div className="flex items-center gap-2">
-                      <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
+                      <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       <span>Creating Account...</span>
                     </div>
                   ) : (
