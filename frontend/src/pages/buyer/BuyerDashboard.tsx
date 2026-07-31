@@ -1,7 +1,77 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-// Mock Data matching Figma Node 9:342
-const initialPropertyPicks = [
+// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
+
+export interface PropertyItem {
+  id: string | number;
+  title: string;
+  location: string;
+  price: string;
+  match: string;
+  beds?: number | string;
+  baths?: number | string;
+  sqft?: string;
+  image: string;
+  isAiPick?: boolean;
+  isSaved?: boolean;
+}
+
+export interface LandItem {
+  id: string | number;
+  title: string;
+  location: string;
+  price: string;
+  match: string;
+  size: string;
+  potential?: string;
+  image: string;
+  isSaved?: boolean;
+}
+
+export interface SearchItem {
+  id: string | number;
+  title: string;
+  desc: string;
+  time: string;
+}
+
+export interface RecentlyViewedItem {
+  id: string | number;
+  title: string;
+  location: string;
+  price: string;
+  image: string;
+}
+
+export interface BuyerDashboardData {
+  userName?: string;
+  aiInsightText?: string;
+  kpis?: {
+    savedPropertiesCount?: number;
+    savedLandsCount?: number;
+    aiMatchesCount?: number;
+    recentSearchesCount?: number;
+  };
+  propertyPicks?: PropertyItem[];
+  landPicks?: LandItem[];
+  recentSearches?: SearchItem[];
+  recentlyViewed?: RecentlyViewedItem[];
+}
+
+export interface BuyerDashboardProps {
+  data?: BuyerDashboardData | null;
+  isLoading?: boolean;
+  error?: string | null;
+  onPropertyClick?: (id: string | number) => void;
+  onLandClick?: (id: string | number) => void;
+  onToggleSaveProperty?: (id: string | number) => void;
+  onToggleSaveLand?: (id: string | number) => void;
+  onClearSearches?: () => void;
+}
+
+// ─── Mock Fallback Data ─────────────────────────────────────────────────────
+
+const defaultProperties: PropertyItem[] = [
   {
     id: 1,
     title: 'Modern Villa',
@@ -11,7 +81,7 @@ const initialPropertyPicks = [
     beds: 4,
     baths: 3,
     sqft: '3,200',
-    image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80',
+    image: '/property_card_1.png',
     isAiPick: true,
     isSaved: true
   },
@@ -24,7 +94,7 @@ const initialPropertyPicks = [
     beds: 3,
     baths: 2,
     sqft: '2,400',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+    image: '/property_card_2.png',
     isAiPick: true,
     isSaved: false
   },
@@ -37,13 +107,13 @@ const initialPropertyPicks = [
     beds: 4,
     baths: 4,
     sqft: '4,100',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
+    image: '/property_card_3.png',
     isAiPick: true,
     isSaved: false
   }
 ];
 
-const initialLandPicks = [
+const defaultLands: LandItem[] = [
   {
     id: 4,
     title: 'Prime Plot',
@@ -52,7 +122,7 @@ const initialLandPicks = [
     match: '96%',
     size: '20 Perches',
     potential: 'HIGH POTENTIAL',
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    image: '/hero_property.png',
     isSaved: true
   },
   {
@@ -63,7 +133,7 @@ const initialLandPicks = [
     match: '89%',
     size: '30 Perches',
     potential: 'HIGH POTENTIAL',
-    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80',
+    image: '/property_card_4.png',
     isSaved: false
   },
   {
@@ -74,114 +144,171 @@ const initialLandPicks = [
     match: '84%',
     size: '40 Perches',
     potential: 'MEDIUM POTENTIAL',
-    image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
+    image: '/property_card_1.png',
     isSaved: false
   }
 ];
 
-const initialRecentSearches = [
+const defaultRecentSearches: SearchItem[] = [
   { id: 1, title: '4BHK Villa Colombo 7', desc: 'LKR 20M—35M • 4+ Beds', time: '2 hr ago' },
   { id: 2, title: 'Land 20+ Perches Homagama', desc: 'LKR 5M—12M • Road Access', time: '1 day ago' }
 ];
 
-const initialRecentlyViewed = [
-  { id: 1, title: 'Luxury Villa', location: 'Colombo 7', price: 'LKR 32M', image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=300&q=80' },
-  { id: 2, title: 'Land Plot', location: 'Homagama', price: 'LKR 9.2M', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=300&q=80' }
+const defaultRecentlyViewed: RecentlyViewedItem[] = [
+  { id: 1, title: 'Luxury Villa', location: 'Colombo 7', price: 'LKR 32M', image: '/property_card_1.png' },
+  { id: 2, title: 'Land Plot', location: 'Homagama', price: 'LKR 9.2M', image: '/hero_property.png' }
 ];
 
-const initialNotifications = [
-  { id: 1, title: 'New AI Match Found', text: '3 new properties match your 98% criteria in Colombo 5.', time: '2 MIN AGO', type: 'match' },
-  { id: 2, title: 'Price Drop Alert', text: 'Property in Nugegoda dropped by LKR 1.2M.', time: '1 HR AGO', type: 'price' }
-];
+// ─── Component Implementation ───────────────────────────────────────────────
 
-const investmentHotspots = [
-  { id: 1, location: 'Colombo 7', type: 'PROPERTY', growth: '+12%', color: 'bg-[#345b79]' },
-  { id: 2, location: 'Homagama', type: 'LAND', growth: '+18%', color: 'bg-[#be5d3f]' },
-  { id: 3, location: 'Nugegoda', type: 'PROPERTY', growth: '+8%', color: 'bg-[#928d64]' }
-];
+export default function BuyerDashboard({
+  data = null,
+  isLoading = false,
+  error = null,
+  onPropertyClick,
+  onLandClick,
+  onToggleSaveProperty,
+  onToggleSaveLand,
+  onClearSearches
+}: BuyerDashboardProps) {
+  const userName = data?.userName || "Kasun";
+  const aiInsightText = data?.aiInsightText || "Today's AI Insight: Property prices in Colombo 5—7 expected to rise 8—12% this quarter.";
+  
+  const properties = data?.propertyPicks !== undefined ? data.propertyPicks : defaultProperties;
+  const lands = data?.landPicks !== undefined ? data.landPicks : defaultLands;
+  const searches = data?.recentSearches !== undefined ? data.recentSearches : defaultRecentSearches;
+  const recentlyViewed = data?.recentlyViewed !== undefined ? data.recentlyViewed : defaultRecentlyViewed;
 
-export default function BuyerDashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [properties, setProperties] = useState(initialPropertyPicks);
-  const [lands, setLands] = useState(initialLandPicks);
-  const [searches, setSearches] = useState(initialRecentSearches);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Local state fallbacks for toggling if external handlers are not supplied
+  const [localSavedProps, setLocalSavedProps] = useState<Record<string | number, boolean>>({});
+  const [localSavedLands, setLocalSavedLands] = useState<Record<string | number, boolean>>({});
+  const [localSearches, setLocalSearches] = useState<SearchItem[]>(searches);
 
-  const togglePropertySave = (id: number) => {
-    setProperties(prev => prev.map(p => p.id === id ? { ...p, isSaved: !p.isSaved } : p));
+  const handleTogglePropSave = (id: string | number) => {
+    if (onToggleSaveProperty) {
+      onToggleSaveProperty(id);
+    } else {
+      setLocalSavedProps(prev => ({ ...prev, [id]: !prev[id] }));
+    }
   };
 
-  const toggleLandSave = (id: number) => {
-    setLands(prev => prev.map(l => l.id === id ? { ...l, isSaved: !l.isSaved } : l));
+  const handleToggleLandSave = (id: string | number) => {
+    if (onToggleSaveLand) {
+      onToggleSaveLand(id);
+    } else {
+      setLocalSavedLands(prev => ({ ...prev, [id]: !prev[id] }));
+    }
   };
 
-  const clearSearches = () => {
-    setSearches([]);
+  const handleClearAllSearches = () => {
+    if (onClearSearches) {
+      onClearSearches();
+    } else {
+      setLocalSearches([]);
+    }
   };
 
-  return (
-    <div className="p-[24px] lg:p-[40px] space-y-[32px] w-full">
-          
-          {/* A. Hero banner Section */}
-          <div className="bg-[#2a4d69] rounded-[24px] p-[24px] md:p-[40px] text-white flex flex-col justify-center min-h-[200px] relative overflow-hidden shadow-md">
-            <div className="absolute right-[5%] top-1/2 -translate-y-1/2 size-[120px] rounded-full bg-white/5 flex items-center justify-center pointer-events-none">
-              <svg className="size-[48px] text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div className="space-y-[8px] max-w-[80%]">
-              <span className="text-[14px] text-white/70 font-semibold tracking-wider">Good morning</span>
-              <h2 className="text-[32px] md:text-[40px] font-extrabold tracking-tight leading-none">Welcome back, Kasun</h2>
-              
-              {/* Glassmorphic AI pill */}
-              <div className="mt-[20px] inline-flex items-center gap-[12px] bg-white/10 backdrop-blur-md border border-white/15 px-[20px] py-[12px] rounded-[16px] text-[13px] font-semibold leading-relaxed">
-                <svg className="size-[18px] shrink-0 text-[#d59b86]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                <span>Today's AI Insight: Property prices in Colombo 5—7 expected to rise 8—12% this quarter.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* B. KPI Metrics Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px] lg:gap-[24px]">
-            {[
-              { label: 'Saved Properties', val: 12, change: '+2 this week', isGreen: true, bg: 'bg-[#345b79]/5 text-[#345b79]' },
-              { label: 'Saved Lands', val: 7, change: '+1 this week', isGreen: true, bg: 'bg-[#be5d3f]/5 text-[#be5d3f]' },
-              { label: 'AI Matches', val: 38, change: 'Updated today', isGreen: false, bg: 'bg-[#2563eb]/5 text-[#2563eb]' },
-              { label: 'Recent Searches', val: 24, change: 'Last 30 days', isGreen: false, bg: 'bg-gray-100 text-gray-500' }
-            ].map((kpi, idx) => (
-              <div key={idx} className="bg-white rounded-[20px] p-[20px] lg:p-[24px] border border-[#ccb7a3]/10 shadow-sm flex flex-col items-center text-center">
-                <div className={`p-[12px] rounded-[16px] flex items-center justify-center size-[48px] ${kpi.bg} mb-[12px]`}>
-                  {idx === 0 && <svg className="size-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>}
-                  {idx === 1 && <svg className="size-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>}
-                  {idx === 2 && <svg className="size-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9A5 5 0 1112.07 15.24" /></svg>}
-                  {idx === 3 && <svg className="size-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
-                </div>
-                <span className="text-[10px] lg:text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-[6px]">{kpi.label}</span>
-                <h4 className="text-[28px] lg:text-[32px] font-extrabold text-[#111827] leading-none mb-[6px]">{kpi.val}</h4>
-                <span className="text-[10px] lg:text-[11px] font-semibold text-gray-500">{kpi.change}</span>
-              </div>
+  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div className="p-6 lg:p-10 space-y-8 w-full max-w-[1400px] mx-auto animate-pulse">
+        {/* Banner Skeleton */}
+        <div className="h-48 bg-gray-200 rounded-3xl w-full" />
+        {/* KPI Skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
+          ))}
+        </div>
+        {/* Cards Skeleton */}
+        <div className="space-y-4">
+          <div className="h-8 bg-gray-200 rounded-lg w-1/4" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-72 bg-gray-200 rounded-2xl" />
             ))}
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          {/* C. AI Property Recommendations */}
-          <div className="space-y-[20px]">
-            <div className="flex items-end justify-between">
-              <div>
-                <h3 className="text-[22px] lg:text-[26px] font-extrabold text-[#111827]">AI Property Recommendations</h3>
-                <p className="text-[13px] text-gray-500 font-semibold">Curated by AI based on your preferences and search history</p>
-              </div>
-              <a href="#" className="flex items-center gap-[6px] text-[13px] font-bold text-[#345b79] hover:underline">
-                <span>View all</span>
-                <svg className="size-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+  return (
+    <div className="p-4 sm:p-6 lg:p-10 space-y-8 w-full max-w-[1400px] mx-auto font-normal text-[#111827]">
+      
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <span className="font-semibold">{error}</span>
+          </div>
+          <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* A. Hero Banner Section */}
+      <div className="bg-[#2a4d69] rounded-[24px] p-6 sm:p-8 lg:p-10 text-white flex flex-col justify-center min-h-[200px] relative overflow-hidden shadow-md">
+        <div className="absolute right-[5%] top-1/2 -translate-y-1/2 size-[120px] rounded-full bg-white/5 flex items-center justify-center pointer-events-none">
+          <img src="/svg/sparks-icon.svg" alt="" className="size-[48px] opacity-20 filter invert" />
+        </div>
+        <div className="space-y-2 max-w-[90%] sm:max-w-[80%]">
+          <span className="text-xs sm:text-sm text-white/70 font-semibold tracking-wider">Good morning</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-none">
+            Welcome back, {userName}
+          </h2>
+          
+          {/* Glassmorphic AI pill */}
+          <div className="mt-4 inline-flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold leading-relaxed">
+            <img src="/svg/sparks-icon.svg" alt="AI Insight" className="size-4 shrink-0 filter invert" />
+            <span>{aiInsightText}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* B. KPI Metrics Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        {[
+          { label: 'Saved Properties', val: data?.kpis?.savedPropertiesCount ?? properties.filter(p => p.isSaved).length, change: '+2 this week', icon: '/svg/bookmark.svg', bg: 'bg-[#345b79]/10 text-[#345b79]' },
+          { label: 'Saved Lands', val: data?.kpis?.savedLandsCount ?? lands.filter(l => l.isSaved).length, change: '+1 this week', icon: '/svg/location.svg', bg: 'bg-[#be5d3f]/10 text-[#be5d3f]' },
+          { label: 'AI Matches', val: data?.kpis?.aiMatchesCount ?? 38, change: 'Updated today', icon: '/svg/sparks-icon.svg', bg: 'bg-[#2563eb]/10 text-[#2563eb]' },
+          { label: 'Recent Searches', val: data?.kpis?.recentSearchesCount ?? (localSearches.length || searches.length), change: 'Last 30 days', icon: '/svg/clock.svg', bg: 'bg-gray-100 text-gray-500' }
+        ].map((kpi, idx) => (
+          <div key={idx} className="bg-white rounded-[20px] p-5 lg:p-6 border border-[#ccb7a3]/20 shadow-sm flex flex-col items-center text-center">
+            <div className={`p-3 rounded-2xl flex items-center justify-center size-12 ${kpi.bg} mb-3`}>
+              <img src={kpi.icon} alt="" className="size-5" />
             </div>
+            <span className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">{kpi.label}</span>
+            <h4 className="text-2xl lg:text-3xl font-extrabold text-[#111827] leading-none mb-1.5">{kpi.val}</h4>
+            <span className="text-[10px] lg:text-xs font-semibold text-gray-500">{kpi.change}</span>
+          </div>
+        ))}
+      </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px]">
-              {properties.map((p) => (
+      {/* C. AI Property Recommendations */}
+      <div className="space-y-5">
+        <div className="flex items-end justify-between">
+          <div>
+            <h3 className="text-xl lg:text-2xl font-extrabold text-[#111827]">AI Property Recommendations</h3>
+            <p className="text-xs sm:text-sm text-gray-500 font-semibold">Curated by AI based on your preferences and search history</p>
+          </div>
+          <a href="#" className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#345b79] hover:underline">
+            <span>View all</span>
+            <img src="/svg/arrowRight.svg" alt="" className="size-3.5" />
+          </a>
+        </div>
+
+        {properties.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 text-center text-gray-400 font-semibold text-sm border border-gray-100">
+            No property recommendations available at the moment.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {properties.map((p) => {
+              const isSaved = localSavedProps[p.id] !== undefined ? localSavedProps[p.id] : p.isSaved;
+              return (
                 <div key={p.id} className="bg-white rounded-[24px] overflow-hidden border border-[#ccb7a3]/20 shadow-sm flex flex-col group hover:shadow-md transition-all">
                   {/* Card Image Cover */}
                   <div className="h-[200px] w-full overflow-hidden relative">
@@ -189,212 +316,227 @@ export default function BuyerDashboard() {
                     
                     {/* Tags */}
                     {p.isAiPick && (
-                      <span className="absolute top-[16px] left-[16px] bg-[#be5d3f] text-white text-[9px] font-extrabold tracking-widest px-[10px] py-[4px] rounded-full shadow-sm">
+                      <span className="absolute top-4 left-4 bg-[#be5d3f] text-white text-[9px] font-extrabold tracking-widest px-2.5 py-1 rounded-full shadow-sm">
                         AI PICK
                       </span>
                     )}
-                    <span className="absolute top-[16px] right-[16px] bg-white/95 backdrop-blur-md border border-[#345b79]/20 text-[#345b79] text-[11px] font-extrabold px-[12px] py-[4px] rounded-full shadow-sm">
+                    <span className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-[#345b79]/20 text-[#345b79] text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
                       {p.match} Match
                     </span>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-[24px] flex-1 flex flex-col justify-between space-y-[16px]">
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div>
-                      <div className="flex justify-between items-start mb-[4px]">
-                        <h4 className="text-[18px] font-bold text-[#111827] leading-tight">{p.title}</h4>
-                        <span className="text-[16px] font-extrabold text-[#345b79]">{p.price}</span>
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-base font-bold text-[#111827] leading-tight">{p.title}</h4>
+                        <span className="text-base font-extrabold text-[#345b79]">{p.price}</span>
                       </div>
-                      <p className="text-[12px] text-gray-500 font-semibold flex items-center gap-[4px]">
-                        <svg className="size-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        </svg>
+                      <p className="text-xs text-gray-500 font-semibold flex items-center gap-1">
+                        <img src="/svg/location.svg" alt="" className="size-3.5" />
                         {p.location}
                       </p>
                     </div>
 
-                    {/* Specs border divider */}
-                    <div className="border-t border-b border-gray-100 py-[12px] flex items-center justify-around text-center text-[10px] font-bold text-gray-700">
+                    {/* Specs divider */}
+                    <div className="border-t border-b border-gray-100 py-3 flex items-center justify-around text-center text-[10px] font-bold text-gray-700">
                       <div>
-                        <span className="block text-[13px] text-[#111827]">{p.beds}</span>
+                        <span className="block text-xs text-[#111827]">{p.beds || 'N/A'}</span>
                         <span className="text-gray-400">BEDS</span>
                       </div>
-                      <div className="w-[1px] h-[24px] bg-gray-100" />
+                      <div className="w-px h-6 bg-gray-100" />
                       <div>
-                        <span className="block text-[13px] text-[#111827]">{p.baths}</span>
+                        <span className="block text-xs text-[#111827]">{p.baths || 'N/A'}</span>
                         <span className="text-gray-400">BATHS</span>
                       </div>
-                      <div className="w-[1px] h-[24px] bg-gray-100" />
+                      <div className="w-px h-6 bg-gray-100" />
                       <div>
-                        <span className="block text-[13px] text-[#111827]">{p.sqft}</span>
+                        <span className="block text-xs text-[#111827]">{p.sqft || 'N/A'}</span>
                         <span className="text-gray-400">SQFT</span>
                       </div>
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-[12px]">
-                      <button className="flex-1 bg-[#345b79] text-white text-[13px] font-bold py-[12px] rounded-[16px] hover:bg-[#345b79]/90 shadow-sm transition-colors text-center">
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => onPropertyClick && onPropertyClick(p.id)}
+                        className="flex-1 bg-[#345b79] text-white text-xs font-bold py-3 rounded-2xl hover:bg-[#345b79]/90 shadow-sm transition-colors text-center"
+                      >
                         View Details
                       </button>
                       <button
-                        onClick={() => togglePropertySave(p.id)}
-                        className={`p-[12px] border rounded-[16px] flex items-center justify-center transition-colors ${
-                          p.isSaved
+                        onClick={() => handleTogglePropSave(p.id)}
+                        className={`p-3 border rounded-2xl flex items-center justify-center transition-colors ${
+                          isSaved
                             ? 'bg-[#be5d3f]/10 border-[#be5d3f]/40 text-[#be5d3f]'
                             : 'border-gray-200 hover:bg-gray-50 text-gray-400'
                         }`}
                       >
-                        <svg className="size-[20px]" fill={p.isSaved ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
+                        <img src="/svg/bookmark.svg" alt="Bookmark" className={`size-5 ${isSaved ? 'filter drop-shadow' : 'opacity-60'}`} />
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        )}
+      </div>
 
-          {/* D. AI Land Recommendations */}
-          <div className="space-y-[20px]">
-            <div className="flex items-end justify-between">
-              <div>
-                <h3 className="text-[22px] lg:text-[26px] font-extrabold text-[#111827]">AI Land Recommendations</h3>
-                <p className="text-[13px] text-gray-500 font-semibold">High-potential land plots matched to your investment profile</p>
-              </div>
-              <a href="#" className="flex items-center gap-[6px] text-[13px] font-bold text-[#345b79] hover:underline">
-                <span>View all</span>
-                <svg className="size-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
-            </div>
+      {/* D. AI Land Recommendations */}
+      <div className="space-y-5">
+        <div className="flex items-end justify-between">
+          <div>
+            <h3 className="text-xl lg:text-2xl font-extrabold text-[#111827]">AI Land Recommendations</h3>
+            <p className="text-xs sm:text-sm text-gray-500 font-semibold">High-potential land plots matched to your investment profile</p>
+          </div>
+          <a href="#" className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#345b79] hover:underline">
+            <span>View all</span>
+            <img src="/svg/arrowRight.svg" alt="" className="size-3.5" />
+          </a>
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px]">
-              {lands.map((l) => (
+        {lands.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 text-center text-gray-400 font-semibold text-sm border border-gray-100">
+            No land plot recommendations found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {lands.map((l) => {
+              const isSaved = localSavedLands[l.id] !== undefined ? localSavedLands[l.id] : l.isSaved;
+              return (
                 <div key={l.id} className="bg-white rounded-[24px] overflow-hidden border border-[#ccb7a3]/20 shadow-sm flex flex-col group hover:shadow-md transition-all">
                   {/* Card Image */}
                   <div className="h-[160px] w-full overflow-hidden relative">
                     <img src={l.image} alt={l.title} className="size-full object-cover group-hover:scale-105 transition-all duration-300" />
                     
-                    <span className="absolute top-[16px] right-[16px] bg-white/95 backdrop-blur-md border border-[#345b79]/20 text-[#345b79] text-[11px] font-extrabold px-[12px] py-[4px] rounded-full shadow-sm">
+                    <span className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-[#345b79]/20 text-[#345b79] text-xs font-extrabold px-3 py-1 rounded-full shadow-sm">
                       {l.match} Match
                     </span>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-[20px] flex-1 flex flex-col justify-between space-y-[16px]">
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div>
-                      <div className="flex justify-between items-start mb-[4px]">
-                        <h4 className="text-[16px] font-bold text-[#111827] leading-tight">{l.title}</h4>
-                        <span className="text-[16px] font-extrabold text-[#345b79]">{l.price}</span>
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-base font-bold text-[#111827] leading-tight">{l.title}</h4>
+                        <span className="text-base font-extrabold text-[#345b79]">{l.price}</span>
                       </div>
-                      <div className="space-y-[4px]">
-                        <p className="text-[11px] text-gray-500 font-semibold flex items-center gap-[4px] uppercase tracking-wider">
-                          <span className="size-[6px] rounded-full bg-gray-400" />
+                      <div className="space-y-1">
+                        <p className="text-[11px] text-gray-500 font-semibold flex items-center gap-1.5 uppercase tracking-wider">
+                          <span className="size-1.5 rounded-full bg-gray-400" />
                           {l.location}
                         </p>
-                        <p className="text-[11px] text-gray-500 font-semibold flex items-center gap-[4px] uppercase tracking-wider">
-                          <span className="size-[6px] rounded-full bg-gray-400" />
+                        <p className="text-[11px] text-gray-500 font-semibold flex items-center gap-1.5 uppercase tracking-wider">
+                          <span className="size-1.5 rounded-full bg-gray-400" />
                           {l.size}
                         </p>
-                        <p className="text-[10px] text-orange-600 font-bold tracking-widest flex items-center gap-[4px] uppercase">
-                          <span className="size-[6px] rounded-full bg-[#be5d3f]" />
-                          {l.potential}
-                        </p>
+                        {l.potential && (
+                          <p className="text-[10px] text-[#be5d3f] font-bold tracking-widest flex items-center gap-1.5 uppercase">
+                            <span className="size-1.5 rounded-full bg-[#be5d3f]" />
+                            {l.potential}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-[10px] pt-[8px]">
-                      <button className="flex-1 bg-[#be5d3f] text-white text-[12px] font-bold py-[10px] rounded-[14px] hover:bg-[#be5d3f]/90 shadow-sm transition-colors text-center">
+                    <div className="flex items-center gap-2.5 pt-2">
+                      <button 
+                        onClick={() => onLandClick && onLandClick(l.id)}
+                        className="flex-1 bg-[#be5d3f] text-white text-xs font-bold py-2.5 rounded-xl hover:bg-[#be5d3f]/90 shadow-sm transition-colors text-center"
+                      >
                         View Details
                       </button>
                       <button
-                        onClick={() => toggleLandSave(l.id)}
-                        className={`p-[10px] border rounded-[14px] flex items-center justify-center transition-colors ${
-                          l.isSaved
+                        onClick={() => handleToggleLandSave(l.id)}
+                        className={`p-2.5 border rounded-xl flex items-center justify-center transition-colors ${
+                          isSaved
                             ? 'bg-[#be5d3f]/10 border-[#be5d3f]/40 text-[#be5d3f]'
                             : 'border-gray-200 hover:bg-gray-50 text-gray-400'
                         }`}
                       >
-                        <svg className="size-[18px]" fill={l.isSaved ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
+                        <img src="/svg/bookmark.svg" alt="Bookmark" className={`size-4 ${isSaved ? 'filter drop-shadow' : 'opacity-60'}`} />
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        )}
+      </div>
 
-          {/* E. Recent Searches & Recently Viewed (Bottom Rows) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
-            
-            {/* Recent Searches panel */}
-            <div className="bg-white rounded-[24px] p-[24px] border border-[#ccb7a3]/20 shadow-sm space-y-[20px]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[18px] font-extrabold text-[#111827]">Recent Searches</h3>
-                {searches.length > 0 && (
-                  <button onClick={clearSearches} className="text-[12px] font-bold text-gray-400 hover:text-red-500 transition-colors">
-                    Clear all
+      {/* E. Recent Searches & Recently Viewed (Bottom Rows) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* Recent Searches panel */}
+        <div className="bg-white rounded-[24px] p-6 border border-[#ccb7a3]/20 shadow-sm space-y-5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-[#111827]">Recent Searches</h3>
+            {localSearches.length > 0 && (
+              <button onClick={handleClearAllSearches} className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors">
+                Clear all
+              </button>
+            )}
+          </div>
+          
+          <div className="space-y-3">
+            {localSearches.length > 0 ? (
+              localSearches.map((s) => (
+                <div key={s.id} className="flex items-center justify-between p-4 bg-[#f8f9fa] border border-gray-100 rounded-2xl">
+                  <div className="flex items-center gap-3.5">
+                    <div className="bg-[#ccb7a3]/20 p-2.5 rounded-xl flex items-center justify-center">
+                      <img src="/svg/search.svg" alt="Search" className="size-4" />
+                    </div>
+                    <div className="leading-tight">
+                      <h4 className="text-sm font-bold text-[#111827]">{s.title}</h4>
+                      <span className="text-xs text-gray-500 font-semibold">{s.desc}</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-gray-400 font-bold tracking-tight text-right">{s.time}</span>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center text-gray-400 font-semibold text-xs">
+                No recent search history available.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recently Viewed panel */}
+        <div className="bg-white rounded-[24px] p-6 border border-[#ccb7a3]/20 shadow-sm space-y-5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-[#111827]">Recently Viewed</h3>
+            <a href="#" className="text-xs font-bold text-[#345b79] hover:underline">View all</a>
+          </div>
+          
+          <div className="space-y-3">
+            {recentlyViewed.length === 0 ? (
+              <div className="py-8 text-center text-gray-400 font-semibold text-xs">
+                No recently viewed items.
+              </div>
+            ) : (
+              recentlyViewed.map((view) => (
+                <div key={view.id} className="flex items-center justify-between p-3 bg-[#f8f9fa] border border-gray-100 rounded-2xl">
+                  <div className="flex items-center gap-3.5">
+                    <img src={view.image} alt={view.title} className="size-12 rounded-xl object-cover shrink-0" />
+                    <div className="leading-tight">
+                      <h4 className="text-sm font-bold text-[#111827]">{view.title}, {view.location}</h4>
+                      <span className="text-xs text-[#345b79] font-extrabold">{view.price}</span>
+                    </div>
+                  </div>
+                  <button className="bg-[#345b79]/10 hover:bg-[#345b79]/20 text-[#345b79] text-xs font-extrabold px-4 py-2 rounded-xl transition-colors">
+                    View
                   </button>
-                )}
-              </div>
-              
-              <div className="space-y-[12px]">
-                {searches.length > 0 ? (
-                  searches.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between p-[16px] bg-[#f8f9fa] border border-gray-100 rounded-[16px]">
-                      <div className="flex items-center gap-[16px]">
-                        <div className="bg-[#ccb7a3]/20 p-[10px] rounded-[12px] flex items-center justify-center">
-                          <svg className="size-[16px] text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                        </div>
-                        <div className="leading-tight">
-                          <h4 className="text-[14px] font-bold text-[#111827]">{s.title}</h4>
-                          <span className="text-[11px] text-gray-500 font-semibold">{s.desc}</span>
-                        </div>
-                      </div>
-                      <span className="text-[10px] text-gray-400 font-bold tracking-tight text-right">{s.time}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-[32px] text-center text-gray-400 font-semibold text-[13px]">
-                    No recent searches.
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Recently Viewed panel */}
-            <div className="bg-white rounded-[24px] p-[24px] border border-[#ccb7a3]/20 shadow-sm space-y-[20px]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[18px] font-extrabold text-[#111827]">Recently Viewed</h3>
-                <a href="#" className="text-[12px] font-bold text-[#345b79] hover:underline">View all</a>
-              </div>
-              
-              <div className="space-y-[12px]">
-                {initialRecentlyViewed.map((view) => (
-                  <div key={view.id} className="flex items-center justify-between p-[12px] bg-[#f8f9fa] border border-gray-100 rounded-[16px]">
-                    <div className="flex items-center gap-[16px]">
-                      <img src={view.image} alt={view.title} className="size-[48px] rounded-[12px] object-cover shrink-0" />
-                      <div className="leading-tight">
-                        <h4 className="text-[14px] font-bold text-[#111827]">{view.title}, {view.location}</h4>
-                        <span className="text-[12px] text-[#345b79] font-extrabold">{view.price}</span>
-                      </div>
-                    </div>
-                    <button className="bg-[#345b79]/10 hover:bg-[#345b79]/20 text-[#345b79] text-[11px] font-extrabold px-[16px] py-[8px] rounded-[10px] transition-colors">
-                      View
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+                </div>
+              ))
+            )}
           </div>
+        </div>
+
+      </div>
     </div>
   );
 }
