@@ -13,7 +13,7 @@ model Property {
   images      String[]  // array of Cloudinary URLs
 
   matchScore     Int?     // AI recommendation score (0-100)
-  investmentScore Int?    // AI investment potential score
+ 
 
   latitude    Float?
   longitude   Float?
