@@ -14,4 +14,21 @@ export class PropertyService {
       where: { id },
     });
   }
+
+  async create(data: any) {
+    return this.prisma.property.create({ data });
+  }
+
+  async update(id: string, data: any) {
+    return this.prisma.property.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.property.delete({
+      where: { id },
+    });
+  }
 }

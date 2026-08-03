@@ -1,0 +1,16 @@
+-- Add Property fields to the existing empty Property table
+
+ALTER TABLE "Property"
+ADD COLUMN "description" TEXT,
+ADD COLUMN "price" DOUBLE PRECISION NOT NULL,
+ADD COLUMN "location" TEXT NOT NULL,
+ADD COLUMN "bedrooms" INTEGER NOT NULL,
+ADD COLUMN "bathrooms" INTEGER NOT NULL,
+ADD COLUMN "area" DOUBLE PRECISION NOT NULL,
+ADD COLUMN "propertyType" TEXT NOT NULL,
+ADD COLUMN "listingType" TEXT NOT NULL,
+ADD COLUMN "images" TEXT[],
+ADD COLUMN "matchScore" INTEGER,
+ADD COLUMN "latitude" DOUBLE PRECISION,
+ADD COLUMN "longitude" DOUBLE PRECISION,
+ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL;
