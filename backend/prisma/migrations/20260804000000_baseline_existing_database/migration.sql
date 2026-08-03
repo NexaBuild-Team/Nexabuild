@@ -1,4 +1,7 @@
--- CreateTable
+-- Baseline for the existing shared Neon database.
+-- This migration represents the database as it already exists.
+-- It must NOT be executed against the existing database.
+
 CREATE TABLE "ArchitectureCompany" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -7,7 +10,6 @@ CREATE TABLE "ArchitectureCompany" (
     CONSTRAINT "ArchitectureCompany_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "ConstructionCompany" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -16,19 +18,36 @@ CREATE TABLE "ConstructionCompany" (
     CONSTRAINT "ConstructionCompany_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "Land" (
     "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "price" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "perches" TEXT NOT NULL,
+    "sqft" TEXT,
+    "status" TEXT NOT NULL,
+    "badge" TEXT,
+    "landType" TEXT NOT NULL,
+    "img" TEXT NOT NULL,
+    "latitude" DOUBLE PRECISION,
+    "longitude" DOUBLE PRECISION,
+    "zoning" TEXT,
+    "roadAccess" BOOLEAN NOT NULL DEFAULT false,
+    "waterAccess" BOOLEAN NOT NULL DEFAULT false,
+    "electricityAccess" BOOLEAN NOT NULL DEFAULT false,
+    "investmentScore" INTEGER NOT NULL DEFAULT 0,
+    "matchScore" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Land_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "Property" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "description" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "location" TEXT NOT NULL,
@@ -39,16 +58,13 @@ CREATE TABLE "Property" (
     "listingType" TEXT NOT NULL,
     "images" TEXT[],
     "matchScore" INTEGER,
-    "investmentScore" INTEGER,
     "latitude" DOUBLE PRECISION,
     "longitude" DOUBLE PRECISION,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Property_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -57,5 +73,4 @@ CREATE TABLE "User" (
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
