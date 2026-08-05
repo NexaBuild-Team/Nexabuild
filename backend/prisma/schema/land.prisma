@@ -1,55 +1,57 @@
 model Land {
-  id                String   @id @default(cuid())
-  name              String
-  description       String
+  id          String @id @default(cuid())
+  name        String
+  description String
 
-  price             Float
-  location          String
-  province          String
+  price    Float
+  location String
+  province String
 
-  pricePerPerch     Float
-  perches           Float
-  sqft              Float?
+  pricePerPerch Float
+  perches       Float
+  sqft          Float?
 
-  type              String
-  landType          String?
+  type     String
+  landType String?
 
-  zoning            String?
+  zoning String?
 
-  roadFrontage      String
-  roadAccess        Boolean @default(false)
+  roadFrontage String
+  roadAccess   Boolean @default(false)
 
   utilities         String
   waterAccess       Boolean @default(false)
   electricityAccess Boolean @default(false)
 
-  shape             String
-  facing            String
-  terrain           String
-  titleType         String
+  shape     String
+  facing    String
+  terrain   String
+  titleType String
 
-  latitude          Float?
-  longitude         Float?
-  mapImg            String?
+  latitude  Float?
+  longitude Float?
+  mapImg    String?
 
-  status            String
+  status String
 
-  img               String
-  imgMain           String
-  imgSec            String
-  allImages         Json
-  highlights        Json
-  reasons           Json
-  badges            Json
-  investmentScore   Int @default(0)
-  matchScore        Int @default(0)
-  rank              Int?
+  img     String
+  imgMain String
+  imgSec  String
 
-  schools           Json?
-  hospitals         Json?
-  supermarkets      Json?
-  agent             Json?
+  allImages  Json
+  highlights Json
+  reasons    Json
+  badges     Json
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  investmentScore Int  @default(0)
+  matchScore      Int  @default(0)
+  rank            Int?
+
+  schools      Json?
+  hospitals    Json?
+  supermarkets Json?
+  agent        Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
