@@ -1,21 +1,55 @@
 model Land {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  location    String
-  perches     Float
-  sqft        Float?
-  status      String
-  landType    String // e.g. "Residential", "Commercial", "Agricultural"
+  id                String   @id @default(cuid())
+  name              String
+  description       String
 
-  images String[] // array of Cloudinary URLs
+  price             Float
+  location          String
+  province          String
 
-  matchScore Int? // AI recommendation score (0-100)
+  pricePerPerch     Float
+  perches           Float
+  sqft              Float?
 
-  latitude  Float?
-  longitude Float?
+  type              String
+  landType          String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  zoning            String?
+
+  roadFrontage      String
+  roadAccess        Boolean @default(false)
+
+  utilities         String
+  waterAccess       Boolean @default(false)
+  electricityAccess Boolean @default(false)
+
+  shape             String
+  facing            String
+  terrain           String
+  titleType         String
+
+  latitude          Float?
+  longitude         Float?
+  mapImg            String?
+
+  status            String
+
+  img               String
+  imgMain           String
+  imgSec            String
+  allImages         Json
+  highlights        Json
+  reasons           Json
+  badges            Json
+  investmentScore   Int @default(0)
+  matchScore        Int @default(0)
+  rank              Int?
+
+  schools           Json?
+  hospitals         Json?
+  supermarkets      Json?
+  agent             Json?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
