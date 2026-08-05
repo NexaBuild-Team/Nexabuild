@@ -1,5 +1,6 @@
 import { useState, lazy, Suspense, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import { allPropertiesPool, type RecommendedProperty } from '../data/recommendedProperties'
 
 const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 
@@ -16,83 +17,11 @@ const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 // Green Accent          : #495d38
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface ListingProperty {
-  id: number
-  image: string
-  badge: string
-  badgeColor: string
-  status: 'FOR SALE' | 'FOR RENT' | 'PREMIUM'
-  statusColor: string
-  price: string
-  priceNum: number          // raw LKR for budget filtering
-  title: string
-  location: string
-  district: string          // e.g. 'Colombo', 'Kandy'
-  type: 'House' | 'Apartment' | 'Villa' | 'Commercial'
-  beds: number
-  baths: number
-  area: string
-  areaUnit: string
-  isFavorite?: boolean
-}
+// Using shared RecommendedProperty type from data/recommendedProperties.ts
+type ListingProperty = RecommendedProperty
 
-// ─── Sample Property Data ────────────────────────────────────────────────────
-const allProperties: ListingProperty[] = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 85,000,000', priceNum: 85_000_000,
-    title: 'Luxury Villa, Colombo 7',
-    location: 'Colombo, Western Province', district: 'Colombo', type: 'Villa',
-    beds: 4, baths: 3, area: '4,900', areaUnit: 'sq ft',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 32,500,000', priceNum: 32_500_000,
-    title: 'Modern Apartment, Kandy',
-    location: 'Kandy, Central Province', district: 'Kandy', type: 'Apartment',
-    beds: 3, baths: 2, area: '1,800', areaUnit: 'sq ft',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&q=80',
-    badge: 'PREMIUM', badgeColor: '#495d38', status: 'PREMIUM', statusColor: '#495d38',
-    price: 'LKR 125,000,000', priceNum: 125_000_000,
-    title: 'Beachfront Residence, Galle',
-    location: 'Galle, Southern Province', district: 'Galle', type: 'Villa',
-    beds: 5, baths: 4, area: '6,400', areaUnit: 'sq ft', isFavorite: true,
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 55,000,000', priceNum: 55_000_000,
-    title: 'Premium Townhouse, Negombo',
-    location: 'Negombo, Western Province', district: 'Negombo', type: 'House',
-    beds: 3, baths: 2, area: '2,800', areaUnit: 'sq ft',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 48,000,000', priceNum: 48_000_000,
-    title: 'Garden Bungalow, Nugegoda',
-    location: 'Nugegoda, Western Province', district: 'Colombo', type: 'House',
-    beds: 4, baths: 3, area: '3,200', areaUnit: 'sq ft',
-  },
-  {
-    id: 6,
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 220,000,000', priceNum: 220_000_000,
-    title: 'Penthouse, Colombo 3',
-    location: 'Colombo 3, Western Province', district: 'Colombo', type: 'Apartment',
-    beds: 5, baths: 4, area: '4,200', areaUnit: 'sq ft',
-  },
-]
+// ─── Property Data (shared from data/recommendedProperties.ts) ───────────────
+const allProperties: ListingProperty[] = allPropertiesPool
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const SearchIcon = () => (
@@ -155,9 +84,13 @@ const XIcon = () => (
 // ─── Property Card ────────────────────────────────────────────────────────────
 function PropertyCard({ property }: { property: ListingProperty }) {
   const [fav, setFav] = useState(property.isFavorite ?? false)
+  const navigate = useNavigate()
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group">
+    <div
+      className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group"
+      onClick={() => navigate(`/property-detail/${property.id}`)}
+    >
       {/* Image */}
       <div className="relative overflow-hidden h-44">
         <img
@@ -168,9 +101,9 @@ function PropertyCard({ property }: { property: ListingProperty }) {
         {/* Status badge top-left */}
         <span
           className="absolute top-2.5 left-2.5 text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase"
-          style={{ backgroundColor: property.statusColor }}
+          style={{ backgroundColor: property.badgeColor }}
         >
-          {property.status}
+          {property.badge}
         </span>
         {/* Favorite button top-right */}
         <button
@@ -204,7 +137,7 @@ function PropertyCard({ property }: { property: ListingProperty }) {
           </span>
           <span className="flex items-center gap-1 ml-auto">
             <AreaIcon />
-            {property.area} {property.areaUnit}
+            {property.area}
           </span>
         </div>
       </div>
@@ -266,11 +199,11 @@ export default function PropertyListing() {
   const [selectedBeds,      setSelectedBeds]      = useState('All')
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
   const [currentPage,       setCurrentPage]       = useState(1)
-  const [sortBy,            setSortBy]            = useState('Most Relevant')
+  const [sortBy,            _setSortBy]           = useState('Most Relevant')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const districts     = ['Colombo', 'Kandy', 'Galle', 'Negombo']
-  const propertyTypes = ['All Types', 'House', 'Apartment', 'Villa']
+  const propertyTypes = ['All Types', 'House', 'Apartment', 'Villa', 'Commercial']
   const bedOptions    = ['All', '1', '2', '3', '4', '5+']
 
   const toggleDistrict = (d: string) =>
