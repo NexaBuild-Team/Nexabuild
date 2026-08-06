@@ -9,6 +9,10 @@ model Land {
   status      String
   landType    String // e.g. "Residential", "Commercial", "Agricultural"
 
+  purpose         String?
+  environment     String?
+  developmentPlan String?
+
   images String[] // array of Cloudinary URLs
 
   matchScore Int? // AI recommendation score (0-100)

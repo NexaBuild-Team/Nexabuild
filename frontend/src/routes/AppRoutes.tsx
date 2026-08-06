@@ -14,7 +14,6 @@ import PropertyDetail from '../pages/PropertyDetail'
 // Land AI
 import LandListing from '../pages/LandListing'
 import AIRecommendations from '../pages/AIRecommendations'
-import AIRecommendationsList from '../pages/AIRecommendationsList'
 import LandDetail from '../pages/LandDetail'
 
 // Architecture Module
@@ -62,7 +61,6 @@ function AppRoutes() {
         {/* Land Routes */}
         <Route path="/land" element={<LandListing />} />
         <Route path="/land/ai-recommendations" element={<AIRecommendations />} />
-        <Route path="/land/ai-recommendations/list" element={<AIRecommendationsList />} />
         <Route path="/land/detail/:id" element={<LandDetail />} />
 
         {/* Architecture Routes */}
