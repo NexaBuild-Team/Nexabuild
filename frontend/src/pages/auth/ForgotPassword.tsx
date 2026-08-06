@@ -1,12 +1,47 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 
-const ForgotPasswordPage = () => {
+// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
+
+export interface ForgotPasswordPageData {
+  heroHeadingLine1?: string;
+  heroHeadingLine2?: string;
+  heroHeadingLine3?: string;
+  heroSubheading?: string;
+  securityNoticeTitle?: string;
+  securityNoticeDesc?: string;
+}
+
+export interface ForgotPasswordPageProps {
+  data?: ForgotPasswordPageData | null;
+  isLoading?: boolean;
+  error?: string | null;
+  onSubmitEmail?: (email: string) => void;
+  onResendEmail?: (email: string) => void;
+}
+
+// ─── Main Component Implementation ──────────────────────────────────────────
+
+const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
+  data = null,
+  isLoading = false,
+  error = null,
+  onSubmitEmail,
+  onResendEmail
+}) => {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+
+  // Fallbacks for data props
+  const heroHeadingLine1 = data?.heroHeadingLine1 || "Secure &";
+  const heroHeadingLine2 = data?.heroHeadingLine2 || "Trusted";
+  const heroHeadingLine3 = data?.heroHeadingLine3 || "Platform";
+  const heroSubheading = data?.heroSubheading || "Your account security is our priority. Reset your password in seconds and get back to building your dream.";
+  const securityNoticeTitle = data?.securityNoticeTitle || "Bank-Level Security";
+  const securityNoticeDesc = data?.securityNoticeDesc || "All password resets are encrypted end-to-end and verified through your registered email address.";
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -20,33 +55,41 @@ const ForgotPasswordPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setFormError('');
 
     if (!email.trim()) {
-      setError('Email address is required');
+      setFormError('Email address is required');
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Invalid email address format');
+      setFormError('Invalid email address format');
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setResendTimer(60);
-    }, 1500);
+    if (onSubmitEmail) {
+      onSubmitEmail(email);
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSuccess(true);
+        setResendTimer(60);
+      }, 1200);
+    }
   };
 
   const handleResend = () => {
-    if (resendTimer > 0) return;
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setResendTimer(60);
-    }, 1200);
+    if (resendTimer > 0 || isSubmitting || isLoading) return;
+    if (onResendEmail) {
+      onResendEmail(email);
+    } else {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setResendTimer(60);
+      }, 1000);
+    }
   };
 
   return (
@@ -58,31 +101,31 @@ const ForgotPasswordPage = () => {
       
       {/* LEFT HERO SECTION */}
       <div 
-        className="hidden lg:flex lg:w-[499.77px] relative shrink-0 overflow-hidden" 
+        className="hidden lg:flex lg:w-[499px] xl:w-[540px] relative shrink-0 overflow-hidden" 
         data-node-id="9:220" 
         data-name="Left Hero Section"
       >
         <div className="absolute inset-0">
-          <img alt="Modern Architectural Home" className="w-full h-full object-cover" src={'https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg'} />
+          <img alt="Modern Architectural Home" className="w-full h-full object-cover" src="https://images.pexels.com/photos/8134750/pexels-photo-8134750.jpeg" />
         </div>
         <div className="absolute bg-slate-800/50 inset-0 z-10" data-node-id="9:222" data-name="Gradient" />
         
         {/* Sticky Left Content */}
         <div 
-          className="flex flex-col justify-between sticky top-[60px] w-full h-[calc(100vh-60px)] p-[48px] z-20" 
+          className="flex flex-col justify-between sticky top-0 w-full h-screen p-[40px] xl:p-[48px] z-20 overflow-y-auto" 
           data-node-id="9:223" 
           data-name="Container"
         >
           {/* Logo on Image */}
           <div className="flex flex-col items-start w-full" data-node-id="9:224" data-name="Logo on Image:margin">
             <div className="flex gap-[12px] items-center w-full" data-node-id="9:225" data-name="Logo on Image">
-              <div className="bg-[#be5d3f] flex flex-col items-start p-[8px] rounded-[8px] shrink-0" data-node-id="9:226" data-name="Background">
+              <div className="bg-[#be5d3f] flex items-center justify-center rounded-[8px] shrink-0 size-[40px]" data-node-id="9:226" data-name="Background">
                 <span className="font-bold text-[20px] text-white leading-[28px]" data-node-id="9:227">
                   N
                 </span>
               </div>
               <div className="flex flex-col items-start" data-node-id="9:228" data-name="Container">
-                <span className="font-bold text-[30px] text-white tracking-[-0.75px] leading-[36px]" data-node-id="9:229">
+                <span className="font-bold text-[28px] text-white tracking-[-0.75px] leading-[34px]" data-node-id="9:229">
                   NexaBuild
                 </span>
               </div>
@@ -90,38 +133,38 @@ const ForgotPasswordPage = () => {
           </div>
 
           {/* Heading and Description */}
-          <div className="flex flex-col items-start w-full">
-            <div className="flex flex-col items-start pb-[24px] w-full" data-node-id="9:230" data-name="Heading 1:margin">
-              <h1 className="font-extrabold text-[48px] text-white leading-[60px] w-full" data-node-id="9:232">
-                <p className="mb-0">Secure &</p>
-                <p className="mb-0">Trusted</p>
-                <p className="mb-0">Platform</p>
+          <div className="flex flex-col items-start w-full my-6">
+            <div className="flex flex-col items-start pb-[20px] w-full" data-node-id="9:230" data-name="Heading 1:margin">
+              <h1 className="font-extrabold text-[44px] xl:text-[48px] text-white leading-[1.15] w-full" data-node-id="9:232">
+                <p className="mb-0">{heroHeadingLine1}</p>
+                <p className="mb-0 text-[#be5d3f]">{heroHeadingLine2}</p>
+                <p className="mb-0">{heroHeadingLine3}</p>
               </h1>
             </div>
             <div className="max-w-[448px] w-full" data-node-id="9:233" data-name="Margin">
-              <p className="text-[#f1f5f9] text-[18px] font-normal leading-[29.25px]" data-node-id="9:235">
-                Your account security is our priority. Reset your password in seconds and get back to building your dream.
+              <p className="text-white/90 text-[15px] xl:text-[16px] font-normal leading-[26px]" data-node-id="9:235">
+                {heroSubheading}
               </p>
             </div>
           </div>
 
           {/* Glassmorphic card */}
-          <div className="flex flex-col items-start max-w-[384px] w-full" data-node-id="9:236" data-name="Glassmorphic Card:margin">
+          <div className="flex flex-col items-start max-w-[384px] w-full mb-6" data-node-id="9:236" data-name="Glassmorphic Card:margin">
             <div 
-              className="backdrop-blur-[6px] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid flex gap-[16px] items-start p-[25px] rounded-[16px] w-full shadow-lg" 
+              className="backdrop-blur-[6px] bg-white/10 border border-white/20 flex gap-[16px] items-start p-[20px] rounded-[16px] w-full shadow-lg" 
               data-node-id="9:237" 
               data-name="Glassmorphic Card"
             >
-              <div className="bg-[rgba(255,255,255,0.2)] rounded-[8px] p-[8px]" data-node-id="9:238" data-name="Overlay">
-                <img alt="Shield Icon" className="w-[24px] h-[24px] object-contain" src={'/svg/shield-tick.svg'} />
+              <div className="bg-white/20 rounded-[8px] p-[8px] shrink-0" data-node-id="9:238" data-name="Overlay">
+                <img alt="Shield Icon" className="size-[24px] object-contain" src="/svg/shield.svg" />
               </div>
               <div className="flex-1" data-node-id="9:241" data-name="Container">
                 <div className="flex flex-col gap-[4px] items-start w-full">
-                  <h4 className="font-bold text-[18px] text-white leading-[28px]" data-node-id="9:243">
-                    Bank-Level Security
+                  <h4 className="font-bold text-[16px] text-white leading-[24px]" data-node-id="9:243">
+                    {securityNoticeTitle}
                   </h4>
-                  <p className="text-[12px] font-normal text-[rgba(255,255,255,0.8)] leading-[16px]" data-node-id="9:245">
-                    All password resets are encrypted end-to-end and verified through your registered email address.
+                  <p className="text-[12px] font-normal text-white/80 leading-[16px]" data-node-id="9:245">
+                    {securityNoticeDesc}
                   </p>
                 </div>
               </div>
@@ -129,23 +172,17 @@ const ForgotPasswordPage = () => {
           </div>
 
           {/* Compliance tags */}
-          <div className="flex gap-[24px] items-start opacity-70 w-full" data-node-id="9:246" data-name="Compliance Tags">
+          <div className="flex gap-[20px] items-start opacity-70 w-full pt-4 border-t border-white/10" data-node-id="9:246" data-name="Compliance Tags">
             <div className="flex gap-[6px] items-center" data-node-id="9:247">
-              <img alt="SSL Key" className="w-[12px] h-[12px] object-contain" src={'/svg/lock-footer.svg'} />
+              <img alt="SSL Key" className="size-[12px] object-contain filter invert" src="/svg/lock.svg" />
               <span className="font-semibold text-[10px] text-white tracking-[1px] uppercase leading-[15px]">
                 SSL ENCRYPTED
               </span>
             </div>
             <div className="flex gap-[6px] items-center" data-node-id="9:251">
-              <img alt="Email Icon" className="w-[12px] h-[12px] object-contain" src={'/svg/email-footer.svg'} />
+              <img alt="Email Icon" className="size-[12px] object-contain filter invert" src="/svg/email.svg" />
               <span className="font-semibold text-[10px] text-white tracking-[1px] uppercase leading-[15px]">
                 EMAIL VERIFIED
-              </span>
-            </div>
-            <div className="flex gap-[6px] items-center" data-node-id="9:256">
-              <img alt="PDPA Icon" className="w-[12px] h-[12px] object-contain" src={'/svg/pdpa-footer.svg'} />
-              <span className="font-semibold text-[10px] text-white tracking-[1px] uppercase leading-[15px]">
-                PDPA COMPLIANT
               </span>
             </div>
           </div>
@@ -155,11 +192,11 @@ const ForgotPasswordPage = () => {
 
       {/* RIGHT RESET SECTION */}
       <div 
-        className="w-full lg:flex-1 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center p-[32px] overflow-y-auto"
+        className="w-full lg:flex-1 min-h-screen bg-[#e6e0d4] flex flex-col items-center justify-center p-[24px] sm:p-[32px] overflow-y-auto"
         data-node-id="9:260"
         data-name="Right Reset Section"
       >
-        <div className="w-full max-w-[448px] flex flex-col gap-[32px] items-start" data-node-id="9:261" data-name="Container">
+        <div className="w-full max-w-[448px] flex flex-col gap-[24px] items-start" data-node-id="9:261" data-name="Container">
           
           {/* Back to Login Link */}
           <Link 
@@ -168,43 +205,46 @@ const ForgotPasswordPage = () => {
             data-node-id="9:262" 
             data-name="Back Link"
           >
-            <img alt="Back Arrow" className="w-[16px] h-[16px] object-contain transition-transform group-hover:-translate-x-1" src={'/svg/arrow-back.svg'} />
+            <img alt="Back Arrow" className="size-[16px] object-contain transition-transform group-hover:-translate-x-1" src="/svg/arrow-send.svg" style={{ transform: 'rotate(180deg)' }} />
             <span className="text-[#64748b] text-[14px] font-medium leading-[20px]" data-node-id="9:265">
               Back to Login
             </span>
           </Link>
 
+          {/* Global Error Banner */}
+          {error && (
+            <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-3.5 rounded-xl flex items-center gap-2 shadow-sm">
+              <img src="/svg/info.svg" alt="Error" className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
           {isSuccess ? (
             /* Success confirmation panel */
             <div className="w-full bg-white rounded-[24px] p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
-              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 19v-8.93a2 2 0 01.89-1.664l8-5.333a2 2 0 012.22 0l8 5.333A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-2.25-1.5a2 2 0 00-2.22 0l-2.25 1.5M12 14v3m-3-3h6" />
-                </svg>
+              <div className="w-16 h-16 bg-[#345b79]/10 rounded-full flex items-center justify-center">
+                <img src="/svg/email.svg" alt="Email Sent" className="size-8" />
               </div>
               <h2 className="text-[#345b79] text-2xl font-bold">Reset Link Sent</h2>
               <p className="text-[#64748b] text-[14px] leading-relaxed">
-                We have sent a secure recovery link to <strong className="text-gray-800">{email}</strong>. Please follow the instructions to reset your password.
+                We have sent a secure recovery link to <strong className="text-gray-800">{email}</strong>. Please follow the instructions in the email to reset your password.
               </p>
               
               <div className="w-full h-px border-t border-slate-100 my-2" />
 
               <button
                 type="button"
-                disabled={resendTimer > 0 || isSubmitting}
+                disabled={resendTimer > 0 || isSubmitting || isLoading}
                 onClick={handleResend}
-                className={`py-[14px] px-6 rounded-[8px] w-full text-white font-bold text-[14px] transition-colors ${
-                  resendTimer > 0 
+                className={`py-[14px] px-6 rounded-[12px] w-full text-white font-bold text-[14px] transition-colors ${
+                  resendTimer > 0 || isSubmitting || isLoading
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-[#be5d3f] hover:bg-[#a64e33] cursor-pointer'
+                    : 'bg-[#be5d3f] hover:bg-[#a64e33] cursor-pointer shadow-md'
                 }`}
               >
-                {isSubmitting ? (
+                {(isSubmitting || isLoading) ? (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
+                    <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Resending...</span>
                   </span>
                 ) : resendTimer > 0 ? (
@@ -216,30 +256,30 @@ const ForgotPasswordPage = () => {
             </div>
           ) : (
             /* Reset Form */
-            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[32px]">
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[24px]">
               
               {/* Form Heading */}
               <div className="flex flex-col gap-[16px] items-start pt-[4px] w-full" data-node-id="9:266" data-name="Form Heading">
                 <div 
-                  className="bg-[rgba(52,91,121,0.1)] border border-[rgba(52,91,121,0.2)] border-solid flex items-center justify-center p-px rounded-[16px] w-[64px] h-[64px]" 
+                  className="bg-[#345b79]/10 border border-[#345b79]/20 flex items-center justify-center rounded-[16px] size-[56px]" 
                   data-node-id="9:267"
                 >
-                  <img alt="Recovery Key Badge" className="w-[32px] h-[32px] object-contain" src={'/svg/key.svg'} />
+                  <img alt="Recovery Key Badge" className="size-[28px] object-contain" src="/svg/sparks-settings-icon.svg" />
                 </div>
                 <div className="flex flex-col gap-[4px] items-start w-full" data-node-id="9:270">
                   <div className="flex gap-[8px] items-center w-full" data-node-id="9:271">
-                    <div className="bg-[#be5d3f] h-[20px] w-[4px]" data-node-id="9:272" />
+                    <div className="bg-[#be5d3f] h-[18px] w-[4px]" data-node-id="9:272" />
                     <span className="font-bold text-[#be5d3f] text-[11px] tracking-[1.1px] uppercase whitespace-nowrap" data-node-id="9:274">
                       ACCOUNT RECOVERY
                     </span>
                   </div>
                   <div className="flex flex-col items-start w-full mt-1" data-node-id="9:275">
-                    <h2 className="font-extrabold text-[#1e293b] text-[36px] w-full leading-[40px]" data-node-id="9:276">
+                    <h2 className="font-extrabold text-[#1e293b] text-[32px] sm:text-[36px] w-full leading-[40px]" data-node-id="9:276">
                       Forgot Password?
                     </h2>
                   </div>
-                  <div className="flex flex-col items-start pt-[8px] w-full" data-node-id="9:277">
-                    <p className="text-[#64748b] text-[16px] font-normal leading-[26px] w-full" data-node-id="9:278">
+                  <div className="flex flex-col items-start pt-[4px] w-full" data-node-id="9:277">
+                    <p className="text-[#64748b] text-[15px] font-normal leading-[24px] w-full" data-node-id="9:278">
                       No worries. Enter your registered email and we'll send you a secure reset link instantly.
                     </p>
                   </div>
@@ -247,11 +287,11 @@ const ForgotPasswordPage = () => {
               </div>
 
               {/* Form Content */}
-              <div className="flex flex-col gap-[24px] items-start w-full" data-node-id="9:279" data-name="Form Content">
+              <div className="flex flex-col gap-[20px] items-start w-full" data-node-id="9:279" data-name="Form Content">
                 
                 {/* Email Input wrapper */}
-                <div className="w-full flex flex-col gap-[8px]" data-node-id="9:280">
-                  <label className="font-bold text-[#334155] text-[14px] leading-[20px] select-none" data-node-id="9:281">
+                <div className="w-full flex flex-col gap-[6px]" data-node-id="9:280">
+                  <label className="font-bold text-[#334155] text-[13px] leading-[18px] select-none" data-node-id="9:281">
                     Email Address
                   </label>
                   <div className="w-full relative" data-node-id="9:282">
@@ -259,26 +299,25 @@ const ForgotPasswordPage = () => {
                       type="email"
                       placeholder="Enter your registered email address"
                       value={email}
+                      disabled={isLoading || isSubmitting}
                       onChange={(e) => {
                         setEmail(e.target.value);
-                        if (error) setError('');
+                        if (formError) setFormError('');
                       }}
-                      className={`bg-white border w-full pl-[49px] pr-[17px] py-[18px] rounded-[8px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline-none text-[16px] text-gray-800 transition-colors ${
-                        error ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#345b79]'
+                      className={`bg-white border w-full pl-[44px] pr-[16px] py-[14px] rounded-[12px] shadow-sm outline-none text-[15px] text-gray-800 transition-colors ${
+                        formError ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#345b79]'
                       }`}
                       data-node-id="9:283"
                     />
-                    <div className="absolute bottom-0 flex items-center left-0 pl-[16px] top-0 pointer-events-none" data-node-id="9:286">
-                      <img alt="Email Icon" className="w-[20px] h-[20px] object-contain" src={'/svg/email.svg'} />
-                    </div>
+                    <img alt="Email Icon" className="size-[18px] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" src="/svg/email.svg" />
                   </div>
-                  {error ? (
-                    <p className="text-red-500 text-[11px] mt-1">{error}</p>
+                  {formError ? (
+                    <p className="text-red-500 text-[11px] mt-1">{formError}</p>
                   ) : (
                     <div className="flex gap-[6px] items-center mt-1" data-node-id="9:289">
-                      <img alt="Info Bullet" className="w-[12px] h-[12px] object-contain" src={'/svg/info.svg'} />
+                      <img alt="Info Bullet" className="size-[12px] object-contain" src="/svg/info.svg" />
                       <span className="text-[#64748b] text-[11px] font-normal leading-[16.5px]" data-node-id="9:292">
-                        Use the email you registered with NexaBuild
+                        Use the email address linked to your NexaBuild account
                       </span>
                     </div>
                   )}
@@ -287,21 +326,18 @@ const ForgotPasswordPage = () => {
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#345b79] hover:bg-[#25465e] flex gap-[8px] items-center justify-center py-[16px] rounded-[8px] w-full text-white text-[16px] font-bold whitespace-nowrap transition-colors duration-200 disabled:opacity-75 disabled:cursor-not-allowed shadow-[0px_10px_15px_-3px_rgba(52,91,121,0.2),0px_4px_6px_-4px_rgba(52,91,121,0.2)] cursor-pointer mt-1"
+                  disabled={isLoading || isSubmitting}
+                  className="bg-[#345b79] hover:bg-[#25465e] flex gap-[8px] items-center justify-center py-[15px] rounded-[12px] w-full text-white text-[15px] font-bold whitespace-nowrap transition-colors duration-200 disabled:opacity-75 disabled:cursor-not-allowed shadow-md cursor-pointer mt-1"
                   data-node-id="9:293"
                 >
-                  {isSubmitting ? (
+                  {(isLoading || isSubmitting) ? (
                     <div className="flex items-center gap-2">
-                      <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
+                      <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       <span>Sending link...</span>
                     </div>
                   ) : (
                     <>
-                      <img alt="Send Link Icon" className="w-[20px] h-[20px] object-contain" src={'/svg/arrow-send.svg'} />
+                      <img alt="Send Link Icon" className="size-[18px] object-contain filter invert" src="/svg/arrow-send.svg" />
                       <span data-node-id="9:297">Send Reset Link</span>
                     </>
                   )}
@@ -314,31 +350,27 @@ const ForgotPasswordPage = () => {
 
               {/* Informational Warning box */}
               <div 
-                className="bg-[rgba(252,249,248,0.5)] border border-[#e2e8f0] border-solid flex gap-[12px] items-start p-[21px] rounded-[16px] w-full select-none" 
+                className="bg-white/60 border border-[#e2e8f0] flex gap-[12px] items-start p-[16px] rounded-[16px] w-full select-none shadow-sm" 
                 data-node-id="9:301"
               >
-                <div className="shrink-0" data-node-id="9:302">
-                  <img alt="Clock Icon" className="w-[24px] h-[24px] object-contain" src={'/svg/clock.svg'} />
-                </div>
-                <div className="flex-1" data-node-id="9:304">
-                  <p className="text-[#475569] text-[14px] font-normal leading-[20px]" data-node-id="9:305">
-                    The reset link is valid for <span className="font-bold text-[#1e293b]">15 minutes</span>. Check your spam folder if you do not see the email within 2 minutes.
-                  </p>
-                </div>
+                <img alt="Clock Icon" className="size-[20px] object-contain shrink-0 mt-0.5" src="/svg/clock.svg" />
+                <p className="text-[#475569] text-[13px] font-normal leading-[18px]">
+                  The reset link is valid for <span className="font-bold text-[#1e293b]">15 minutes</span>. Check your spam folder if you do not see the email within 2 minutes.
+                </p>
               </div>
 
               {/* Links and Redirects */}
-              <div className="flex flex-col gap-[12px] items-start w-full select-none" data-node-id="9:306" data-name="Footer Links">
-                <div className="flex flex-col items-center w-full" data-node-id="9:307">
-                  <span className="text-[#64748b] text-[14px] font-normal leading-[20px]" data-node-id="9:308">
+              <div className="flex flex-col gap-[10px] items-start w-full select-none" data-node-id="9:306" data-name="Footer Links">
+                <div className="flex flex-col items-center w-full">
+                  <span className="text-[#64748b] text-[14px] font-normal leading-[20px]">
                     Remembered your password?{' '}
                     <Link to="/auth/login" className="font-bold text-[#345b79] hover:underline">
                       Sign In
                     </Link>
                   </span>
                 </div>
-                <div className="flex flex-col items-center w-full" data-node-id="9:309">
-                  <span className="text-[#64748b] text-[14px] font-normal leading-[20px]" data-node-id="9:310">
+                <div className="flex flex-col items-center w-full">
+                  <span className="text-[#64748b] text-[14px] font-normal leading-[20px]">
                     Don't have an account?{' '}
                     <Link to="/auth/register" className="font-bold text-[#be5d3f] hover:underline">
                       Register Free
