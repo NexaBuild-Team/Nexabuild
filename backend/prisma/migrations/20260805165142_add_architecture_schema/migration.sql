@@ -40,8 +40,6 @@ ADD COLUMN     "reviewCount" INTEGER NOT NULL,
 ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL,
 ADD COLUMN     "yearsExperience" INTEGER NOT NULL;
 
--- DropTable
-DROP TABLE "Land";
 
 -- CreateTable
 CREATE TABLE "CompanySpecialization" (
