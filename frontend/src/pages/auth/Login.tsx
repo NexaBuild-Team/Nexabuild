@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { authService } from '../../services/authService';
 
 // ─── Backend Interfaces ─────────────────────────────────────────────────────
 
@@ -39,6 +40,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   error = null,
   onSubmit
 }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -80,7 +82,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -88,10 +90,20 @@ const LoginPage: React.FC<LoginPageProps> = ({
       onSubmit({ email, password, rememberMe });
     } else {
       setIsSubmitting(true);
-      setTimeout(() => {
+      setErrors({});
+      try {
+        await authService.login({ email, password });
         setIsSubmitting(false);
         setIsSuccess(true);
-      }, 1200);
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setErrors({
+          auth: err.response?.data?.message || 'Invalid email or password. Please try again.',
+        });
+      }
     }
   };
 
@@ -245,6 +257,13 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
               {/* Separator line */}
               <div className="w-full h-px border-t border-[#c2c7ce] mt-6" data-node-id="4:103" />
+
+              {/* Auth error message */}
+              {errors.auth && (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mt-4">
+                  {errors.auth}
+                </div>
+              )}
 
               {/* Inputs Form */}
               <div className="flex flex-col gap-[20px] items-start w-full mt-6" data-node-id="4:104" data-name="Login Form">
