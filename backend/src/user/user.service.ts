@@ -68,4 +68,23 @@ export class UserService {
     const { password, ...result } = updatedUser;
     return result;
   }
+
+  async getDashboardStats(userId: string) {
+    const user = await this.findById(userId);
+    const totalUsers = await this.prisma.user.count();
+    let totalProperties = 0;
+    try {
+      totalProperties = await this.prisma.property.count();
+    } catch {
+      totalProperties = 0;
+    }
+
+    return {
+      user,
+      systemStats: {
+        totalUsers,
+        totalProperties,
+      },
+    };
+  }
 }

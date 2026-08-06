@@ -14,6 +14,12 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('dashboard-stats')
+  getDashboardStats(@Req() req: any) {
+    return this.userService.getDashboardStats(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch('me')
   updateProfile(@Req() req: any, @Body() dto: UpdateUserDto) {
     return this.userService.updateUser(req.user.id, dto);
