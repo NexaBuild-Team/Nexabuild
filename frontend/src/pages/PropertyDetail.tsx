@@ -1,7 +1,7 @@
-import { useState, lazy, Suspense } from 'react'
-import { Link, useParams, Navigate } from 'react-router'
+import { useState, lazy, Suspense, useEffect } from 'react'
+import { Link, useParams, useNavigate, useLocation } from 'react-router'
 
-import { getPropertyById, getSimilarProperties, type RecommendedProperty } from '../data/recommendedProperties'
+import { fetchAllProperties, fetchPropertyById, type MappedProperty } from '../services/propertyService'
 
 const PropertyLocationMap = lazy(() => import('../components/PropertyLocationMap'))
 
@@ -58,19 +58,19 @@ function MatchScoreRing({ score }: { score: number }) {
   )
 }
 
-function SimilarPropertyCard({ property }: { property: RecommendedProperty }) {
+function SimilarPropertyCard({ property, fromAI }: { property: MappedProperty; fromAI: boolean }) {
   const [fav, setFav] = useState(false)
 
   return (
-    <Link to={`/property-detail/${property.id}`} className="block no-underline">
+    <Link to={`/property-detail/${property.id}`} state={{ fromAI }} className="block no-underline">
     <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
       <div className="relative h-44">
         <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
         <span
           className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase"
-          style={{ backgroundColor: '#be5d3f' }}
+          style={{ backgroundColor: property.badgeColor }}
         >
-          For Sale
+          {property.badge}
         </span>
         <button
           onClick={(e) => { e.preventDefault(); setFav(!fav) }}
@@ -99,17 +99,64 @@ function SimilarPropertyCard({ property }: { property: RecommendedProperty }) {
 
 export default function PropertyDetail() {
   const { id } = useParams<{ id: string }>()
-  const property = getPropertyById(Number(id))
-  const [saved, setSaved] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  // fromAI is true only when navigated from an AI-powered page (PropertyListingAI / PropertyAIrecommended)
+  const fromAI = (location.state as { fromAI?: boolean } | null)?.fromAI ?? false
+  const [property,   setProperty]   = useState<MappedProperty | null>(null)
+  const [similar,    setSimilar]    = useState<MappedProperty[]>([])
+  const [isLoading,  setIsLoading]  = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  const [saved,      setSaved]      = useState(false)
   const [agentSaved, setAgentSaved] = useState(false)
 
-  if (!property) {
-    return <Navigate to="/property-ai-recommended" replace />
+  useEffect(() => {
+    if (!id) return
+    setIsLoading(true)
+    fetchPropertyById(id)
+      .then(async (p) => {
+        setProperty(p)
+        setFetchError(null)
+        // fetch similar: all properties excluding this one, limit 3
+        const all = await fetchAllProperties()
+        setSimilar(all.filter((x) => x.id !== p.id).slice(0, 3))
+      })
+      .catch(() => setFetchError('Property not found or backend is unreachable.'))
+      .finally(() => setIsLoading(false))
+  }, [id])
+
+  // ── Loading state ──
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#e6e0d4] flex items-center justify-center" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
+        <div className="text-center">
+          <svg className="w-10 h-10 animate-spin mx-auto mb-4 text-[#345b79]" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          <p className="text-sm font-semibold text-[#928d64]">Loading property…</p>
+        </div>
+      </div>
+    )
   }
 
-  const similarProperties = getSimilarProperties(property.id)
-  const galleryMain = property.gallery[0]
-  const galleryMid = property.gallery[1] ?? property.gallery[0]
+  // ── Error / not found state ──
+  if (fetchError || !property) {
+    return (
+      <div className="min-h-screen bg-[#e6e0d4] flex items-center justify-center" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
+        <div className="bg-white rounded-2xl shadow p-12 text-center max-w-sm">
+          <p className="font-bold text-[#1d1d1d] mb-2">Property not found</p>
+          <p className="text-xs text-[#928d64] mb-6">{fetchError}</p>
+          <button onClick={() => navigate('/property-listing')} className="text-sm font-bold px-6 py-2.5 rounded-xl text-white" style={{ backgroundColor: '#345b79' }}>
+            Back to Listings
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const galleryMain  = property.gallery[0]
+  const galleryMid   = property.gallery[1] ?? property.gallery[0]
   const gallerySmall = property.gallery[2] ?? property.gallery[0]
   const galleryExtra = property.gallery[3]
 
@@ -330,12 +377,14 @@ export default function PropertyDetail() {
                   </button>
                 </div>
 
-                {/* AI Match Score */}
-                <div className="rounded-2xl shadow-sm p-6 text-center" style={{ backgroundColor: '#345b79' }}>
-                  <MatchScoreRing score={property.matchScore} />
-                  <p className="text-white font-bold text-sm mt-3">AI Match Score</p>
-                  <p className="text-xs mt-1" style={{ color: 'rgba(230,224,212,0.75)' }}>Based on your preferences</p>
-                </div>
+                {/* AI Match Score — only shown when arrived from an AI page */}
+                {fromAI && (
+                  <div className="rounded-2xl shadow-sm p-6 text-center" style={{ backgroundColor: '#345b79' }}>
+                    <MatchScoreRing score={property.matchScore} />
+                    <p className="text-white font-bold text-sm mt-3">AI Match Score</p>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(230,224,212,0.75)' }}>Based on your preferences</p>
+                  </div>
+                )}
 
                 {/* Agent Card */}
                 <div className="bg-white rounded-2xl shadow-sm p-5">
@@ -391,12 +440,14 @@ export default function PropertyDetail() {
                     Save Property
                   </button>
 
-                  <div
-                    className="mt-4 text-center text-xs font-bold text-white py-2 rounded-lg"
-                    style={{ backgroundColor: '#345b79' }}
-                  >
-                    AI Match Score {property.matchScore}%
-                  </div>
+                  {fromAI && (
+                    <div
+                      className="mt-4 text-center text-xs font-bold text-white py-2 rounded-lg"
+                      style={{ backgroundColor: '#345b79' }}
+                    >
+                      AI Match Score {property.matchScore}%
+                    </div>
+                  )}
                 </div>
 
                 {/* Property Details */}
@@ -435,8 +486,8 @@ export default function PropertyDetail() {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {similarProperties.map((property) => (
-                <SimilarPropertyCard key={property.id} property={property} />
+              {similar.map((property) => (
+                <SimilarPropertyCard key={property.id} property={property} fromAI={fromAI} />
               ))}
             </div>
           </div>

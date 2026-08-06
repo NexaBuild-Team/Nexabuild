@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
-import { allPropertiesPool, type RecommendedProperty } from '../data/recommendedProperties'
+import { fetchAllProperties, type MappedProperty } from '../services/propertyService'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Primary Brick Accent : #be5d3f  |  Primary Blue  : #345b79
@@ -10,7 +10,7 @@ import { allPropertiesPool, type RecommendedProperty } from '../data/recommended
 // Olive Accent         : #928d64  |  Dark Text     : #1d1d1d
 // Green Accent         : #495d38
 
-type AIProperty = RecommendedProperty
+type AIProperty = MappedProperty
 
 // ─── Full Property Pool ───────────────────────────────────────────────────────
 // (imported from shared data — see data/recommendedProperties.ts)
@@ -224,7 +224,7 @@ function RecommendedCard({
         </div>
 
         <button
-          onClick={() => navigate(`/property-detail/${property.id}`)}
+          onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
           className="mt-3 w-full text-xs font-bold py-2 rounded-lg text-white transition-all hover:opacity-90"
           style={{ backgroundColor: '#345b79' }}
         >
@@ -275,7 +275,7 @@ function BrowseCard({ property }: { property: AIProperty }) {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate(`/property-detail/${property.id}`)}
+            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
             className="flex-1 text-[10px] font-bold py-1.5 rounded-lg text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
@@ -321,12 +321,12 @@ export default function PropertyListingAI() {
   )
   const initType      = searchParams.get('type')      ?? ''
   const initBeds      = searchParams.get('beds')      ?? ''
-  const initMinBudget = searchParams.get('minBudget') ?? ''
-  const initMaxBudget = searchParams.get('maxBudget') ?? ''
+  const initMinBudget = parseInt(searchParams.get('minBudget') ?? '0', 10)
+  const initMaxBudget = parseInt(searchParams.get('maxBudget') ?? '500', 10)
   const initQuery     = searchParams.get('query')     ?? ''
 
   const hasIncomingFilters =
-    initDistricts.length > 0 || initType || initBeds || initMinBudget || initMaxBudget || initQuery
+    initDistricts.length > 0 || initType || initBeds || initMinBudget > 0 || initMaxBudget < 500 || initQuery
 
   // ── Local filter state — seeded from URL params ──
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>(
@@ -337,8 +337,15 @@ export default function PropertyListingAI() {
     const idx = BED_OPTIONS.indexOf(initBeds)
     return idx >= 0 ? idx : 0
   })
-  const [minBudget, setMinBudget] = useState(initMinBudget)
-  const [maxBudget, setMaxBudget] = useState(initMaxBudget)
+  
+  const SLIDER_MAX = 500
+  const [minBudgetM, setMinBudgetM] = useState(isNaN(initMinBudget) ? 0 : initMinBudget)
+  const [maxBudgetM, setMaxBudgetM] = useState(isNaN(initMaxBudget) ? SLIDER_MAX : initMaxBudget)
+  
+  const [heroLocation, setHeroLocation] = useState(() => {
+    if (initDistricts.length > 0) return initDistricts.join(', ')
+    return initQuery
+  })
   const [searchQuery, setSearchQuery] = useState(initQuery)
 
   // Clear a single URL param chip
@@ -346,23 +353,55 @@ export default function PropertyListingAI() {
     const next = new URLSearchParams(searchParams)
     next.delete(key)
     setSearchParams(next)
-    if (key === 'districts') setSelectedDistricts([])
+    if (key === 'districts') { setSelectedDistricts([]); setHeroLocation('') }
     if (key === 'type')      setPropertyTypeFilter('All Types')
     if (key === 'beds')      setSelectedBedIndex(0)
-    if (key === 'minBudget') setMinBudget('')
-    if (key === 'maxBudget') setMaxBudget('')
-    if (key === 'query')     setSearchQuery('')
+    if (key === 'minBudget') setMinBudgetM(0)
+    if (key === 'maxBudget') setMaxBudgetM(SLIDER_MAX)
+    if (key === 'query')     { setSearchQuery(''); setHeroLocation('') }
+  }
+
+  const setDistrictsAndHero = (districts: string[]) => {
+    setSelectedDistricts(districts)
+    setHeroLocation(districts.length === 1 ? districts[0] : districts.join(', '))
+    setSearchQuery('')
   }
 
   const toggleDistrict = (d: string) => {
-    setSelectedDistricts(prev =>
-      prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]
-    )
+    const next = selectedDistricts.includes(d) ? selectedDistricts.filter(x => x !== d) : [...selectedDistricts, d]
+    setDistrictsAndHero(next)
   }
+
+  const handleHeroSearch = () => {
+    const raw = heroLocation.trim()
+    const parts = raw.split(',').map(s => s.trim()).filter(Boolean)
+    const matchedDistricts = parts.filter(p =>
+      ALL_DISTRICTS.some(d => d.toLowerCase() === p.toLowerCase())
+    ).map(p => ALL_DISTRICTS.find(d => d.toLowerCase() === p.toLowerCase())!)
+
+    if (matchedDistricts.length > 0) {
+      setSelectedDistricts(matchedDistricts)
+      setSearchQuery('')
+    } else {
+      setSelectedDistricts([])
+      setSearchQuery(raw)
+    }
+  }
+
+  // ── API data ──
+  const [propertyPool,  setPropertyPool]  = useState<AIProperty[]>([])
+  const [_isLoadingData, setIsLoadingData] = useState(true)
+
+  useEffect(() => {
+    fetchAllProperties()
+      .then(setPropertyPool)
+      .catch(() => setPropertyPool([]))
+      .finally(() => setIsLoadingData(false))
+  }, [])
 
   // ── Derived filter logic ───────────────────────────────────────────────────
   const filteredPool = useMemo(() => {
-    return allPropertiesPool.filter(p => {
+    return propertyPool.filter(p => {
       // District filter
       if (selectedDistricts.length > 0 && !selectedDistricts.includes(p.district)) return false
 
@@ -377,15 +416,10 @@ export default function PropertyListingAI() {
         else                   { if (p.beds !== required) return false }
       }
 
-      // Budget filter (parse raw LKR numbers from input strings)
-      if (minBudget) {
-        const min = parseFloat(minBudget.replace(/[^0-9.]/g, '')) * 1_000_000
-        if (!isNaN(min) && p.priceNum < min) return false
-      }
-      if (maxBudget) {
-        const max = parseFloat(maxBudget.replace(/[^0-9.]/g, '')) * 1_000_000
-        if (!isNaN(max) && p.priceNum > max) return false
-      }
+      // Budget filter (in millions)
+      const pM = p.priceNum / 1_000_000
+      if (minBudgetM > 0 && pM < minBudgetM) return false
+      if (maxBudgetM < SLIDER_MAX && pM > maxBudgetM) return false
 
       // Text search
       if (searchQuery) {
@@ -397,7 +431,7 @@ export default function PropertyListingAI() {
     })
     // Sort by match score descending
     .sort((a, b) => b.matchScore - a.matchScore)
-  }, [selectedDistricts, propertyTypeFilter, selectedBedIndex, minBudget, maxBudget, searchQuery])
+  }, [propertyPool, selectedDistricts, propertyTypeFilter, selectedBedIndex, minBudgetM, maxBudgetM, searchQuery])
 
   // ── AI Preference state ──────────────────────────────────────────────────
   const [aiPrefs, setAiPrefs] = useState<Record<string, string[]>>({
@@ -420,80 +454,131 @@ export default function PropertyListingAI() {
 
   // ── AI scoring engine ─────────────────────────────────────────────────────
   const scoreWithAI = (p: AIProperty): number => {
-    if (!hasGenerated) return p.matchScore
-    let score = 32
+    if (!hasGenerated || totalSelected === 0) return p.matchScore
+    
+    // Start with the base match score (which is already based on hard filters)
+    let score = p.matchScore
     const { purpose, features, lifestyle, priority } = aiPrefs
 
     // Purpose scoring
     if (purpose.includes('Investment')) {
-      if (p.priceNum > 80_000_000)                        score += 18
-      if (['Colombo', 'Galle'].includes(p.district))     score += 8
+      if (p.isInvestment) score += 12
+      else score -= 5
     }
     if (purpose.includes('Own Home')) {
-      if (p.beds >= 3)                                    score += 10
-      if (['House', 'Villa'].includes(p.type))            score += 12
+      if (p.isOwnHome) score += 10
+      else score -= 5
     }
     if (purpose.includes('Vacation Home')) {
-      if (p.district === 'Galle')                         score += 22
-      if (p.type === 'Villa')                             score += 10
+      if (p.isVacationHome) score += 15
+      else score -= 10
     }
     if (purpose.includes('Rental Income')) {
-      if (p.type === 'Apartment')                         score += 15
-      if (p.district === 'Colombo')                       score += 10
+      if (p.isRentalIncome) score += 12
+      else score -= 5
     }
 
     // Features scoring
-    if (features.includes('Pool') && p.type === 'Villa')                        score += 14
-    if (features.includes('Garden') && ['House','Villa'].includes(p.type))      score += 10
-    if (features.includes('Sea View') && p.district === 'Galle')               score += 16
-    if (features.includes('Modern Kitchen') && p.type === 'Apartment')         score += 12
-    if (features.includes('Security') && p.priceNum > 50_000_000)              score += 8
-    if (features.includes('Parking') && ['Villa','House'].includes(p.type))    score += 8
+    if (features.includes('Pool')) {
+       if (p.hasPool) score += 10 
+       else score -= 15
+    }
+    if (features.includes('Garden')) {
+       if (p.hasGarden) score += 8
+       else score -= 8
+    }
+    if (features.includes('Sea View')) {
+       if (p.hasSeaView) score += 12
+       else score -= 15
+    }
+    if (features.includes('Modern Kitchen')) {
+       if (p.hasModernKitchen) score += 5
+    }
+    if (features.includes('Security')) {
+       if (p.hasSecurity) score += 8
+    }
+    if (features.includes('Parking')) {
+       if (p.parkingSpaces > 0) score += 6
+       else score -= 5
+    }
 
     // Lifestyle scoring
-    if (lifestyle.includes('Urban') && p.district === 'Colombo')               score += 14
-    if (lifestyle.includes('Coastal') && p.district === 'Galle')               score += 18
-    if (lifestyle.includes('Suburban') && ['Negombo','Kandy'].includes(p.district)) score += 12
-    if (lifestyle.includes('Rural') && ['Galle','Kandy'].includes(p.district)) score += 8
-    if (lifestyle.includes('City Center') && p.location.includes('Colombo 3')) score += 16
+    if (lifestyle.includes('Urban')) {
+       if (p.isUrban) score += 8
+    }
+    if (lifestyle.includes('Coastal')) {
+       if (p.isCoastal) score += 10
+       else score -= 10
+    }
+    if (lifestyle.includes('Suburban')) {
+       if (p.isSuburban) score += 8
+    }
+    if (lifestyle.includes('Rural')) {
+       if (p.isRural) score += 8
+    }
+    if (lifestyle.includes('City Center')) {
+       if (p.isCityCenter) score += 10
+       else score -= 5
+    }
 
     // Priority scoring
-    if (priority.includes('Near Schools') && ['Colombo','Kandy'].includes(p.district))   score += 10
-    if (priority.includes('Near Beach') && p.district === 'Galle')                       score += 16
-    if (priority.includes('Quiet Area') && ['Kandy','Galle','Negombo'].includes(p.district)) score += 10
-    if (priority.includes('Near Highway') && ['Negombo','Colombo'].includes(p.district)) score += 8
-    if (priority.includes('Near Hospital') && p.district === 'Colombo')                  score += 8
+    if (priority.includes('Near Schools')) {
+       if (p.isNearSchools) score += 8
+    }
+    if (priority.includes('Near Beach')) {
+       if (p.isNearBeach) score += 12
+       else score -= 15
+    }
+    if (priority.includes('Quiet Area')) {
+       if (p.isQuietArea) score += 10
+       else score -= 8
+    }
+    if (priority.includes('Near Highway')) {
+       if (p.isNearHighway) score += 8
+    }
+    if (priority.includes('Near Hospital')) {
+       if (p.isNearHospital) score += 6 
+    }
 
-    return Math.min(99, score)
+    return Math.max(10, Math.min(99, score))
   }
 
   // ── Dynamic reason generator ──────────────────────────────────────────────
   const reasonWithAI = (p: AIProperty): string => {
-    if (!hasGenerated) return p.reason
+    if (!hasGenerated || totalSelected === 0) return p.reason
     const reasons: string[] = []
     const { purpose, features, lifestyle, priority } = aiPrefs
-    if (purpose.includes('Investment') && p.priceNum > 80_000_000)
-      reasons.push('High-value investment asset')
-    if (purpose.includes('Vacation Home') && p.district === 'Galle')
-      reasons.push('Perfect coastal holiday home')
-    if (purpose.includes('Own Home') && p.beds >= 3)
-      reasons.push(`${p.beds}-bed family residence`)
-    if (purpose.includes('Rental Income') && p.type === 'Apartment')
+    
+    if (purpose.includes('Investment') && p.isInvestment)
+      reasons.push('Excellent investment property')
+    else if (purpose.includes('Investment'))
+      reasons.push('Not ideal for pure investment')
+      
+    if (purpose.includes('Vacation Home') && p.isVacationHome)
+      reasons.push('Perfect holiday retreat')
+      
+    if (purpose.includes('Own Home') && p.isOwnHome)
+      reasons.push('Ideal family home layout')
+      
+    if (purpose.includes('Rental Income') && p.isRentalIncome)
       reasons.push('Strong rental yield potential')
-    if (features.includes('Pool') && p.type === 'Villa')
-      reasons.push('Private pool in a villa setting')
-    if (features.includes('Sea View') && p.district === 'Galle')
-      reasons.push('Sea view from Southern coast')
-    if (features.includes('Garden') && ['House','Villa'].includes(p.type))
-      reasons.push('Garden-ready property')
-    if (lifestyle.includes('Urban') && p.district === 'Colombo')
-      reasons.push('Prime urban Colombo location')
-    if (lifestyle.includes('Coastal') && p.district === 'Galle')
-      reasons.push('Beachfront coastal lifestyle')
-    if (priority.includes('Near Beach') && p.district === 'Galle')
-      reasons.push('Minutes from the beach')
-    if (priority.includes('Quiet Area') && ['Kandy','Negombo'].includes(p.district))
-      reasons.push('Peaceful, low-traffic neighbourhood')
+
+    if (features.includes('Sea View')) {
+      if (!p.hasSeaView) reasons.push('Note: Lacks a sea view')
+      else reasons.push('Beautiful coastal views')
+    }
+      
+    if (lifestyle.includes('City Center') && p.isCityCenter)
+      reasons.push('Prime central location')
+      
+    if (priority.includes('Near Beach')) {
+      if (!p.isNearBeach) reasons.push('Note: Not located near a beach')
+      else reasons.push('Minutes from the beach')
+    }
+    
+    if (priority.includes('Quiet Area') && p.isQuietArea)
+      reasons.push('Peaceful neighbourhood')
+
     if (reasons.length === 0) return p.reason
     return reasons.join(' · ')
   }
@@ -504,23 +589,82 @@ export default function PropertyListingAI() {
       .map(p => ({ ...p, _aiScore: scoreWithAI(p), _aiReason: reasonWithAI(p) }))
       .sort((a, b) => b._aiScore - a._aiScore)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPool, hasGenerated])
+  }, [filteredPool, propertyPool, hasGenerated])
 
   // Top 2 → Recommended, rest → Browse All
   const recommended = scoredPool.slice(0, 2)
   const browseAll   = scoredPool.slice(2)
 
-  const handleGenerate = async () => {
-    if (totalSelected === 0) return
+  // ── Budget preset ranges for the hero dropdown ──
+  const BUDGET_PRESETS = [
+    { label: 'Budget',     min: 0,   max: SLIDER_MAX },
+    { label: 'Under 30M',  min: 0,   max: 30  },
+    { label: '30M – 60M',  min: 30,  max: 60  },
+    { label: '60M – 100M', min: 60,  max: 100 },
+    { label: '100M – 200M',min: 100, max: 200 },
+    { label: 'Above 200M', min: 200, max: SLIDER_MAX },
+  ]
+  const heroBudgetLabel = BUDGET_PRESETS.find(
+    r => r.min === minBudgetM && r.max === maxBudgetM
+  )?.label ?? (minBudgetM > 0 || maxBudgetM < SLIDER_MAX ? `${minBudgetM}M – ${maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}` : 'Budget')
+
+  const runAIRecommendation = async () => {
+    // 1. Apply current filters to URL (shows filtered results immediately)
+    const params = new URLSearchParams()
+    if (selectedDistricts.length > 0) params.set('districts', selectedDistricts.join(','))
+    if (propertyTypeFilter !== 'All Types') params.set('type', propertyTypeFilter)
+    if (BED_OPTIONS[selectedBedIndex] !== 'Any') params.set('beds', BED_OPTIONS[selectedBedIndex])
+    if (minBudgetM > 0) params.set('minBudget', String(minBudgetM))
+    if (maxBudgetM < SLIDER_MAX) params.set('maxBudget', String(maxBudgetM))
+    if (searchQuery) params.set('query', searchQuery)
+    setSearchParams(params)
+
+    // 2. Reset AI state to trigger animation & show filtered results first
+    setHasGenerated(false)
     setIsGenerating(true)
-    await new Promise(resolve => setTimeout(resolve, 1300))
+    
+    // Wait for AI to "analyze"
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // 3. Apply AI filter with AI questions (shows AI score and reason)
     setHasGenerated(true)
     setIsGenerating(false)
   }
 
+  const handleGenerate = async () => {
+    if (totalSelected === 0) return
+    await runAIRecommendation()
+  }
+
   return (
     <>
-   
+      {/* Range slider thumb styles */}
+      <style>{`
+        input[type='range'].appearance-none::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          background: #345b79;
+          border: 2px solid #fff;
+          box-shadow: 0 1px 4px rgba(52,91,121,0.35);
+          cursor: pointer;
+          transition: transform 0.15s, box-shadow 0.15s;
+        }
+        input[type='range'].appearance-none::-webkit-slider-thumb:hover {
+          transform: scale(1.2);
+          box-shadow: 0 2px 8px rgba(52,91,121,0.5);
+        }
+        input[type='range'].appearance-none::-moz-range-thumb {
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          background: #345b79;
+          border: 2px solid #fff;
+          box-shadow: 0 1px 4px rgba(52,91,121,0.35);
+          cursor: pointer;
+        }
+        input[type='range'].appearance-none::-webkit-slider-runnable-track { background: transparent; }
+        input[type='range'].appearance-none::-moz-range-track { background: transparent; }
+      `}</style>
 
       <div className="min-h-screen bg-[#e6e0d4]" style={{ fontFamily: "'Inter', 'Outfit', sans-serif" }}>
 
@@ -553,32 +697,62 @@ export default function PropertyListingAI() {
               <input
                 id="ai-search-location"
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={heroLocation}
+                onChange={(e) => setHeroLocation(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleHeroSearch() }}
                 placeholder="Search by city, district or property name..."
                 className="w-full text-xs outline-none bg-transparent text-[#1d1d1d] placeholder:text-[#ccb7a3]"
               />
             </div>
-            <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5 cursor-pointer flex-shrink-0" style={{ borderColor: '#e6e0d4' }}>
-              <svg className="w-4 h-4 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-              </svg>
-              <span className="text-xs text-[#1d1d1d] font-medium whitespace-nowrap">
-                {propertyTypeFilter && propertyTypeFilter !== 'All Types' ? propertyTypeFilter : 'Property Type'}
-              </span>
-              <ChevronDownIcon cls="w-3.5 h-3.5 text-[#ccb7a3]" />
+            <div className="relative flex-shrink-0">
+              <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5 cursor-pointer h-full" style={{ borderColor: '#e6e0d4' }}>
+                <svg className="w-4 h-4 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                <select
+                  id="ai-hero-type"
+                  value={propertyTypeFilter}
+                  onChange={(e) => setPropertyTypeFilter(e.target.value)}
+                  className="text-xs font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1 h-full"
+                  style={{ color: propertyTypeFilter !== 'All Types' ? '#1d1d1d' : '#928d64' }}
+                >
+                  <option value="All Types">Property Type</option>
+                  <option value="House">House</option>
+                  <option value="Apartment">Apartment</option>
+                  <option value="Villa">Villa</option>
+                  <option value="Commercial">Commercial</option>
+                </select>
+                <ChevronDownIcon cls="w-3.5 h-3.5 text-[#ccb7a3]" />
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5 cursor-pointer flex-shrink-0" style={{ borderColor: '#e6e0d4' }}>
-              <svg className="w-4 h-4 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-xs text-[#1d1d1d] font-medium">
-                {minBudget || maxBudget ? `${minBudget || '0'}–${maxBudget || '∞'} M` : 'Budget'}
-              </span>
-              <ChevronDownIcon cls="w-3.5 h-3.5 text-[#ccb7a3]" />
+            <div className="relative flex-shrink-0">
+              <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5 cursor-pointer h-full" style={{ borderColor: '#e6e0d4' }}>
+                <svg className="w-4 h-4 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <select
+                  id="ai-hero-budget"
+                  value={heroBudgetLabel}
+                  onChange={(e) => {
+                    const preset = BUDGET_PRESETS.find(r => r.label === e.target.value)
+                    if (preset) { setMinBudgetM(preset.min); setMaxBudgetM(preset.max) }
+                  }}
+                  className="text-xs font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1 h-full"
+                  style={{ color: heroBudgetLabel !== 'Budget' ? '#1d1d1d' : '#928d64' }}
+                >
+                  {heroBudgetLabel !== 'Budget' && !BUDGET_PRESETS.some(r => r.label === heroBudgetLabel) && (
+                    <option value={heroBudgetLabel} hidden>{heroBudgetLabel}</option>
+                  )}
+                  {BUDGET_PRESETS.map(r => (
+                    <option key={r.label} value={r.label}>{r.label}</option>
+                  ))}
+                </select>
+                <ChevronDownIcon cls="w-3.5 h-3.5 text-[#ccb7a3]" />
+              </div>
             </div>
             <button
               id="ai-search-btn"
+              onClick={handleHeroSearch}
               className="flex items-center justify-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all hover:opacity-90 shadow whitespace-nowrap flex-shrink-0"
               style={{ backgroundColor: '#be5d3f' }}
             >
@@ -620,10 +794,10 @@ export default function PropertyListingAI() {
             {initBeds && (
               <FilterChip label={`🛏 ${initBeds} Beds`} onRemove={() => clearParam('beds')} />
             )}
-            {initMinBudget && (
+            {initMinBudget > 0 && (
               <FilterChip label={`💰 Min ${initMinBudget}M`} onRemove={() => clearParam('minBudget')} />
             )}
-            {initMaxBudget && (
+            {initMaxBudget < 500 && (
               <FilterChip label={`💰 Max ${initMaxBudget}M`} onRemove={() => clearParam('maxBudget')} />
             )}
             {initQuery && (
@@ -650,11 +824,11 @@ export default function PropertyListingAI() {
                   className="text-[10px] font-semibold hover:opacity-80"
                   style={{ color: '#be5d3f' }}
                   onClick={() => {
-                    setSelectedDistricts([])
+                    setDistrictsAndHero([])
                     setPropertyTypeFilter('All Types')
                     setSelectedBedIndex(0)
-                    setMinBudget('')
-                    setMaxBudget('')
+                    setMinBudgetM(0)
+                    setMaxBudgetM(SLIDER_MAX)
                     setSearchQuery('')
                     setSearchParams(new URLSearchParams())
                   }}
@@ -721,27 +895,56 @@ export default function PropertyListingAI() {
               {/* Budget Range */}
               <div className="mb-4">
                 <h3 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#928d64' }}>Budget Range</h3>
-                <p className="text-[9px] mb-2" style={{ color: '#ccb7a3' }}>LKR (in millions)</p>
-                <div className="flex gap-1.5">
-                  <input
-                    id="ai-min-budget"
-                    type="text"
-                    placeholder="Min"
-                    value={minBudget}
-                    onChange={(e) => setMinBudget(e.target.value)}
-                    className="min-w-0 w-full border rounded-lg px-2 py-1.5 text-[10px] outline-none"
-                    style={{ borderColor: '#e6e0d4', color: '#1d1d1d' }}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-semibold" style={{ color: '#345b79' }}>LKR {minBudgetM}M</span>
+                  <span className="text-[10px] font-semibold" style={{ color: '#345b79' }}>LKR {maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}</span>
+                </div>
+                
+                {/* Dual range slider */}
+                <div className="relative h-5 flex items-center mb-1">
+                  {/* Track */}
+                  <div className="absolute w-full h-1 rounded-full" style={{ backgroundColor: '#e6e0d4' }} />
+                  {/* Active range fill */}
+                  <div
+                    className="absolute h-1 rounded-full pointer-events-none"
+                    style={{
+                      left: `${(minBudgetM / SLIDER_MAX) * 100}%`,
+                      right: `${100 - (maxBudgetM / SLIDER_MAX) * 100}%`,
+                      backgroundColor: '#345b79',
+                    }}
                   />
+                  {/* Min thumb */}
                   <input
-                    id="ai-max-budget"
-                    type="text"
-                    placeholder="Max"
-                    value={maxBudget}
-                    onChange={(e) => setMaxBudget(e.target.value)}
-                    className="min-w-0 w-full border rounded-lg px-2 py-1.5 text-[10px] outline-none"
-                    style={{ borderColor: '#e6e0d4', color: '#1d1d1d' }}
+                    id="ai-slider-min"
+                    type="range"
+                    min={0}
+                    max={SLIDER_MAX}
+                    step={5}
+                    value={minBudgetM}
+                    onChange={(e) => {
+                      const v = Number(e.target.value)
+                      if (v <= maxBudgetM) setMinBudgetM(v)
+                    }}
+                    className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer"
+                    style={{ zIndex: minBudgetM > SLIDER_MAX - 10 ? 5 : 3 }}
+                  />
+                  {/* Max thumb */}
+                  <input
+                    id="ai-slider-max"
+                    type="range"
+                    min={0}
+                    max={SLIDER_MAX}
+                    step={5}
+                    value={maxBudgetM}
+                    onChange={(e) => {
+                      const v = Number(e.target.value)
+                      if (v >= minBudgetM) setMaxBudgetM(v)
+                    }}
+                    className="absolute w-full h-1 appearance-none bg-transparent cursor-pointer"
+                    style={{ zIndex: 4 }}
                   />
                 </div>
+                <p className="text-[9px]" style={{ color: '#ccb7a3' }}>LKR (in millions) · drag both ends</p>
               </div>
 
               <div className="border-t my-3" style={{ borderColor: '#e6e0d4' }} />
@@ -770,6 +973,7 @@ export default function PropertyListingAI() {
               {/* AI Smart Recommend (re-apply) */}
               <button
                 id="ai-smart-recommend-btn"
+                onClick={runAIRecommendation}
                 className="w-full flex items-center justify-center gap-1.5 text-white text-xs font-bold py-2.5 rounded-xl mb-2 transition-all hover:opacity-90 shadow"
                 style={{ background: 'linear-gradient(135deg, #345b79, #6b879c)' }}
               >
@@ -779,6 +983,16 @@ export default function PropertyListingAI() {
 
               <button
                 id="ai-apply-filters-btn"
+                onClick={() => {
+                  const params = new URLSearchParams()
+                  if (selectedDistricts.length > 0) params.set('districts', selectedDistricts.join(','))
+                  if (propertyTypeFilter !== 'All Types') params.set('type', propertyTypeFilter)
+                  if (BED_OPTIONS[selectedBedIndex] !== 'Any') params.set('beds', BED_OPTIONS[selectedBedIndex])
+                  if (minBudgetM > 0) params.set('minBudget', String(minBudgetM))
+                  if (maxBudgetM < SLIDER_MAX) params.set('maxBudget', String(maxBudgetM))
+                  if (searchQuery) params.set('query', searchQuery)
+                  setSearchParams(params)
+                }}
                 className="w-full flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 rounded-xl transition-all hover:opacity-90 border"
                 style={{ color: '#345b79', borderColor: '#345b79' }}
               >
@@ -817,7 +1031,7 @@ export default function PropertyListingAI() {
                     <p className="text-white font-bold text-sm">AI Smart Preference Assistant</p>
                     <p className="text-[10px]" style={{ color: 'rgba(230,224,212,0.70)' }}>
                       {hasIncomingFilters
-                        ? 'Showing results based on your applied filters from Property Search'
+                        ? (filteredPool.length === 0 ? 'No properties match your strict filters.' : 'Showing results based on your applied filters')
                         : 'Tell us about your ideal property to get better recommendations'}
                     </p>
                   </div>
@@ -951,9 +1165,12 @@ export default function PropertyListingAI() {
                     className="mt-4 text-xs font-bold px-5 py-2 rounded-xl text-white transition-all hover:opacity-90"
                     style={{ backgroundColor: '#345b79' }}
                     onClick={() => {
-                      setSelectedDistricts([])
+                      setDistrictsAndHero([])
                       setPropertyTypeFilter('All Types')
                       setSelectedBedIndex(0)
+                      setMinBudgetM(0)
+                      setMaxBudgetM(SLIDER_MAX)
+                      setSearchQuery('')
                       setSearchParams(new URLSearchParams())
                     }}
                   >

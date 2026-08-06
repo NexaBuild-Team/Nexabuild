@@ -1,5 +1,6 @@
-import { useState, lazy, Suspense, useMemo } from 'react'
+import { useState, lazy, Suspense, useMemo, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import { fetchAllProperties, type MappedProperty } from '../services/propertyService'
 
 const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 
@@ -16,83 +17,7 @@ const SriLankaMap = lazy(() => import('../components/SriLankaMap'))
 // Green Accent          : #495d38
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface ListingProperty {
-  id: number
-  image: string
-  badge: string
-  badgeColor: string
-  status: 'FOR SALE' | 'FOR RENT' | 'PREMIUM'
-  statusColor: string
-  price: string
-  priceNum: number          // raw LKR for budget filtering
-  title: string
-  location: string
-  district: string          // e.g. 'Colombo', 'Kandy'
-  type: 'House' | 'Apartment' | 'Villa' | 'Commercial'
-  beds: number
-  baths: number
-  area: string
-  areaUnit: string
-  isFavorite?: boolean
-}
-
-// ─── Sample Property Data ────────────────────────────────────────────────────
-const allProperties: ListingProperty[] = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 85,000,000', priceNum: 85_000_000,
-    title: 'Luxury Villa, Colombo 7',
-    location: 'Colombo, Western Province', district: 'Colombo', type: 'Villa',
-    beds: 4, baths: 3, area: '4,900', areaUnit: 'sq ft',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 32,500,000', priceNum: 32_500_000,
-    title: 'Modern Apartment, Kandy',
-    location: 'Kandy, Central Province', district: 'Kandy', type: 'Apartment',
-    beds: 3, baths: 2, area: '1,800', areaUnit: 'sq ft',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&q=80',
-    badge: 'PREMIUM', badgeColor: '#495d38', status: 'PREMIUM', statusColor: '#495d38',
-    price: 'LKR 125,000,000', priceNum: 125_000_000,
-    title: 'Beachfront Residence, Galle',
-    location: 'Galle, Southern Province', district: 'Galle', type: 'Villa',
-    beds: 5, baths: 4, area: '6,400', areaUnit: 'sq ft', isFavorite: true,
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 55,000,000', priceNum: 55_000_000,
-    title: 'Premium Townhouse, Negombo',
-    location: 'Negombo, Western Province', district: 'Negombo', type: 'House',
-    beds: 3, baths: 2, area: '2,800', areaUnit: 'sq ft',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 48,000,000', priceNum: 48_000_000,
-    title: 'Garden Bungalow, Nugegoda',
-    location: 'Nugegoda, Western Province', district: 'Colombo', type: 'House',
-    beds: 4, baths: 3, area: '3,200', areaUnit: 'sq ft',
-  },
-  {
-    id: 6,
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=600&q=80',
-    badge: 'FOR SALE', badgeColor: '#be5d3f', status: 'FOR SALE', statusColor: '#be5d3f',
-    price: 'LKR 220,000,000', priceNum: 220_000_000,
-    title: 'Penthouse, Colombo 3',
-    location: 'Colombo 3, Western Province', district: 'Colombo', type: 'Apartment',
-    beds: 5, baths: 4, area: '4,200', areaUnit: 'sq ft',
-  },
-]
+type ListingProperty = MappedProperty
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const SearchIcon = () => (
@@ -155,9 +80,13 @@ const XIcon = () => (
 // ─── Property Card ────────────────────────────────────────────────────────────
 function PropertyCard({ property }: { property: ListingProperty }) {
   const [fav, setFav] = useState(property.isFavorite ?? false)
+  const navigate = useNavigate()
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group">
+    <div
+      onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: false } })}
+      className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group"
+    >
       {/* Image */}
       <div className="relative overflow-hidden h-44">
         <img
@@ -168,9 +97,9 @@ function PropertyCard({ property }: { property: ListingProperty }) {
         {/* Status badge top-left */}
         <span
           className="absolute top-2.5 left-2.5 text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase"
-          style={{ backgroundColor: property.statusColor }}
+          style={{ backgroundColor: property.badgeColor }}
         >
-          {property.status}
+          {property.badge}
         </span>
         {/* Favorite button top-right */}
         <button
@@ -204,7 +133,7 @@ function PropertyCard({ property }: { property: ListingProperty }) {
           </span>
           <span className="flex items-center gap-1 ml-auto">
             <AreaIcon />
-            {property.area} {property.areaUnit}
+            {property.area}
           </span>
         </div>
       </div>
@@ -259,6 +188,10 @@ export default function PropertyListing() {
   const initMaxBudget = parseInt(searchParams.get('maxBudget') ?? String(SLIDER_MAX), 10)
 
   // ── Single unified filter state (shared by hero bar + sidebar) ──
+  // heroLocation is the "draft" value shown in the top bar text input.
+  // On Search click it is committed: if it matches a known district name it
+  // sets selectedDistricts; otherwise it is used as a free-text searchQuery.
+  const [heroLocation,      setHeroLocation]      = useState(initQuery)
   const [searchQuery,       setSearchQuery]       = useState(initQuery)
   const [propertyType,      setPropertyType]      = useState(initType || 'All Types')
   const [minBudgetM,        setMinBudgetM]        = useState(isNaN(initMinBudget) ? 0          : initMinBudget)
@@ -266,21 +199,66 @@ export default function PropertyListing() {
   const [selectedBeds,      setSelectedBeds]      = useState('All')
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
   const [currentPage,       setCurrentPage]       = useState(1)
-  const [sortBy,            setSortBy]            = useState('Most Relevant')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const districts     = ['Colombo', 'Kandy', 'Galle', 'Negombo']
-  const propertyTypes = ['All Types', 'House', 'Apartment', 'Villa']
+  const propertyTypes = ['All Types', 'House', 'Apartment', 'Villa', 'Commercial']
   const bedOptions    = ['All', '1', '2', '3', '4', '5+']
 
-  const toggleDistrict = (d: string) =>
-    setSelectedDistricts(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])
+  // When the sidebar location dropdown/pills change, also update the hero text
+  const setDistrictsAndHero = (districts: string[]) => {
+    setSelectedDistricts(districts)
+    setHeroLocation(districts.length === 1 ? districts[0] : districts.join(', '))
+    setSearchQuery('')   // clear free-text when a district is explicitly chosen
+    setCurrentPage(1)
+  }
+
+  const toggleDistrict = (d: string) => {
+    const next = selectedDistricts.includes(d)
+      ? selectedDistricts.filter(x => x !== d)
+      : [...selectedDistricts, d]
+    setDistrictsAndHero(next)
+  }
+
+  // Commit the top-bar inputs into the active filter state
+  const handleSearch = () => {
+    const raw = heroLocation.trim()
+    // Check if the text exactly matches one or more district names (comma-separated)
+    const parts = raw.split(',').map(s => s.trim()).filter(Boolean)
+    const matchedDistricts = parts.filter(p =>
+      districts.some(d => d.toLowerCase() === p.toLowerCase())
+    ).map(p => districts.find(d => d.toLowerCase() === p.toLowerCase())!)
+
+    if (matchedDistricts.length > 0) {
+      setSelectedDistricts(matchedDistricts)
+      setSearchQuery('')     // district filter handles it, no free-text needed
+    } else {
+      setSelectedDistricts([])
+      setSearchQuery(raw)    // use as free-text search
+    }
+    setCurrentPage(1)
+  }
 
   const clearAll = () => {
+    setHeroLocation('')
     setSearchQuery(''); setPropertyType('All Types')
     setMinBudgetM(0); setMaxBudgetM(SLIDER_MAX)
     setSelectedBeds('All'); setSelectedDistricts([]); setCurrentPage(1)
   }
+
+  // ── API data state ──
+  const [allProperties,  setAllProperties]  = useState<ListingProperty[]>([])
+  const [isLoading,      setIsLoading]      = useState(true)
+  const [fetchError,     setFetchError]     = useState<string | null>(null)
+
+  useEffect(() => {
+    setIsLoading(true)
+    fetchAllProperties()
+      .then((data) => { setAllProperties(data); setFetchError(null) })
+      .catch(() => setFetchError('Could not load properties. Please check the backend is running.'))
+      .finally(() => setIsLoading(false))
+  }, [])
+
 
   // ── Unified filtering logic ──
   const filteredProperties = useMemo(() => {
@@ -307,7 +285,7 @@ export default function PropertyListing() {
       }
       return true
     })
-  }, [searchQuery, propertyType, minBudgetM, maxBudgetM, selectedDistricts, selectedBeds])
+  }, [allProperties, searchQuery, propertyType, minBudgetM, maxBudgetM, selectedDistricts, selectedBeds])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -320,7 +298,7 @@ export default function PropertyListing() {
   ]
   const heroBudgetLabel = BUDGET_PRESETS.find(
     r => r.min === minBudgetM && r.max === maxBudgetM
-  )?.label ?? 'Budget'
+  )?.label ?? (minBudgetM > 0 || maxBudgetM < SLIDER_MAX ? `${minBudgetM}M – ${maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}` : 'Budget')
 
   const handleAIRecommend = () => {
     const params = new URLSearchParams()
@@ -396,8 +374,9 @@ export default function PropertyListing() {
               <input
                 id="pl-search-location"
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={heroLocation}
+                onChange={(e) => setHeroLocation(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSearch() }}
                 placeholder="Search by city, district or property name..."
                 className="w-full text-sm outline-none bg-transparent text-[#1d1d1d] placeholder:text-[#ccb7a3]"
               />
@@ -442,6 +421,9 @@ export default function PropertyListing() {
                   className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1"
                   style={{ color: heroBudgetLabel !== 'Budget' ? '#1d1d1d' : '#928d64' }}
                 >
+                  {heroBudgetLabel !== 'Budget' && !BUDGET_PRESETS.some(r => r.label === heroBudgetLabel) && (
+                    <option value={heroBudgetLabel} hidden>{heroBudgetLabel}</option>
+                  )}
                   {BUDGET_PRESETS.map(r => (
                     <option key={r.label} value={r.label}>{r.label}</option>
                   ))}
@@ -453,7 +435,7 @@ export default function PropertyListing() {
             {/* Search Button */}
             <button
               id="pl-search-btn"
-              onClick={() => { setCurrentPage(1) }}
+              onClick={handleSearch}
               className="flex items-center justify-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 shadow whitespace-nowrap flex-shrink-0 active:scale-95"
               style={{ backgroundColor: '#be5d3f' }}
             >
@@ -477,6 +459,71 @@ export default function PropertyListing() {
           </div>
         </div>
       </section>
+
+      {/* ── Active Filters Summary Bar ── */}
+      {(searchQuery || selectedDistricts.length > 0 || propertyType !== 'All Types' ||
+        minBudgetM > 0 || maxBudgetM < SLIDER_MAX || selectedBeds !== 'All') && (
+        <div className="border-b" style={{ backgroundColor: '#fff', borderColor: '#e6e0d4' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" style={{ color: '#345b79' }}>
+              <SparklesIcon />
+              Active Filters:
+            </span>
+
+            {selectedDistricts.map(d => (
+              <span key={d} className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.12)', color: '#345b79' }}>
+                📍 {d}
+                <button onClick={() => setDistrictsAndHero(selectedDistricts.filter(x => x !== d))} className="opacity-60 hover:opacity-100 ml-0.5">
+                  <XIcon />
+                </button>
+              </span>
+            ))}
+
+            {searchQuery && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.12)', color: '#345b79' }}>
+                🔍 "{searchQuery}"
+                <button onClick={() => { setSearchQuery(''); setHeroLocation('') }} className="opacity-60 hover:opacity-100 ml-0.5">
+                  <XIcon />
+                </button>
+              </span>
+            )}
+
+            {propertyType !== 'All Types' && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.12)', color: '#345b79' }}>
+                🏠 {propertyType}
+                <button onClick={() => setPropertyType('All Types')} className="opacity-60 hover:opacity-100 ml-0.5">
+                  <XIcon />
+                </button>
+              </span>
+            )}
+
+            {(minBudgetM > 0 || maxBudgetM < SLIDER_MAX) && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.12)', color: '#345b79' }}>
+                💰 LKR {minBudgetM}M – {maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}
+                <button onClick={() => { setMinBudgetM(0); setMaxBudgetM(SLIDER_MAX) }} className="opacity-60 hover:opacity-100 ml-0.5">
+                  <XIcon />
+                </button>
+              </span>
+            )}
+
+            {selectedBeds !== 'All' && (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.12)', color: '#345b79' }}>
+                🛏 {selectedBeds} Bed{selectedBeds !== '1' ? 's' : ''}
+                <button onClick={() => setSelectedBeds('All')} className="opacity-60 hover:opacity-100 ml-0.5">
+                  <XIcon />
+                </button>
+              </span>
+            )}
+
+            <span className="ml-auto text-[10px] font-semibold" style={{ color: '#928d64' }}>
+              {filteredProperties.length} result{filteredProperties.length !== 1 ? 's' : ''}
+            </span>
+            <button onClick={clearAll} className="text-[10px] font-bold underline hover:opacity-70" style={{ color: '#be5d3f' }}>
+              Clear All
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Main Content: Filters + Listings ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -515,11 +562,9 @@ export default function PropertyListing() {
                   id="pl-sidebar-location"
                   value={selectedDistricts.length === 1 ? selectedDistricts[0] : ''}
                   onChange={(e) => {
-                    if (e.target.value === '') {
-                      setSelectedDistricts([])
-                    } else {
-                      setSelectedDistricts([e.target.value])
-                    }
+                    const val = e.target.value
+                    const next = val === '' ? [] : [val]
+                    setDistrictsAndHero(next)
                   }}
                   className="w-full border rounded-lg px-3 py-2 text-xs outline-none mb-3"
                   style={{
@@ -707,20 +752,54 @@ export default function PropertyListing() {
                   className="flex items-center gap-1.5 border rounded-lg px-3 py-1.5 cursor-pointer text-xs font-semibold"
                   style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}
                 >
-                  {sortBy}
+                  Most Relevant
                   <ChevronDownIcon />
                 </div>
               </div>
             </div>
 
+            {/* Loading state */}
+            {isLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl overflow-hidden shadow animate-pulse">
+                    <div className="h-44 bg-[#e6e0d4]" />
+                    <div className="p-3.5 space-y-2">
+                      <div className="h-3 bg-[#e6e0d4] rounded w-1/2" />
+                      <div className="h-4 bg-[#e6e0d4] rounded w-3/4" />
+                      <div className="h-3 bg-[#e6e0d4] rounded w-2/3" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Error state */}
+            {!isLoading && fetchError && (
+              <div className="bg-white rounded-2xl shadow p-14 text-center">
+                <svg className="w-10 h-10 mx-auto mb-3 text-[#be5d3f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <p className="font-semibold text-sm mb-1" style={{ color: '#1d1d1d' }}>Failed to load properties</p>
+                <p className="text-xs mb-5" style={{ color: '#928d64' }}>{fetchError}</p>
+                <button
+                  onClick={() => { setIsLoading(true); fetchAllProperties().then(setAllProperties).catch(() => setFetchError(fetchError)).finally(() => setIsLoading(false)) }}
+                  className="text-xs font-bold px-6 py-2.5 rounded-xl text-white transition-all hover:opacity-90"
+                  style={{ backgroundColor: '#345b79' }}
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             {/* 3-column grid */}
-            {filteredProperties.length > 0 ? (
+            {!isLoading && !fetchError && filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {filteredProperties.map((p) => (
                   <PropertyCard key={p.id} property={p} />
                 ))}
               </div>
-            ) : (
+            ) : !isLoading && !fetchError && filteredProperties.length === 0 ? (
               <div className="bg-white rounded-2xl shadow p-14 text-center">
                 <svg className="w-10 h-10 mx-auto mb-3 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -728,22 +807,14 @@ export default function PropertyListing() {
                 <p className="font-semibold text-sm mb-1" style={{ color: '#1d1d1d' }}>No properties match your filters</p>
                 <p className="text-xs mb-5" style={{ color: '#928d64' }}>Try adjusting your search criteria or clearing some filters.</p>
                 <button
-                  onClick={() => {
-                                      setSearchQuery('');
-                                      setPropertyType('All Types');
-                                      setMinBudgetM(0);
-                                      setMaxBudgetM(SLIDER_MAX);
-                                      setSelectedBeds('All');
-                                      setSelectedDistricts([]);
-                                      setCurrentPage(1);
-}}
+                  onClick={() => { setSearchQuery(''); setPropertyType('All Types'); setMinBudgetM(0); setMaxBudgetM(SLIDER_MAX); setSelectedBeds('All'); setSelectedDistricts([]); setCurrentPage(1) }}
                   className="text-xs font-bold px-6 py-2.5 rounded-xl text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: '#345b79' }}
                 >
                   Clear All Filters
                 </button>
               </div>
-            )}
+            ) : null}
 
             {/* Pagination — only when results exist */}
             {filteredProperties.length > 0 && (

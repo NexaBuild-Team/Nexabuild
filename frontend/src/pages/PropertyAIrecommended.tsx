@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 
-import { recommendedProperties, type RecommendedProperty } from '../data/recommendedProperties'
+import { fetchAllProperties, type MappedProperty } from '../services/propertyService'
 
 const matchMetrics = [
   { label: 'Budget Match', value: 96, detail: 'Within range', icon: 'wallet' },
@@ -103,7 +103,7 @@ function MatchScoreRing({ score }: { score: number }) {
 }
 
 // ─── Property Card ────────────────────────────────────────────────────────────
-function PropertyCard({ property }: { property: RecommendedProperty }) {
+function PropertyCard({ property }: { property: MappedProperty }) {
   const [fav, setFav] = useState(false)
   const navigate = useNavigate()
 
@@ -176,7 +176,7 @@ function PropertyCard({ property }: { property: RecommendedProperty }) {
 
         <div className="flex gap-3 mt-auto">
           <button
-            onClick={() => navigate(`/property-detail/${property.id}`)}
+            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
             className="flex-1 text-sm font-bold py-3 rounded-xl text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
@@ -203,6 +203,26 @@ export default function PropertyAIrecommended() {
   const [budgetMax, setBudgetMax] = useState(100)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
+  // ── API state ──
+  const [topProperties, setTopProperties] = useState<MappedProperty[]>([])
+  const [isLoading,     setIsLoading]     = useState(true)
+  const [fetchError,    setFetchError]    = useState<string | null>(null)
+
+  const loadProperties = () => {
+    setIsLoading(true)
+    fetchAllProperties()
+      .then((all) => {
+        // Sort by matchScore desc, take top 3
+        const top3 = [...all].sort((a, b) => b.matchScore - a.matchScore).slice(0, 3)
+        setTopProperties(top3)
+        setFetchError(null)
+      })
+      .catch(() => setFetchError('Could not load recommendations. Is the backend running?'))
+      .finally(() => setIsLoading(false))
+  }
+
+  useEffect(() => { loadProperties() }, [])
+
   const toggleLocation = (loc: string) => {
     setSelectedLocations((prev) =>
       prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc]
@@ -217,6 +237,7 @@ export default function PropertyAIrecommended() {
 
   const handleRerunAnalysis = async () => {
     setIsAnalyzing(true)
+    loadProperties()
     await new Promise((resolve) => setTimeout(resolve, 1500))
     setIsAnalyzing(false)
   }
@@ -473,7 +494,28 @@ export default function PropertyAIrecommended() {
               </div>
 
               <div className="space-y-5">
-                {recommendedProperties.map((property) => (
+                {isLoading && (
+                  <div className="space-y-5">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-md animate-pulse flex flex-col lg:flex-row" style={{ minHeight: '280px' }}>
+                        <div className="lg:w-[42%] bg-[#e6e0d4] h-56 lg:h-auto" />
+                        <div className="flex-1 p-6 space-y-3">
+                          <div className="h-5 bg-[#e6e0d4] rounded w-1/3" />
+                          <div className="h-6 bg-[#e6e0d4] rounded w-2/3" />
+                          <div className="h-4 bg-[#e6e0d4] rounded w-1/2" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {!isLoading && fetchError && (
+                  <div className="bg-white rounded-2xl p-10 text-center shadow">
+                    <p className="font-bold text-[#1d1d1d] mb-1">Failed to load</p>
+                    <p className="text-xs text-[#928d64] mb-4">{fetchError}</p>
+                    <button onClick={loadProperties} className="text-xs font-bold px-5 py-2 rounded-xl text-white" style={{ backgroundColor: '#345b79' }}>Retry</button>
+                  </div>
+                )}
+                {!isLoading && !fetchError && topProperties.map((property) => (
                   <PropertyCard key={property.id} property={property} />
                 ))}
               </div>
