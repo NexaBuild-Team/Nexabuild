@@ -1,355 +1,681 @@
 // src/pages/DesignsPage.tsx
 // Route: /designs
-// House design gallery with live search, style filter dropdown, and save/favorite toggle
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router'
+// Architect Profile View — Silva & Associates Architecture
 
+import { Link, } from 'react-router'
+import { architectFirms, houseDesigns } from '../services/architectureMockData'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 
-import { houseDesigns, type HouseDesign } from '../services/architectureMockData'
-
-const STYLE_OPTIONS = ['All Styles', 'Modern', 'Minimalist', 'Luxury', 'Sustainable', 'Colonial']
-const LOCATION_PILLS = ['All', 'Colombo', 'Kandy', 'Galle', 'Negombo', 'Coastal']
-
-function DesignCard({
-  design,
-  onToggleSave,
-}: {
-  design: HouseDesign
-  onToggleSave: (id: string) => void
-}) {
-  return (
-    <article
-      className="nb-card-hover nb-card-shadow rounded-2xl overflow-hidden group"
-      style={{ background: '#fff', border: '1px solid #ccb7a3' }}
-    >
-      {/* Image */}
-      <div className="relative h-52 overflow-hidden">
-        <img
-          src={design.imageUrl}
-          alt={design.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Style badge */}
-        <span
-          className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold"
-          style={{ background: 'rgba(29,29,29,0.72)', color: '#fff', backdropFilter: 'blur(4px)' }}
-        >
-          {design.style}
-        </span>
-
-        {/* Save / Heart button — brick when saved, white when not */}
-        <button
-          id={`save-design-${design.id}`}
-          onClick={() => onToggleSave(design.id)}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
-          style={{
-            background: design.saved ? '#be5d3f' : 'rgba(255,255,255,0.88)',
-            backdropFilter: 'blur(4px)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-          title={design.saved ? 'Remove from saved' : 'Save design'}
-          aria-label={design.saved ? `Remove ${design.title} from saved` : `Save ${design.title}`}
-        >
-          <svg
-            className="w-4 h-4"
-            fill={design.saved ? '#fff' : 'none'}
-            stroke={design.saved ? '#fff' : '#be5d3f'}
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+// Custom high-precision SVG pin icon builder
+const customMarkerIcon = new L.DivIcon({
+  html: `<div class="flex items-center justify-center">
+          <svg class="w-8 h-8 text-[#be5d3f] drop-shadow-md" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           </svg>
-        </button>
-      </div>
+         </div>`,
+  className: 'custom-pin-container',
+  popupAnchor: [0, -10]
+});
 
-      {/* Details */}
-      <div className="p-5">
-        <Link to={`/designs/${design.id}`} className="hover:underline">
-          <h3 className="font-semibold text-base mb-1" style={{ color: '#1d1d1d' }}>
-            {design.title}
-          </h3>
-        </Link>
 
-        <p className="text-xs mb-3" style={{ color: '#928d64' }}>
-          by {design.architectName} · {design.architectFirm}
-        </p>
 
-        {/* Stats row */}
-        <div className="flex items-center gap-3 text-xs mb-4" style={{ color: '#6b879c' }}>
-          <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            {design.bedrooms} Beds
-          </span>
-          <span>·</span>
-          <span>{design.bathrooms} Baths</span>
-          <span>·</span>
-          <span>{design.sqft.toLocaleString()} sqft</span>
-          <span>·</span>
-          <span className="flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
-            {design.location}
-          </span>
-        </div>
+// ─── Static data ──────────────────────────────────────────────────────────────
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {design.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2.5 py-0.5 rounded-full text-xs"
-              style={{ background: '#e6e0d4', color: '#345b79' }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+const firm = architectFirms.find((f) => f.id === 'silva-associates') ?? architectFirms[0]
 
-        {/* Price + CTA */}
-        <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: '#e6e0d4' }}>
-          <div>
-            <p className="text-xs" style={{ color: '#6b879c' }}>Starting from</p>
-            {/* Price in brick accent */}
-            <p className="font-bold text-lg" style={{ color: '#be5d3f' }}>
-              ${design.price.toLocaleString()}
-            </p>
-          </div>
-          {/* Primary CTA — blue */}
-          <Link
-            to={`/designs/${design.id}`}
-            id={`view-design-${design.id}`}
-            className="nb-btn-primary text-sm py-2 px-5"
-          >
-            View Details
-          </Link>
-        </div>
-      </div>
-    </article>
+const stats = [
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M12 22V12m0 0C12 6 7 3 2 3c0 5 3 9 10 9z" />
+        <path d="M12 12c0-6 5-9 10-9 0 5-3 9-10 9z" />
+      </svg>
+    ),
+    value: '18+',
+    label: 'Years Experience',
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+    ),
+    value: '143',
+    label: 'Projects Completed',
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+      </svg>
+    ),
+    value: '14+',
+    label: 'Awards Won',
+  },
+  {
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+    value: '98%',
+    label: 'Client Satisfaction',
+  },
+]
+
+const services = [
+  {
+    icon: '🏠',
+    title: 'Residential Design',
+    desc: 'Custom home designs tailored to your lifestyle, from modern urban homes to tropical retreat residences throughout Sri Lanka.',
+  },
+  {
+    icon: '🏖️',
+    title: 'Luxury Villas',
+    desc: 'High-end villa architecture with premium finishes, panoramic layouts, and resort-style amenities for discerning clients.',
+  },
+  {
+    icon: '🏢',
+    title: 'Commercial Buildings',
+    desc: 'Corporate offices, retail complexes, and hospitality developments built to the highest international design standards.',
+  },
+  {
+    icon: '🛋️',
+    title: 'Interior Design',
+    desc: 'Seamless interior design services that extend the architectural vision into every space, surface, and material detail.',
+  },
+  {
+    icon: '🌿',
+    title: 'Landscape Design',
+    desc: 'Biophilic outdoor environments, courtyard gardens, and sustainable landscape masterplanning for tropical climates.',
+  },
+  {
+    icon: '🔨',
+    title: 'Renovation',
+    desc: 'Breathing new life into existing structures through thoughtful architectural transformation and sensitive heritage adaptation.',
+  },
+]
+
+const latestProjects = houseDesigns.filter((d) =>
+  ['pearl-residence', 'ocean-breeze', 'lotus-tower-penthouse'].includes(d.id)
+)
+
+const testimonials = [
+  {
+    id: 1,
+    rating: 5,
+    text: 'Silva & Associates exceeded every expectation. Their attention to detail and commitment to our vision produced a home that is truly extraordinary. The process was seamless from concept to completion.',
+    author: 'Chaminda Senanayake',
+    role: 'Homeowner · Colombo',
+    avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=80&h=80&fit=crop&crop=face',
+  },
+  {
+    id: 2,
+    rating: 5,
+    text: "Working with Arjun Silva's team was a transformative experience. They brought creativity, professionalism, and precision to every phase of our commercial development in Kandy.",
+    author: 'Ravi Wickramasinghe',
+    role: 'Developer · Kandy',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
+  },
+  {
+    id: 3,
+    rating: 5,
+    text: 'From the first consultation to the final walkthrough, Silva & Associates delivered a level of service that set the benchmark. Our villa is beyond anything we had ever imagined.',
+    author: 'Priya Jayasuriya',
+    role: 'Homeowner · Galle',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face',
+  },
+]
+
+const teamMembers = [
+  {
+    id: 1,
+    name: 'Arjun Silva',
+    title: 'Principal Architect',
+    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
+  },
+  {
+    id: 2,
+    name: 'Priya Mendis',
+    title: 'Creative Director',
+    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
+  },
+  {
+    id: 3,
+    name: 'Rohan Fernando',
+    title: 'Senior Architect',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+  },
+  {
+    id: 4,
+    name: 'Nisha Perera',
+    title: 'Project Manager',
+    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face',
+  },
+]
+
+// ─── Stars sub-component ──────────────────────────────────────────────────────
+
+function Stars({ count }: { count: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <svg key={s} className="w-4 h-4" viewBox="0 0 20 20" fill={s <= count ? '#f59e0b' : '#e6e0d4'}>
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
   )
 }
 
-function DesignsPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [styleFilter, setStyleFilter] = useState('All Styles')
-  const [locationPill, setLocationPill] = useState('All')
-  const [savedDesigns, setSavedDesigns] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(houseDesigns.map((d) => [d.id, d.saved]))
-  )
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
-  const handleToggleSave = (id: string) => {
-    setSavedDesigns((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
+export default function DesignsPage() {
+  
+  
 
-  // Live filtering
-  const filteredDesigns = useMemo(() => {
-    return houseDesigns
-      .map((d) => ({ ...d, saved: savedDesigns[d.id] ?? d.saved }))
-      .filter((design) => {
-        const q = searchQuery.toLowerCase()
-        const matchesSearch =
-          !q ||
-          design.title.toLowerCase().includes(q) ||
-          design.architectName.toLowerCase().includes(q) ||
-          design.architectFirm.toLowerCase().includes(q) ||
-          design.location.toLowerCase().includes(q)
-
-        const matchesStyle = styleFilter === 'All Styles' || design.style === styleFilter
-        const matchesLocation =
-          locationPill === 'All' ||
-          design.location.toLowerCase().includes(locationPill.toLowerCase()) ||
-          design.tags.some((t) => t.toLowerCase().includes(locationPill.toLowerCase()))
-
-        return matchesSearch && matchesStyle && matchesLocation
-      })
-  }, [searchQuery, styleFilter, locationPill, savedDesigns])
-
-  const savedCount = Object.values(savedDesigns).filter(Boolean).length
+  const featuredProject = latestProjects.find((p) => p.id === 'pearl-residence')
+  const sideProjects    = latestProjects.filter((p) => p.id !== 'pearl-residence')
 
   return (
     <>
-      {/* ── Sub-Banner ───────────────────────────────────────── */}
-      <section className="nb-gradient-hero py-14 px-6 pt-24">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#d59b86' }}>Architecture Module</span>
-              <h1 className="text-3xl font-bold text-white mt-1">House Design Gallery</h1>
-              <p className="mt-2" style={{ color: '#ccb7a3' }}>Browse award-winning Sri Lankan residential designs.</p>
-            </div>
-            {savedCount > 0 && (
-              <div
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold"
-                style={{ background: 'rgba(190,93,63,0.20)', color: '#d59b86', border: '1px solid rgba(190,93,63,0.40)' }}
-              >
-                ❤️ {savedCount} Saved Design{savedCount > 1 ? 's' : ''}
-              </div>
-            )}
-          </div>
+      {/* ═════════════════════════════════════════════════════════════
+          1. HERO — full-width cover image + overlay + title + CTAs
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden" style={{ minHeight: '380px' }}>
+        {/* Cover photo (absolute, behind everything) */}
+        <img
+          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600&h=700&fit=crop"
+          alt="Silva &amp; Associates Architecture"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Dark gradient overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to top, rgba(20,20,20,0.92) 0%, rgba(20,20,20,0.55) 55%, rgba(20,20,20,0.30) 100%)',
+          }}
+        />
 
-          {/* ── Search + Filter Bar ─────────────────────────── */}
-          <div
-            className="flex flex-col md:flex-row items-center gap-3 rounded-2xl p-4"
-            style={{ background: '#fff', boxShadow: '0 20px 50px rgba(52,91,121,0.22)' }}
-          >
-            {/* Search input */}
-            <div className="relative flex-1 w-full">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                style={{ color: '#6b879c' }}
-                fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              <input
-                id="designs-search-input"
-                type="text"
-                placeholder="Search by design name, architect, or location…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="nb-input pl-10 text-sm"
-              />
-            </div>
+        {/* Content — sits on top of overlay */}
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-14">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-xs mb-5" style={{ color: 'rgba(255,255,255,0.60)' }}>
+            <Link to="/" className="hover:opacity-80">Home</Link>
+            <span>/</span>
+            <Link to="/architecture" className="hover:opacity-80">Architecture</Link>
+            <span>/</span>
+            <span style={{ color: '#d59b86' }}>{firm.name}</span>
+          </nav>
 
-            {/* Style filter dropdown */}
-            <select
-              id="designs-style-filter"
-              value={styleFilter}
-              onChange={(e) => setStyleFilter(e.target.value)}
-              className="nb-input w-full md:w-48 text-sm"
-              style={{ color: '#1d1d1d' }}
-            >
-              {STYLE_OPTIONS.map((s) => <option key={s}>{s}</option>)}
-            </select>
+          {/* Firm name */}
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-7" style={{ maxWidth: '600px' }}>
+            {firm.name}
+          </h1>
 
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 flex-wrap">
             <button
-              id="designs-search-btn"
-              className="nb-btn-primary w-full md:w-auto flex items-center gap-2"
+              id="request-consultation-hero-btn"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95"
+              style={{ background: '#be5d3f' }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
-              Search
+              Request Consultation
+            </button>
+            <button
+              id="share-profile-btn"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:bg-white/20"
+              style={{ background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.35)' }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              Share
             </button>
           </div>
+        </div>
+      </section>
 
-          {/* Location pills */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {LOCATION_PILLS.map((pill) => (
-              <button
-                key={pill}
-                id={`loc-pill-${pill.toLowerCase()}`}
-                onClick={() => setLocationPill((prev) => (prev === pill ? 'All' : pill))}
-                className="nb-pill"
-                style={
-                  locationPill === pill
-                    ? { background: '#345b79', borderColor: '#345b79', color: '#fff' }
-                    : { color: '#ccb7a3', borderColor: 'rgba(204,183,163,0.40)', background: 'rgba(255,255,255,0.10)' }
-                }
-              >
-                {pill}
-              </button>
+      {/* ═════════════════════════════════════════════════════════════
+          2. STATS BAR — white strip with 4 key metrics
+      ═════════════════════════════════════════════════════════════ */}
+      <section style={{ background: '#e6e0d4', borderBottom: '1px solid #ccb7a3' }}>
+        <div className="max-w-7xl mx-auto px-6 py-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 divide-x" style={{ borderColor: '#e6e0d4' }}>
+            {stats.map((stat, i) => (
+              <div key={i} className="flex items-center gap-4 px-6 first:pl-0 last:border-r-0">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(52,91,121,0.09)', color: '#345b79' }}
+                >
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="text-2xl font-bold leading-none" style={{ color: '#1d1d1d' }}>{stat.value}</p>
+                  <p className="text-xs mt-1" style={{ color: '#928d64' }}>{stat.label}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Gallery Grid ─────────────────────────────────────── */}
-      <main className="flex-1 py-12 px-6" style={{ background: '#e6e0d4' }}>
-        <div className="max-w-7xl mx-auto">
-          {/* Results info bar */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-xl font-bold" style={{ color: '#1d1d1d' }}>
-                {filteredDesigns.length > 0
-                  ? `${filteredDesigns.length} Design${filteredDesigns.length > 1 ? 's' : ''} Found`
-                  : 'No Designs Found'}
-              </h2>
-              {searchQuery && (
-                <p className="text-sm mt-0.5" style={{ color: '#6b879c' }}>
-                  Results for "<span style={{ color: '#345b79' }}>{searchQuery}</span>"
-                </p>
-              )}
-            </div>
-            {(searchQuery || styleFilter !== 'All Styles' || locationPill !== 'All') && (
-              <button
-                id="clear-design-filters"
-                onClick={() => { setSearchQuery(''); setStyleFilter('All Styles'); setLocationPill('All') }}
-                className="text-sm font-medium hover:underline"
-                style={{ color: '#be5d3f' }}
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
-
-          {/* Grid */}
-          {filteredDesigns.length === 0 ? (
-            <div
-              className="rounded-2xl p-20 text-center nb-card-shadow"
-              style={{ background: '#fff', border: '1px solid #ccb7a3' }}
-            >
-              <p className="text-5xl mb-4">🏠</p>
-              <p className="font-semibold text-lg" style={{ color: '#1d1d1d' }}>No designs match your criteria</p>
-              <p className="text-sm mt-2" style={{ color: '#6b879c' }}>Try different keywords or clear the filters</p>
-              <button
-                onClick={() => { setSearchQuery(''); setStyleFilter('All Styles'); setLocationPill('All') }}
-                className="nb-btn-primary mt-5 px-8 py-2.5"
-              >
-                Show All Designs
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDesigns.map((design) => (
-                <DesignCard
-                  key={design.id}
-                  design={design}
-                  onToggleSave={handleToggleSave}
-                />
+      {/* ═════════════════════════════════════════════════════════════
+          3. ABOUT — two-column: text left, office photo right
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#faf7f4' }}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+          {/* Left: bio */}
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+              About the Firm
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold mt-2 mb-5" style={{ color: '#1d1d1d' }}>
+              About Silva &amp; Associates
+            </h2>
+            <p className="text-sm leading-relaxed mb-4" style={{ color: '#928d64' }}>
+              Founded in 2006, Silva &amp; Associates Architecture is one of Sri Lanka's most celebrated contemporary
+              practices. Led by Principal Architect Arjun Silva, the studio has delivered over 143 award-winning
+              projects across residential, commercial, and hospitality sectors throughout the island.
+            </p>
+            <p className="text-sm leading-relaxed mb-7" style={{ color: '#928d64' }}>
+              The firm's design philosophy is rooted in tropical modernism — harnessing natural light,
+              cross-ventilation, and indigenous materials to create spaces that are architecturally bold yet
+              deeply connected to Sri Lanka's landscape and cultural heritage.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['Modern', 'Tropical', 'Luxury', 'Sustainable', 'Award-Winning'].map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold"
+                  style={{ background: '#e6e0d4', color: '#345b79' }}
+                >
+                  {tag}
+                </span>
               ))}
             </div>
-          )}
+          </div>
 
-          {/* Saved designs summary */}
-          {savedCount > 0 && (
-            <div
-              className="mt-12 rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4"
-              style={{ background: 'rgba(190,93,63,0.10)', border: '1px solid rgba(190,93,63,0.30)' }}
-            >
-              <div className="flex items-center gap-3">
+          {/* Right: office photo */}
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{ height: '360px', boxShadow: '0 8px 40px rgba(52,91,121,0.12)' }}
+          >
+            <img
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&h=700&fit=crop"
+              alt="Silva &amp; Associates studio office"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════════════════════════════════════════════════════════
+          4. OUR SERVICES — 3 × 2 card grid
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#e6e0d4' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+              Our Services
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold mt-2" style={{ color: '#1d1d1d' }}>
+              Our Services
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {services.map((svc, i) => (
+              <div
+                key={i}
+                className="rounded-2xl p-6 transition-shadow hover:shadow-md"
+                style={{ background: '#faf7f4', border: '1px solid #e6e0d4' }}
+              >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                  style={{ background: '#be5d3f' }}
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4"
+                  style={{ background: 'rgba(52,91,121,0.09)' }}
                 >
-                  ❤️
+                  {svc.icon}
                 </div>
-                <div>
-                  <p className="font-semibold" style={{ color: '#1d1d1d' }}>
-                    {savedCount} Design{savedCount > 1 ? 's' : ''} Saved to Your Collection
+                <h3 className="font-semibold text-base mb-2" style={{ color: '#1d1d1d' }}>{svc.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#928d64' }}>{svc.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════════════════════════════════════════════════════════
+          5. LATEST PROJECTS — featured large + 2 stacked side cards
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#faf7f4' }}>
+        <div className="max-w-7xl mx-auto">
+          {/* Section header */}
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+                Latest Projects
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold mt-2" style={{ color: '#1d1d1d' }}>
+                Latest Projects
+              </h2>
+            </div>
+            <Link
+              to="/architecture"
+              className="text-sm font-semibold flex items-center gap-1 hover:underline"
+              style={{ color: '#345b79' }}
+            >
+              View All Projects <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
+          {/* Project mosaic */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: '440px' }}>
+            {/* Featured card — left 2 columns */}
+            {featuredProject && (
+              <Link
+                to="villa-lumina"
+                id={`project-featured-${featuredProject.id}`}
+                className="lg:col-span-2 relative rounded-2xl overflow-hidden group block"
+                style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.12)' }}
+              >
+                <img
+                  src={featuredProject.imageUrl.replace('w=600', 'w=900')}
+                  alt="Villa Lumina"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(to top, rgba(29,29,29,0.88) 0%, rgba(29,29,29,0.10) 60%, transparent 100%)',
+                  }}
+                />
+                <div className="absolute bottom-0 left-0 p-7">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2"
+                    style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', backdropFilter: 'blur(6px)' }}
+                  >
+                    {featuredProject.style}
+                  </span>
+                  <h3 className="text-xl font-bold text-white leading-snug">Villa Lumina</h3>
+                  <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.72)' }}>
+                    {featuredProject.location} &nbsp;·&nbsp; LKR {featuredProject.price.toLocaleString()}
                   </p>
-                  <p className="text-sm" style={{ color: '#928d64' }}>Share your shortlist or request a quote from architects.</p>
+
+                </div>
+
+                {/* 🎯 FIGMA MATCHED STYLE — Solid white rounded button container block */}
+                <span 
+                  className="absolute bottom-6 right-6 px-5 py-2.5 bg-white text-[#2d4a63] rounded-xl text-xs font-bold font-sans tracking-wide shadow-md select-none transition-transform duration-200 group-hover:scale-105"
+                >
+                  View Details
+                </span>
+
+
+              </Link>
+            )}
+
+            {/* Two stacked side cards — right 1 column */}
+            <div className="flex flex-col gap-4 h-full">
+              {sideProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  to="/designs/villa-lumina"
+                  id={`project-side-${project.id}`}
+                  className="relative rounded-2xl overflow-hidden group block flex-1"
+                  style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.10)' }}
+                >
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: 'linear-gradient(to top, rgba(29,29,29,0.85) 0%, transparent 65%)' }}
+                  />
+                  <div className="absolute bottom-0 left-0 p-5">
+                    <span
+                      className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold mb-1"
+                      style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', backdropFilter: 'blur(4px)' }}
+                    >
+                      {project.style}
+                    </span>
+                    <h3 className="text-sm font-bold text-white leading-snug">{project.title}</h3>
+                    <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.72)' }}>
+                      LKR {project.price.toLocaleString()}
+                    </p>
+
+                    {/* 🧭 SIDE CARDS ANCHOR: Easily drop your placeholder "View Details" button elements directly below this comment block line later */}
+                  <div className="mt-3 pt-2 border-t border-white/20 text-[10px] font-bold opacity-60 flex items-center justify-between">
+                    <span>View Project Details</span>
+                    <span>→</span>
+                  </div>
+
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════════════════════════════════════════════════════════
+          6. TESTIMONIALS — 3 equal-width review cards
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#e6e0d4' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+              Like Us
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold mt-2" style={{ color: '#1d1d1d' }}>
+              What Our Clients Say
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t) => (
+              <div
+                key={t.id}
+                className="rounded-2xl p-6 flex flex-col"
+                style={{
+                  background: '#faf7f4',
+                  border: '1px solid #e6e0d4',
+                  boxShadow: '0 2px 16px rgba(52,91,121,0.06)',
+                }}
+              >
+                <Stars count={t.rating} />
+                <blockquote
+                  className="mt-4 text-sm leading-relaxed flex-1 italic"
+                  style={{ color: '#928d64' }}
+                >
+                  "{t.text}"
+                </blockquote>
+                <div
+                  className="flex items-center gap-3 mt-5 pt-5"
+                  style={{ borderTop: '1px solid #e6e0d4' }}
+                >
+                  <img
+                    src={t.avatar}
+                    alt={t.author}
+                    className="w-10 h-10 rounded-full object-cover shrink-0"
+                  />
+                  <div>
+                    <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>{t.author}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#6b879c' }}>{t.role}</p>
+                  </div>
                 </div>
               </div>
-              {/* Brick secondary CTA */}
-              <button
-                id="view-saved-btn"
-                className="px-6 py-2.5 text-sm font-semibold rounded-lg text-white transition-all hover:opacity-90"
-                style={{ background: '#be5d3f' }}
-              >
-                View Saved Designs
-              </button>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
 
-      
+      {/* ═════════════════════════════════════════════════════════════
+          7. MEET OUR TEAM — 4 member portrait cards
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#e6e0d4' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+              Discover More
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold mt-2" style={{ color: '#1d1d1d' }}>
+              Meet Our Team
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {teamMembers.map((member) => (
+              <div
+                key={member.id}
+                className="rounded-2xl overflow-hidden text-center"
+                style={{
+                  background: '#fff',
+                  border: '1px solid #e6e0d4',
+                  boxShadow: '0 2px 16px rgba(52,91,121,0.06)',
+                }}
+              >
+                <div className="h-52 overflow-hidden">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="px-4 py-4">
+                  <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>{member.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#928d64' }}>{member.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════════════════════════════════════════════════════════
+          8. CONTACT — left: details + map  |  right: form
+      ═════════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-6" style={{ background: '#e6e0d4' }}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+          {/* ── Left: Contact details + map ── */}
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#be5d3f' }}>
+              Reach Out
+            </span>
+            <h2 className="text-2xl font-bold mt-2 mb-7" style={{ color: '#1d1d1d' }}>Contact Us</h2>
+
+            <ul className="space-y-5 mb-7">
+              {/* Address */}
+              <li className="flex items-start gap-4">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: 'rgba(52,91,121,0.09)', color: '#345b79' }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Address</p>
+                  <p className="text-sm" style={{ color: '#1d1d1d' }}>42 Galle Road, Colombo 03, Sri Lanka</p>
+                </div>
+              </li>
+
+              {/* Phone */}
+              <li className="flex items-start gap-4">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: 'rgba(52,91,121,0.09)', color: '#345b79' }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Phone</p>
+                  <a href="tel:+94112345678" className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
+                    +94 11 234 5678
+                  </a>
+                </div>
+              </li>
+
+              {/* Email */}
+              <li className="flex items-start gap-4">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: 'rgba(52,91,121,0.09)', color: '#345b79' }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Email</p>
+                  <a href="mailto:info@silvaassociates.lk" className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
+                    info@silvaassociates.lk
+                  </a>
+                </div>
+              </li>
+            </ul>
+
+            
+            
+
+          </div>
+
+                    {/* ── Right: Edge-to-Edge Premium Live Location Map ── */}
+          <div 
+            className="w-full h-full min-h-[420px] rounded-2xl overflow-hidden relative shadow-sm border border-gray-200"
+            style={{ boxShadow: '0 4px 20px rgba(52,91,121,0.05)' }}
+          >
+            {/* 📍 Floating Location Badge (Cleanly layered right on top of map canvas layout tracks) */}
+            <div className="absolute top-4 left-4 z-[400] bg-white px-4 py-2 rounded-xl text-xs font-semibold shadow-md border border-gray-100 text-gray-800 flex items-center gap-1.5 pointer-events-none">
+              <span className="text-sm">📍</span> Office Location — Colombo 03
+            </div>
+
+            {/* Live Interactive Map Core */}
+            <div className="w-full h-full absolute inset-0 z-10">
+              <MapContainer 
+                center={[6.9271, 79.8612]} 
+                zoom={14} 
+                scrollWheelZoom={false}
+                className="w-full h-full"
+                attributionControl={false}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={[6.9271, 79.8612]} icon={customMarkerIcon}>
+                  <Popup>
+                    Silva & Associates Architecture <br /> Colombo 03, Sri Lanka.
+                  </Popup>
+                </Marker>
+              </MapContainer>
+            </div>
+          </div>
+          
+
+        </div>
+      </section>
     </>
   )
 }
-
-export default DesignsPage

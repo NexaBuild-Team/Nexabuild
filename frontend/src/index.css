@@ -49,7 +49,44 @@ body {
 /* Architecture utilities */
 
 .nb-gradient-hero {
-  background: linear-gradient(135deg, #1d1d1d 0%, #345b79 55%, #6b879c 100%);
+  background: #345b79;
+}
+
+/* Budget range slider — cross-browser track + thumb */
+.nb-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: #e6e0d4;
+  border: 1px solid #ccb7a3;
+  outline: none;
+}
+.nb-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #be5d3f;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 1px 6px rgba(190,93,63,0.40);
+  cursor: pointer;
+}
+.nb-range-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: #e6e0d4;
+  border: 1px solid #ccb7a3;
+}
+.nb-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #be5d3f;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 1px 6px rgba(190,93,63,0.40);
+  cursor: pointer;
 }
 
 .nb-card-hover {
