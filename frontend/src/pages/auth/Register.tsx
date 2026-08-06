@@ -224,10 +224,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
           role: roleMap[formData.role] || 'USER',
         });
         setIsSubmitting(false);
-        setIsSuccess(true);
-        setTimeout(() => {
-          navigate('/');
-        }, 1000);
+        navigate('/');
       } catch (err: any) {
         setIsSubmitting(false);
         setErrors({
@@ -339,24 +336,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
           )}
 
-          {isSuccess ? (
-            /* Registration Success Screen */
-            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <img src="/svg/checkMark.svg" alt="Success" className="size-8" />
-              </div>
-              <h2 className="text-[#345b79] text-3xl font-extrabold">Account Created!</h2>
-              <p className="text-[#6b7280] text-base max-w-md">
-                Thank you for joining NexaBuild, {formData.firstName}. Your registration as a <strong>{role}</strong> was successful.
-              </p>
-              <Link
-                to="/auth/login"
-                className="mt-4 bg-[#345b79] hover:bg-[#25465e] py-[16px] px-8 rounded-[12px] text-white font-bold uppercase tracking-[1.4px] text-[14px] shadow-lg transition-colors duration-200"
-              >
-                Sign In to Your Account
-              </Link>
-            </div>
-          ) : (
             /* Main Form */
             <form onSubmit={handleFormSubmit} className="w-full flex flex-col gap-[24px]">
               
@@ -794,7 +773,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
               </div>
             </form>
-          )}
 
         </div>
       </div>
