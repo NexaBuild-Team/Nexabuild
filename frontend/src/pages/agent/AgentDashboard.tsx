@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { ComingSoonMetric } from '../../components/ComingSoonMetric';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -213,86 +215,18 @@ export default function AgentDashboard({
     );
   }
 
+  const { user } = useAuth();
+  const agentName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Agent';
+
   return (
-    <div className="min-h-screen w-full relative flex flex-row items-start font-normal text-[#1a1c1e] bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
-      
-      {/* Sidebar Drawer */}
-      <aside 
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[256px] bg-[#345b79] flex flex-col justify-between pt-[76px] pb-[24px] px-[16px] transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="absolute top-[11px] left-0 right-0 px-[32px] flex items-center gap-[12px]">
-          <div className="bg-white/20 flex items-center justify-center rounded-[12px] size-[40px]">
-            <img alt="NexaBuild Logo" className="size-[20px] object-contain" src="/src/assets/logo.png" />
-          </div>
-          <span className="text-[24px] font-extrabold text-white tracking-[-0.6px] leading-[32px]">
-            NexaBuild
-          </span>
+    <div className="flex-1 min-w-0 flex flex-col font-normal text-[#111827]">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-[#e5e7eb] px-6 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm gap-4">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="text-xl font-bold text-[#1a1c1e] tracking-tight">Welcome back, {agentName}</h1>
+          <p className="text-xs text-[#42474d] hidden sm:block">Manage your properties, lands, and performance metrics</p>
         </div>
-
-        <div className="flex-1 flex flex-col justify-between overflow-y-auto mt-[20px]">
-          <nav className="flex flex-col gap-[4px]">
-            <a href="/agent-dashboard" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] bg-[#52748c] text-white font-normal text-[14px]">
-              <img alt="Dashboard" className="size-[20px]" src="/svg/home.svg" />
-              <span className="leading-[20px]">Dashboard</span>
-            </a>
-            <a href="/view-all-properties" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]">
-              <img alt="Properties" className="size-[20px] filter brightness-200" src="/svg/home.svg" />
-              <span className="leading-[20px]">Properties</span>
-            </a>
-            <a href="/view-all-land" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]">
-              <img alt="Lands" className="size-[20px] filter brightness-200" src="/svg/land-plot-icon.svg" />
-              <span className="leading-[20px]">Lands</span>
-            </a>
-
-            <div className="px-[16px] pt-[20px] pb-[8px] text-[11px] font-bold tracking-[1px] uppercase text-white/40">
-              Quick Actions
-            </div>
-            <a href="/add-property" className="flex items-center gap-[12px] px-[16px] py-[10px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[13px]">
-              <span className="text-[16px] font-bold text-white/60">+</span>
-              <span className="leading-[20px]">Add Property</span>
-            </a>
-            <a href="/land" className="flex items-center gap-[12px] px-[16px] py-[10px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[13px]">
-              <span className="text-[16px] font-bold text-white/60">+</span>
-              <span className="leading-[20px]">Add Land</span>
-            </a>
-          </nav>
-        </div>
-      </aside>
-
-      {/* Backdrop */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/45 lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* Main Content Area */}
-      <main className="flex-1 lg:pl-[256px] min-w-0 flex flex-col">
-        
-        {/* Sticky Top Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-[#e5e7eb] px-6 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm gap-4">
-          <div className="flex flex-col gap-0.5">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                <svg className="size-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <h1 className="text-xl font-bold text-[#1a1c1e] tracking-tight">Agent Dashboard</h1>
-            </div>
-            <p className="text-xs text-[#42474d] hidden sm:block">
-              Manage your properties, lands, and performance metrics
-            </p>
-          </div>
-
-          <div className="relative p-2 bg-gray-100 hover:bg-gray-200 rounded-full cursor-pointer transition-colors flex items-center justify-center size-10">
-            <img alt="Notifications" className="size-5" src="/svg/email.svg" />
-            <div className="absolute bg-[#be5d3f] border-2 border-white rounded-full size-3 top-1 right-1 shadow" />
-          </div>
-        </header>
+      </header>
 
         {/* Body Layout */}
         <div className="p-6 lg:p-8 flex flex-col gap-8 w-full max-w-[1400px] mx-auto">
@@ -484,7 +418,6 @@ export default function AgentDashboard({
           </div>
 
         </div>
-      </main>
     </div>
   );
 }
