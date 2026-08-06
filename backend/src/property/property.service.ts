@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -10,9 +10,9 @@ export class PropertyService {
   }
 
   async findOne(id: string) {
-    return this.prisma.property.findUnique({
-      where: { id },
-    });
+    const property = await this.prisma.property.findUnique({ where: { id } });
+    if (!property) throw new NotFoundException(`Property with id "${id}" not found`);
+    return property;
   }
 
   async create(data: any) {
@@ -20,15 +20,12 @@ export class PropertyService {
   }
 
   async update(id: string, data: any) {
-    return this.prisma.property.update({
-      where: { id },
-      data,
-    });
+    await this.findOne(id); // ensures 404 if not found
+    return this.prisma.property.update({ where: { id }, data });
   }
 
   async remove(id: string) {
-    return this.prisma.property.delete({
-      where: { id },
-    });
+    await this.findOne(id); // ensures 404 if not found
+    return this.prisma.property.delete({ where: { id } });
   }
 }
