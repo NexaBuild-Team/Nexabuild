@@ -45,11 +45,15 @@ export default function LandListing() {
   const [error, setError] = useState<string | null>(null)
 
   const [selectedType, setSelectedType] = useState('all')
+  const [appliedType, setAppliedType] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [savedCards, setSavedCards] = useState<string[]>([])
   const [activeLocation, setActiveLocation] = useState('Any')
+  const [appliedLocation, setAppliedLocation] = useState('Any')
   const [activeRoadAccess, setActiveRoadAccess] = useState('Any')
+  const [appliedRoadAccess, setAppliedRoadAccess] = useState('Any')
   const [priceMax, setPriceMax] = useState(150)
+  const [appliedPriceMax, setAppliedPriceMax] = useState(150)
   const [sortBy, setSortBy] = useState('Most Relevant')
   const [searchText, setSearchText] = useState('')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -72,7 +76,9 @@ export default function LandListing() {
 
   const handleHeroSearch = () => {
     setActiveLocation(searchLocation)
+    setAppliedLocation(searchLocation)
     setSelectedType(searchType)
+    setAppliedType(searchType)
     
     let maxVal = 150
     if (searchBudget === 'Under LKR 10M') maxVal = 10
@@ -82,6 +88,7 @@ export default function LandListing() {
     else if (searchBudget === 'LKR 100M - 150M') maxVal = 150
     
     setPriceMax(maxVal)
+    setAppliedPriceMax(maxVal)
     localStorage.setItem('nexabuild_land_filter_pricemax', String(maxVal))
     localStorage.setItem('nexabuild_land_filter_location', searchLocation)
     localStorage.setItem('nexabuild_land_filter_type', searchType)
@@ -108,9 +115,13 @@ export default function LandListing() {
 
   const handleClearAll = () => {
     setSelectedType('all')
+    setAppliedType('all')
     setActiveLocation('Any')
+    setAppliedLocation('Any')
     setActiveRoadAccess('Any')
+    setAppliedRoadAccess('Any')
     setPriceMax(150)
+    setAppliedPriceMax(150)
     setSearchText('')
   }
 
@@ -148,23 +159,23 @@ export default function LandListing() {
     }
 
     // Locations (only filter if non-default location is selected)
-    if (activeLocation && activeLocation !== 'Any') {
-      filtered = filtered.filter(l => l.location.toLowerCase().includes(activeLocation.toLowerCase()))
+    if (appliedLocation && appliedLocation !== 'Any') {
+      filtered = filtered.filter(l => l.location.toLowerCase().includes(appliedLocation.toLowerCase()))
     }
 
     // Land Types
-    if (selectedType && selectedType !== 'all') {
-      filtered = filtered.filter(l => l.landType.toLowerCase() === selectedType.toLowerCase())
+    if (appliedType && appliedType !== 'all') {
+      filtered = filtered.filter(l => l.landType.toLowerCase() === appliedType.toLowerCase())
     }
 
     // Road Access
-    if (activeRoadAccess && activeRoadAccess !== 'Any') {
-      filtered = filtered.filter(l => getRoadAccessWidth(l) === activeRoadAccess)
+    if (appliedRoadAccess && appliedRoadAccess !== 'Any') {
+      filtered = filtered.filter(l => getRoadAccessWidth(l) === appliedRoadAccess)
     }
 
     // Max Price
-    if (priceMax) {
-      filtered = filtered.filter(l => (l.price / 1_000_000) <= priceMax)
+    if (appliedPriceMax) {
+      filtered = filtered.filter(l => (l.price / 1_000_000) <= appliedPriceMax)
     }
 
     // Sort
@@ -175,7 +186,7 @@ export default function LandListing() {
     }
 
     return filtered
-  }, [lands, searchText, activeLocation, selectedType, priceMax, activeRoadAccess, sortBy])
+  }, [lands, searchText, appliedLocation, appliedType, appliedPriceMax, appliedRoadAccess, sortBy])
 
   return (
     <div style={{ backgroundColor: '#e6e0d4', fontFamily: 'Inter, sans-serif' }}>
@@ -481,7 +492,13 @@ export default function LandListing() {
               {/* Apply Filters */}
               <button
                 id="apply-filters-btn"
-                onClick={() => setMobileFiltersOpen(false)}
+                onClick={() => {
+                  setAppliedType(selectedType)
+                  setAppliedLocation(activeLocation)
+                  setAppliedRoadAccess(activeRoadAccess)
+                  setAppliedPriceMax(priceMax)
+                  setMobileFiltersOpen(false)
+                }}
                 className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold py-2.5 rounded-xl transition-all hover:opacity-90 border cursor-pointer active:scale-95"
                 style={{ color: '#345b79', borderColor: '#345b79', backgroundColor: 'transparent' }}
               >
