@@ -179,13 +179,15 @@ const SLIDER_MAX = 500
 
 export default function PropertyListing() {
   // ── Read URL params (from Home page search) ──
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
   const initQuery     = searchParams.get('query')     ?? ''
   const initType      = (searchParams.get('type') ?? '').replace(/^\w/, c => c.toUpperCase())
   const initMinBudget = parseInt(searchParams.get('minBudget') ?? '0',  10)
   const initMaxBudget = parseInt(searchParams.get('maxBudget') ?? String(SLIDER_MAX), 10)
+  const initDistricts = searchParams.get('districts')?.split(',').filter(Boolean) ?? []
+  const initBeds      = searchParams.get('beds') ?? 'All'
 
   // ── Single unified filter state (shared by hero bar + sidebar) ──
   // heroLocation is the "draft" value shown in the top bar text input.
@@ -202,6 +204,11 @@ export default function PropertyListing() {
   const [heroMinBudget,     setHeroMinBudget]     = useState(minBudgetM)
   const [heroMaxBudget,     setHeroMaxBudget]     = useState(maxBudgetM)
 
+  const [selectedBeds,      setSelectedBeds]      = useState(initBeds)
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>(initDistricts)
+  const [currentPage,       setCurrentPage]       = useState(1)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+
   // Sync draft states when active filters change (e.g. via sidebar)
   useEffect(() => {
     setHeroPropertyType(propertyType)
@@ -211,10 +218,17 @@ export default function PropertyListing() {
     setHeroMaxBudget(maxBudgetM)
   }, [minBudgetM, maxBudgetM])
 
-  const [selectedBeds,      setSelectedBeds]      = useState('All')
-  const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
-  const [currentPage,       setCurrentPage]       = useState(1)
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  // Sync draft states when URL params change
+  useEffect(() => {
+    setHeroLocation(initDistricts.length > 0 ? initDistricts.join(', ') : initQuery)
+    setSearchQuery(initQuery)
+    setPropertyType(initType || 'All Types')
+    setMinBudgetM(isNaN(initMinBudget) ? 0 : initMinBudget)
+    setMaxBudgetM(isNaN(initMaxBudget) ? SLIDER_MAX : initMaxBudget)
+    setSelectedBeds(initBeds)
+    setSelectedDistricts(initDistricts)
+    setCurrentPage(1)
+  }, [searchParams])
 
   const districts = [
     'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
@@ -249,17 +263,26 @@ export default function PropertyListing() {
       districts.some(d => d.toLowerCase() === p.toLowerCase())
     ).map(p => districts.find(d => d.toLowerCase() === p.toLowerCase())!)
 
+    let finalDistricts: string[] = []
+    let finalQuery = ''
+
     if (matchedDistricts.length > 0) {
-      setSelectedDistricts(matchedDistricts)
-      setSearchQuery('')     // district filter handles it, no free-text needed
+      finalDistricts = matchedDistricts
     } else {
-      setSelectedDistricts([])
-      setSearchQuery(raw)    // use as free-text search
+      finalQuery = raw
     }
-    setPropertyType(heroPropertyType)
-    setMinBudgetM(heroMinBudget)
-    setMaxBudgetM(heroMaxBudget)
+
+    const params = new URLSearchParams()
+    if (finalDistricts.length > 0) params.set('districts', finalDistricts.join(','))
+    if (heroPropertyType !== 'All Types') params.set('type', heroPropertyType)
+    if (selectedBeds !== 'All') params.set('beds', selectedBeds)
+    if (heroMinBudget > 0) params.set('minBudget', String(heroMinBudget))
+    if (heroMaxBudget < SLIDER_MAX) params.set('maxBudget', String(heroMaxBudget))
+    if (finalQuery) params.set('query', finalQuery)
+
+    setSearchParams(params)
     setCurrentPage(1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const clearAll = () => {
@@ -285,30 +308,39 @@ export default function PropertyListing() {
 
   // ── Unified filtering logic ──
   const filteredProperties = useMemo(() => {
+    const appliedDistricts = searchParams.get('districts')?.split(',').filter(Boolean) ?? []
+    const appliedType = searchParams.get('type') ?? 'All Types'
+    const appliedBeds = searchParams.get('beds') ?? 'All'
+    const appliedMin = parseInt(searchParams.get('minBudget') ?? '0', 10)
+    const appliedMax = parseInt(searchParams.get('maxBudget') ?? String(SLIDER_MAX), 10)
+    const safeAppliedMin = isNaN(appliedMin) ? 0 : appliedMin
+    const safeAppliedMax = isNaN(appliedMax) ? SLIDER_MAX : appliedMax
+    const appliedQuery = searchParams.get('query') ?? ''
+
     return allProperties.filter(p => {
       // Text search — location / title
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
+      if (appliedQuery) {
+        const q = appliedQuery.toLowerCase()
         if (!p.title.toLowerCase().includes(q) && !p.location.toLowerCase().includes(q)) return false
       }
       // Property type (shared state)
-      if (propertyType && propertyType !== 'All Types')
-        if (p.type.toLowerCase() !== propertyType.toLowerCase()) return false
+      if (appliedType && appliedType !== 'All Types')
+        if (p.type.toLowerCase() !== appliedType.toLowerCase()) return false
       // Budget range (shared state, in millions)
       const pM = p.priceNum / 1_000_000
-      if (minBudgetM > 0    && pM < minBudgetM)   return false
-      if (maxBudgetM < SLIDER_MAX && pM > maxBudgetM) return false
+      if (safeAppliedMin > 0    && pM < safeAppliedMin)   return false
+      if (safeAppliedMax < SLIDER_MAX && pM > safeAppliedMax) return false
       // District (sidebar only)
-      if (selectedDistricts.length > 0 && !selectedDistricts.includes(p.district)) return false
+      if (appliedDistricts.length > 0 && !appliedDistricts.includes(p.district)) return false
       // Bedrooms (sidebar only)
-      if (selectedBeds && selectedBeds !== 'All') {
-        const req = selectedBeds === '5+' ? 5 : parseInt(selectedBeds, 10)
-        if (selectedBeds === '5+') { if (p.beds < 5) return false }
+      if (appliedBeds && appliedBeds !== 'All') {
+        const req = appliedBeds === '5+' ? 5 : parseInt(appliedBeds, 10)
+        if (appliedBeds === '5+') { if (p.beds < 5) return false }
         else                       { if (p.beds !== req) return false }
       }
       return true
     })
-  }, [allProperties, searchQuery, propertyType, minBudgetM, maxBudgetM, selectedDistricts, selectedBeds])
+  }, [allProperties, searchParams])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -331,7 +363,20 @@ export default function PropertyListing() {
     if (minBudgetM > 0)               params.set('minBudget', String(minBudgetM))
     if (maxBudgetM < SLIDER_MAX)      params.set('maxBudget', String(maxBudgetM))
     if (searchQuery)                  params.set('query', searchQuery)
+    params.set('ai', 'true')
     navigate(`/property-listing-ai?${params.toString()}`)
+  }
+
+  const handleApplyFilters = () => {
+    const params = new URLSearchParams()
+    if (selectedDistricts.length > 0) params.set('districts', selectedDistricts.join(','))
+    if (propertyType !== 'All Types') params.set('type', propertyType)
+    if (selectedBeds !== 'All')       params.set('beds', selectedBeds)
+    if (minBudgetM > 0)               params.set('minBudget', String(minBudgetM))
+    if (maxBudgetM < SLIDER_MAX)      params.set('maxBudget', String(maxBudgetM))
+    if (searchQuery)                  params.set('query', searchQuery)
+    setSearchParams(params)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -763,6 +808,7 @@ export default function PropertyListing() {
               {/* Apply Filters */}
               <button
                 id="pl-apply-filters-btn"
+                onClick={handleApplyFilters}
                 className="w-full flex items-center justify-center gap-2 text-sm font-bold py-3 rounded-xl transition-all hover:opacity-90 border"
                 style={{ color: '#345b79', borderColor: '#345b79', backgroundColor: 'transparent' }}
               >

@@ -116,11 +116,7 @@ const FilterIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
   </svg>
 )
-const ArrowRightIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-  </svg>
-)
+
 const XIcon = ({ cls = 'w-3 h-3' }: { cls?: string }) => (
   <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -263,7 +259,10 @@ function BrowseCard({ property }: { property: AIProperty }) {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group">
+    <div 
+      className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer group"
+      onClick={() => navigate(`/properties/${property.id}`)}
+    >
       <div className="relative overflow-hidden h-40">
         <img
           src={property.image}
@@ -333,7 +332,6 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function PropertyListingAI() {
-  const navigate = useNavigate()
   // ── Read URL params passed from PropertyListing "AI Smart Recommend" ──
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -380,6 +378,32 @@ export default function PropertyListingAI() {
   })
   const [searchQuery, setSearchQuery] = useState(initQuery)
 
+  // ── AI Preference state ──────────────────────────────────────────────────
+  const [aiPrefs, setAiPrefs] = useState<Record<string, string[]>>({
+    purpose: [], features: [], lifestyle: [], priority: [],
+  })
+  const [hasGenerated, setHasGenerated] = useState(() => searchParams.get('ai') === 'true')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(6)
+
+  // Sync draft states whenever the URL parameters (searchParams) change
+  useEffect(() => {
+    setSelectedDistricts(initDistricts.length > 0 ? initDistricts : [])
+    setPropertyTypeFilter(initType || 'All Types')
+    const idx = BED_OPTIONS.indexOf(initBeds)
+    setSelectedBedIndex(idx >= 0 ? idx : 0)
+    setMinBudgetM(isNaN(initMinBudget) ? 0 : initMinBudget)
+    setMaxBudgetM(isNaN(initMaxBudget) ? SLIDER_MAX : initMaxBudget)
+    setSearchQuery(initQuery)
+    setHeroLocation(initDistricts.length > 0 ? initDistricts.join(', ') : initQuery)
+    setVisibleCount(6)
+    
+    if (!isGenerating) {
+      setHasGenerated(searchParams.get('ai') === 'true')
+    }
+  }, [searchParams, isGenerating])
+
+
   // Clear a single URL param chip
   const clearParam = (key: string) => {
     const next = new URLSearchParams(searchParams)
@@ -411,17 +435,27 @@ export default function PropertyListingAI() {
       ALL_DISTRICTS.some(d => d.toLowerCase() === p.toLowerCase())
     ).map(p => ALL_DISTRICTS.find(d => d.toLowerCase() === p.toLowerCase())!)
 
-    if (matchedDistricts.length > 0) {
-      setSelectedDistricts(matchedDistricts)
-      setSearchQuery('')
-    } else {
-      setSelectedDistricts([])
-      setSearchQuery(raw)
-    }
-    
+    const finalDistricts = matchedDistricts.length > 0 ? matchedDistricts : []
+    const finalQuery = matchedDistricts.length > 0 ? '' : raw
+
+    setSelectedDistricts(finalDistricts)
+    setSearchQuery(finalQuery)
     setPropertyTypeFilter(heroPropertyType)
     setMinBudgetM(heroMinBudget)
     setMaxBudgetM(heroMaxBudget)
+
+    // Apply the filters to the URL so they take effect immediately
+    const params = new URLSearchParams()
+    if (finalDistricts.length > 0) params.set('districts', finalDistricts.join(','))
+    if (heroPropertyType !== 'All Types') params.set('type', heroPropertyType)
+    params.set('beds', BED_OPTIONS[selectedBedIndex])
+    if (heroMinBudget > 0) params.set('minBudget', String(heroMinBudget))
+    if (heroMaxBudget < SLIDER_MAX) params.set('maxBudget', String(heroMaxBudget))
+    if (finalQuery) params.set('query', finalQuery)
+    params.set('ai', 'true')
+    setSearchParams(params)
+    setHasGenerated(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // ── API data ──
@@ -435,46 +469,50 @@ export default function PropertyListingAI() {
       .finally(() => setIsLoadingData(false))
   }, [])
 
-  // ── AI Preference state ──────────────────────────────────────────────────
-  const [aiPrefs, setAiPrefs] = useState<Record<string, string[]>>({
-    purpose: [], features: [], lifestyle: [], priority: [],
-  })
-  const [hasGenerated, setHasGenerated] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
+
 
   // ── Derived filter logic ───────────────────────────────────────────────────
   const filteredPool = useMemo(() => {
+    // Read from searchParams to act as the "applied" state
+    const appliedDistricts = searchParams.get('districts')?.split(',').filter(Boolean) ?? []
+    const appliedType = searchParams.get('type') ?? 'All Types'
+    const appliedBeds = searchParams.get('beds') ?? 'Any'
+    const appliedMin = parseInt(searchParams.get('minBudget') ?? '0', 10)
+    const appliedMax = parseInt(searchParams.get('maxBudget') ?? String(SLIDER_MAX), 10)
+    const safeAppliedMin = isNaN(appliedMin) ? 0 : appliedMin
+    const safeAppliedMax = isNaN(appliedMax) ? SLIDER_MAX : appliedMax
+    const appliedQuery = searchParams.get('query') ?? ''
+
     return propertyPool.filter(p => {
       // Text search is always strictly filtered
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
+      if (appliedQuery) {
+        const q = appliedQuery.toLowerCase()
         if (!p.title.toLowerCase().includes(q) && !p.location.toLowerCase().includes(q)) return false
       }
 
       // District filter
-      if (selectedDistricts.length > 0 && !selectedDistricts.includes(p.district)) return false
+      if (appliedDistricts.length > 0 && !appliedDistricts.includes(p.district)) return false
 
       // Property type filter
-      if (propertyTypeFilter && propertyTypeFilter !== 'All Types' && p.type !== propertyTypeFilter) return false
+      if (appliedType && appliedType !== 'All Types' && p.type !== appliedType) return false
 
       // Bedrooms filter
-      const bedLabel = BED_OPTIONS[selectedBedIndex]
-      if (bedLabel && bedLabel !== 'Any') {
-        const required = bedLabel === '5+' ? 5 : parseInt(bedLabel, 10)
-        if (bedLabel === '5+') { if (p.beds < 5) return false }
+      if (appliedBeds && appliedBeds !== 'Any') {
+        const required = appliedBeds === '5+' ? 5 : parseInt(appliedBeds, 10)
+        if (appliedBeds === '5+') { if (p.beds < 5) return false }
         else                   { if (p.beds !== required) return false }
       }
 
       // Budget filter (in millions)
       const pM = p.priceNum / 1_000_000
-      if (minBudgetM > 0 && pM < minBudgetM) return false
-      if (maxBudgetM < SLIDER_MAX && pM > maxBudgetM) return false
+      if (safeAppliedMin > 0 && pM < safeAppliedMin) return false
+      if (safeAppliedMax < SLIDER_MAX && pM > safeAppliedMax) return false
 
       return true
     })
     // Sort by match score descending
     .sort((a, b) => b.matchScore - a.matchScore)
-  }, [propertyPool, selectedDistricts, propertyTypeFilter, selectedBedIndex, minBudgetM, maxBudgetM, searchQuery])
+  }, [propertyPool, searchParams])
 
   const totalSelected = Object.values(aiPrefs).flat().length
 
@@ -495,7 +533,7 @@ export default function PropertyListingAI() {
     const activeAiCount = totalSelected
     const matchedAiCount = matched.length
 
-    if (!hasGenerated || activeAiCount === 0) {
+    if (activeAiCount === 0) {
       return p.matchScore // fallback to original score if no AI used
     }
 
@@ -514,7 +552,7 @@ export default function PropertyListingAI() {
 
   // ── Dynamic reason generator ──────────────────────────────────────────────
   const reasonWithAI = (p: AIProperty): string => {
-    if (!hasGenerated || totalSelected === 0) return p.reason
+    if (totalSelected === 0) return p.reason
     const reasons: string[] = []
     const { purpose, features, lifestyle, priority } = aiPrefs
     
@@ -553,7 +591,7 @@ export default function PropertyListingAI() {
   }
 
   const getMatches = (p: AIProperty): { matched: string[], unmatched: string[] } => {
-    if (!hasGenerated || totalSelected === 0) return { matched: [], unmatched: [] }
+    if (totalSelected === 0) return { matched: [], unmatched: [] }
     const matched: string[] = []
     const unmatched: string[] = []
     const { purpose, features, lifestyle, priority } = aiPrefs
@@ -610,11 +648,41 @@ export default function PropertyListingAI() {
     
     return pool
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPool, propertyPool, hasGenerated, sortBy])
+  }, [filteredPool, propertyPool, hasGenerated, sortBy, aiPrefs])
 
   // Top 2 → Recommended, rest → Browse All
   const recommended = scoredPool.slice(0, 2)
-  const browseAll   = scoredPool.slice(2)
+  
+  const browseAll = useMemo(() => {
+    let pool = scoredPool.slice(2);
+    // If not enough properties in the filtered list, pad with other properties
+    if (pool.length < 3) {
+      const usedIds = new Set(scoredPool.map(p => p.id));
+      const extras = propertyPool
+        .filter(p => !usedIds.has(p.id))
+        .map(p => ({
+          ...p,
+          _aiScore: scoreWithAI(p),
+          _aiReason: reasonWithAI(p),
+          _aiMatches: getMatches(p)
+        }));
+      pool = [...pool, ...extras];
+    }
+    
+    // Pick exactly 3 random properties. Re-randomizes when inputs change.
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    const selected3 = shuffled.slice(0, 3);
+    
+    // Apply the current sorting preference to these 3 items
+    if (sortBy === 'Price High to Low') {
+      selected3.sort((a, b) => b.priceNum - a.priceNum)
+    } else if (sortBy === 'Price Low to High') {
+      selected3.sort((a, b) => a.priceNum - b.priceNum)
+    } else {
+      selected3.sort((a, b) => b._aiScore - a._aiScore)
+    }
+    return selected3;
+  }, [scoredPool, propertyPool, sortBy])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -638,7 +706,9 @@ export default function PropertyListingAI() {
     if (minBudgetM > 0) params.set('minBudget', String(minBudgetM))
     if (maxBudgetM < SLIDER_MAX) params.set('maxBudget', String(maxBudgetM))
     if (searchQuery) params.set('query', searchQuery)
+    params.set('ai', 'true')
     setSearchParams(params)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // 2. Reset AI state to trigger animation & show filtered results first
     setHasGenerated(false)
@@ -1023,26 +1093,14 @@ export default function PropertyListingAI() {
                   if (maxBudgetM < SLIDER_MAX) params.set('maxBudget', String(maxBudgetM))
                   if (searchQuery) params.set('query', searchQuery)
                   setSearchParams(params)
+                  setHasGenerated(false)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
                 className="w-full flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 rounded-xl transition-all hover:opacity-90 border"
                 style={{ color: '#345b79', borderColor: '#345b79' }}
               >
                 <FilterIcon />
                 Apply Filters
-              </button>
-            </div>
-
-            {/* AI Market Insight mini card */}
-            <div className="bg-white rounded-2xl shadow p-4 mt-4">
-              <div className="flex items-center gap-1.5 mb-2">
-                <SparklesIcon cls="w-3 h-3 text-[#345b79]" />
-                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#345b79' }}>AI Market Insight</p>
-              </div>
-              <p className="text-[10px] leading-relaxed" style={{ color: '#928d64' }}>
-                Property values in Colombo have increased 6.2% this quarter. Your budget aligns with top investment zones.
-              </p>
-              <button className="mt-2 text-[10px] font-bold flex items-center gap-1 hover:gap-1.5 transition-all" style={{ color: '#be5d3f' }}>
-                View related report <ArrowRightIcon />
               </button>
             </div>
           </aside>
@@ -1158,114 +1216,161 @@ export default function PropertyListingAI() {
               </div>
             </div>
 
-            {/* ── Recommended For You ── */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-5 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#be5d3f' }} />
-                  <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Recommended For You</h2>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: 'rgba(190,93,63,0.12)', color: '#be5d3f' }}>
-                    {recommended.length} match{recommended.length !== 1 ? 'es' : ''}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
-                  <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
-                    <SortIcon />
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
-                    >
-                      <option value="Best Match">Best Match</option>
-                      <option value="Price High to Low">Price High to Low</option>
-                      <option value="Price Low to High">Price Low to High</option>
-                    </select>
-                    <ChevronDownIcon cls="w-3 h-3 -ml-2" />
-                  </div>
-                </div>
-              </div>
-
-              {recommended.length > 0 ? (
-                <div className="space-y-3.5">
-                  {recommended.map((p) => (
-                    <RecommendedCard
-                      key={p.id}
-                      property={p}
-                      displayScore={p._aiScore}
-                      displayReason={p._aiReason}
-                      aiMatches={p._aiMatches}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white rounded-2xl shadow p-10 text-center">
-                  <SparklesIcon cls="w-8 h-8 mx-auto mb-3 text-[#ccb7a3]" />
-                  <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>No exact matches found</p>
-                  <p className="text-xs mt-1" style={{ color: '#928d64' }}>Try relaxing your filters to see more results.</p>
-                  <button
-                    className="mt-4 text-xs font-bold px-5 py-2 rounded-xl text-white transition-all hover:opacity-90"
-                    style={{ backgroundColor: '#345b79' }}
-                    onClick={() => {
-                      setDistrictsAndHero([])
-                      setPropertyTypeFilter('All Types')
-                      setSelectedBedIndex(0)
-                      setMinBudgetM(0)
-                      setMaxBudgetM(SLIDER_MAX)
-                      setSearchQuery('')
-                      setSearchParams(new URLSearchParams())
-                    }}
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* ── Browse All Properties ── */}
-            {browseAll.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
+            {hasGenerated || isGenerating || totalSelected > 0 || searchParams.get('ai') === 'true' ? (
+              <>
+                {/* ── Recommended For You ── */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
                       <span className="w-5 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#be5d3f' }} />
-                      <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Browse All Properties</h2>
+                      <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Recommended For You</h2>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: 'rgba(190,93,63,0.12)', color: '#be5d3f' }}>
+                        {recommended.length} match{recommended.length !== 1 ? 'es' : ''}
+                      </span>
                     </div>
-                    <p className="text-[10px] ml-7" style={{ color: '#928d64' }}>
-                      Showing {browseAll.length} more result{browseAll.length !== 1 ? 's' : ''}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
+                      <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
+                        <SortIcon />
+                        <select
+                          value={sortBy}
+                          onChange={(e) => setSortBy(e.target.value)}
+                          className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+                        >
+                          <option value="Best Match">Best Match</option>
+                          <option value="Price High to Low">Price High to Low</option>
+                          <option value="Price Low to High">Price Low to High</option>
+                        </select>
+                        <ChevronDownIcon cls="w-3 h-3 -ml-2" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
-                    <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
-                      <SortIcon />
-                      <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+
+                  {recommended.length > 0 ? (
+                    <div className="space-y-3.5">
+                      {recommended.map((p) => (
+                        <RecommendedCard
+                          key={p.id}
+                          property={p}
+                          displayScore={p._aiScore}
+                          displayReason={p._aiReason}
+                          aiMatches={p._aiMatches}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl shadow p-10 text-center">
+                      <SparklesIcon cls="w-8 h-8 mx-auto mb-3 text-[#ccb7a3]" />
+                      <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>No exact matches found</p>
+                      <p className="text-xs mt-1" style={{ color: '#928d64' }}>Try relaxing your filters to see more results.</p>
+                      <button
+                        className="mt-4 text-xs font-bold px-5 py-2 rounded-xl text-white transition-all hover:opacity-90"
+                        style={{ backgroundColor: '#345b79' }}
+                        onClick={() => {
+                          setDistrictsAndHero([])
+                          setPropertyTypeFilter('All Types')
+                          setSelectedBedIndex(0)
+                          setMinBudgetM(0)
+                          setMaxBudgetM(SLIDER_MAX)
+                          setSearchQuery('')
+                          setSearchParams(new URLSearchParams())
+                        }}
                       >
-                        <option value="Best Match">Best Match</option>
-                        <option value="Price High to Low">Price High to Low</option>
-                        <option value="Price Low to High">Price Low to High</option>
-                      </select>
-                      <ChevronDownIcon cls="w-3 h-3 -ml-2" />
+                        Clear Filters
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Browse All Properties ── */}
+                {browseAll.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-3 mt-6">
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="w-5 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#be5d3f' }} />
+                          <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Browse All Properties</h2>
+                        </div>
+                        <p className="text-[10px] ml-7" style={{ color: '#928d64' }}>
+                          Showing {Math.min(visibleCount, browseAll.length)} of {browseAll.length} result{browseAll.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
+                        <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
+                          <SortIcon />
+                          <select
+                             value={sortBy}
+                             onChange={(e) => setSortBy(e.target.value)}
+                             className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+                          >
+                            <option value="Best Match">Best Match</option>
+                            <option value="Price High to Low">Price High to Low</option>
+                            <option value="Price Low to High">Price Low to High</option>
+                          </select>
+                          <ChevronDownIcon cls="w-3 h-3 -ml-2" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {browseAll.slice(0, visibleCount).map((p) => <BrowseCard key={p.id} property={p} />)}
+                    </div>
+
+                    {browseAll.length > visibleCount && (
+                      <div className="mb-8 mt-5 flex justify-center">
+                        <button
+                          id="ai-load-more-btn"
+                          onClick={() => setVisibleCount((prev) => prev + 6)}
+                          className="flex items-center gap-2 text-xs font-bold px-8 py-3 rounded-xl border-2 border-[#345b79] text-[#345b79] transition-all hover:bg-[#345b79] hover:text-white"
+                        >
+                          Load More Properties
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between mb-4 border-b pb-3" style={{ borderColor: '#e6e0d4' }}>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#be5d3f' }} />
+                    <h2 className="font-bold text-base" style={{ color: '#1d1d1d' }}>Properties</h2>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <p className="text-[10px]" style={{ color: '#928d64' }}>
+                      {scoredPool.length} result{scoredPool.length !== 1 ? 's' : ''} found
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
+                      <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
+                        <SortIcon />
+                        <select
+                          value={sortBy}
+                          onChange={(e) => setSortBy(e.target.value)}
+                          className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+                        >
+                          <option value="Best Match">Best Match</option>
+                          <option value="Price High to Low">Price High to Low</option>
+                          <option value="Price Low to High">Price Low to High</option>
+                        </select>
+                        <ChevronDownIcon cls="w-3 h-3 -ml-2" />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {browseAll.map((p) => <BrowseCard key={p.id} property={p} />)}
-                </div>
-
-                <div className="mt-5 flex justify-center">
-                  <button
-                    id="ai-load-more-btn"
-                    className="flex items-center gap-2 text-xs font-bold px-8 py-3 rounded-xl border-2 transition-all hover:bg-[#345b79] hover:text-white hover:border-[#345b79]"
-                    style={{ color: '#345b79', borderColor: '#345b79' }}
-                  >
-                    Load More Properties
-                  </button>
-                </div>
+                {scoredPool.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {scoredPool.map((p) => <BrowseCard key={p.id} property={p} />)}
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-2xl shadow p-10 text-center">
+                    <p className="font-semibold text-sm" style={{ color: '#1d1d1d' }}>No exact matches found</p>
+                    <p className="text-xs mt-1" style={{ color: '#928d64' }}>Try relaxing your filters to see more results.</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1349,46 +1454,6 @@ export default function PropertyListingAI() {
               </div>
             </div>
           </aside>
-        </div>
-      </section>
-
-      {/* ── CTA Banner ── */}
-      <section className="py-10" style={{ backgroundColor: '#345b79' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center gap-1" style={{ color: '#d59b86' }}>
-                <SparklesIcon cls="w-3 h-3" />
-                AI-Powered Matching
-              </p>
-              <h2 className="text-2xl font-extrabold text-white leading-tight mb-2">
-                {filteredPool.length > 2
-                  ? `${filteredPool.length - 2} More Properties Match Your Profile`
-                  : '20 More Properties Match Your Profile'}
-              </h2>
-              <p className="text-xs leading-relaxed max-w-md" style={{ color: 'rgba(230,224,212,0.70)' }}>
-                Expand your criteria to unlock even more personalised matches from across Sri Lanka.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0 w-full sm:w-auto">
-              <button
-                id="ai-cta-view-matches-btn"
-                onClick={() => navigate('/property-ai-recommended')}
-                className="flex items-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all hover:opacity-90 shadow"
-                style={{ backgroundColor: '#be5d3f' }}
-              >
-                View AI Matches
-              </button>
-              <button
-                id="ai-cta-refine-btn"
-                className="flex items-center gap-2 font-bold px-6 py-3 rounded-xl border-2 transition-all hover:bg-white/10"
-                style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}
-              >
-                Refine Preferences
-                <ArrowRightIcon />
-              </button>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -99,9 +99,9 @@ export default function LandListing() {
       target.scrollIntoView({ behavior: 'smooth' })
     }
   }
-  const [aiAnalyzing, setAiAnalyzing] = useState(false)
-  const [aiStepText, setAiStepText] = useState('')
-  const [aiProgress, setAiProgress] = useState(0)
+  const [aiAnalyzing] = useState(false)
+  const [aiStepText] = useState('')
+  const [aiProgress] = useState(0)
 
   useEffect(() => {
     getAllLands()
