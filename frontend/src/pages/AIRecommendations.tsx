@@ -1199,7 +1199,7 @@ export default function AIRecommendations() {
                     <article
                       key={land.id}
                       id={`rec-card-${land.id}`}
-                      onClick={() => navigate(`/land/detail/${land.id}`)}
+                      onClick={() => navigate(`/land/detail/${land.id}`, { state: { fromRecommendations: true, matchScore: land.matchScore } })}
                       className="bg-white rounded-2xl overflow-hidden border border-slate-100 flex flex-col md:flex-row relative group cursor-pointer"
                       style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
                     >
@@ -1330,7 +1330,7 @@ export default function AIRecommendations() {
                         <div className="flex items-center gap-3 pt-2" onClick={e => e.stopPropagation()}>
                           <button
                             id={`view-details-btn-${land.id}`}
-                            onClick={() => navigate(`/land/detail/${land.id}`)}
+                            onClick={() => navigate(`/land/detail/${land.id}`, { state: { fromRecommendations: true, matchScore: land.matchScore } })}
                             className="flex-1 py-3 rounded-lg font-bold text-sm text-white hover:opacity-90 transition-opacity"
                             style={{ backgroundColor: '#345b79' }}
                           >
@@ -1543,7 +1543,7 @@ export default function AIRecommendations() {
                   key={land.id}
                   id={`browse-card-${land.id}`}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer group"
-                  onClick={() => navigate(`/land/detail/${land.id}`)}
+                  onClick={() => navigate(`/land/detail/${land.id}`, { state: { fromRecommendations: true, matchScore: land.matchScore } })}
                 >
                   <div className="relative h-48 overflow-hidden">
                     {land.images[0] ? (

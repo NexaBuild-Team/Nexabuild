@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { useParams, useNavigate, Link } from 'react-router'
+import { useParams, useNavigate, Link, useLocation } from 'react-router'
 import { getLandById, getAllLands } from '../services/landApi'
 import type { Land } from '../types/land'
 
@@ -191,6 +191,9 @@ function SimilarLandCard({ land, navigate }: { land: Land; navigate: any }) {
 export default function LandDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const showScore = location.state?.fromRecommendations === true
+  const displayedScore = location.state?.matchScore !== undefined ? location.state.matchScore : (land?.matchScore ?? null)
 
   const [land, setLand] = useState<Land | null>(null)
   const [similarLands, setSimilarLands] = useState<Land[]>([])
@@ -515,9 +518,9 @@ export default function LandDetail() {
                 </div>
 
                 {/* AI Match Score */}
-                {land.matchScore !== null && (
+                {displayedScore !== null && showScore && (
                   <div className="rounded-2xl shadow-sm p-6 text-center" style={{ backgroundColor: '#345b79' }}>
-                    <MatchScoreRing score={land.matchScore} />
+                    <MatchScoreRing score={displayedScore} />
                     <p className="text-white font-bold text-sm mt-3">AI Match Score</p>
                     <p className="text-xs mt-1" style={{ color: 'rgba(230,224,212,0.75)' }}>Based on your preferences</p>
                   </div>
@@ -594,12 +597,12 @@ export default function LandDetail() {
                     Save Property
                   </button>
 
-                  {land.matchScore !== null && (
+                  {displayedScore !== null && showScore && (
                     <div
                       className="mt-4 text-center text-xs font-bold text-white py-2 rounded-lg"
                       style={{ backgroundColor: '#345b79' }}
                     >
-                      AI Match Score {land.matchScore}%
+                      AI Match Score {displayedScore}%
                     </div>
                   )}
                 </div>
@@ -615,7 +618,7 @@ export default function LandDetail() {
                       { label: 'Perches', value: String(land.perches) },
                       { label: 'Road Access', value: getRoadAccessWidth(land) },
                       ...(land.sqft ? [{ label: 'Sqft', value: String(land.sqft) }] : []),
-                      ...(land.matchScore !== null ? [{ label: 'AI Match', value: `${land.matchScore}%` }] : []),
+                      ...(displayedScore !== null && showScore ? [{ label: 'AI Match', value: `${displayedScore}%` }] : []),
                     ].map((detail, i, arr) => (
                       <li
                         key={detail.label}
