@@ -208,6 +208,7 @@ export default function PropertyListing() {
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>(initDistricts)
   const [currentPage,       setCurrentPage]       = useState(1)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [sortBy,            setSortBy]            = useState('Most Relevant')
 
   // Sync draft states when active filters change (e.g. via sidebar)
   useEffect(() => {
@@ -317,7 +318,7 @@ export default function PropertyListing() {
     const safeAppliedMax = isNaN(appliedMax) ? SLIDER_MAX : appliedMax
     const appliedQuery = searchParams.get('query') ?? ''
 
-    return allProperties.filter(p => {
+    const filtered = allProperties.filter(p => {
       // Text search — location / title
       if (appliedQuery) {
         const q = appliedQuery.toLowerCase()
@@ -340,7 +341,17 @@ export default function PropertyListing() {
       }
       return true
     })
-  }, [allProperties, searchParams])
+
+    // Sort
+    if (sortBy === 'Price: Low to High') {
+      filtered.sort((a, b) => a.priceNum - b.priceNum)
+    } else if (sortBy === 'Price: High to Low') {
+      filtered.sort((a, b) => b.priceNum - a.priceNum)
+    }
+    // "Most Relevant" is default ordering (as returned by API or filtered)
+
+    return filtered
+  }, [allProperties, searchParams, sortBy])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -827,13 +838,21 @@ export default function PropertyListing() {
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-xs" style={{ color: '#928d64' }}>Sort by</span>
-                <div
-                  className="flex items-center gap-1.5 border rounded-lg px-3 py-1.5 cursor-pointer text-xs font-semibold"
-                  style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="border rounded-lg px-3 py-1.5 cursor-pointer text-xs font-semibold outline-none appearance-none pr-8 bg-no-repeat bg-right"
+                  style={{
+                    borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff',
+                    backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%231d1d1d%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")`,
+                    backgroundPosition: 'right 0.5rem center',
+                    backgroundSize: '1em'
+                  }}
                 >
-                  Most Relevant
-                  <ChevronDownIcon />
-                </div>
+                  <option value="Most Relevant">Most Relevant</option>
+                  <option value="Price: Low to High">Price: Low to High</option>
+                  <option value="Price: High to Low">Price: High to Low</option>
+                </select>
               </div>
             </div>
 

@@ -15,18 +15,6 @@ type AIProperty = MappedProperty & { _aiScore?: number; _aiReason?: string; _aiM
 // ─── Full Property Pool ───────────────────────────────────────────────────────
 // (imported from shared data — see data/recommendedProperties.ts)
 
-const marketInsights = [
-  { city: 'Colombo 7', trend: '+2.3%', trendUp: true,  value: 'LKR 48M avg' },
-  { city: 'Kandy City', trend: '+1.1%', trendUp: true,  value: 'LKR 18M avg' },
-  { city: 'Negombo',    trend: '-0.5%', trendUp: false, value: 'LKR 22M avg' },
-  { city: 'Colombo 3',  trend: '+3.7%', trendUp: true,  value: 'LKR 95M avg' },
-]
-
-const bestInvestmentZones = [
-  { name: 'Colombo 10', avgPrice: 'LKR 41M', barWidth: '72%', color: '#345b79' },
-  { name: 'Galle Face',  avgPrice: 'LKR 88M', barWidth: '90%', color: '#be5d3f' },
-]
-
 const ALL_DISTRICTS  = ['Colombo', 'Kandy', 'Galle', 'Negombo']
 const PROP_TYPES     = ['All Types', 'Apartment', 'Villa', 'House', 'Commercial']
 const BED_OPTIONS    = ['Any', '1', '2', '3', '4', '5+']
@@ -683,6 +671,73 @@ export default function PropertyListingAI() {
     }
     return selected3;
   }, [scoredPool, propertyPool, sortBy])
+
+  // ── Derived Stats for Platform Activity Overview ──
+  const locationCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    propertyPool.forEach(p => {
+      counts[p.district] = (counts[p.district] || 0) + 1
+    })
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1]) // Sort by count descending
+      .slice(0, 4) // Top 4
+  }, [propertyPool])
+
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      'House': 0,
+      'Apartment': 0,
+      'Villa': 0,
+      'Commercial': 0
+    }
+    propertyPool.forEach(p => {
+      if (counts[p.type] === undefined) {
+        counts[p.type] = 0
+      }
+      counts[p.type]++
+    })
+    
+    const maxCount = Math.max(...Object.values(counts), 1)
+    
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, count]) => ({
+        label,
+        count,
+        pct: `${(count / maxCount) * 100}%`
+      }))
+  }, [propertyPool])
+
+  const budgetCounts = useMemo(() => {
+    const presets = [
+      { label: 'Under 30M',  min: 0,   max: 30 },
+      { label: '30M – 60M',  min: 30,  max: 60 },
+      { label: '60M – 100M', min: 60,  max: 100 },
+      { label: '100M – 200M',min: 100, max: 200 },
+      { label: 'Above 200M', min: 200, max: SLIDER_MAX }
+    ]
+
+    const counts = presets.map(p => ({ label: p.label, count: 0, pct: '0%' }))
+
+    propertyPool.forEach(p => {
+      const pM = p.priceNum / 1_000_000
+      for (let i = 0; i < presets.length; i++) {
+        const preset = presets[i]
+        // Include upper bound for last tier, otherwise exclusive on max
+        if (pM >= preset.min && (preset.max === SLIDER_MAX ? pM >= preset.min : pM < preset.max)) {
+          counts[i].count++
+          break
+        }
+      }
+    })
+
+    const maxCount = Math.max(...counts.map(c => c.count), 1)
+
+    return counts.map(c => ({
+      ...c,
+      pct: `${(c.count / maxCount) * 100}%`
+    }))
+  }, [propertyPool])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -1375,82 +1430,80 @@ export default function PropertyListingAI() {
             )}
           </div>
 
-          {/* ── RIGHT SIDEBAR: AI Market Insights ── */}
-          <aside className="hidden xl:block w-[220px] flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow p-4 sticky top-[76px]">
+          {/* ── RIGHT SIDEBAR: Platform Activity Overview ── */}
+          <aside className="hidden xl:block w-[220px] flex-shrink-0 sticky top-[76px] self-start space-y-4">
+            <div className="bg-white rounded-2xl shadow p-4">
               <div className="flex items-center gap-1.5 mb-4">
-                <SparklesIcon cls="w-3.5 h-3.5 text-[#345b79]" />
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#345b79' }}>AI Market Insights</p>
+                <svg className="w-4 h-4 text-[#345b79]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#345b79' }}>Platform Activity Overview</p>
               </div>
 
               {/* Popular Locations */}
               <div className="mb-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: '#928d64' }}>Popular Locations</p>
-                <div className="space-y-2">
-                  {marketInsights.map((insight) => (
-                    <div key={insight.city} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 mb-2.5">
+                  <svg className="w-3.5 h-3.5 text-[#e6b445]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                  </svg>
+                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#928d64' }}>Popular Locations</p>
+                </div>
+                <div className="space-y-3">
+                  {locationCounts.map(([district, count]) => (
+                    <div key={district} className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-semibold" style={{ color: '#1d1d1d' }}>{insight.city}</p>
-                        <p className="text-[9px]" style={{ color: '#928d64' }}>{insight.value}</p>
+                        <p className="text-[11px] font-bold" style={{ color: '#1d1d1d' }}>{district}</p>
+                        <p className="text-[9px]" style={{ color: '#928d64' }}>Active listings in district</p>
                       </div>
-                      <span
-                        className="flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                        style={
-                          insight.trendUp
-                            ? { color: '#495d38', backgroundColor: 'rgba(73,93,56,0.12)' }
-                            : { color: '#be5d3f', backgroundColor: 'rgba(190,93,63,0.10)' }
-                        }
-                      >
-                        {insight.trendUp ? <TrendUpIcon /> : <TrendDownIcon />}
-                        {insight.trend}
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ color: '#1d1d1d', backgroundColor: '#e6e0d4' }}>
+                        {count} listing{count !== 1 ? 's' : ''}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="border-t my-3" style={{ borderColor: '#e6e0d4' }} />
+              <div className="border-t my-4" style={{ borderColor: '#e6e0d4' }} />
 
-              {/* Fast Growing Areas */}
-              <div className="mb-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: '#928d64' }}>Fast Growing Areas</p>
-                <div className="flex gap-2 text-center">
-                  {[
-                    { label: 'Rajagiriya', pct: '+21%', height: '70%', color: '#345b79', avg: 'LKR 42M avg' },
-                    { label: 'Peliyagoda',  pct: '+19%', height: '85%', color: '#be5d3f', avg: 'LKR 38M avg' },
-                  ].map(z => (
-                    <div key={z.label} className="flex-1">
-                      <p className="text-xs font-bold" style={{ color: z.color }}>{z.pct}</p>
-                      <div className="relative mx-auto w-3 mt-1" style={{ height: '48px', backgroundColor: '#e6e0d4', borderRadius: '4px' }}>
-                        <div className="absolute bottom-0 w-full rounded" style={{ height: z.height, backgroundColor: z.color, borderRadius: '4px' }} />
-                      </div>
-                      <p className="text-[9px] mt-1" style={{ color: '#928d64' }}>{z.label}</p>
-                      <p className="text-[8px]" style={{ color: '#ccb7a3' }}>{z.avg}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-[9px] mt-2 italic" style={{ color: '#928d64' }}>↑ Average price info 2025</p>
-              </div>
-
-              <div className="border-t my-3" style={{ borderColor: '#e6e0d4' }} />
-
-              {/* Best Investment Zones */}
+              {/* Listings by Property Type */}
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: '#928d64' }}>Best Investment Zones</p>
+                <div className="flex items-center gap-1.5 mb-2.5">
+                  <svg className="w-3.5 h-3.5 text-[#6b879c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#928d64' }}>Listings by Property Type</p>
+                </div>
                 <div className="space-y-2.5">
-                  {bestInvestmentZones.map((zone) => (
-                    <div key={zone.name}>
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-[10px] font-semibold" style={{ color: '#1d1d1d' }}>{zone.name}</p>
-                        <p className="text-[9px]" style={{ color: '#928d64' }}>{zone.avgPrice}</p>
-                      </div>
-                      <div className="h-1.5 rounded-full" style={{ backgroundColor: '#e6e0d4' }}>
-                        <div className="h-full rounded-full transition-all duration-700" style={{ width: zone.barWidth, backgroundColor: zone.color }} />
-                      </div>
+                  {typeCounts.map((item) => (
+                    <div key={item.label} className="flex items-center justify-between">
+                      <p className="text-[11px] font-semibold" style={{ color: '#1d1d1d' }}>{item.label}</p>
+                      <span className="text-[10px] font-bold" style={{ color: '#be5d3f' }}>{item.count} propert{item.count !== 1 ? 'ies' : 'y'}</span>
                     </div>
                   ))}
-                  <p className="text-[8px]" style={{ color: '#928d64' }}>↑ Average price info 2025</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Budget Distribution */}
+            <div className="bg-[#1d1d1d] rounded-2xl shadow p-5">
+              <div className="flex items-center gap-1.5 mb-5">
+                <svg className="w-3.5 h-3.5 text-[#ccb7a3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#ccb7a3]">Budget Distribution</p>
+              </div>
+              <div className="space-y-4">
+                {budgetCounts.map((item) => (
+                  <div key={item.label}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-[10px] font-bold text-white">{item.label}</p>
+                      <p className="text-[9px] text-[#ccb7a3]">{item.count} listing{item.count !== 1 ? 's' : ''}</p>
+                    </div>
+                    <div className="h-1 rounded-full bg-white/10 overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-700" style={{ width: item.pct, backgroundColor: '#be5d3f' }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </aside>

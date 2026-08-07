@@ -371,7 +371,14 @@ function SectionLabel({ text }: { text: string }) {
 function Home() {
   const [propertyType, setPropertyType] = useState('')
   const [location, setLocation]         = useState('')
-  const [budget, setBudget]             = useState('')  // preset key e.g. '0-30'
+  const [budget, setBudget] = useState('')
+
+  const ALL_DISTRICTS = [
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+    'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale',
+    'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+    'Trincomalee', 'Vavuniya'
+  ]
   const navigate = useNavigate()
 
 
@@ -443,11 +450,11 @@ function Home() {
                   style={{ color: propertyType ? '#1d1d1d' : '#928d64' }}
                 >
                   <option value="">Property Type</option>
-                  <option value="house">House</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="villa">Villa</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="land">Land</option>
+                  <option value="House">House</option>
+                  <option value="Apartment">Apartment</option>
+                  <option value="Villa">Villa</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Land">Land</option>
                 </select>
                 <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -463,15 +470,22 @@ function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <input
+                <select
                   id="search-location"
-                  type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Location"
-                  className="w-full text-sm bg-transparent outline-none"
-                  style={{ color: '#1d1d1d' }}
-                />
+                  className="w-full text-sm bg-transparent outline-none cursor-pointer appearance-none"
+                  style={{ color: location ? '#1d1d1d' : '#928d64' }}
+                >
+                  <option value="" disabled hidden>Select District...</option>
+                  <option value="">All Districts</option>
+                  {ALL_DISTRICTS.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <svg className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#ccb7a3' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
 
               {/* Divider */}
@@ -504,8 +518,8 @@ function Home() {
                 id="search-btn"
                 onClick={() => {
                   const params = new URLSearchParams()
-                  if (location.trim()) params.set('query', location.trim())
-                  if (propertyType)    params.set('type',  propertyType)
+                  if (location) params.set('districts', location)
+                  if (propertyType) params.set('type', propertyType)
                   if (budget) {
                     const [min, max] = budget.split('-')
                     params.set('minBudget', min)
@@ -570,12 +584,12 @@ function Home() {
                 Trusted Architecture Partners
               </h2>
             </div>
-            <a href="#" className="flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all self-start sm:self-auto" style={{ color: '#345b79' }}>
+            <Link to="/architecture" className="flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all self-start sm:self-auto" style={{ color: '#345b79' }}>
               View All Architecture Companies
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -596,12 +610,12 @@ function Home() {
                 Top Construction Partners
               </h2>
             </div>
-            <a href="#" className="flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all self-start sm:self-auto" style={{ color: '#345b79' }}>
+            <Link to="/construction" className="flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all self-start sm:self-auto" style={{ color: '#345b79' }}>
               View All Construction Companies
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -639,6 +653,7 @@ function Home() {
                 properties that truly match your dream. Smarter search, better results — saving you
                 hundreds of hours of browsing.
               </p>
+              {/* 
               <div className="flex flex-wrap gap-3">
                 <button
                   id="ai-match-btn"
@@ -654,7 +669,8 @@ function Home() {
                 >
                   Learn More
                 </button>
-              </div>
+              </div> 
+              */}
             </div>
 
             {/* Right Stat Cards */}
