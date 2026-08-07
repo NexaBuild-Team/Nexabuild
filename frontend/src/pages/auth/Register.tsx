@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { authService } from '../../services/authService';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -194,7 +195,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -202,10 +205,35 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
       onSubmit(formData);
     } else {
       setIsSubmitting(true);
-      setTimeout(() => {
+      setErrors({});
+
+      const roleMap: Record<UserRole, 'USER' | 'AGENT' | 'ARCHITECT' | 'CONTRACTOR'> = {
+        buyer: 'USER',
+        agent: 'AGENT',
+        architect: 'ARCHITECT',
+        construction: 'CONTRACTOR',
+      };
+
+      try {
+        await authService.register({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phoneNumber,
+          role: roleMap[formData.role] || 'USER',
+        });
         setIsSubmitting(false);
         setIsSuccess(true);
-      }, 1200);
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setErrors({
+          auth: err.response?.data?.message || 'Registration failed. Email may already exist.',
+        });
+      }
     }
   };
 
@@ -479,6 +507,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
                 </div>
               </div>
+
+              {/* Auth error message */}
+              {errors.auth && (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                  {errors.auth}
+                </div>
+              )}
 
               {/* Registration Form inputs */}
               <div className="flex flex-col gap-[18px] items-start w-full" data-node-id="9:120" data-name="Registration Form">

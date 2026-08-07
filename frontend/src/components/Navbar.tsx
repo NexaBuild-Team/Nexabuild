@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import nexaBuildLogo from '../assets/NexaBuildlogo.png'
-
+import { useAuth } from '../context/AuthContext'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Primary Blue         : #345b79
@@ -23,10 +23,11 @@ const navLinks: NavLink[] = [
 
 const propertySearchRoutes = ['/property-listing', '/property-listing-ai', '/property-ai-recommended', '/property-detail']
 
-
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
 
   const isActive = (href: string) => {
     if (href === '/') return location.pathname === '/'
@@ -34,6 +35,11 @@ export default function Navbar() {
       return propertySearchRoutes.some((route) => location.pathname.startsWith(route))
     }
     return location.pathname.startsWith(href)
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/auth/login')
   }
 
   return (
@@ -92,26 +98,52 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* ── Desktop: Login + Register ── */}
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0 justify-self-end">
-            <a
-              href="/auth/login"
-              id="nav-login-btn"
-              className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150 border border-white/50 hover:border-white"
-            >
-              Login
-            </a>
-            <a
-              href="/auth/register"
-              id="nav-register-btn"
-              className="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all duration-150 hover:opacity-90 shadow inline-block text-center"
-              style={{ backgroundColor: '#be5d3f' }}
-            >
-              Register
-            </a>
+          {/* ── Desktop: User Profile or Login + Register ── */}
+          <div className="hidden lg:flex items-center gap-3 flex-shrink-0 justify-self-end">
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/20 transition-all text-xs font-semibold"
+                >
+                  <div className="size-6 rounded-full bg-[#be5d3f] text-white flex items-center justify-center font-bold text-xs uppercase">
+                    {user.firstName ? user.firstName[0] : user.email[0]}
+                  </div>
+                  <span className="max-w-[120px] truncate">{user.firstName || user.email}</span>
+                  <span className="bg-[#be5d3f] text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                    {user.role}
+                  </span>
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="text-xs font-medium text-white/80 hover:text-white px-3 py-2 rounded-lg hover:bg-white/10 transition-all border border-white/30"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/auth/login"
+                  id="nav-login-btn"
+                  className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-150 border border-white/50 hover:border-white"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/auth/register"
+                  id="nav-register-btn"
+                  className="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all duration-150 hover:opacity-90 shadow inline-block text-center"
+                  style={{ backgroundColor: '#be5d3f' }}
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* ── Mobile Hamburger (always right-most on mobile) ── */}
+          {/* ── Mobile Hamburger ── */}
           <button
             id="nav-mobile-menu-btn"
             className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors flex-shrink-0"
@@ -155,19 +187,44 @@ export default function Navbar() {
           ))}
 
           <div className="flex gap-3 pt-3 border-t border-white/15 mt-2">
-            <button
-              id="nav-mobile-login-btn"
-              className="flex-1 py-2.5 text-sm font-medium text-white border border-white/50 rounded-lg hover:bg-white/10 hover:border-white transition-colors"
-            >
-              Login
-            </button>
-            <button
-              id="nav-mobile-register-btn"
-              className="flex-1 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#be5d3f' }}
-            >
-              Register
-            </button>
+            {isAuthenticated && user ? (
+              <div className="w-full flex flex-col gap-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2 text-sm font-semibold text-white bg-[#be5d3f] rounded-lg"
+                >
+                  My Dashboard ({user.role})
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    handleLogout()
+                  }}
+                  className="w-full text-center py-2 text-sm font-medium text-white border border-white/30 rounded-lg"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/auth/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 text-center py-2.5 text-sm font-medium text-white border border-white/50 rounded-lg hover:bg-white/10"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/auth/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 text-center py-2.5 text-sm font-semibold text-white rounded-lg hover:opacity-90"
+                  style={{ backgroundColor: '#be5d3f' }}
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

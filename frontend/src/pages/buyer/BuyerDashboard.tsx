@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -171,7 +172,8 @@ export default function BuyerDashboard({
   onToggleSaveLand,
   onClearSearches
 }: BuyerDashboardProps) {
-  const userName = data?.userName || "Kasun";
+  const { user } = useAuth();
+  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : (data?.userName || "Valued Member");
   const aiInsightText = data?.aiInsightText || "Today's AI Insight: Property prices in Colombo 5—7 expected to rise 8—12% this quarter.";
   
   const properties = data?.propertyPicks !== undefined ? data.propertyPicks : defaultProperties;

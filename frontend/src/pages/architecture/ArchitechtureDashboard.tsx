@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { ComingSoonMetric } from '../../components/ComingSoonMetric';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 

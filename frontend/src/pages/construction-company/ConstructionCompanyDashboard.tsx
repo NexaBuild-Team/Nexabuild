@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -108,6 +109,8 @@ export default function ConstructionCompanyDashboard({
   onEditProject,
   onDeleteProject
 }: ConstructionCompanyDashboardProps) {
+  const { user } = useAuth();
+  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Contractor Team';
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [projectsState, setProjectsState] = useState<ConstructionProjectItem[]>([]);
 
@@ -226,7 +229,7 @@ export default function ConstructionCompanyDashboard({
               </button>
               <h1 className="text-2xl font-bold text-[#194360] tracking-tight">Dashboard Overview</h1>
             </div>
-            <p className="text-xs text-[#42474d] mt-1 font-semibold">Welcome back, BuildCo Team</p>
+            <p className="text-xs text-[#42474d] mt-1 font-semibold">Welcome back, {userName}</p>
           </div>
 
           <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
