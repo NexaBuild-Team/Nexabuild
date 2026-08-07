@@ -196,12 +196,32 @@ export default function PropertyListing() {
   const [propertyType,      setPropertyType]      = useState(initType || 'All Types')
   const [minBudgetM,        setMinBudgetM]        = useState(isNaN(initMinBudget) ? 0          : initMinBudget)
   const [maxBudgetM,        setMaxBudgetM]        = useState(isNaN(initMaxBudget) ? SLIDER_MAX : initMaxBudget)
+  
+  // Draft states for the hero bar so it doesn't filter immediately
+  const [heroPropertyType,  setHeroPropertyType]  = useState(propertyType)
+  const [heroMinBudget,     setHeroMinBudget]     = useState(minBudgetM)
+  const [heroMaxBudget,     setHeroMaxBudget]     = useState(maxBudgetM)
+
+  // Sync draft states when active filters change (e.g. via sidebar)
+  useEffect(() => {
+    setHeroPropertyType(propertyType)
+  }, [propertyType])
+  useEffect(() => {
+    setHeroMinBudget(minBudgetM)
+    setHeroMaxBudget(maxBudgetM)
+  }, [minBudgetM, maxBudgetM])
+
   const [selectedBeds,      setSelectedBeds]      = useState('All')
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
   const [currentPage,       setCurrentPage]       = useState(1)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
-  const districts     = ['Colombo', 'Kandy', 'Galle', 'Negombo']
+  const districts = [
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+    'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale',
+    'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+    'Trincomalee', 'Vavuniya'
+  ]
   const propertyTypes = ['All Types', 'House', 'Apartment', 'Villa', 'Commercial']
   const bedOptions    = ['All', '1', '2', '3', '4', '5+']
 
@@ -236,6 +256,9 @@ export default function PropertyListing() {
       setSelectedDistricts([])
       setSearchQuery(raw)    // use as free-text search
     }
+    setPropertyType(heroPropertyType)
+    setMinBudgetM(heroMinBudget)
+    setMaxBudgetM(heroMaxBudget)
     setCurrentPage(1)
   }
 
@@ -297,8 +320,8 @@ export default function PropertyListing() {
     { label: 'Above 200M', min: 200, max: SLIDER_MAX },
   ]
   const heroBudgetLabel = BUDGET_PRESETS.find(
-    r => r.min === minBudgetM && r.max === maxBudgetM
-  )?.label ?? (minBudgetM > 0 || maxBudgetM < SLIDER_MAX ? `${minBudgetM}M – ${maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}` : 'Budget')
+    r => r.min === heroMinBudget && r.max === heroMaxBudget
+  )?.label ?? (heroMinBudget > 0 || heroMaxBudget < SLIDER_MAX ? `${heroMinBudget}M – ${heroMaxBudget >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${heroMaxBudget}M`}` : 'Budget')
 
   const handleAIRecommend = () => {
     const params = new URLSearchParams()
@@ -371,15 +394,25 @@ export default function PropertyListing() {
             {/* Location input */}
             <div className="flex-1 flex items-center gap-2.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
               <MapPinIcon cls="w-4 h-4 flex-shrink-0 text-[#ccb7a3]" />
-              <input
+              <select
                 id="pl-search-location"
-                type="text"
                 value={heroLocation}
                 onChange={(e) => setHeroLocation(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSearch() }}
-                placeholder="Search by city, district or property name..."
-                className="w-full text-sm outline-none bg-transparent text-[#1d1d1d] placeholder:text-[#ccb7a3]"
-              />
+                className="w-full text-sm outline-none bg-transparent appearance-none cursor-pointer"
+                style={{ color: heroLocation ? '#1d1d1d' : '#ccb7a3' }}
+              >
+                <option value="" disabled hidden>Search by district...</option>
+                <option value="">All Districts</option>
+                {[
+                  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+                  'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale',
+                  'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+                  'Trincomalee', 'Vavuniya'
+                ].map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <ChevronDownIcon />
             </div>
 
             {/* Property Type — synced with sidebar */}
@@ -390,10 +423,10 @@ export default function PropertyListing() {
                 </svg>
                 <select
                   id="pl-hero-type"
-                  value={propertyType}
-                  onChange={(e) => setPropertyType(e.target.value)}
+                  value={heroPropertyType}
+                  onChange={(e) => setHeroPropertyType(e.target.value)}
                   className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1"
-                  style={{ color: propertyType !== 'All Types' ? '#1d1d1d' : '#928d64' }}
+                  style={{ color: heroPropertyType !== 'All Types' ? '#1d1d1d' : '#928d64' }}
                 >
                   <option value="All Types">Property Type</option>
                   <option value="House">House</option>
@@ -416,7 +449,7 @@ export default function PropertyListing() {
                   value={heroBudgetLabel}
                   onChange={(e) => {
                     const preset = BUDGET_PRESETS.find(r => r.label === e.target.value)
-                    if (preset) { setMinBudgetM(preset.min); setMaxBudgetM(preset.max) }
+                    if (preset) { setHeroMinBudget(preset.min); setHeroMaxBudget(preset.max) }
                   }}
                   className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1"
                   style={{ color: heroBudgetLabel !== 'Budget' ? '#1d1d1d' : '#928d64' }}
