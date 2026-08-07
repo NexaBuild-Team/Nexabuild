@@ -1,63 +1,20 @@
 model Land {
-  id                String   @id @default(cuid())
-  name              String
-  description       String
-  price             Float
-  location          String
-  province          String
-  pricePerPerch     Float
-  perches           Float
-  sqft              Float?
-  type              String
-  zoning            String?
-  roadFrontage      String
-  utilities         String
-  shape             String
-  facing            String
-  terrain           String
-  titleType         String
-  latitude          Float?
-  longitude         Float?
-  mapImg            String?
-  status            String
-  img               String
-  imgMain           String
-  imgSec            String
-  allImages         String[]
-  highlights        String[]
-  reasons           String[]
-  badges            String[]
-  rank              Int?
-
-  schools           Json?
-  hospitals         Json?
-  supermarkets      Json?
-  agent             Json?
-
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id              String   @id @default(uuid())
+  name            String
+  description     String
+  price           Float
+  location        String
+  perches         Float
+  sqft            Float?
+  landType        String
+  status          String
+  purpose         String?
+  environment     String?
+  developmentPlan String?
+  images          String[]
+  matchScore      Int?
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
-=======
-  id                String   @id @default(uuid())
-  name              String
-  description       String
-  price             String
-  location          String
-  perches           String
-  sqft              String?
-  status            String
-  badge             String?
-  landType          String
-  img               String
-  latitude          Float?
-  longitude         Float?
-  zoning            String?
-  roadAccess        Boolean  @default(false)
-  waterAccess       Boolean  @default(false)
-  electricityAccess Boolean  @default(false)
-  investmentScore   Int      @default(0)
-  matchScore        Int      @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime
-}
-

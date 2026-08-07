@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { Link } from 'react-router'
+import { useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { companies } from '../services/constructionMockData'
+import type { Company } from '../services/constructionMockData'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
 // Primary Blue         : #345b79
@@ -28,118 +30,6 @@ const budgets = [
   'LKR 30M – 50M',
   'LKR 50M – 100M',
   'Above LKR 100M',
-]
-
-interface Company {
-  id: number
-  name: string
-  initials: string
-  color: string
-  rating: number
-  reviews: number
-  location: string
-  description: string
-  projects: number
-  experience: number
-  startingPrice: string
-  tags: string[]
-  featured?: boolean
-  coverBg: string
-}
-
-const companies: Company[] = [
-  {
-    id: 1,
-    name: 'Heritage Construction',
-    initials: 'H',
-    color: '#345b79',
-    rating: 4.9,
-    reviews: 312,
-    location: 'Colombo',
-    description: 'Crafting premium residential and commercial masterpieces with over two decades of architectural excellence.',
-    projects: 512,
-    experience: 19,
-    startingPrice: 'LKR 3.5M',
-    tags: ['Residential', 'Commercial'],
-    featured: true,
-    coverBg: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80',
-  },
-  {
-    id: 2,
-    name: 'CMI Construction Co.',
-    initials: 'C',
-    color: '#be5d3f',
-    rating: 4.7,
-    reviews: 198,
-    location: 'Gampaha',
-    description: 'Sri Lanka\'s leading large-scale commercial and mixed-use development specialist.',
-    projects: 270,
-    experience: 25,
-    startingPrice: 'LKR8M',
-    tags: ['Commercial', 'Industrial'],
-    featured: true,
-    coverBg: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80',
-  },
-  {
-    id: 3,
-    name: 'Sithara Builders & Engineers',
-    initials: 'S',
-    color: '#495d38',
-    rating: 4.8,
-    reviews: 267,
-    location: 'Kandy',
-    description: 'Delivering high-quality residential homes and heritage renovations across Central Sri Lanka.',
-    projects: 196,
-    experience: 11,
-    startingPrice: 'LKR 2.6M',
-    tags: ['Residential', 'Renovation'],
-    coverBg: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80',
-  },
-  {
-    id: 4,
-    name: 'Lanka Build Pro (Pvt) Ltd',
-    initials: 'L',
-    color: '#928d64',
-    rating: 4.5,
-    reviews: 134,
-    location: 'Galle',
-    description: 'Fast, reliable and affordable construction with sustainable practices for modern Sri Lankan life.',
-    projects: 154,
-    experience: 9,
-    startingPrice: 'LKR 2.4M',
-    tags: ['Residential', 'Commercial'],
-    coverBg: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
-  },
-  {
-    id: 5,
-    name: 'Avant-Garde Constructions',
-    initials: 'A',
-    color: '#6b879c',
-    rating: 4.9,
-    reviews: 89,
-    location: 'Colombo',
-    description: 'Bespoke architectural constructions tailored to exacting standards, delivering award-winning structures.',
-    projects: 85,
-    experience: 11,
-    startingPrice: 'LKR 12M',
-    tags: ['Luxury', 'Residential'],
-    coverBg: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&q=80',
-  },
-  {
-    id: 6,
-    name: 'Millennium Builders (Pvt) Ltd',
-    initials: 'M',
-    color: '#be5d3f',
-    rating: 4.7,
-    reviews: 221,
-    location: 'Colombo',
-    description: 'Modern high-rise residential and apartment complexes built to a class of its own.',
-    projects: 231,
-    experience: 21,
-    startingPrice: 'LKR 8M',
-    tags: ['Commercial', 'Residential'],
-    coverBg: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80',
-  },
 ]
 
 const topBuilders = [
@@ -171,7 +61,19 @@ function StarRating({ rating, size = 12 }: { rating: number; size?: number }) {
   )
 }
 
-function CompanyCard({ company }: { company: Company }) {
+function CompanyCard({
+  company,
+  isBookmarked,
+  onToggleBookmark,
+  onEmail,
+  onViewProfile,
+}: {
+  company: Company
+  isBookmarked: boolean
+  onToggleBookmark: (companyId: number) => void
+  onEmail: (company: Company) => void
+  onViewProfile: () => void
+}) {
   return (
     <article
       id={`company-card-${company.id}`}
@@ -286,27 +188,29 @@ function CompanyCard({ company }: { company: Company }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <Link
-            to={`/construction-companies/${company.id}`}
+          <button
             id={`view-profile-${company.id}`}
-            className="flex-1 text-center text-xs font-semibold py-2 rounded-xl text-white no-underline transition-all duration-150 hover:opacity-90"
+            onClick={onViewProfile}
+            className="flex-1 text-center text-xs font-semibold py-2 rounded-xl text-white transition-all duration-150 hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
             View Profile
-          </Link>
+          </button>
           <button
             id={`bookmark-${company.id}`}
             aria-label={`Bookmark ${company.name}`}
+            onClick={() => onToggleBookmark(company.id)}
             className="p-2 rounded-xl transition-colors hover:bg-gray-100"
             style={{ border: '1px solid #e6e0d4' }}
           >
-            <svg width="14" height="14" fill="none" stroke="#6b879c" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+            <svg width="14" height="14" fill={isBookmarked ? '#be5d3f' : 'none'} stroke={isBookmarked ? '#be5d3f' : '#6b879c'} strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
           </button>
           <button
             id={`email-${company.id}`}
             aria-label={`Email ${company.name}`}
+            onClick={() => onEmail(company)}
             className="p-2 rounded-xl transition-colors hover:bg-gray-100"
             style={{ border: '1px solid #e6e0d4' }}
           >
@@ -321,29 +225,136 @@ function CompanyCard({ company }: { company: Company }) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
+const DEFAULT_FILTERS = {
+  search: '',
+  district: 'All Districts',
+  budget: 'Any Budget',
+  budgetSlider: 50,
+  minRating: 0,
+  locations: [] as string[],
+  experience: '',
+  specialization: '',
+}
+
 export default function ConstructionListing() {
-  const [search, setSearch] = useState('')
-  const [district, setDistrict] = useState('All Districts')
-  const [budget, setBudget] = useState('Any Budget')
+  const navigate = useNavigate()
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const { search, district, budget, budgetSlider, minRating, locations, experience, specialization } = filters
+  const [appliedFilters, setAppliedFilters] = useState(DEFAULT_FILTERS)
+  const [sort, setSort] = useState('Top Rated')
   const [currentPage, setCurrentPage] = useState(1)
-  const [budgetSlider, setBudgetSlider] = useState(50)
-  const [minRating, setMinRating] = useState(0)
-  const [locations, setLocations] = useState<string[]>([])
-  const [experience, setExperience] = useState('')
-  const [specialization, setSpecialization] = useState('')
+  const [bookmarkedCompanies, setBookmarkedCompanies] = useState<number[]>([])
 
   const locationOptions = ['Colombo', 'Gampaha', 'Kandy', 'Galle', 'Matara']
   const experienceOptions = ['1 – 5 Years', '5 – 10 Years', '10 – 20 Years', '20+ Years']
   const specializationOptions = ['Residential', 'Commercial', 'Luxury Villas', 'Interior Design', 'Sustainable Design']
 
   const toggleLocation = (loc: string) => {
-    setLocations((prev) => prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc])
+    setFilters((prev) => ({
+      ...prev,
+      locations: prev.locations.includes(loc) ? prev.locations.filter((l) => l !== loc) : [...prev.locations, loc],
+    }))
   }
 
   const clearFilters = () => {
-    setSearch(''); setDistrict('All Districts'); setBudget('Any Budget')
-    setBudgetSlider(50); setMinRating(0); setLocations([]); setExperience(''); setSpecialization('')
+    setFilters(DEFAULT_FILTERS)
+    setAppliedFilters(DEFAULT_FILTERS)
+    setCurrentPage(1)
   }
+
+  const applyFilters = () => {
+    setAppliedFilters(filters)
+    setCurrentPage(1)
+  }
+
+  const searchCompanies = () => {
+    setAppliedFilters(filters)
+    setCurrentPage(1)
+  }
+
+  const toggleBookmark = (companyId: number) => {
+    setBookmarkedCompanies((prev) =>
+      prev.includes(companyId) ? prev.filter((id) => id !== companyId) : [...prev, companyId]
+    )
+  }
+
+  const emailCompany = (company: Company) => {
+    const toEmail = `info@${company.name.toLowerCase().replace(/[^a-z0-9]+/g, '')}.com`
+    const subject = encodeURIComponent(`Inquiry about ${company.name}`)
+    const body = encodeURIComponent(`Hello ${company.name},%0D%0A%0D%0AI would like to learn more about your construction services.`)
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${toEmail}&su=${subject}&body=${body}`
+    window.open(gmailUrl, '_blank', 'noopener')
+  }
+
+  const parseBudgetValue = (priceString: string) => {
+    const numeric = Number(priceString.replace(/[^0-9.]/g, ''))
+    return Number.isNaN(numeric) ? 0 : numeric
+  }
+
+  const budgetRange = (budgetLabel: string) => {
+    switch (budgetLabel) {
+      case 'Under LKR 5M':
+        return { min: 0, max: 5 }
+      case 'LKR 5M – 15M':
+        return { min: 5, max: 15 }
+      case 'LKR 15M – 30M':
+        return { min: 15, max: 30 }
+      case 'LKR 30M – 50M':
+        return { min: 30, max: 50 }
+      case 'LKR 50M – 100M':
+        return { min: 50, max: 100 }
+      case 'Above LKR 100M':
+        return { min: 100, max: Number.MAX_SAFE_INTEGER }
+      default:
+        return null
+    }
+  }
+
+  const experienceRange = (experienceLabel: string) => {
+    if (experienceLabel === '1 – 5 Years') return { min: 1, max: 5 }
+    if (experienceLabel === '5 – 10 Years') return { min: 5, max: 10 }
+    if (experienceLabel === '10 – 20 Years') return { min: 10, max: 20 }
+    if (experienceLabel === '20+ Years') return { min: 20, max: Number.MAX_SAFE_INTEGER }
+    return null
+  }
+
+  const filteredCompanies = useMemo(() => {
+    const range = budgetRange(appliedFilters.budget)
+    const expRange = experienceRange(appliedFilters.experience)
+
+    return companies
+      .filter((company) => {
+        if (appliedFilters.search && !company.name.toLowerCase().includes(appliedFilters.search.toLowerCase()) && !company.description.toLowerCase().includes(appliedFilters.search.toLowerCase())) {
+          return false
+        }
+        if (appliedFilters.district !== 'All Districts' && company.location !== appliedFilters.district) return false
+        const value = parseBudgetValue(company.startingPrice)
+        if (range) {
+          if (value < range.min || value > range.max) return false
+        }
+        if (appliedFilters.budgetSlider < 100 && value > appliedFilters.budgetSlider) return false
+        if (appliedFilters.locations.length > 0 && !appliedFilters.locations.includes(company.location)) return false
+        if (expRange) {
+          if (company.experience < expRange.min || company.experience > expRange.max) return false
+        }
+        if (appliedFilters.specialization && !company.tags.includes(appliedFilters.specialization)) return false
+        if (appliedFilters.minRating > 0 && company.rating < appliedFilters.minRating) return false
+        return true
+      })
+      .sort((a, b) => {
+        if (sort === 'Top Rated') return b.rating - a.rating
+        if (sort === 'Most Projects') return b.projects - a.projects
+        if (sort === 'Price: Low to High') return parseBudgetValue(a.startingPrice) - parseBudgetValue(b.startingPrice)
+        if (sort === 'Newest') return b.id - a.id
+        return 0
+      })
+  }, [appliedFilters, sort])
+
+  const pagedCompanies = useMemo(() => {
+    const pageSize = 6
+    const start = (currentPage - 1) * pageSize
+    return filteredCompanies.slice(start, start + pageSize)
+  }, [filteredCompanies, currentPage])
 
   return (
     <div style={{ backgroundColor: '#e6e0d4', minHeight: '100vh', fontFamily: "'Poppins', sans-serif" }}>
@@ -399,7 +410,7 @@ export default function ConstructionListing() {
                   type="text"
                   placeholder="Search Company Name"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
                   className="bg-transparent w-full text-sm outline-none"
                   style={{ color: '#1d1d1d', fontFamily: "'Poppins', sans-serif" }}
                 />
@@ -413,7 +424,7 @@ export default function ConstructionListing() {
                 <select
                   id="search-district"
                   value={district}
-                  onChange={(e) => setDistrict(e.target.value)}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, district: e.target.value }))}
                   className="bg-transparent text-sm outline-none w-full"
                   style={{ color: '#1d1d1d', fontFamily: "'Poppins', sans-serif" }}
                 >
@@ -428,7 +439,7 @@ export default function ConstructionListing() {
                 <select
                   id="search-budget"
                   value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, budget: e.target.value }))}
                   className="bg-transparent text-sm outline-none w-full"
                   style={{ color: '#1d1d1d', fontFamily: "'Poppins', sans-serif" }}
                 >
@@ -438,6 +449,7 @@ export default function ConstructionListing() {
               {/* Search Button */}
               <button
                 id="hero-search-btn"
+                onClick={searchCompanies}
                 className="flex items-center justify-center gap-2 px-7 py-2.5 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-all duration-150 hover:shadow-lg"
                 style={{ backgroundColor: '#be5d3f', minWidth: '120px' }}
               >
@@ -520,7 +532,7 @@ export default function ConstructionListing() {
                         type="radio"
                         name="experience"
                         checked={experience === opt}
-                        onChange={() => setExperience(opt)}
+                        onChange={() => setFilters((prev) => ({ ...prev, experience: opt }))}
                         style={{ accentColor: '#345b79' }}
                       />
                       <span className="text-sm group-hover:opacity-70 transition-opacity" style={{ color: '#1d1d1d' }}>{opt}</span>
@@ -541,7 +553,7 @@ export default function ConstructionListing() {
                         type="radio"
                         name="specialization"
                         checked={specialization === opt}
-                        onChange={() => setSpecialization(opt)}
+                        onChange={() => setFilters((prev) => ({ ...prev, specialization: opt }))}
                         style={{ accentColor: '#345b79' }}
                       />
                       <span className="text-sm group-hover:opacity-70 transition-opacity" style={{ color: '#1d1d1d' }}>{opt}</span>
@@ -566,7 +578,7 @@ export default function ConstructionListing() {
                     min={1}
                     max={100}
                     value={budgetSlider}
-                    onChange={(e) => setBudgetSlider(Number(e.target.value))}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, budgetSlider: Number(e.target.value) }))}
                     className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                     style={{ accentColor: '#345b79', backgroundColor: '#e6e0d4' }}
                   />
@@ -584,7 +596,7 @@ export default function ConstructionListing() {
                     <button
                       key={r}
                       id={`rating-filter-${r}`}
-                      onClick={() => setMinRating(r)}
+                      onClick={() => setFilters((prev) => ({ ...prev, minRating: r }))}
                       className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-150"
                       style={minRating === r
                         ? { backgroundColor: '#345b79', color: 'white' }
@@ -599,6 +611,7 @@ export default function ConstructionListing() {
 
               <button
                 id="apply-filters-btn"
+                onClick={applyFilters}
                 className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: '#345b79' }}
               >
@@ -615,12 +628,16 @@ export default function ConstructionListing() {
                 <h2 className="text-lg font-bold" style={{ color: '#1d1d1d' }}>
                   Construction Companies
                 </h2>
-                <p className="text-sm mt-0.5" style={{ color: '#928d64' }}>Showing {companies.length} of 250+ verified companies</p>
+                <p className="text-sm mt-0.5" style={{ color: '#928d64' }}>
+                  Showing {pagedCompanies.length} of {filteredCompanies.length} matching companies
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <label className="text-xs" style={{ color: '#928d64' }}>Sort by:</label>
                 <select
                   id="sort-select"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
                   className="text-sm rounded-lg px-3 py-1.5 outline-none"
                   style={{ backgroundColor: 'white', color: '#1d1d1d', border: '1px solid #e6e0d4', fontFamily: "'Poppins', sans-serif" }}
                 >
@@ -634,8 +651,15 @@ export default function ConstructionListing() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-              {companies.map((company) => (
-                <CompanyCard key={company.id} company={company} />
+              {pagedCompanies.map((company) => (
+                <CompanyCard
+                  key={company.id}
+                  company={company}
+                  isBookmarked={bookmarkedCompanies.includes(company.id)}
+                  onToggleBookmark={toggleBookmark}
+                  onEmail={emailCompany}
+                  onViewProfile={() => navigate(`/construction-companies/${company.id}`)}
+                />
               ))}
             </div>
 

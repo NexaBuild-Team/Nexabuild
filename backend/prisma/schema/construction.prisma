@@ -1,5 +1,96 @@
+// Construction module schema
+
 model ConstructionCompany {
+  id                String                              @id @default(uuid())
+  name              String
+  slug              String                              @unique
+  description       String?
+  logo              String?
+  district          String?
+  address           String?
+  phone             String?
+  email             String?
+  website           String?
+  yearsOfExperience Int?                                 @default(0)
+  startingBudget    Float?
+  verified          Boolean                             @default(false)
+  featured          Boolean                             @default(false)
+  rating            Float?                              @default(0)
+  reviewCount       Int                                 @default(0)
+  projectCount      Int                                 @default(0)
+  createdAt         DateTime                            @default(now())
+  updatedAt         DateTime                            @updatedAt
+
+  projects          ConstructionProject[]
+  reviews           ConstructionReview[]
+  images            ConstructionCompanyImage[]
+  specializations   ConstructionCompanySpecialization[]
+
+  @@index([district])
+  @@index([yearsOfExperience])
+  @@index([startingBudget])
+  @@index([verified])
+  @@index([featured])
+  @@index([rating])
+}
+
+model ConstructionProject {
+  id           String   @id @default(uuid())
+  company      ConstructionCompany @relation(fields: [companyId], references: [id])
+  companyId    String
+  title        String
+  description  String?
+  projectType  String?
+  location     String?
+  budget       Float?
+  images       String[]   @default([])
+  completionDate DateTime?
+  status       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ConstructionReview {
+  id         String   @id @default(uuid())
+  company    ConstructionCompany @relation(fields: [companyId], references: [id])
+  companyId  String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ConstructionCompanyImage {
   id        String   @id @default(uuid())
-  name      String
+  company   ConstructionCompany @relation(fields: [companyId], references: [id])
+  companyId String
+  url       String
+  caption   String?
   createdAt DateTime @default(now())
+}
+
+model ConstructionSpecialization {
+  id    String @id @default(uuid())
+  name  String @unique
+
+  companies ConstructionCompanySpecialization[]
+}
+
+model ConstructionCompanySpecialization {
+  company         ConstructionCompany     @relation(fields: [companyId], references: [id])
+  companyId       String
+  specialization  ConstructionSpecialization @relation(fields: [specializationId], references: [id])
+  specializationId String
+
+  @@id([companyId, specializationId])
+}
+
+model ConstructionMarketInsight {
+  id               String   @id @default(uuid())
+  category         String
+  averageCostPerSqft Float
+  year             Int?
+  district         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

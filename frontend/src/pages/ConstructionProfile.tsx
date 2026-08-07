@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { companies } from '../services/constructionMockData'
 import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
@@ -13,30 +15,6 @@ import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 // Green Accent         : #495d38
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
-const company = {
-  name: 'Avant Construction Group',
-  tagline: 'Building Tomorrow\'s Sri Lanka, Today.',
-  established: 2004,
-  location: 'Colombo 03, Western Province',
-  phone: '+94 11 456 7890',
-  email: 'info@avantconstruction.lk',
-  website: 'www.avantconstruction.lk',
-  rating: 4.9,
-  reviews: 312,
-  projects: 512,
-  experience: 21,
-  avgResponseTime: '< 2 hrs',
-  clientSatisfaction: 98,
-  avgProjectCost: 'LKR 18M',
-  coverImage: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1400&q=90',
-  about: `Avant Construction Group is Sri Lanka's foremost premium construction company, specializing in bespoke luxury residential estates, large-scale commercial complexes, and heritage-inspired hospitality projects. With over two decades of uncompromising craftsmanship, we have redefined the skyline of Colombo and beyond.
-
-Our multidisciplinary team of architects, engineers, and interior specialists collaborates seamlessly to deliver projects that harmonize cutting-edge technology with Sri Lanka's rich architectural heritage. Every structure we build is a testament to precision, sustainability, and aesthetic excellence.`,
-  mission: 'To build enduring structures that inspire communities, empower lives, and define modern Sri Lankan architecture.',
-  vision: 'To be the most trusted and innovative construction partner in South Asia by 2030, setting the benchmark for quality, sustainability, and design excellence.',
-  coreValues: ['Integrity', 'Excellence', 'Innovation', 'Sustainability', 'Community'],
-}
-
 const specializations = [
   { icon: '🏡', label: 'Luxury Residential', desc: 'Bespoke villas and high-end homes' },
   { icon: '🏢', label: 'Commercial', desc: 'Office towers and retail complexes' },
@@ -106,14 +84,19 @@ function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
 }
 
 export default function ConstructionProfile() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const companyId = id ? parseInt(id, 10) : NaN
+  const company = companies.find((c) => c.id === companyId) ?? companies[0]
+
   const [activeTab, setActiveTab] = useState<'about' | 'projects' | 'reviews' | 'contact'>('about')
   const [bookmarked, setBookmarked] = useState(false)
 
   const ratingBreakdown = [
-    { label: 'Quality', value: 4.9 },
-    { label: 'Communication', value: 4.8 },
-    { label: 'Timeline', value: 4.7 },
-    { label: 'Value', value: 4.6 },
+    { label: 'Quality', value: company.rating },
+    { label: 'Communication', value: Math.max(0, company.rating - 0.1) },
+    { label: 'Timeline', value: Math.max(0, company.rating - 0.2) },
+    { label: 'Value', value: Math.max(0, company.rating - 0.3) },
   ]
 
   return (
@@ -413,6 +396,7 @@ export default function ConstructionProfile() {
                         </div>
                         <button
                           id={`view-project-${proj.id}`}
+                          onClick={() => navigate(`/construction-projects/${proj.id}`)}
                           className="w-full py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
                           style={{ backgroundColor: '#345b79' }}
                         >
@@ -640,26 +624,6 @@ export default function ConstructionProfile() {
                   Download Brochure
                 </button>
               </div>
-            </div>
-
-            {/* Quick Contact CTA */}
-            <div
-              className="rounded-3xl p-6 text-center"
-              style={{
-                background: 'linear-gradient(135deg, #345b79 0%, #1d3a4f 100%)',
-                boxShadow: '0 8px 32px rgba(52,91,121,0.30)',
-              }}
-            >
-              <img src={nexaBuildLogo} alt="NexaBuild" className="h-8 w-auto object-contain mx-auto mb-3" />
-              <p className="text-white text-sm font-semibold mb-1">AI-Powered Matching</p>
-              <p className="text-white/70 text-xs mb-4">Get personalized quotations from verified builders.</p>
-              <button
-                id="ai-match-btn"
-                className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: '#be5d3f' }}
-              >
-                Get AI Quote
-              </button>
             </div>
 
           </aside>

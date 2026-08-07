@@ -266,7 +266,7 @@ export default function PropertyListing() {
   const [selectedBeds,      setSelectedBeds]      = useState('All')
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([])
   const [currentPage,       setCurrentPage]       = useState(1)
-  const [sortBy,            setSortBy]            = useState('Most Relevant')
+  const [sortBy]                                  = useState('Most Relevant')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const districts     = ['Colombo', 'Kandy', 'Galle', 'Negombo']
