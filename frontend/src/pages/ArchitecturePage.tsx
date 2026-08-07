@@ -1,10 +1,10 @@
 // src/pages/ArchitecturePage.tsx
 // Route: /architecture
 // Full blueprint layout: Hero search + Architecture Firms listing
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { ReactElement } from 'react'
 import { useNavigate } from 'react-router'
-import { architectFirms } from '../services/architectureMockData'
+import api from '../services/api'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -40,7 +40,8 @@ const SPEC_ICONS: Record<string, ReactElement> = {
 
 // ─── Firm Card ─────────────────────────────────────────────────────────────────
 
-function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function FirmCard({ firm }: { firm: any }) {
   const navigate = useNavigate()
   return (
     <article
@@ -50,14 +51,14 @@ function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
       {/* Cover image */}
       <div className="relative h-44 overflow-hidden">
         <img
-          src={firm.coverImage}
+          src={firm.coverImageUrl}
           alt={firm.name}
           className="w-full h-full object-cover"
           loading="lazy"
         />
         {/* Avatar overlaid on image bottom */}
         <img
-          src={firm.avatar}
+          src={firm.avatarUrl}
           alt={`${firm.name} principal`}
           className="absolute bottom-3 left-4 w-12 h-12 rounded-full object-cover border-2 border-white"
           style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}
@@ -85,14 +86,14 @@ function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
           <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
           </svg>
-          {firm.location}, {firm.country}
+          {firm.locationLabel}, {firm.country}
         </p>
 
         {/* Stats row */}
         <div className="flex items-stretch gap-0 py-3 border-y mb-3" style={{ borderColor: '#e6e0d4' }}>
           <div className="flex-1 text-center">
             <p className="text-xs font-semibold uppercase tracking-widest mb-0.5" style={{ color: '#6b879c' }}>Experience</p>
-            <p className="font-bold text-sm" style={{ color: '#1d1d1d' }}>{firm.experience}+ yrs</p>
+            <p className="font-bold text-sm" style={{ color: '#1d1d1d' }}>{firm.yearsExperience}+ yrs</p>
           </div>
           <div className="w-px" style={{ background: '#e6e0d4' }} />
           <div className="flex-1 text-center">
@@ -108,15 +109,18 @@ function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
 
         {/* Specialization tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {firm.specializations.map((spec) => (
-            <span
-              key={spec}
-              className="h-auto px-3 py-1 rounded-full text-xs font-medium leading-none"
-              style={{ background: '#f0ede8', color: '#345b79' }}
-            >
-              {spec}
-            </span>
-          ))}
+          {(firm.specializations ?? []).map((spec: any) => {
+            const label = typeof spec === 'string' ? spec : spec.label
+            return (
+              <span
+                key={label}
+                className="h-auto px-3 py-1 rounded-full text-xs font-medium leading-none"
+                style={{ background: '#f0ede8', color: '#345b79' }}
+              >
+                {label}
+              </span>
+            )
+          })}
         </div>
 
         {/* Action row */}
@@ -156,6 +160,18 @@ function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 function ArchitecturePage() {
+  // Live data state
+  const [firms, setFirms]     = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState<string | null>(null)
+
+  useEffect(() => {
+    api.get('/architecture')
+      .then((res) => setFirms(res.data))
+      .catch(() => setError('Failed to load firms. Please ensure the backend is running.'))
+      .finally(() => setLoading(false))
+  }, [])
+
   // Hero search state
   const [searchName, setSearchName]       = useState('')
   const [searchCompany, setSearchCompany] = useState('')
@@ -196,10 +212,12 @@ function ArchitecturePage() {
     scrollToFirms()
   }
 
-  // Apply sidebar filters
-  const filtered = architectFirms.filter((firm) => {
+  // Apply sidebar filters to live data
+  const filtered = firms.filter((firm) => {
     if (selectedLocations.length > 0 && !selectedLocations.includes(firm.city)) return false
-    if (selectedSpecs.length > 0 && !selectedSpecs.some((s) => firm.specializations.includes(s))) return false
+    if (selectedSpecs.length > 0 && !selectedSpecs.some((s) =>
+      (firm.specializations ?? []).map((sp: any) => (typeof sp === 'string' ? sp : sp.label)).includes(s)
+    )) return false
     if (minRating > 0 && firm.rating < minRating) return false
     if (selectedExperience) {
       const ranges: Record<string, [number, number]> = {
@@ -207,7 +225,7 @@ function ArchitecturePage() {
         '10 – 20 Years': [10, 20], '20+ Years': [20, 999],
       }
       const [min, max] = ranges[selectedExperience]
-      if (firm.experience < min || firm.experience > max) return false
+      if (firm.yearsExperience < min || firm.yearsExperience > max) return false
     }
     return true
   })
@@ -215,9 +233,21 @@ function ArchitecturePage() {
   // Sort
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'Most Projects')    return b.projectCount - a.projectCount
-    if (sortBy === 'Most Experienced') return b.experience - a.experience
+    if (sortBy === 'Most Experienced') return b.yearsExperience - a.yearsExperience
     return b.rating - a.rating // Top Rated default
   })
+
+  // Loading / error guards
+  if (loading) return (
+    <main className="flex-1 flex items-center justify-center py-32">
+      <p className="text-sm" style={{ color: '#928d64' }}>Loading firms…</p>
+    </main>
+  )
+  if (error) return (
+    <main className="flex-1 flex items-center justify-center py-32">
+      <p className="text-sm" style={{ color: '#be5d3f' }}>{error}</p>
+    </main>
+  )
 
   return (
     <>
