@@ -85,22 +85,65 @@ export default function AIRecommendations() {
   const [activeLocation, setActiveLocation] = useState(() => {
     return localStorage.getItem('nexabuild_land_filter_location') || 'Any'
   })
+  const [appliedLocation, setAppliedLocation] = useState(activeLocation)
   const [selectedType, setSelectedType] = useState(() => {
     return localStorage.getItem('nexabuild_land_filter_type') || 'all'
   })
+  const [appliedType, setAppliedType] = useState(selectedType)
   const [priceMax, setPriceMax] = useState(() => {
     const saved = localStorage.getItem('nexabuild_land_filter_pricemax')
     return saved ? Number(saved) : 150
   })
+  const [appliedPriceMax, setAppliedPriceMax] = useState(priceMax)
   const [activeRoadAccess, setActiveRoadAccess] = useState(() => {
     return localStorage.getItem('nexabuild_land_pref_road_access') || 'Any'
   })
+  const [appliedRoadAccess, setAppliedRoadAccess] = useState(activeRoadAccess)
   const [savedCards, setSavedCards] = useState<string[]>([])
   const [bookmarked, setBookmarked] = useState<string[]>([])
   const [sortBy, setSortBy] = useState('Best Match')
   const [searchText, setSearchText] = useState('')
   const [budgetMin, setBudgetMin] = useState('5M')
   const [budgetMax, setBudgetMax] = useState('150M')
+
+  const locationCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    allLands.forEach(l => {
+      const city = l.location.split(',')[0].trim()
+      counts[city] = (counts[city] || 0) + 1
+    })
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3)
+  }, [allLands])
+
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    allLands.forEach(l => {
+      const type = l.landType.charAt(0).toUpperCase() + l.landType.slice(1).toLowerCase() + ' Land'
+      counts[type] = (counts[type] || 0) + 1
+    })
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+  }, [allLands])
+
+  const sizeCatCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      '< 10 Perches': 0,
+      '10–20 Perches': 0,
+      '20–50 Perches': 0,
+      '50+ Perches': 0
+    }
+    allLands.forEach(l => {
+      const cat = getLandSizeCategory(l)
+      if (counts[cat] !== undefined) {
+        counts[cat]++
+      }
+    })
+    return Object.entries(counts).map(([name, count]) => ({ name, count }))
+  }, [allLands])
 
   const [searchLocation, setSearchLocation] = useState(() => {
     return localStorage.getItem('nexabuild_land_filter_location') || 'Any'
@@ -120,7 +163,9 @@ export default function AIRecommendations() {
 
   const handleHeroSearch = () => {
     setActiveLocation(searchLocation)
+    setAppliedLocation(searchLocation)
     setSelectedType(searchType)
+    setAppliedType(searchType)
     
     let maxVal = 150
     if (searchBudget === 'Under LKR 10M') maxVal = 10
@@ -130,6 +175,7 @@ export default function AIRecommendations() {
     else if (searchBudget === 'LKR 100M - 150M') maxVal = 150
     
     setPriceMax(maxVal)
+    setAppliedPriceMax(maxVal)
     localStorage.setItem('nexabuild_land_filter_pricemax', String(maxVal))
     localStorage.setItem('nexabuild_land_filter_location', searchLocation)
     localStorage.setItem('nexabuild_land_filter_type', searchType)
@@ -143,9 +189,13 @@ export default function AIRecommendations() {
 
   const handleClearAll = () => {
     setSelectedType('all')
+    setAppliedType('all')
     setActiveLocation('Any')
+    setAppliedLocation('Any')
     setActiveRoadAccess('Any')
+    setAppliedRoadAccess('Any')
     setPriceMax(150)
+    setAppliedPriceMax(150)
     setSearchText('')
     setActiveLocations([])
     setCenterFilterApplied(false)
@@ -160,6 +210,11 @@ export default function AIRecommendations() {
   const [isGenerating, setIsGenerating] = useState(false)
 
   const handleSidebarAISmartRecommend = () => {
+    setAppliedLocation(activeLocation)
+    setAppliedType(selectedType)
+    setAppliedPriceMax(priceMax)
+    setAppliedRoadAccess(activeRoadAccess)
+
     localStorage.setItem('nexabuild_land_filter_location', activeLocation)
     localStorage.setItem('nexabuild_land_filter_type', selectedType)
     localStorage.setItem('nexabuild_land_filter_pricemax', String(priceMax))
@@ -255,23 +310,23 @@ export default function AIRecommendations() {
     const roadWidth = getRoadAccessWidth(land)
 
     // Stage 1: Left Sidebar Penalties
-    if (activeLocation && activeLocation !== 'Any') {
-      if (!loc.includes(activeLocation.toLowerCase())) {
+    if (appliedLocation && appliedLocation !== 'Any') {
+      if (!loc.includes(appliedLocation.toLowerCase())) {
         score -= 15
       }
     }
-    if (selectedType && selectedType !== 'all') {
-      if (type !== selectedType.toLowerCase()) {
+    if (appliedType && appliedType !== 'all') {
+      if (type !== appliedType.toLowerCase()) {
         score -= 15
       }
     }
-    if (activeRoadAccess && activeRoadAccess !== 'Any') {
-      if (roadWidth !== activeRoadAccess) {
+    if (appliedRoadAccess && appliedRoadAccess !== 'Any') {
+      if (roadWidth !== appliedRoadAccess) {
         score -= 15
       }
     }
-    if (priceMax) {
-      if (land.price > priceMax * 1000000) {
+    if (appliedPriceMax) {
+      if (land.price > appliedPriceMax * 1000000) {
         score -= 15
       }
     }
@@ -382,8 +437,8 @@ export default function AIRecommendations() {
     let pool = [...allLands]
 
     // Location
-    if (activeLocation && activeLocation !== 'Any') {
-      pool = pool.filter(l => l.location.toLowerCase().includes(activeLocation.toLowerCase()))
+    if (appliedLocation && appliedLocation !== 'Any') {
+      pool = pool.filter(l => l.location.toLowerCase().includes(appliedLocation.toLowerCase()))
     } else if (activeLocations.length > 0) {
       pool = pool.filter(l =>
         activeLocations.some(loc => l.location.toLowerCase().includes(loc.toLowerCase()))
@@ -391,8 +446,8 @@ export default function AIRecommendations() {
     }
 
     // Type
-    if (selectedType && selectedType !== 'all') {
-      pool = pool.filter(l => l.landType.toLowerCase() === selectedType.toLowerCase())
+    if (appliedType && appliedType !== 'all') {
+      pool = pool.filter(l => l.landType.toLowerCase() === appliedType.toLowerCase())
     } else if (checkedTypes.length > 0) {
       pool = pool.filter(l =>
         checkedTypes.some(t => {
@@ -409,15 +464,15 @@ export default function AIRecommendations() {
     }
 
     // Road Access
-    if (activeRoadAccess && activeRoadAccess !== 'Any') {
-      pool = pool.filter(l => getRoadAccessWidth(l) === activeRoadAccess)
+    if (appliedRoadAccess && appliedRoadAccess !== 'Any') {
+      pool = pool.filter(l => getRoadAccessWidth(l) === appliedRoadAccess)
     } else if (activeRoadAccessFilters.length > 0) {
       pool = pool.filter(l => activeRoadAccessFilters.includes(getRoadAccessWidth(l)))
     }
 
     // Price Max
-    if (priceMax) {
-      pool = pool.filter(l => l.price <= priceMax * 1000000)
+    if (appliedPriceMax) {
+      pool = pool.filter(l => l.price <= appliedPriceMax * 1000000)
     }
 
     return pool.map(land => {
@@ -493,7 +548,7 @@ export default function AIRecommendations() {
       return (b.rawScore || 0) - (a.rawScore || 0)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allLands, appliedPurpose, appliedLandSize, appliedEnvironment, appliedPlan, activeLocation, activeLocations, selectedType, checkedTypes, activeRoadAccess, activeRoadAccessFilters, priceMax, hasGenerated, centerFilterApplied])
+  }, [allLands, appliedPurpose, appliedLandSize, appliedEnvironment, appliedPlan, appliedLocation, activeLocations, appliedType, checkedTypes, appliedRoadAccess, activeRoadAccessFilters, appliedPriceMax, hasGenerated, centerFilterApplied])
 
 
   const [visibleRecommendations, setVisibleRecommendations] = useState(2)
@@ -839,39 +894,18 @@ export default function AIRecommendations() {
               {/* Apply Filters */}
               <button
                 id="apply-filters-btn"
-                onClick={handleSidebarAISmartRecommend}
+                onClick={() => {
+                  setAppliedLocation(activeLocation)
+                  setAppliedType(selectedType)
+                  setAppliedPriceMax(priceMax)
+                  setAppliedRoadAccess(activeRoadAccess)
+                }}
                 className="w-full flex items-center justify-center gap-1.5 text-[11px] font-bold py-2.5 rounded-xl transition-all hover:opacity-90 border cursor-pointer active:scale-95"
                 style={{ color: '#345b79', borderColor: '#345b79', backgroundColor: 'transparent' }}
               >
                 <FilterIcon />
                 Apply Filters
               </button>
-            </div>
-
-            {/* AI Market Insight */}
-            <div
-              className="p-6 rounded-xl text-white shadow-lg overflow-hidden relative sticky top-[76px]"
-              style={{ background: 'linear-gradient(135deg, #345b79 0%, #1d1d1d 100%)' }}
-            >
-              <div className="relative z-10">
-                <div className="flex items-center text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#d59b86' }}>
-                  📊 AI Market Insight
-                </div>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.80)' }}>
-                  Property values in Colombo 7 have increased 12% this quarter. Your preferred budget aligns with 94 available listings.
-                </p>
-                <button
-                  id="best-time-btn"
-                  className="w-full py-2 text-xs font-semibold rounded-md flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.20)' }}
-                >
-                  Best time to buy: Now →
-                </button>
-              </div>
-              <div
-                className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-10"
-                style={{ backgroundColor: '#fff' }}
-              />
             </div>
           </aside>
 
@@ -1058,7 +1092,7 @@ export default function AIRecommendations() {
             </div>
 
             {/* Applied Filters Banner — mirrors PropertyListingAI URL-param chips */}
-            {(activeLocation !== 'Any' || selectedType !== 'all' || activeRoadAccess !== 'Any' || priceMax < 150) && (
+            {(appliedLocation !== 'Any' || appliedType !== 'all' || appliedRoadAccess !== 'Any' || appliedPriceMax < 150) && (
               <div className="bg-white border rounded-2xl px-5 py-3 mb-6 flex flex-wrap items-center gap-2" style={{ borderColor: '#e6e0d4' }}>
                 <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#345b79' }}>
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -1066,34 +1100,34 @@ export default function AIRecommendations() {
                   </svg>
                   AI Filters Applied:
                 </span>
-                {activeLocation && activeLocation !== 'Any' && (
+                {appliedLocation && appliedLocation !== 'Any' && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.10)', color: '#345b79' }}>
-                    📍 {activeLocation}
-                    <button onClick={() => setActiveLocation('Any')} className="ml-0.5 opacity-60 hover:opacity-100">
+                    📍 {appliedLocation}
+                    <button onClick={() => { setActiveLocation('Any'); setAppliedLocation('Any'); }} className="ml-0.5 opacity-60 hover:opacity-100 cursor-pointer">
                       <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </span>
                 )}
-                {selectedType && selectedType !== 'all' && (
+                {appliedType && appliedType !== 'all' && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.10)', color: '#345b79' }}>
-                    🏞 {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}
-                    <button onClick={() => setSelectedType('all')} className="ml-0.5 opacity-60 hover:opacity-100">
+                    🏞 {appliedType.charAt(0).toUpperCase() + appliedType.slice(1)}
+                    <button onClick={() => { setSelectedType('all'); setAppliedType('all'); }} className="ml-0.5 opacity-60 hover:opacity-100 cursor-pointer">
                       <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </span>
                 )}
-                {activeRoadAccess && activeRoadAccess !== 'Any' && (
+                {appliedRoadAccess && appliedRoadAccess !== 'Any' && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.10)', color: '#345b79' }}>
-                    🛣 Road: {activeRoadAccess}
-                    <button onClick={() => setActiveRoadAccess('Any')} className="ml-0.5 opacity-60 hover:opacity-100">
+                    🛣 Road: {appliedRoadAccess}
+                    <button onClick={() => { setActiveRoadAccess('Any'); setAppliedRoadAccess('Any'); }} className="ml-0.5 opacity-60 hover:opacity-100 cursor-pointer">
                       <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </span>
                 )}
-                {priceMax < 150 && (
+                {appliedPriceMax < 150 && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.10)', color: '#345b79' }}>
-                    💰 Max LKR {priceMax}M
-                    <button onClick={() => setPriceMax(150)} className="ml-0.5 opacity-60 hover:opacity-100">
+                    💰 Max LKR {appliedPriceMax}M
+                    <button onClick={() => { setPriceMax(150); setAppliedPriceMax(150); }} className="ml-0.5 opacity-60 hover:opacity-100 cursor-pointer">
                       <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </span>
@@ -1377,11 +1411,11 @@ export default function AIRecommendations() {
 
           {/* ── RIGHT SIDEBAR ── */}
           <aside className="col-span-12 lg:col-span-3 space-y-6">
-            {/* AI Land Insights */}
+            {/* Platform Activity Overview */}
             <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-6">
                 <span style={{ color: '#345b79' }}>📊</span>
-                <h3 className="font-bold" style={{ color: '#1d1d1d' }}>AI LAND INSIGHTS</h3>
+                <h3 className="font-bold uppercase text-[11px] tracking-wider" style={{ color: '#1d1d1d' }}>Platform Activity Overview</h3>
               </div>
 
               {/* Popular Locations */}
@@ -1390,94 +1424,48 @@ export default function AIRecommendations() {
                   ⭐ Popular Locations
                 </div>
                 <div className="space-y-4">
-                  {[
-                    { name: 'Malabe', parcels: '143 parcels', roi: '+18% ROI' },
-                    { name: 'Battaramulla', parcels: '98 parcels', roi: '+14% ROI' },
-                    { name: 'Negombo', parcels: '77 parcels', roi: '+10% ROI' },
-                  ].map(loc => (
+                  {locationCounts.map(loc => (
                     <div key={loc.name} className="flex items-center justify-between">
                       <div>
                         <div className="text-sm font-bold" style={{ color: '#1d1d1d' }}>{loc.name}</div>
-                        <div className="text-[10px]" style={{ color: '#928d64' }}>{loc.parcels}</div>
+                        <div className="text-[10px]" style={{ color: '#928d64' }}>Active listings in district</div>
                       </div>
                       <div
-                        className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                        style={{ color: '#495d38', backgroundColor: '#f0fdf4' }}
+                        className="text-[10px] font-bold px-3 py-1 rounded-full text-slate-800"
+                        style={{ backgroundColor: '#e6e0d4' }}
                       >
-                        {loc.roi}
+                        {loc.count} listings
                       </div>
                     </div>
                   ))}
+                  {locationCounts.length === 0 && (
+                    <p className="text-xs text-[#928d64]">No listings data available</p>
+                  )}
                 </div>
               </div>
 
               <hr className="border-gray-100 mb-6" />
 
-              {/* Fast Growing Areas */}
-              <div className="mb-6">
-                <div className="text-xs font-bold uppercase mb-4 flex items-center gap-2" style={{ color: '#928d64' }}>
-                  ⚡ Fast Growing Areas
-                </div>
-                <div className="space-y-3">
-                  {[
-                    { area: 'Rajagiriya', pct: '+24%' },
-                    { area: 'Kaduwela', pct: '+19%' },
-                    { area: 'Wattala', pct: '+13%' },
-                  ].map(a => (
-                    <div key={a.area} className="flex justify-between items-center">
-                      <span className="text-sm" style={{ color: '#1d1d1d' }}>{a.area}</span>
-                      <span className="text-xs font-bold" style={{ color: '#be5d3f' }}>↑ {a.pct}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mini Bar Chart */}
-                <div className="flex items-end gap-1.5 h-16 mt-6">
-                  {[
-                    { h: 25, active: false }, { h: 37, active: false }, { h: 75, active: true },
-                    { h: 50, active: true }, { h: 87, active: true }, { h: 62, active: false },
-                    { h: 100, active: true },
-                  ].map((b, i) => (
-                    <div
-                      key={i}
-                      className="w-2 rounded-t"
-                      style={{
-                        height: `${b.h}%`,
-                        backgroundColor: b.active ? '#be5d3f' : '#e6e0d4',
-                      }}
-                    />
-                  ))}
-                </div>
-                <div className="flex justify-between text-[8px] font-bold mt-2 uppercase tracking-widest" style={{ color: '#928d64' }}>
-                  <span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span>
-                </div>
-              </div>
-
-              <hr className="border-gray-100 mb-6" />
-
-              {/* Best Investment Zones */}
+              {/* Listings by Category */}
               <div>
                 <div className="text-xs font-bold uppercase mb-4 flex items-center gap-2" style={{ color: '#928d64' }}>
-                  🏆 Best Investment Zones
+                  📂 Listings by Category
                 </div>
                 <div className="space-y-3">
-                  {[
-                    { zone: 'Colombo Outskirts', roi: '17.4% ROI Predicted', badge: 'Top Pick', badgeBg: '#be5d3f' },
-                    { zone: 'Galle Coastal Belt', roi: '13.2% ROI Predicted', badge: 'Growing', badgeBg: '#345b79' },
-                  ].map(z => (
-                    <div key={z.zone} className="p-3 rounded-lg border border-slate-100" style={{ backgroundColor: '#f8f8f8' }}>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-xs font-bold" style={{ color: '#1d1d1d' }}>{z.zone}</span>
-                        <span className="text-[8px] text-white px-2 py-0.5 rounded font-black uppercase" style={{ backgroundColor: z.badgeBg }}>{z.badge}</span>
-                      </div>
-                      <div className="text-[10px] font-bold" style={{ color: '#495d38' }}>{z.roi}</div>
+                  {typeCounts.map(tc => (
+                    <div key={tc.name} className="flex justify-between items-center text-xs">
+                      <span className="text-[#1d1d1d] font-semibold">{tc.name}</span>
+                      <span className="font-bold text-[#be5d3f]">{tc.count} parcels</span>
                     </div>
                   ))}
+                  {typeCounts.length === 0 && (
+                    <p className="text-xs text-[#928d64]">No category data available</p>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Land Price Trend */}
+            {/* Land Size Distribution */}
             <div className="text-white rounded-xl p-6 shadow-sm relative overflow-hidden" style={{ backgroundColor: '#1d1d1d' }}>
               <div
                 className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-5"
@@ -1487,32 +1475,24 @@ export default function AIRecommendations() {
                 className="text-xs font-bold uppercase tracking-widest mb-6 pb-4 flex items-center gap-2"
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.10)', color: '#d59b86' }}
               >
-                📈 Land Price Trend — Sri Lanka
+                📐 Land Size Distribution
               </div>
-              <div className="flex items-end gap-2 h-24 mb-4">
-                {[33, 50, 66, 83, 100].map((h, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-sm"
-                    style={{ height: `${h}%`, backgroundColor: `rgba(255,255,255,${(i + 1) * 0.2})` }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-[10px] font-bold mb-6" style={{ color: '#928d64' }}>
-                <span>Jan 2024</span><span>Jan 2025</span>
-              </div>
-              <div className="rounded-lg p-3 flex items-center gap-3 mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.10)' }}>
-                <span className="text-green-400">↑</span>
-                <div>
-                  <div className="text-xs font-bold text-white">Land prices up 19% YoY</div>
-                  <div className="text-[10px]" style={{ color: '#928d64' }}>across Sri Lanka</div>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-[10px] font-bold uppercase" style={{ color: '#928d64' }}>AI Price Prediction</div>
-                <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.70)' }}>
-                  Malabe & Rajagiriya expected to appreciate 22-28% by 2026 based on infrastructure trends.
-                </p>
+              <div className="space-y-4">
+                {sizeCatCounts.map(item => {
+                  const maxCount = Math.max(...sizeCatCounts.map(c => c.count)) || 1
+                  const pct = (item.count / maxCount) * 100
+                  return (
+                    <div key={item.name} className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span>{item.name}</span>
+                        <span style={{ color: '#d59b86' }}>{item.count} listings</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-[#be5d3f] rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </aside>
