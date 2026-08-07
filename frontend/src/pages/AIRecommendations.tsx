@@ -44,6 +44,14 @@ function getLandSizeCategory(land: Land): string {
   return '50+ Perches'
 }
 
+const SRI_LANKA_DISTRICTS = [
+  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 
+  'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 
+  'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 
+  'Matale', 'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 
+  'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'
+]
+
 export default function AIRecommendations() {
   const navigate = useNavigate()
 
@@ -93,6 +101,45 @@ export default function AIRecommendations() {
   const [searchText, setSearchText] = useState('')
   const [budgetMin, setBudgetMin] = useState('5M')
   const [budgetMax, setBudgetMax] = useState('150M')
+
+  const [searchLocation, setSearchLocation] = useState(() => {
+    return localStorage.getItem('nexabuild_land_filter_location') || 'Any'
+  })
+  const [searchType, setSearchType] = useState(() => {
+    return localStorage.getItem('nexabuild_land_filter_type') || 'all'
+  })
+  const [searchBudget, setSearchBudget] = useState(() => {
+    const savedPriceMax = localStorage.getItem('nexabuild_land_filter_pricemax')
+    if (savedPriceMax === '10') return 'Under LKR 10M'
+    if (savedPriceMax === '30') return 'LKR 10M - 30M'
+    if (savedPriceMax === '60') return 'LKR 30M - 60M'
+    if (savedPriceMax === '100') return 'LKR 60M - 100M'
+    if (savedPriceMax === '150') return 'LKR 100M - 150M'
+    return 'Any Budget'
+  })
+
+  const handleHeroSearch = () => {
+    setActiveLocation(searchLocation)
+    setSelectedType(searchType)
+    
+    let maxVal = 150
+    if (searchBudget === 'Under LKR 10M') maxVal = 10
+    else if (searchBudget === 'LKR 10M - 30M') maxVal = 30
+    else if (searchBudget === 'LKR 30M - 60M') maxVal = 60
+    else if (searchBudget === 'LKR 60M - 100M') maxVal = 100
+    else if (searchBudget === 'LKR 100M - 150M') maxVal = 150
+    
+    setPriceMax(maxVal)
+    localStorage.setItem('nexabuild_land_filter_pricemax', String(maxVal))
+    localStorage.setItem('nexabuild_land_filter_location', searchLocation)
+    localStorage.setItem('nexabuild_land_filter_type', searchType)
+    setSearchText('')
+
+    const target = document.getElementById('recommended-section')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   const handleClearAll = () => {
     setSelectedType('all')
@@ -451,8 +498,21 @@ export default function AIRecommendations() {
 
   const [visibleRecommendations, setVisibleRecommendations] = useState(2)
 
+  const [randomBrowseLands, setRandomBrowseLands] = useState<any[]>([])
+
+  useEffect(() => {
+    if (allLands.length > 0 && randomBrowseLands.length === 0) {
+      const arr = [...allLands]
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]]
+      }
+      setRandomBrowseLands(arr.slice(0, 3))
+    }
+  }, [allLands, randomBrowseLands])
+
   const browseLands = useMemo(() => {
-    let filtered = [...scoredLands]
+    let filtered = [...randomBrowseLands]
 
     // Search query
     if (searchText.trim() !== '') {
@@ -480,11 +540,11 @@ export default function AIRecommendations() {
     }
 
     return filtered
-  }, [scoredLands, searchText, sortBy])
+  }, [randomBrowseLands, searchText, sortBy])
 
   const recommendedLands = useMemo(() => {
-    return browseLands.slice(0, visibleRecommendations)
-  }, [browseLands, visibleRecommendations])
+    return scoredLands.slice(0, visibleRecommendations)
+  }, [scoredLands, visibleRecommendations])
 
   return (
     <div style={{ backgroundColor: '#e6e0d4', fontFamily: 'Inter, sans-serif' }}>
@@ -498,49 +558,95 @@ export default function AIRecommendations() {
           >
             <span>✦ AI-Powered Intelligence</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold">Find Your Perfect Land with AI</h1>
-          <p className="text-slate-200 text-lg max-w-2xl mx-auto">
-            Search thousands of lands and receive personalized recommendations based on your lifestyle and goals.
-          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Find Your Perfect Land with AI</h1>
 
           {/* Search Bar */}
-          <div
-            className="rounded-xl shadow-2xl p-2 flex flex-col md:flex-row items-center gap-2 mt-8"
-            style={{ backgroundColor: '#fff', color: '#1d1d1d' }}
-          >
-            <div className="flex-1 w-full flex items-center px-4 gap-3 border-r border-slate-100">
-              <span className="text-gray-400 text-sm">📍</span>
-              <input
-                id="ai-search-input"
-                className="w-full text-sm py-4 outline-none bg-transparent"
-                placeholder="Search by city, district or land name..."
-                type="text"
-                value={searchText}
-                onChange={e => setSearchText(e.target.value)}
-              />
-            </div>
-            <div className="flex-1 w-full flex items-center px-4 gap-3 border-r border-slate-100">
-              <span className="text-[10px] font-bold uppercase w-20" style={{ color: '#928d64' }}>Land Type</span>
-              <select className="w-full text-sm py-4 font-medium outline-none bg-transparent">
-                <option>All Types</option>
-                <option>Residential</option>
-                <option>Agricultural</option>
+          <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-3 flex flex-col sm:flex-row gap-3 items-stretch mt-8">
+            {/* Location Dropdown */}
+            <div className="flex-1 flex items-center gap-2.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
+              <svg className="w-4 h-4 flex-shrink-0 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <select
+                id="ai-search-location"
+                value={searchLocation}
+                onChange={e => setSearchLocation(e.target.value)}
+                className="w-full text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6"
+                style={{ color: '#928d64' }}
+              >
+                <option value="Any">All Districts</option>
+                {SRI_LANKA_DISTRICTS.map(dist => (
+                  <option key={dist} value={dist}>{dist}</option>
+                ))}
               </select>
+              <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
-            <div className="flex-1 w-full flex items-center px-4 gap-3">
-              <span className="text-[10px] font-bold uppercase w-20" style={{ color: '#928d64' }}>Budget</span>
-              <select className="w-full text-sm py-4 font-medium outline-none bg-transparent">
-                <option>Any Budget</option>
-                <option>LKR 10M - 50M</option>
-                <option>LKR 50M+</option>
-              </select>
+
+            {/* Land Type Dropdown */}
+            <div className="relative flex-shrink-0">
+              <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
+                <svg className="w-4 h-4 text-[#ccb7a3] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-13.5 18v-2.25z" />
+                </svg>
+                <select
+                  id="ai-search-type"
+                  value={searchType}
+                  onChange={e => setSearchType(e.target.value)}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6"
+                  style={{ color: '#928d64' }}
+                >
+                  <option value="all">All Types</option>
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="agricultural">Agricultural</option>
+                  <option value="industrial">Industrial</option>
+                </select>
+                <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
+
+            {/* Budget Dropdown */}
+            <div className="relative flex-shrink-0">
+              <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
+                <svg className="w-4 h-4 text-[#ccb7a3] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <select
+                  id="ai-search-budget"
+                  value={searchBudget}
+                  onChange={e => setSearchBudget(e.target.value)}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6"
+                  style={{ color: '#928d64' }}
+                >
+                  <option value="Any Budget">Any Budget</option>
+                  <option value="Under LKR 10M">Under LKR 10M</option>
+                  <option value="LKR 10M - 30M">LKR 10M - 30M</option>
+                  <option value="LKR 30M - 60M">LKR 30M - 60M</option>
+                  <option value="LKR 60M - 100M">LKR 60M - 100M</option>
+                  <option value="LKR 100M - 150M">LKR 100M - 150M</option>
+                </select>
+                <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Search Button */}
             <button
               id="hero-search-btn"
-              className="text-white px-8 py-4 rounded-lg font-bold flex items-center gap-2 hover:opacity-90 w-full md:w-auto justify-center transition-opacity"
+              onClick={handleHeroSearch}
+              className="flex items-center justify-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 shadow whitespace-nowrap flex-shrink-0 active:scale-95 cursor-pointer w-full sm:w-auto"
               style={{ backgroundColor: '#be5d3f' }}
             >
-              🔍 Search
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
             </button>
           </div>
 
@@ -565,59 +671,7 @@ export default function AIRecommendations() {
           </ol>
         </nav>
 
-        {/* ── Header + Overall Stats ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end mb-10">
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#be5d3f' }}>
-              ✦ AI-Powered Intelligence
-            </div>
-            <h1 className="text-4xl font-bold mb-4" style={{ color: '#1d1d1d' }}>Your AI Land Matches</h1>
-            <p className="max-w-2xl" style={{ color: '#928d64' }}>
-              Personalized recommendations based on your preferences, budget and lifestyle — updated in real-time.
-            </p>
-          </div>
-          {/* Stats Summary */}
-          <div
-            className="flex items-center justify-between p-4 rounded-xl border border-gray-200"
-            style={{ backgroundColor: 'rgba(255,255,255,0.50)' }}
-          >
-            {[
-              { val: loading ? '—' : String(recommendedLands.length), label: 'Matches Found' },
-              { val: '98%', label: 'Top Match Score' },
-              { val: '< 2 min', label: 'Analysis Time' },
-            ].map((s, i) => (
-              <div key={s.label} className={`text-center px-4 ${i < 2 ? 'border-r border-gray-300' : ''}`}>
-                <div className="text-2xl font-bold" style={{ color: '#1d1d1d' }}>{s.val}</div>
-                <div className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: '#928d64' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* ── Match Category Grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {matchStats.map(stat => (
-            <div
-              key={stat.label}
-              className="bg-white p-5 rounded-xl border border-gray-100"
-              style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="p-2 rounded-lg" style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                </div>
-                <div className="text-2xl font-bold" style={{ color: '#1d1d1d' }}>{stat.pct}%</div>
-              </div>
-              <div className="text-sm font-bold mb-1" style={{ color: '#1d1d1d' }}>{stat.label}</div>
-              <div className="text-xs mb-3" style={{ color: '#928d64' }}>{stat.sub}</div>
-              <div className="h-1 rounded-full" style={{ backgroundColor: '#e5e7eb' }}>
-                <div className="h-full rounded-full" style={{ width: `${stat.pct}%`, backgroundColor: '#345b79' }} />
-              </div>
-            </div>
-          ))}
-        </div>
 
         {/* ── Three-Column Layout ── */}
         <div className="grid grid-cols-12 gap-8">
@@ -625,7 +679,7 @@ export default function AIRecommendations() {
           {/* ── LEFT SIDEBAR ── */}
           <aside className="col-span-12 lg:col-span-3 space-y-6">
             {/* Filters Card */}
-            <div className="bg-white rounded-2xl shadow p-4 sticky top-[76px] border border-slate-100">
+            <div className="bg-white rounded-2xl shadow p-4 border border-slate-100">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Land Filters</h2>
@@ -649,10 +703,10 @@ export default function AIRecommendations() {
                   className="w-full border rounded-lg px-2 py-1.5 text-[10px] outline-none mb-2"
                   style={{ borderColor: '#e6e0d4', color: '#1d1d1d', backgroundColor: '#f9f7f4' }}
                 >
-                  <option value="">Select District...</option>
-                  <option value="Colombo">Colombo</option>
-                  <option value="Kandy">Kandy</option>
-                  <option value="Galle">Galle</option>
+                  <option value="">All Districts</option>
+                  {SRI_LANKA_DISTRICTS.map(dist => (
+                    <option key={dist} value={dist}>{dist}</option>
+                  ))}
                 </select>
 
                 {/* Location pill chips */}
@@ -796,7 +850,7 @@ export default function AIRecommendations() {
 
             {/* AI Market Insight */}
             <div
-              className="p-6 rounded-xl text-white shadow-lg overflow-hidden relative"
+              className="p-6 rounded-xl text-white shadow-lg overflow-hidden relative sticky top-[76px]"
               style={{ background: 'linear-gradient(135deg, #345b79 0%, #1d1d1d 100%)' }}
             >
               <div className="relative z-10">
@@ -1483,80 +1537,68 @@ export default function AIRecommendations() {
           </div>
 
           {!loading && !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {browseLands.map(land => (
-                <div
+                <article
                   key={land.id}
                   id={`browse-card-${land.id}`}
-                  className="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm group cursor-pointer"
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer group"
                   onClick={() => navigate(`/land/detail/${land.id}`)}
                 >
                   <div className="relative h-48 overflow-hidden">
                     {land.images[0] ? (
                       <img
                         alt={land.name}
-                        className="w-full h-full object-cover transition group-hover:scale-105"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         src={land.images[0]}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: '#e6e0d4' }}>
-                        <span className="text-xs" style={{ color: '#928d64' }}>No image</span>
+                        <span className="text-sm" style={{ color: '#928d64' }}>No image</span>
                       </div>
                     )}
                     <div className="absolute top-3 left-3 flex gap-2">
-                      <span className="text-white text-[8px] font-black px-2 py-0.5 rounded uppercase" style={{ backgroundColor: '#345b79' }}>
+                      <span
+                        className="text-white text-[10px] font-bold px-2 py-1 rounded"
+                        style={{ backgroundColor: '#be5d3f' }}
+                      >
                         {land.status}
                       </span>
-                      <span className="bg-white text-[8px] font-black px-2 py-0.5 rounded uppercase shadow-sm" style={{ color: '#928d64' }}>
+                      <span
+                        className="bg-white text-[10px] font-bold px-2 py-1 rounded shadow-sm"
+                        style={{ color: '#928d64' }}
+                      >
                         {land.landType}
                       </span>
                     </div>
+                    {/* Save Button */}
                     <button
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white transition-all"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(4px)' }}
                       onClick={e => {
                         e.stopPropagation()
                         setSavedCards(prev => prev.includes(land.id) ? prev.filter(i => i !== land.id) : [...prev, land.id])
                       }}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all"
-                      style={{
-                        backgroundColor: 'rgba(255,255,255,0.20)',
-                        backdropFilter: 'blur(4px)',
-                        color: savedCards.includes(land.id) ? '#be5d3f' : '#fff',
-                      }}
+                      aria-label="Save property"
                     >
                       {savedCards.includes(land.id) ? '♥' : '♡'}
                     </button>
                   </div>
-                  <div className="p-5 space-y-4">
-                    <div className="font-bold" style={{ color: '#be5d3f' }}>LKR {land.price.toLocaleString()}</div>
-                    <div>
-                      <h4 className="font-bold" style={{ color: '#1d1d1d' }}>{land.name}</h4>
-                      <p className="text-xs flex items-center gap-1 mt-1" style={{ color: '#928d64' }}>
-                        📍 {land.location}
-                      </p>
+                  <div className="p-5">
+                    <div className="font-bold text-lg mb-1" style={{ color: '#be5d3f' }}>
+                      LKR {land.price.toLocaleString()}
                     </div>
-                    <div className="flex items-center justify-between text-[10px] font-bold pt-4 border-t border-slate-50" style={{ color: '#928d64' }}>
-                      <span>⬛ {land.perches} perches</span>
-                      <span>🏷️ {land.landType}</span>
-                    </div>
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        id={`browse-view-btn-${land.id}`}
-                        className="flex-1 text-white py-2 rounded font-bold text-xs hover:opacity-90 transition-opacity"
-                        style={{ backgroundColor: '#1d1d1d' }}
-                        onClick={e => { e.stopPropagation(); navigate(`/land/detail/${land.id}`) }}
-                      >
-                        View
-                      </button>
-                      <button
-                        className="w-10 rounded flex items-center justify-center hover:bg-slate-100 transition-colors"
-                        style={{ backgroundColor: '#f8f8f8', color: '#928d64' }}
-                        onClick={e => { e.stopPropagation() }}
-                      >
-                        🔖
-                      </button>
+                    <h3 className="font-bold mb-1" style={{ color: '#1d1d1d' }}>{land.name}</h3>
+                    <p className="text-xs mb-4 flex items-center gap-1" style={{ color: '#928d64' }}>
+                      {land.location}
+                    </p>
+                    <div className="flex items-center gap-4 text-xs pt-4 border-t border-gray-100 flex-wrap" style={{ color: '#6b879c' }}>
+                      <span className="flex items-center gap-1">⬛ {land.perches} perches</span>
+                      {land.sqft && <span className="flex items-center gap-1">⤢ {land.sqft} sqft</span>}
+                      <span className="flex items-center gap-1">🛣 {getRoadAccessWidth(land)} Road</span>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           )}

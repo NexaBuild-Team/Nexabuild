@@ -30,6 +30,14 @@ function getRoadAccessWidth(land: Land): string {
   return '< 12 Feet'
 }
 
+const SRI_LANKA_DISTRICTS = [
+  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 
+  'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 
+  'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 
+  'Matale', 'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 
+  'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'
+]
+
 export default function LandListing() {
   const navigate = useNavigate()
   const [lands, setLands] = useState<Land[]>([])
@@ -45,6 +53,45 @@ export default function LandListing() {
   const [sortBy, setSortBy] = useState('Most Relevant')
   const [searchText, setSearchText] = useState('')
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+
+  const [searchLocation, setSearchLocation] = useState(() => {
+    return localStorage.getItem('nexabuild_land_filter_location') || 'Any'
+  })
+  const [searchType, setSearchType] = useState(() => {
+    return localStorage.getItem('nexabuild_land_filter_type') || 'all'
+  })
+  const [searchBudget, setSearchBudget] = useState(() => {
+    const savedPriceMax = localStorage.getItem('nexabuild_land_filter_pricemax')
+    if (savedPriceMax === '10') return 'Under LKR 10M'
+    if (savedPriceMax === '30') return 'LKR 10M - 30M'
+    if (savedPriceMax === '60') return 'LKR 30M - 60M'
+    if (savedPriceMax === '100') return 'LKR 60M - 100M'
+    if (savedPriceMax === '150') return 'LKR 100M - 150M'
+    return 'Any Budget'
+  })
+
+  const handleHeroSearch = () => {
+    setActiveLocation(searchLocation)
+    setSelectedType(searchType)
+    
+    let maxVal = 150
+    if (searchBudget === 'Under LKR 10M') maxVal = 10
+    else if (searchBudget === 'LKR 10M - 30M') maxVal = 30
+    else if (searchBudget === 'LKR 30M - 60M') maxVal = 60
+    else if (searchBudget === 'LKR 60M - 100M') maxVal = 100
+    else if (searchBudget === 'LKR 100M - 150M') maxVal = 150
+    
+    setPriceMax(maxVal)
+    localStorage.setItem('nexabuild_land_filter_pricemax', String(maxVal))
+    localStorage.setItem('nexabuild_land_filter_location', searchLocation)
+    localStorage.setItem('nexabuild_land_filter_type', searchType)
+    setSearchText('')
+
+    const target = document.getElementById('listings-section')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
   const [aiAnalyzing, setAiAnalyzing] = useState(false)
   const [aiStepText, setAiStepText] = useState('')
   const [aiProgress, setAiProgress] = useState(0)
@@ -149,30 +196,33 @@ export default function LandListing() {
             </span>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-white text-center leading-tight mb-3 tracking-tight">Find Your Perfect Land with AI</h1>
-          <p className="text-center text-sm mb-8 max-w-md mx-auto leading-relaxed" style={{ color: 'rgba(230,224,212,0.70)' }}>
-            Search thousands of lands and receive personalized recommendations based on your lifestyle and goals.
-          </p>
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-white text-center leading-tight mb-8 tracking-tight">Find Your Perfect Land with AI</h1>
 
           {/* Search Bar */}
           <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-3 flex flex-col sm:flex-row gap-3 items-stretch">
-            {/* Location input */}
+            {/* Location Dropdown */}
             <div className="flex-1 flex items-center gap-2.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
               <svg className="w-4 h-4 flex-shrink-0 text-[#ccb7a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <input
-                id="land-search-input"
-                type="text"
-                value={searchText}
-                onChange={e => setSearchText(e.target.value)}
-                placeholder="Search by city, district or land name..."
-                className="w-full text-sm outline-none bg-transparent text-[#1d1d1d] placeholder:text-[#ccb7a3]"
-              />
+              <select
+                id="land-search-location"
+                value={searchLocation}
+                onChange={e => setSearchLocation(e.target.value)}
+                className="w-full text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6 text-[#928d64]"
+              >
+                <option value="Any">All Districts</option>
+                {SRI_LANKA_DISTRICTS.map(dist => (
+                  <option key={dist} value={dist}>{dist}</option>
+                ))}
+              </select>
+              <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
 
-            {/* Land Type */}
+            {/* Land Type Dropdown */}
             <div className="relative flex-shrink-0">
               <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
                 <svg className="w-4 h-4 text-[#ccb7a3] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,21 +230,23 @@ export default function LandListing() {
                 </svg>
                 <select
                   id="land-type-select"
-                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1"
-                  style={{ color: '#928d64' }}
+                  value={searchType}
+                  onChange={e => setSearchType(e.target.value)}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6 text-[#928d64]"
                 >
-                  <option>Land Type</option>
-                  <option>Residential</option>
-                  <option>Commercial</option>
-                  <option>Agricultural</option>
+                  <option value="all">All Types</option>
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="agricultural">Agricultural</option>
+                  <option value="industrial">Industrial</option>
                 </select>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
             </div>
 
-            {/* Budget */}
+            {/* Budget Dropdown */}
             <div className="relative flex-shrink-0">
               <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
                 <svg className="w-4 h-4 text-[#ccb7a3] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,15 +254,18 @@ export default function LandListing() {
                 </svg>
                 <select
                   id="land-budget-select"
-                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1"
-                  style={{ color: '#928d64' }}
+                  value={searchBudget}
+                  onChange={e => setSearchBudget(e.target.value)}
+                  className="text-sm font-medium bg-transparent outline-none cursor-pointer appearance-none pr-6 text-[#928d64]"
                 >
-                  <option>Budget</option>
-                  <option>LKR 5M - 10M</option>
-                  <option>LKR 10M - 50M</option>
-                  <option>Above LKR 50M</option>
+                  <option value="Any Budget">Any Budget</option>
+                  <option value="Under LKR 10M">Under LKR 10M</option>
+                  <option value="LKR 10M - 30M">LKR 10M - 30M</option>
+                  <option value="LKR 30M - 60M">LKR 30M - 60M</option>
+                  <option value="LKR 60M - 100M">LKR 60M - 100M</option>
+                  <option value="LKR 100M - 150M">LKR 100M - 150M</option>
                 </select>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#ccb7a3] pointer-events-none -ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -219,8 +274,8 @@ export default function LandListing() {
             {/* Search Button */}
             <button
               id="land-search-btn"
-              onClick={handleAISmartRecommend}
-              className="flex items-center justify-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 shadow whitespace-nowrap flex-shrink-0 active:scale-95 cursor-pointer"
+              onClick={handleHeroSearch}
+              className="flex items-center justify-center gap-2 text-white font-bold px-6 py-2.5 rounded-xl transition-all duration-200 hover:opacity-90 shadow whitespace-nowrap flex-shrink-0 active:scale-95 cursor-pointer w-full sm:w-auto"
               style={{ backgroundColor: '#be5d3f' }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +302,7 @@ export default function LandListing() {
       </section>
 
       {/* ── Main Content ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <section id="listings-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Mobile filters toggle */}
         <div className="lg:hidden mb-4">
           <button
@@ -290,10 +345,10 @@ export default function LandListing() {
                   className="w-full border rounded-lg px-2 py-1.5 text-[10px] outline-none mb-2"
                   style={{ borderColor: '#e6e0d4', color: '#1d1d1d', backgroundColor: '#f9f7f4' }}
                 >
-                  <option value="">Select District...</option>
-                  <option value="Colombo">Colombo</option>
-                  <option value="Kandy">Kandy</option>
-                  <option value="Galle">Galle</option>
+                  <option value="">All Districts</option>
+                  {SRI_LANKA_DISTRICTS.map(dist => (
+                    <option key={dist} value={dist}>{dist}</option>
+                  ))}
                 </select>
 
                 {/* Location pill chips */}
