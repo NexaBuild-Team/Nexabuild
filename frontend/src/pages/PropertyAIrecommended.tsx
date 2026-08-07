@@ -176,7 +176,7 @@ function PropertyCard({ property }: { property: MappedProperty }) {
 
         <div className="flex gap-3 mt-auto">
           <button
-            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
+            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true, aiScore: property.matchScore, aiReason: property.reason } })}
             className="flex-1 text-sm font-bold py-3 rounded-xl text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >

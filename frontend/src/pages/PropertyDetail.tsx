@@ -101,8 +101,13 @@ export default function PropertyDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  
   // fromAI is true only when navigated from an AI-powered page (PropertyListingAI / PropertyAIrecommended)
-  const fromAI = (location.state as { fromAI?: boolean } | null)?.fromAI ?? false
+  const locState = location.state as { fromAI?: boolean; aiScore?: number; aiReason?: string } | null
+  const fromAI = locState?.fromAI ?? false
+  const passedAiScore = locState?.aiScore
+  const passedAiReason = locState?.aiReason
+  
   const [property,   setProperty]   = useState<MappedProperty | null>(null)
   const [similar,    setSimilar]    = useState<MappedProperty[]>([])
   const [isLoading,  setIsLoading]  = useState(true)
@@ -291,7 +296,7 @@ export default function PropertyDetail() {
                     {property.description[0]}
                   </p>
                   <p className="text-sm text-[#928d64] leading-relaxed mb-6">
-                    {property.description[1]}
+                    {passedAiReason ? passedAiReason : property.description[1]}
                   </p>
 
                   <h3 className="text-sm font-bold text-[#1d1d1d] mb-3">Key Features</h3>
@@ -380,7 +385,7 @@ export default function PropertyDetail() {
                 {/* AI Match Score — only shown when arrived from an AI page */}
                 {fromAI && (
                   <div className="rounded-2xl shadow-sm p-6 text-center" style={{ backgroundColor: '#345b79' }}>
-                    <MatchScoreRing score={property.matchScore} />
+                    <MatchScoreRing score={passedAiScore ?? property.matchScore} />
                     <p className="text-white font-bold text-sm mt-3">AI Match Score</p>
                     <p className="text-xs mt-1" style={{ color: 'rgba(230,224,212,0.75)' }}>Based on your preferences</p>
                   </div>
@@ -445,7 +450,7 @@ export default function PropertyDetail() {
                       className="mt-4 text-center text-xs font-bold text-white py-2 rounded-lg"
                       style={{ backgroundColor: '#345b79' }}
                     >
-                      AI Match Score {property.matchScore}%
+                      AI Match Score {passedAiScore ?? property.matchScore}%
                     </div>
                   )}
                 </div>

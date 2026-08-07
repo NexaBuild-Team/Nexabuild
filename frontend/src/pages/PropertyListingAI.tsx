@@ -10,7 +10,7 @@ import { fetchAllProperties, type MappedProperty } from '../services/propertySer
 // Olive Accent         : #928d64  |  Dark Text     : #1d1d1d
 // Green Accent         : #495d38
 
-type AIProperty = MappedProperty
+type AIProperty = MappedProperty & { _aiScore?: number; _aiReason?: string; _aiMatches?: { matched: string[]; unmatched: string[] } }
 
 // ─── Full Property Pool ───────────────────────────────────────────────────────
 // (imported from shared data — see data/recommendedProperties.ts)
@@ -246,7 +246,7 @@ function RecommendedCard({
         </div>
 
         <button
-          onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
+          onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true, aiScore: displayScore, aiReason: displayReason } })}
           className="mt-3 w-full text-xs font-bold py-2 rounded-lg text-white transition-all hover:opacity-90"
           style={{ backgroundColor: '#345b79' }}
         >
@@ -297,7 +297,7 @@ function BrowseCard({ property }: { property: AIProperty }) {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
+            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true, aiScore: property._aiScore ?? property.matchScore, aiReason: property._aiReason ?? property.reason } })}
             className="flex-1 text-[10px] font-bold py-1.5 rounded-lg text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
