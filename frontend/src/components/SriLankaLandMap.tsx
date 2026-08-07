@@ -130,6 +130,7 @@ export default function SriLankaLandMap() {
     <MapContainer
       center={[7.8731, 80.7718]}
       zoom={7}
+      maxZoom={20}
       zoomControl={false}
       scrollWheelZoom={true}
       style={{ width: '100%', height: '100%' }}
@@ -137,9 +138,10 @@ export default function SriLankaLandMap() {
       {/* CARTO Voyager tile layer — clean, modern, free, no API key needed */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
         subdomains="abcd"
-        maxZoom={19}
+        maxZoom={20}
+        maxNativeZoom={18}
       />
 
       {/* Zoom control — bottom right */}
