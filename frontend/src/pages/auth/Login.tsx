@@ -94,10 +94,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
       try {
         await authService.login({ email, password });
         setIsSubmitting(false);
-        setIsSuccess(true);
-        setTimeout(() => {
-          navigate('/');
-        }, 1000);
+        navigate('/');
       } catch (err: any) {
         setIsSubmitting(false);
         setErrors({
@@ -223,24 +220,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
             </div>
           )}
 
-          {isSuccess ? (
-            /* Login Success Toast */
-            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <img src="/svg/checkMark.svg" alt="Success" className="size-8" />
-              </div>
-              <h2 className="text-[#345b79] text-2xl font-bold">Welcome Back!</h2>
-              <p className="text-[#42474d] text-sm">
-                Successfully signed into account <strong>{email}</strong>.
-              </p>
-              <Link
-                to="/"
-                className="mt-2 bg-[#345b79] hover:bg-[#25465e] py-[14px] px-8 rounded-[12px] text-white font-bold uppercase tracking-[1.4px] text-[13px] shadow-lg transition-colors duration-200"
-              >
-                Go to Homepage
-              </Link>
-            </div>
-          ) : (
             <form onSubmit={handleFormSubmit} className="w-full flex flex-col">
               
               {/* Header Title */}
@@ -414,7 +393,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
               </div>
 
             </form>
-          )}
 
         </div>
       </div>
