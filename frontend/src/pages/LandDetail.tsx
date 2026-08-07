@@ -423,7 +423,7 @@ export default function LandDetail() {
                 <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
                   <h2 className="text-lg font-bold text-[#1d1d1d] mb-4">About This Land</h2>
                   <div className="space-y-4 text-slate-600 leading-relaxed text-sm">
-                    {land.description.split('\n\n').map((para, i) => (
+                    {(land.description || '').split('\n\n').map((para, i) => (
                       <p key={i} className="text-sm text-[#928d64] leading-relaxed mb-3">{para}</p>
                     ))}
                   </div>

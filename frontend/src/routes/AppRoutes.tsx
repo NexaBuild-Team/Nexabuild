@@ -8,7 +8,7 @@ import Home from '../pages/Home'
 // Property AI
 import PropertyListing from '../pages/PropertyListing'
 import PropertyListingAI from '../pages/PropertyListingAI'
-import PropertyAIrecommended from '../pages/PropertyAIrecommended'
+
 import PropertyDetail from '../pages/PropertyDetail'
 
 // Land AI
@@ -55,7 +55,7 @@ function AppRoutes() {
         {/* Property Routes */}
         <Route path="/property-listing" element={<PropertyListing />} />
         <Route path="/property-listing-ai" element={<PropertyListingAI />} />
-        <Route path="/property-ai-recommended" element={<PropertyAIrecommended />} />
+
         <Route path="/property-detail/:id" element={<PropertyDetail />} />
 
         {/* Land Routes */}
