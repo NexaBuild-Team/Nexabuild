@@ -108,9 +108,13 @@ export default function AIRecommendations() {
 
   const locationCounts = useMemo(() => {
     const counts: Record<string, number> = {}
+    const POPULAR_AREAS = ['Malabe', 'Battaramulla', 'Kaduwela', 'Negombo', 'Colombo', 'Kandy', 'Galle', 'Kurunegala']
+
     allLands.forEach(l => {
-      const city = l.location.split(',')[0].trim()
-      counts[city] = (counts[city] || 0) + 1
+      const locLower = l.location.toLowerCase()
+      const matched = POPULAR_AREAS.find(a => locLower.includes(a.toLowerCase()))
+      const key = matched || l.location.split(',')[0].trim()
+      counts[key] = (counts[key] || 0) + 1
     })
     return Object.entries(counts)
       .map(([name, count]) => ({ name, count }))
