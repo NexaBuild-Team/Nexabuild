@@ -27,15 +27,17 @@ export default function PropertyLocationMap({ center }: PropertyLocationMapProps
     <MapContainer
       center={center}
       zoom={14}
+      maxZoom={20}
       zoomControl={false}
       scrollWheelZoom={false}
       style={{ width: '100%', height: '100%' }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
         subdomains="abcd"
-        maxZoom={19}
+        maxZoom={20}
+        maxNativeZoom={18}
       />
       <ZoomControl position="bottomright" />
       <Marker position={center} />

@@ -10,7 +10,7 @@ import { fetchAllProperties, type MappedProperty } from '../services/propertySer
 // Olive Accent         : #928d64  |  Dark Text     : #1d1d1d
 // Green Accent         : #495d38
 
-type AIProperty = MappedProperty
+type AIProperty = MappedProperty & { _aiScore?: number; _aiReason?: string; _aiMatches?: { matched: string[]; unmatched: string[] } }
 
 // ─── Full Property Pool ───────────────────────────────────────────────────────
 // (imported from shared data — see data/recommendedProperties.ts)
@@ -142,10 +142,12 @@ function RecommendedCard({
   property,
   displayScore,
   displayReason,
+  aiMatches,
 }: {
   property: AIProperty
   displayScore: number
   displayReason: string
+  aiMatches?: { matched: string[], unmatched: string[] }
 }) {
   const [fav, setFav] = useState(property.isFavorite ?? false)
   const navigate = useNavigate()
@@ -213,18 +215,38 @@ function RecommendedCard({
             <span className="flex items-center gap-1"><AreaIcon />{property.area}</span>
           </div>
 
-          {/* Why recommended */}
-          <div className="bg-[#e6e0d4] rounded-lg px-3 py-2">
-            <p className="text-[10px] font-bold text-[#345b79] uppercase tracking-wider mb-0.5 flex items-center gap-1">
-              <SparklesIcon cls="w-3 h-3" />
-              Why Recommended
+          {/* AI Reasoning */}
+          <div className="mt-4 pt-3 border-t border-[#e6e0d4]">
+            <p className="text-[10px] font-bold text-[#1d1d1d] uppercase tracking-wider mb-2 flex items-center gap-1">
+              <span className="text-[#be5d3f] text-xs">✦</span>
+              ABOUT THIS PROPERTY
             </p>
-            <p className="text-[10px] text-[#928d64] leading-relaxed">{displayReason}</p>
+            <p className="text-[11px] text-[#6b879c] leading-relaxed mb-4">{displayReason}</p>
+            
+            {/* AI Preferences Match Indicators */}
+            {aiMatches && (aiMatches.matched.length > 0 || aiMatches.unmatched.length > 0) && (
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {aiMatches.unmatched.map(u => (
+                  <div key={u} className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full transition-all duration-150" style={{ backgroundColor: '#e6e0d4', color: '#928d64' }}>
+                    <span>{u}</span>
+                  </div>
+                ))}
+                {aiMatches.matched.map(m => (
+                  <div key={m} className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full transition-all duration-150" style={{ backgroundColor: '#345b79', color: '#fff' }}>
+                    <span className="font-bold">✓</span> <span>{m}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <p className="text-[10px] font-bold text-[#be5d3f] uppercase tracking-wider flex items-center gap-1">
+              ✨ WHY AI RECOMMENDED
+            </p>
           </div>
         </div>
 
         <button
-          onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
+          onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true, aiScore: displayScore, aiReason: displayReason } })}
           className="mt-3 w-full text-xs font-bold py-2 rounded-lg text-white transition-all hover:opacity-90"
           style={{ backgroundColor: '#345b79' }}
         >
@@ -275,7 +297,7 @@ function BrowseCard({ property }: { property: AIProperty }) {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true } })}
+            onClick={() => navigate(`/property-detail/${property.id}`, { state: { fromAI: true, aiScore: property._aiScore ?? property.matchScore, aiReason: property._aiReason ?? property.reason } })}
             className="flex-1 text-[10px] font-bold py-1.5 rounded-lg text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#345b79' }}
           >
@@ -315,10 +337,7 @@ export default function PropertyListingAI() {
   // ── Read URL params passed from PropertyListing "AI Smart Recommend" ──
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const initDistricts = useMemo(
-    () => searchParams.get('districts')?.split(',').filter(Boolean) ?? [],
-    [] // run once on mount
-  )
+  const initDistricts = searchParams.get('districts')?.split(',').filter(Boolean) ?? []
   const initType      = searchParams.get('type')      ?? ''
   const initBeds      = searchParams.get('beds')      ?? ''
   const initMinBudget = parseInt(searchParams.get('minBudget') ?? '0', 10)
@@ -341,6 +360,19 @@ export default function PropertyListingAI() {
   const SLIDER_MAX = 500
   const [minBudgetM, setMinBudgetM] = useState(isNaN(initMinBudget) ? 0 : initMinBudget)
   const [maxBudgetM, setMaxBudgetM] = useState(isNaN(initMaxBudget) ? SLIDER_MAX : initMaxBudget)
+  
+  // Draft states for the hero bar so it doesn't filter immediately
+  const [heroPropertyType,  setHeroPropertyType]  = useState(propertyTypeFilter)
+  const [heroMinBudget,     setHeroMinBudget]     = useState(minBudgetM)
+  const [heroMaxBudget,     setHeroMaxBudget]     = useState(maxBudgetM)
+
+  useEffect(() => {
+    setHeroPropertyType(propertyTypeFilter)
+  }, [propertyTypeFilter])
+  useEffect(() => {
+    setHeroMinBudget(minBudgetM)
+    setHeroMaxBudget(maxBudgetM)
+  }, [minBudgetM, maxBudgetM])
   
   const [heroLocation, setHeroLocation] = useState(() => {
     if (initDistricts.length > 0) return initDistricts.join(', ')
@@ -386,6 +418,10 @@ export default function PropertyListingAI() {
       setSelectedDistricts([])
       setSearchQuery(raw)
     }
+    
+    setPropertyTypeFilter(heroPropertyType)
+    setMinBudgetM(heroMinBudget)
+    setMaxBudgetM(heroMaxBudget)
   }
 
   // ── API data ──
@@ -399,9 +435,22 @@ export default function PropertyListingAI() {
       .finally(() => setIsLoadingData(false))
   }, [])
 
+  // ── AI Preference state ──────────────────────────────────────────────────
+  const [aiPrefs, setAiPrefs] = useState<Record<string, string[]>>({
+    purpose: [], features: [], lifestyle: [], priority: [],
+  })
+  const [hasGenerated, setHasGenerated] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+
   // ── Derived filter logic ───────────────────────────────────────────────────
   const filteredPool = useMemo(() => {
     return propertyPool.filter(p => {
+      // Text search is always strictly filtered
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase()
+        if (!p.title.toLowerCase().includes(q) && !p.location.toLowerCase().includes(q)) return false
+      }
+
       // District filter
       if (selectedDistricts.length > 0 && !selectedDistricts.includes(p.district)) return false
 
@@ -421,24 +470,11 @@ export default function PropertyListingAI() {
       if (minBudgetM > 0 && pM < minBudgetM) return false
       if (maxBudgetM < SLIDER_MAX && pM > maxBudgetM) return false
 
-      // Text search
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
-        if (!p.title.toLowerCase().includes(q) && !p.location.toLowerCase().includes(q)) return false
-      }
-
       return true
     })
     // Sort by match score descending
     .sort((a, b) => b.matchScore - a.matchScore)
   }, [propertyPool, selectedDistricts, propertyTypeFilter, selectedBedIndex, minBudgetM, maxBudgetM, searchQuery])
-
-  // ── AI Preference state ──────────────────────────────────────────────────
-  const [aiPrefs, setAiPrefs] = useState<Record<string, string[]>>({
-    purpose: [], features: [], lifestyle: [], priority: [],
-  })
-  const [hasGenerated, setHasGenerated] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
 
   const totalSelected = Object.values(aiPrefs).flat().length
 
@@ -454,93 +490,26 @@ export default function PropertyListingAI() {
 
   // ── AI scoring engine ─────────────────────────────────────────────────────
   const scoreWithAI = (p: AIProperty): number => {
-    if (!hasGenerated || totalSelected === 0) return p.matchScore
-    
-    // Start with the base match score (which is already based on hard filters)
-    let score = p.matchScore
-    const { purpose, features, lifestyle, priority } = aiPrefs
+    // Calculate AI Preferences Score
+    const { matched } = getMatches(p)
+    const activeAiCount = totalSelected
+    const matchedAiCount = matched.length
 
-    // Purpose scoring
-    if (purpose.includes('Investment')) {
-      if (p.isInvestment) score += 12
-      else score -= 5
-    }
-    if (purpose.includes('Own Home')) {
-      if (p.isOwnHome) score += 10
-      else score -= 5
-    }
-    if (purpose.includes('Vacation Home')) {
-      if (p.isVacationHome) score += 15
-      else score -= 10
-    }
-    if (purpose.includes('Rental Income')) {
-      if (p.isRentalIncome) score += 12
-      else score -= 5
+    if (!hasGenerated || activeAiCount === 0) {
+      return p.matchScore // fallback to original score if no AI used
     }
 
-    // Features scoring
-    if (features.includes('Pool')) {
-       if (p.hasPool) score += 10 
-       else score -= 15
-    }
-    if (features.includes('Garden')) {
-       if (p.hasGarden) score += 8
-       else score -= 8
-    }
-    if (features.includes('Sea View')) {
-       if (p.hasSeaView) score += 12
-       else score -= 15
-    }
-    if (features.includes('Modern Kitchen')) {
-       if (p.hasModernKitchen) score += 5
-    }
-    if (features.includes('Security')) {
-       if (p.hasSecurity) score += 8
-    }
-    if (features.includes('Parking')) {
-       if (p.parkingSpaces > 0) score += 6
-       else score -= 5
-    }
+    // Since standard filters strictly filter properties, 
+    // any property reaching this function has 100% matched standard filters.
+    // So we just score based on the AI preference match rate!
+    let finalScore = (matchedAiCount / activeAiCount) * 100
 
-    // Lifestyle scoring
-    if (lifestyle.includes('Urban')) {
-       if (p.isUrban) score += 8
-    }
-    if (lifestyle.includes('Coastal')) {
-       if (p.isCoastal) score += 10
-       else score -= 10
-    }
-    if (lifestyle.includes('Suburban')) {
-       if (p.isSuburban) score += 8
-    }
-    if (lifestyle.includes('Rural')) {
-       if (p.isRural) score += 8
-    }
-    if (lifestyle.includes('City Center')) {
-       if (p.isCityCenter) score += 10
-       else score -= 5
-    }
+    // Add a tie-breaker based on the property's innate base score
+    // to subtly rank properties higher if they are generally better
+    const tieBreaker = (p.matchScore / 100) * 5
+    finalScore = finalScore > 0 ? Math.min(99, finalScore - 5 + tieBreaker) : finalScore
 
-    // Priority scoring
-    if (priority.includes('Near Schools')) {
-       if (p.isNearSchools) score += 8
-    }
-    if (priority.includes('Near Beach')) {
-       if (p.isNearBeach) score += 12
-       else score -= 15
-    }
-    if (priority.includes('Quiet Area')) {
-       if (p.isQuietArea) score += 10
-       else score -= 8
-    }
-    if (priority.includes('Near Highway')) {
-       if (p.isNearHighway) score += 8
-    }
-    if (priority.includes('Near Hospital')) {
-       if (p.isNearHospital) score += 6 
-    }
-
-    return Math.max(10, Math.min(99, score))
+    return Math.max(10, Math.round(finalScore))
   }
 
   // ── Dynamic reason generator ──────────────────────────────────────────────
@@ -583,13 +552,65 @@ export default function PropertyListingAI() {
     return reasons.join(' · ')
   }
 
-  // ── Scored pool (re-sorts when AI recommendations generated) ─────────────
+  const getMatches = (p: AIProperty): { matched: string[], unmatched: string[] } => {
+    if (!hasGenerated || totalSelected === 0) return { matched: [], unmatched: [] }
+    const matched: string[] = []
+    const unmatched: string[] = []
+    const { purpose, features, lifestyle, priority } = aiPrefs
+
+    // Purpose
+    if (purpose.includes('Investment')) { p.isInvestment ? matched.push('Purpose: Investment') : unmatched.push('Purpose: Investment') }
+    if (purpose.includes('Own Home')) { p.isOwnHome ? matched.push('Purpose: Own Home') : unmatched.push('Purpose: Own Home') }
+    if (purpose.includes('Vacation Home')) { p.isVacationHome ? matched.push('Purpose: Vacation Home') : unmatched.push('Purpose: Vacation Home') }
+    if (purpose.includes('Rental Income')) { p.isRentalIncome ? matched.push('Purpose: Rental Income') : unmatched.push('Purpose: Rental Income') }
+
+    // Features
+    if (features.includes('Pool')) { p.hasPool ? matched.push('Feature: Pool') : unmatched.push('Feature: Pool') }
+    if (features.includes('Garden')) { p.hasGarden ? matched.push('Feature: Garden') : unmatched.push('Feature: Garden') }
+    if (features.includes('Sea View')) { p.hasSeaView ? matched.push('Feature: Sea View') : unmatched.push('Feature: Sea View') }
+    if (features.includes('Modern Kitchen')) { p.hasModernKitchen ? matched.push('Feature: Modern Kitchen') : unmatched.push('Feature: Modern Kitchen') }
+    if (features.includes('Security')) { p.hasSecurity ? matched.push('Feature: Security') : unmatched.push('Feature: Security') }
+    if (features.includes('Parking')) { p.parkingSpaces > 0 ? matched.push('Feature: Parking') : unmatched.push('Feature: Parking') }
+
+    // Lifestyle
+    if (lifestyle.includes('Urban')) { p.isUrban ? matched.push('Lifestyle: Urban') : unmatched.push('Lifestyle: Urban') }
+    if (lifestyle.includes('Coastal')) { p.isCoastal ? matched.push('Lifestyle: Coastal') : unmatched.push('Lifestyle: Coastal') }
+    if (lifestyle.includes('Suburban')) { p.isSuburban ? matched.push('Lifestyle: Suburban') : unmatched.push('Lifestyle: Suburban') }
+    if (lifestyle.includes('Rural')) { p.isRural ? matched.push('Lifestyle: Rural') : unmatched.push('Lifestyle: Rural') }
+    if (lifestyle.includes('City Center')) { p.isCityCenter ? matched.push('Lifestyle: City Center') : unmatched.push('Lifestyle: City Center') }
+
+    // Priority
+    if (priority.includes('Near Schools')) { p.isNearSchools ? matched.push('Priority: Near Schools') : unmatched.push('Priority: Near Schools') }
+    if (priority.includes('Near Beach')) { p.isNearBeach ? matched.push('Priority: Near Beach') : unmatched.push('Priority: Near Beach') }
+    if (priority.includes('Quiet Area')) { p.isQuietArea ? matched.push('Priority: Quiet Area') : unmatched.push('Priority: Quiet Area') }
+    if (priority.includes('Near Highway')) { p.isNearHighway ? matched.push('Priority: Near Highway') : unmatched.push('Priority: Near Highway') }
+    if (priority.includes('Near Hospital')) { p.isNearHospital ? matched.push('Priority: Near Hospital') : unmatched.push('Priority: Near Hospital') }
+
+    return { matched, unmatched }
+  }
+
+  // ── Scored pool (re-sorts when AI recommendations generated or sortBy changes) ─────────────
+  const [sortBy, setSortBy] = useState('Best Match')
+
   const scoredPool = useMemo(() => {
-    return filteredPool
-      .map(p => ({ ...p, _aiScore: scoreWithAI(p), _aiReason: reasonWithAI(p) }))
-      .sort((a, b) => b._aiScore - a._aiScore)
+    const pool = filteredPool.map(p => ({
+      ...p,
+      _aiScore: scoreWithAI(p),
+      _aiReason: reasonWithAI(p),
+      _aiMatches: getMatches(p)
+    }))
+    
+    if (sortBy === 'Best Match') {
+      pool.sort((a, b) => b._aiScore - a._aiScore)
+    } else if (sortBy === 'Price High to Low') {
+      pool.sort((a, b) => b.priceNum - a.priceNum)
+    } else if (sortBy === 'Price Low to High') {
+      pool.sort((a, b) => a.priceNum - b.priceNum)
+    }
+    
+    return pool
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPool, propertyPool, hasGenerated])
+  }, [filteredPool, propertyPool, hasGenerated, sortBy])
 
   // Top 2 → Recommended, rest → Browse All
   const recommended = scoredPool.slice(0, 2)
@@ -694,15 +715,25 @@ export default function PropertyListingAI() {
           <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-3 flex flex-col sm:flex-row gap-2.5 items-stretch">
             <div className="flex-1 flex items-center gap-2 border rounded-xl px-3 py-2.5" style={{ borderColor: '#e6e0d4' }}>
               <MapPinIcon cls="w-4 h-4 flex-shrink-0 text-[#ccb7a3]" />
-              <input
+              <select
                 id="ai-search-location"
-                type="text"
                 value={heroLocation}
                 onChange={(e) => setHeroLocation(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleHeroSearch() }}
-                placeholder="Search by city, district or property name..."
-                className="w-full text-xs outline-none bg-transparent text-[#1d1d1d] placeholder:text-[#ccb7a3]"
-              />
+                className="w-full text-xs outline-none bg-transparent appearance-none cursor-pointer"
+                style={{ color: heroLocation ? '#1d1d1d' : '#ccb7a3' }}
+              >
+                <option value="" disabled hidden>Search by district...</option>
+                <option value="">All Districts</option>
+                {[
+                  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+                  'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale',
+                  'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+                  'Trincomalee', 'Vavuniya'
+                ].map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <ChevronDownIcon cls="w-3.5 h-3.5 text-[#ccb7a3]" />
             </div>
             <div className="relative flex-shrink-0">
               <div className="flex items-center gap-1.5 border rounded-xl px-3 py-2.5 cursor-pointer h-full" style={{ borderColor: '#e6e0d4' }}>
@@ -711,10 +742,10 @@ export default function PropertyListingAI() {
                 </svg>
                 <select
                   id="ai-hero-type"
-                  value={propertyTypeFilter}
-                  onChange={(e) => setPropertyTypeFilter(e.target.value)}
+                  value={heroPropertyType}
+                  onChange={(e) => setHeroPropertyType(e.target.value)}
                   className="text-xs font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1 h-full"
-                  style={{ color: propertyTypeFilter !== 'All Types' ? '#1d1d1d' : '#928d64' }}
+                  style={{ color: heroPropertyType !== 'All Types' ? '#1d1d1d' : '#928d64' }}
                 >
                   <option value="All Types">Property Type</option>
                   <option value="House">House</option>
@@ -735,7 +766,7 @@ export default function PropertyListingAI() {
                   value={heroBudgetLabel}
                   onChange={(e) => {
                     const preset = BUDGET_PRESETS.find(r => r.label === e.target.value)
-                    if (preset) { setMinBudgetM(preset.min); setMaxBudgetM(preset.max) }
+                    if (preset) { setHeroMinBudget(preset.min); setHeroMaxBudget(preset.max) }
                   }}
                   className="text-xs font-medium bg-transparent outline-none cursor-pointer appearance-none pr-1 h-full"
                   style={{ color: heroBudgetLabel !== 'Budget' ? '#1d1d1d' : '#928d64' }}
@@ -1139,8 +1170,18 @@ export default function PropertyListingAI() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
-                  <div className="flex items-center gap-1 border rounded-lg px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
-                    <SortIcon /> Best Match <ChevronDownIcon cls="w-3 h-3" />
+                  <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
+                    <SortIcon />
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+                    >
+                      <option value="Best Match">Best Match</option>
+                      <option value="Price High to Low">Price High to Low</option>
+                      <option value="Price Low to High">Price Low to High</option>
+                    </select>
+                    <ChevronDownIcon cls="w-3 h-3 -ml-2" />
                   </div>
                 </div>
               </div>
@@ -1153,6 +1194,7 @@ export default function PropertyListingAI() {
                       property={p}
                       displayScore={p._aiScore}
                       displayReason={p._aiReason}
+                      aiMatches={p._aiMatches}
                     />
                   ))}
                 </div>
@@ -1195,8 +1237,18 @@ export default function PropertyListingAI() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px]" style={{ color: '#928d64' }}>Sort:</span>
-                    <div className="flex items-center gap-1 border rounded-lg px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
-                      <SortIcon /> Nearest <ChevronDownIcon cls="w-3 h-3" />
+                    <div className="flex items-center gap-1 border rounded-lg px-2 text-[10px] font-semibold" style={{ borderColor: '#ccb7a3', color: '#1d1d1d', backgroundColor: '#fff' }}>
+                      <SortIcon />
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="bg-transparent outline-none cursor-pointer appearance-none py-1 pr-3"
+                      >
+                        <option value="Best Match">Best Match</option>
+                        <option value="Price High to Low">Price High to Low</option>
+                        <option value="Price Low to High">Price Low to High</option>
+                      </select>
+                      <ChevronDownIcon cls="w-3 h-3 -ml-2" />
                     </div>
                   </div>
                 </div>
