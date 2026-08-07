@@ -193,9 +193,9 @@ export default function LandDetail() {
   const navigate = useNavigate()
   const location = useLocation()
   const showScore = location.state?.fromRecommendations === true
-  const displayedScore = location.state?.matchScore !== undefined ? location.state.matchScore : (land?.matchScore ?? null)
 
   const [land, setLand] = useState<Land | null>(null)
+  const displayedScore = location.state?.matchScore !== undefined ? location.state.matchScore : (land?.matchScore ?? null)
   const [similarLands, setSimilarLands] = useState<Land[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
