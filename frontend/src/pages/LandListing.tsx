@@ -567,14 +567,6 @@ export default function LandListing() {
                         >
                           {parcel.status}
                         </span>
-                        {parcel.matchScore !== null && (
-                          <span
-                            className="text-white text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1"
-                            style={{ backgroundColor: '#345b79' }}
-                          >
-                            ✦ {parcel.matchScore}% Match
-                          </span>
-                        )}
                       </div>
                       {/* Save Button */}
                       <button
