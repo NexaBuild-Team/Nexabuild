@@ -2,8 +2,9 @@
 // Route: /designs
 // Architect Profile View — Silva & Associates Architecture
 
+import { useState, useEffect } from 'react'
 import { Link, } from 'react-router'
-import { architectFirms, houseDesigns } from '../services/architectureMockData'
+import api from '../services/api'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -23,7 +24,7 @@ const customMarkerIcon = new L.DivIcon({
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
-const firm = architectFirms.find((f) => f.id === 'silva-associates') ?? architectFirms[0]
+// firm is fetched from the API inside the component (see useEffect below)
 
 const stats = [
   {
@@ -100,9 +101,7 @@ const services = [
   },
 ]
 
-const latestProjects = houseDesigns.filter((d) =>
-  ['pearl-residence', 'ocean-breeze', 'lotus-tower-penthouse'].includes(d.id)
-)
+// latestProjects is now populated from the API inside the component
 
 const testimonials = [
   {
@@ -175,8 +174,23 @@ function Stars({ count }: { count: number }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DesignsPage() {
-  
-  
+  // Live firm profile
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [firm, setFirm]                   = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [latestProjects, setLatestProjects] = useState<any[]>([])
+
+  useEffect(() => {
+    // Load the silva-associates firm profile
+    api.get('/architecture/silva-associates').then((res) => setFirm(res.data)).catch(() => {})
+    // Load latest project cards
+    api.get('/architecture/designs').then((res) => {
+      const all: any[] = res.data
+      setLatestProjects(
+        all.filter((d) => ['pearl-residence', 'ocean-breeze', 'lotus-tower-penthouse'].includes(d.id))
+      )
+    }).catch(() => {})
+  }, [])
 
   const featuredProject = latestProjects.find((p) => p.id === 'pearl-residence')
   const sideProjects    = latestProjects.filter((p) => p.id !== 'pearl-residence')
@@ -210,12 +224,12 @@ export default function DesignsPage() {
             <span>/</span>
             <Link to="/architecture" className="hover:opacity-80">Architecture</Link>
             <span>/</span>
-            <span style={{ color: '#d59b86' }}>{firm.name}</span>
+            <span style={{ color: '#d59b86' }}>{firm?.name ?? 'Silva & Associates Architecture'}</span>
           </nav>
 
           {/* Firm name */}
           <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-7" style={{ maxWidth: '600px' }}>
-            {firm.name}
+            {firm?.name ?? 'Silva & Associates Architecture'}
           </h1>
 
           {/* Action buttons */}
@@ -411,7 +425,7 @@ export default function DesignsPage() {
                   </span>
                   <h3 className="text-xl font-bold text-white leading-snug">Villa Lumina</h3>
                   <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.72)' }}>
-                    {featuredProject.location} &nbsp;·&nbsp; LKR {featuredProject.price.toLocaleString()}
+                    {featuredProject.locationLabel ?? featuredProject.location} &nbsp;·&nbsp; LKR {(featuredProject.priceLkr ?? featuredProject.price ?? 0).toLocaleString()}
                   </p>
 
                 </div>
@@ -455,7 +469,7 @@ export default function DesignsPage() {
                     </span>
                     <h3 className="text-sm font-bold text-white leading-snug">{project.title}</h3>
                     <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.72)' }}>
-                      LKR {project.price.toLocaleString()}
+                      LKR {(project.priceLkr ?? project.price ?? 0).toLocaleString()}
                     </p>
 
                     {/* 🧭 SIDE CARDS ANCHOR: Easily drop your placeholder "View Details" button elements directly below this comment block line later */}

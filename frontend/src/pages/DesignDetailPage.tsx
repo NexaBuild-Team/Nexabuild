@@ -1,9 +1,9 @@
 // src/pages/DesignDetailPage.tsx
 // Route: /designs/:id
 // Full design detail view — Villa Lumina
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
-import { designDetail } from '../services/architectureMockData'
+import api from '../services/api'
 
 // ─── Star rating row ──────────────────────────────────────────────────────────
 function StarRow({ rating }: { rating: number }) {
@@ -25,15 +25,77 @@ function DesignDetailPage() {
   const [saved, setSaved] = useState(false)
   const [openPhase, setOpenPhase] = useState<string | null>('Off-Site Interiors')
 
-  const design = designDetail
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [design, setDesign]   = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
+
+  useEffect(() => {
+    if (!id) { setNotFound(true); setLoading(false); return }
+    api.get(`/architecture/designs/${id}`)
+      .then((res) => {
+        // Merge the HouseDesign top-level fields with the nested detail
+        const data = res.data
+        const detail = data.detail ?? {}
+        setDesign({
+          id:                   data.id,
+          title:                data.title,
+          breadcrumb:           detail.breadcrumb ?? [],
+          architectName:        detail.architectName ?? data.architectName,
+          architectFirm:        detail.architectFirm ?? data.company?.name ?? '',
+          location:             detail.locationLabel ?? data.locationLabel ?? '',
+          year:                 detail.completionYear ?? '',
+          status:               detail.status ?? 'Planning',
+          heroImage:            detail.heroImageUrl ?? data.imageUrl ?? '',
+          price:                detail.priceLkr ?? data.priceLkr ?? 0,
+          bedrooms:             detail.bedrooms ?? data.bedrooms,
+          bathrooms:            detail.bathrooms ?? data.bathrooms,
+          sqft:                 detail.sqftArea ?? data.sqftArea,
+          garage:               detail.garageSpaces ?? 0,
+          overview:             detail.overview ?? '',
+          gallery:              (detail.gallery ?? []).map((g: any) => g.url ?? g),
+          threeDVisualization:  detail.threeDVisualizationUrl ?? '',
+          floorPlans:           (detail.floorPlans ?? []).map((p: any) => ({ label: p.label, image: p.imageUrl ?? p.image ?? '' })),
+          features:             detail.features ?? [],
+          constructionProgress: (detail.constructionProgress ?? []).map((ph: any) => ({
+            phase:  ph.phase,
+            detail: ph.detail,
+            status: (ph.status ?? '').toLowerCase(),
+          })),
+          review: detail.review ? {
+            author: detail.review.author,
+            avatar: detail.review.avatarUrl ?? detail.review.avatar ?? '',
+            rating: detail.review.rating,
+            text:   detail.review.text,
+            date:   detail.review.reviewDate ?? detail.review.date ?? '',
+          } : null,
+          relatedProjects: (detail.relatedProjects ?? []).map((r: any) => ({
+            id:    r.targetDesignId ?? r.id,
+            title: r.title,
+            image: r.imageUrl ?? r.image ?? '',
+            style: r.style,
+            price: r.priceLkr ?? r.price ?? 0,
+          })),
+        })
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  // Loading guard
+  if (loading) return (
+    <main className="flex-1 flex items-center justify-center py-32">
+      <p className="text-sm" style={{ color: '#928d64' }}>Loading design…</p>
+    </main>
+  )
 
   // 404 guard
-  if (!design || (id && id !== design.id && id !== 'villa-lumina')) {
+  if (notFound || !design) {
     return (
       <>
         <main className="flex-1 flex items-center justify-center py-20">
           <div className="text-center">
-            <p className="text-6xl mb-4">🏚️</p>
+            <p className="text-6xl mb-4">🏙️</p>
             <h1 className="text-2xl font-bold mb-2" style={{ color: '#1d1d1d' }}>Design Not Found</h1>
             <p className="mb-6" style={{ color: '#928d64' }}>This design doesn't exist or has been removed.</p>
             <button onClick={() => navigate('/designs')} className="nb-btn-primary px-8 py-3">
@@ -73,7 +135,7 @@ function DesignDetailPage() {
         <div className="absolute top-32 left-0 right-0 px-6">
           <div className="max-w-7xl mx-auto">
             <nav className="flex items-center gap-2 text-xs" style={{ color: 'rgba(255,255,255,0.70)' }}>
-              {design.breadcrumb.map((crumb, i) => (
+              {design.breadcrumb.map((crumb: string, i: number) => (
                 <span key={crumb} className="flex items-center gap-2">
                   {i > 0 && <span>/</span>}
                   <span style={{ color: i === design.breadcrumb.length - 1 ? '#d59b86' : 'inherit' }}>
@@ -156,7 +218,7 @@ function DesignDetailPage() {
               <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#be5d3f' }}>Overview</span>
               <h2 className="text-2xl font-bold mt-1 mb-4" style={{ color: '#1d1d1d' }}>Project Overview</h2>
               <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid #ccb7a3', boxShadow: '0 4px 20px rgba(52,91,121,0.07)' }}>
-                {design.overview.split('\n\n').map((para, i) => (
+                {design.overview.split('\n\n').map((para: string, i: number) => (
                   <p key={i} className="text-sm leading-relaxed mb-3 last:mb-0" style={{ color: '#928d64' }}>
                     {para.trim()}
                   </p>
@@ -203,7 +265,7 @@ function DesignDetailPage() {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {design.gallery.slice(1, 5).map((img, i) => (
+                  {design.gallery.slice(1, 5).map((img: string, i: number) => (
                     <div key={i} className="rounded-xl overflow-hidden cursor-pointer">
                       <img
                         src={img}
@@ -244,7 +306,7 @@ function DesignDetailPage() {
               <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#be5d3f' }}>Plans</span>
               <h2 className="text-2xl font-bold mt-1 mb-4" style={{ color: '#1d1d1d' }}>Architectural Floor Plans</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {design.floorPlans.map((plan, i) => (
+                {design.floorPlans.map((plan: any, i: number) => (
                   <div
                     key={i}
                     className="rounded-2xl overflow-hidden"
@@ -271,7 +333,7 @@ function DesignDetailPage() {
               <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#be5d3f' }}>Amenities</span>
               <h2 className="text-2xl font-bold mt-1 mb-4" style={{ color: '#1d1d1d' }}>Project Features</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {design.features.map((feat) => (
+                {design.features.map((feat: any) => (
                   <div
                     key={feat.label}
                     className="rounded-xl p-4 flex flex-col items-center text-center gap-2 transition-shadow hover:shadow-md"
@@ -292,7 +354,7 @@ function DesignDetailPage() {
                 className="rounded-2xl overflow-hidden"
                 style={{ background: '#fff', border: '1px solid #ccb7a3', boxShadow: '0 4px 20px rgba(52,91,121,0.07)' }}
               >
-                {design.constructionProgress.map((phase, idx) => {
+                {design.constructionProgress.map((phase: any, idx: number) => {
                   const isOpen     = openPhase === phase.phase
                   const dotColor   = phase.status === 'done' ? '#495d38' : phase.status === 'active' ? '#be5d3f' : '#ccb7a3'
                   const badgeBg    = phase.status === 'done' ? 'rgba(73,93,56,0.12)' : phase.status === 'active' ? 'rgba(190,93,63,0.12)' : '#e6e0d4'
@@ -341,6 +403,7 @@ function DesignDetailPage() {
             </section>
 
             {/* ── 7. Client Review ─────────────────────────────── */}
+            {design.review && (
             <section>
               <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#be5d3f' }}>Testimonial</span>
               <h2 className="text-2xl font-bold mt-1 mb-4" style={{ color: '#1d1d1d' }}>What Our Client Says</h2>
@@ -365,6 +428,7 @@ function DesignDetailPage() {
                 </div>
               </div>
             </section>
+            )}
 
             {/* ── 8. Related Projects ──────────────────────────── */}
             <section className="pb-4">
@@ -378,7 +442,7 @@ function DesignDetailPage() {
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {design.relatedProjects.map((proj) => (
+                {design.relatedProjects.map((proj: any) => (
                   <Link
                     key={proj.id}
                     to={`/designs/${proj.id}`}
