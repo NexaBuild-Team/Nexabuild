@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { authService } from '../../services/authService';
 
 // ─── Backend Interfaces ─────────────────────────────────────────────────────
 
@@ -39,6 +40,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   error = null,
   onSubmit
 }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -80,7 +82,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -88,10 +90,17 @@ const LoginPage: React.FC<LoginPageProps> = ({
       onSubmit({ email, password, rememberMe });
     } else {
       setIsSubmitting(true);
-      setTimeout(() => {
+      setErrors({});
+      try {
+        await authService.login({ email, password });
         setIsSubmitting(false);
-        setIsSuccess(true);
-      }, 1200);
+        navigate('/');
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setErrors({
+          auth: err.response?.data?.message || 'Invalid email or password. Please try again.',
+        });
+      }
     }
   };
 
@@ -211,24 +220,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
             </div>
           )}
 
-          {isSuccess ? (
-            /* Login Success Toast */
-            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <img src="/svg/checkMark.svg" alt="Success" className="size-8" />
-              </div>
-              <h2 className="text-[#345b79] text-2xl font-bold">Welcome Back!</h2>
-              <p className="text-[#42474d] text-sm">
-                Successfully signed into account <strong>{email}</strong>.
-              </p>
-              <Link
-                to="/"
-                className="mt-2 bg-[#345b79] hover:bg-[#25465e] py-[14px] px-8 rounded-[12px] text-white font-bold uppercase tracking-[1.4px] text-[13px] shadow-lg transition-colors duration-200"
-              >
-                Go to Homepage
-              </Link>
-            </div>
-          ) : (
             <form onSubmit={handleFormSubmit} className="w-full flex flex-col">
               
               {/* Header Title */}
@@ -245,6 +236,13 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
               {/* Separator line */}
               <div className="w-full h-px border-t border-[#c2c7ce] mt-6" data-node-id="4:103" />
+
+              {/* Auth error message */}
+              {errors.auth && (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mt-4">
+                  {errors.auth}
+                </div>
+              )}
 
               {/* Inputs Form */}
               <div className="flex flex-col gap-[20px] items-start w-full mt-6" data-node-id="4:104" data-name="Login Form">
@@ -395,7 +393,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
               </div>
 
             </form>
-          )}
 
         </div>
       </div>

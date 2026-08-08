@@ -99,9 +99,9 @@ export default function LandListing() {
       target.scrollIntoView({ behavior: 'smooth' })
     }
   }
-  const [aiAnalyzing, setAiAnalyzing] = useState(false)
-  const [aiStepText, setAiStepText] = useState('')
-  const [aiProgress, setAiProgress] = useState(0)
+  const [aiAnalyzing] = useState(false)
+  const [aiStepText] = useState('')
+  const [aiProgress] = useState(0)
 
   useEffect(() => {
     getAllLands()
@@ -181,8 +181,8 @@ export default function LandListing() {
     // Sort
     if (sortBy === 'Price: Low to High') {
       filtered.sort((a, b) => a.price - b.price)
-    } else if (sortBy === 'Latest') {
-      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    } else if (sortBy === 'Price: High to Low') {
+      filtered.sort((a, b) => b.price - a.price)
     }
 
     return filtered
@@ -526,7 +526,7 @@ export default function LandListing() {
                 >
                   <option>Most Relevant</option>
                   <option>Price: Low to High</option>
-                  <option>Latest</option>
+                  <option>Price: High to Low</option>
                 </select>
               </div>
             </div>

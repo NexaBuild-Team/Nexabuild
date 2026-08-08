@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { authService } from '../../services/authService';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -194,7 +195,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -202,10 +205,32 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
       onSubmit(formData);
     } else {
       setIsSubmitting(true);
-      setTimeout(() => {
+      setErrors({});
+
+      const roleMap: Record<UserRole, 'USER' | 'AGENT' | 'ARCHITECT' | 'CONTRACTOR'> = {
+        buyer: 'USER',
+        agent: 'AGENT',
+        architect: 'ARCHITECT',
+        construction: 'CONTRACTOR',
+      };
+
+      try {
+        await authService.register({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phoneNumber,
+          role: roleMap[formData.role] || 'USER',
+        });
         setIsSubmitting(false);
-        setIsSuccess(true);
-      }, 1200);
+        navigate('/');
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setErrors({
+          auth: err.response?.data?.message || 'Registration failed. Email may already exist.',
+        });
+      }
     }
   };
 
@@ -311,24 +336,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
           )}
 
-          {isSuccess ? (
-            /* Registration Success Screen */
-            <div className="w-full bg-white rounded-2xl p-8 shadow-xl text-center flex flex-col items-center justify-center gap-6 border border-gray-100 animate-fadeIn">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <img src="/svg/checkMark.svg" alt="Success" className="size-8" />
-              </div>
-              <h2 className="text-[#345b79] text-3xl font-extrabold">Account Created!</h2>
-              <p className="text-[#6b7280] text-base max-w-md">
-                Thank you for joining NexaBuild, {formData.firstName}. Your registration as a <strong>{role}</strong> was successful.
-              </p>
-              <Link
-                to="/auth/login"
-                className="mt-4 bg-[#345b79] hover:bg-[#25465e] py-[16px] px-8 rounded-[12px] text-white font-bold uppercase tracking-[1.4px] text-[14px] shadow-lg transition-colors duration-200"
-              >
-                Sign In to Your Account
-              </Link>
-            </div>
-          ) : (
             /* Main Form */
             <form onSubmit={handleFormSubmit} className="w-full flex flex-col gap-[24px]">
               
@@ -479,6 +486,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
                 </div>
               </div>
+
+              {/* Auth error message */}
+              {errors.auth && (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                  {errors.auth}
+                </div>
+              )}
 
               {/* Registration Form inputs */}
               <div className="flex flex-col gap-[18px] items-start w-full" data-node-id="9:120" data-name="Registration Form">
@@ -759,7 +773,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
 
               </div>
             </form>
-          )}
 
         </div>
       </div>

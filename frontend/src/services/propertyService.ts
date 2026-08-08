@@ -111,8 +111,13 @@ function formatArea(n: number): string {
 }
 
 function extractDistrict(location: string): string {
-  const districts = ['Colombo', 'Kandy', 'Galle', 'Negombo', 'Matara', 'Jaffna']
-  return districts.find((d) => location.includes(d)) ?? 'Colombo'
+  const districts = [
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota',
+    'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale',
+    'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura',
+    'Trincomalee', 'Vavuniya'
+  ]
+  return districts.find((d) => location.toLowerCase().includes(d.toLowerCase())) ?? location.split(',')[0].trim()
 }
 
 function getBadgeInfo(listingType: string): { badge: string; badgeColor: string } {
