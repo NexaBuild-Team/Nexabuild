@@ -57,6 +57,7 @@ import AddArchitectureProject from '../pages/architecture/AddArchitectureProject
 
 import { ContractorLayout } from '../pages/construction-company/ContractorLayout'
 import ConstructionCompanyDashboard from '../pages/construction-company/ConstructionCompanyDashboard'
+import UploadConstruction from '../pages/construction-company/UploadConstruction'
 
 function AppRoutes() {
   const location = useLocation()
@@ -128,6 +129,7 @@ function AppRoutes() {
           {/* Contractor Sub-routes */}
           <Route path="/dashboard/construction" element={<ContractorLayout />}>
             <Route index element={<ConstructionCompanyDashboard />} />
+            <Route path="add-project" element={<UploadConstruction />} />
           </Route>
         </Route>
 

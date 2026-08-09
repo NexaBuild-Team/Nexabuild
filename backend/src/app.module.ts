@@ -9,6 +9,7 @@ import { ArchitectureModule } from './architecture/architecture.module';
 import { LandModule } from './land/land.module';
 import { BuyerModule } from './buyer/buyer.module';
 import { AgentModule } from './agent/agent.module';
+import { ConstructionModule } from './construction/construction.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AgentModule } from './agent/agent.module';
     LandModule,
     BuyerModule,
     AgentModule,
+    ConstructionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,30 @@
 model ConstructionCompany {
-  id        String   @id @default(uuid())
+  id        String                @id @default(uuid())
   name      String
-  createdAt DateTime @default(now())
+  projects  ConstructionProject[]
+  createdAt DateTime              @default(now())
+}
+
+model ConstructionProject {
+  id                  String   @id @default(uuid())
+  name                String
+  category            String   @default("Commercial") // "Residential", "Commercial", "Renovation", "Industrial"
+  status              String   @default("Active")      // "Active", "Completed", "Planning", "On Hold"
+  description         String?  @db.Text
+  views               Int      @default(0)
+  clientName          String?
+  siteLocation        String?
+  totalBudget         String?
+  estimatedCompletion String?
+  teamSize            String?
+  blueprintFileName   String?
+  visibility          String   @default("Public")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  company   ConstructionCompany? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  companyId String?
+
+  @@index([category])
+  @@index([status])
 }
