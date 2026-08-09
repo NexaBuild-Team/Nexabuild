@@ -1,0 +1,307 @@
+﻿// prisma\schema\architecture.prisma
+model ArchitectureCompany {
+  id                    String                  @id @default(uuid())
+  name                  String
+  createdAt             DateTime                @default(now())
+  avatarUrl             String
+  awardsWon             Int?
+  budgetRangeLabel      String
+  city                  String
+  clientSatisfactionPct Int?
+  country               String                  @default("Sri Lanka")
+  coverImageUrl         String
+  description           String
+  email                 String                  @unique
+  locationLabel         String
+  projectCount          Int
+  rating                Float
+  reviewCount           Int
+  updatedAt             DateTime
+  yearsExperience       Int
+  CompanySpecialization CompanySpecialization[]
+  FirmService           FirmService[]
+  FirmTeamMember        FirmTeamMember[]
+  FirmTestimonial       FirmTestimonial[]
+  HouseDesign           HouseDesign[]
+}
+
+// prisma\schema\construction.prisma
+model ConstructionCompany {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+}
+
+// prisma\schema\introspected.prisma
+model CompanySpecialization {
+  id                  String              @id
+  label               String
+  companyId           String
+  ArchitectureCompany ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model ConstructionPhase {
+  id             String             @id
+  phase          String
+  detail         String
+  status         ConstructionStatus @default(PENDING)
+  sortOrder      Int                @default(0)
+  designDetailId String
+  DesignDetail   DesignDetail       @relation(fields: [designDetailId], references: [id], onDelete: Cascade)
+
+  @@index([designDetailId])
+}
+
+model DesignDetail {
+  id                     String               @id
+  designId               String               @unique
+  breadcrumb             String[]
+  architectName          String
+  architectFirm          String
+  locationLabel          String
+  completionYear         Int
+  status                 DesignStatus         @default(PLANNING)
+  heroImageUrl           String
+  threeDVisualizationUrl String?
+  priceLkr               Int
+  bedrooms               Int
+  bathrooms              Int
+  sqftArea               Int
+  garageSpaces           Int                  @default(0)
+  overview               String
+  designStyle            String?
+  structureType          String?
+  interiorFinish         String?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime
+  ConstructionPhase      ConstructionPhase[]
+  HouseDesign            HouseDesign          @relation(fields: [designId], references: [id], onDelete: Cascade)
+  DesignFeature          DesignFeature[]
+  DesignGalleryImage     DesignGalleryImage[]
+  DesignReview           DesignReview?
+  FloorPlan              FloorPlan[]
+  RelatedProject         RelatedProject[]
+}
+
+model DesignFeature {
+  id           String       @id
+  icon         String
+  label        String
+  sortOrder    Int          @default(0)
+  detailId     String
+  DesignDetail DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model DesignGalleryImage {
+  id           String       @id
+  url          String
+  altText      String?
+  sortOrder    Int          @default(0)
+  detailId     String
+  DesignDetail DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model DesignReview {
+  id           String       @id
+  author       String
+  avatarUrl    String
+  rating       Int
+  text         String
+  reviewDate   String
+  detailId     String       @unique
+  DesignDetail DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+}
+
+model FirmService {
+  id                  String              @id
+  icon                String
+  title               String
+  description         String
+  sortOrder           Int                 @default(0)
+  companyId           String
+  ArchitectureCompany ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model FirmTeamMember {
+  id                  String              @id
+  name                String
+  title               String
+  photoUrl            String
+  sortOrder           Int                 @default(0)
+  companyId           String
+  ArchitectureCompany ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model FirmTestimonial {
+  id                  String              @id
+  rating              Int
+  text                String
+  author              String
+  role                String
+  avatarUrl           String
+  createdAt           DateTime            @default(now())
+  companyId           String
+  ArchitectureCompany ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+}
+
+model FloorPlan {
+  id           String       @id
+  label        String
+  imageUrl     String
+  sortOrder    Int          @default(0)
+  detailId     String
+  DesignDetail DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model HouseDesign {
+  id                  String              @id
+  title               String
+  style               String
+  priceLkr            Int
+  architectName       String
+  imageUrl            String
+  bedrooms            Int
+  bathrooms           Int
+  sqftArea            Int
+  locationLabel       String
+  isSaved             Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime
+  companyId           String
+  DesignDetail        DesignDetail?
+  ArchitectureCompany ArchitectureCompany @relation(fields: [companyId], references: [id])
+  HouseDesignTag      HouseDesignTag[]
+
+  @@index([companyId])
+  @@index([priceLkr])
+  @@index([style])
+}
+
+model HouseDesignTag {
+  id          String      @id
+  label       String
+  designId    String
+  HouseDesign HouseDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  @@index([designId])
+}
+
+model RelatedProject {
+  id             String       @id
+  targetDesignId String
+  title          String
+  imageUrl       String
+  style          String
+  priceLkr       Int
+  sortOrder      Int          @default(0)
+  detailId       String
+  DesignDetail   DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+enum ConstructionStatus {
+  DONE
+  ACTIVE
+  PENDING
+}
+
+enum DesignStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// prisma\schema\land.prisma
+model Land {
+  id              String   @id @default(uuid())
+  name            String
+  description     String
+  location        String
+  status          String
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  price           Float
+  perches         Float
+  sqft            Float?
+  images          String[]
+  landType        String
+  matchScore      Int?
+  developmentPlan String?
+  environment     String?
+  purpose         String?
+}
+
+// prisma\schema\property.prisma
+model Property {
+  id               String   @id @default(uuid())
+  title            String
+  createdAt        DateTime @default(now())
+  description      String?
+  price            Float
+  location         String
+  bedrooms         Int
+  bathrooms        Int
+  area             Float
+  propertyType     String
+  listingType      String
+  images           String[]
+  matchScore       Int?
+  latitude         Float?
+  longitude        Float?
+  updatedAt        DateTime @updatedAt
+  hasGarden        Boolean  @default(false)
+  hasModernKitchen Boolean  @default(false)
+  hasPool          Boolean  @default(false)
+  hasSeaView       Boolean  @default(false)
+  hasSecurity      Boolean  @default(false)
+  isCityCenter     Boolean  @default(false)
+  isCoastal        Boolean  @default(false)
+  isInvestment     Boolean  @default(false)
+  isNearBeach      Boolean  @default(false)
+  isNearHighway    Boolean  @default(false)
+  isNearHospital   Boolean  @default(false)
+  isNearSchools    Boolean  @default(false)
+  isOwnHome        Boolean  @default(false)
+  isQuietArea      Boolean  @default(false)
+  isRentalIncome   Boolean  @default(false)
+  isRural          Boolean  @default(false)
+  isSuburban       Boolean  @default(false)
+  isUrban          Boolean  @default(false)
+  isVacationHome   Boolean  @default(false)
+  parkingSpaces    Int      @default(0)
+}
+
+// prisma\schema\schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// prisma\schema\user.prisma
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+

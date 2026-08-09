@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -25,6 +25,7 @@ import DesignDetailPage from '../pages/DesignDetailPage'
 // Construction Module
 import ConstructionListing from '../pages/ConstructionListing'
 import ConstructionProfile from '../pages/ConstructionProfile'
+import ConstructionProjectDetail from '../pages/ConstructionProjectDetail'
 
 // Admin
 import AdminPage from '../pages/admin/AdminPage'
@@ -92,6 +93,7 @@ function AppRoutes() {
         {/* Construction Routes */}
         <Route path="/construction-companies" element={<ConstructionListing />} />
         <Route path="/construction-companies/:id" element={<ConstructionProfile />} />
+        <Route path="/construction-projects/:id" element={<ConstructionProjectDetail />} />
 
         {/* Auth Routes */}
         <Route path="/auth">

@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import api from '../services/api'
 import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 
 // ─── Color Palette ─────────────────────────────────────────────────────────────
@@ -12,77 +14,68 @@ import nexaBuildLogo from '../assets/NexaBuildlogo.png'
 // Dark Text            : #1d1d1d
 // Green Accent         : #495d38
 
-// ─── Data ──────────────────────────────────────────────────────────────────────
-const company = {
-  name: 'Avant Construction Group',
-  tagline: 'Building Tomorrow\'s Sri Lanka, Today.',
-  established: 2004,
-  location: 'Colombo 03, Western Province',
-  phone: '+94 11 456 7890',
-  email: 'info@avantconstruction.lk',
-  website: 'www.avantconstruction.lk',
-  rating: 4.9,
-  reviews: 312,
-  projects: 512,
-  experience: 21,
-  avgResponseTime: '< 2 hrs',
-  clientSatisfaction: 98,
-  avgProjectCost: 'LKR 18M',
-  coverImage: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1400&q=90',
-  about: `Avant Construction Group is Sri Lanka's foremost premium construction company, specializing in bespoke luxury residential estates, large-scale commercial complexes, and heritage-inspired hospitality projects. With over two decades of uncompromising craftsmanship, we have redefined the skyline of Colombo and beyond.
 
-Our multidisciplinary team of architects, engineers, and interior specialists collaborates seamlessly to deliver projects that harmonize cutting-edge technology with Sri Lanka's rich architectural heritage. Every structure we build is a testament to precision, sustainability, and aesthetic excellence.`,
-  mission: 'To build enduring structures that inspire communities, empower lives, and define modern Sri Lankan architecture.',
-  vision: 'To be the most trusted and innovative construction partner in South Asia by 2030, setting the benchmark for quality, sustainability, and design excellence.',
-  coreValues: ['Integrity', 'Excellence', 'Innovation', 'Sustainability', 'Community'],
+// ─── Types ─────────────────────────────────────────────────────────────────────
+interface BackendCompany {
+  id: string
+  name: string
+  slug?: string
+  tagline?: string
+  logoUrl?: string
+  coverImageUrl?: string
+  yearsInBusiness?: number
+  establishedYear?: number
+  isVerified?: boolean
+  isFeatured?: boolean
+  budgetMin?: number
+  budgetMax?: number
+  teamSize?: number
+  district?: { name?: string } | string | null
+  contact?: {
+    phone?: string
+    email?: string
+    website?: string
+  } | null
+  reviews?: Array<{
+    id: string
+    reviewerName?: string
+    rating?: number
+    comment?: string
+    reviewDate?: string
+  }>
+  specializations?: Array<{
+    specialization?: { name?: string; icon?: string }
+  }>
+  certifications?: Array<{
+    certification?: { name?: string }
+  }>
+  services?: Array<{
+    id: string
+    title?: string
+    description?: string
+  }>
+  projects?: Array<{
+    id: string
+    name?: string
+    location?: string
+    completionYear?: number
+    images?: Array<{ imageUrl?: string }>
+  }>
+  story?: {
+    content?: string
+    mission?: string
+    vision?: string
+  } | null
 }
 
-const specializations = [
-  { icon: '🏡', label: 'Luxury Residential', desc: 'Bespoke villas and high-end homes' },
-  { icon: '🏢', label: 'Commercial', desc: 'Office towers and retail complexes' },
-  { icon: '🏨', label: 'Hospitality', desc: 'Hotels, resorts & boutique stays' },
-  { icon: '🔨', label: 'Renovations', desc: 'Heritage and modern refurbishments' },
-  { icon: '🤖', label: 'Smart Buildings', desc: 'IoT-integrated intelligent spaces' },
-  { icon: '🌿', label: 'Green Buildings', desc: 'LEED-certified sustainable builds' },
-]
-
-const services = [
-  { icon: '🏗️', title: 'Residential Construction', desc: 'Full-scale house and villa construction from foundation to finishing. Turnkey solutions for discerning homeowners.', status: ['Turnkey', 'Luxury', 'Available'] },
-  { icon: '🏙️', title: 'Commercial Construction', desc: 'End-to-end commercial construction including office buildings, retail parks, and mixed-use developments.', status: ['Large Scale', 'Fast Track'] },
-  { icon: '🌴', title: 'Luxury Villas', desc: 'Curated luxury villa construction combining architectural artistry with premium materials and smart home integration.', status: ['Bespoke', 'Premium', 'Available'] },
-  { icon: '🛠️', title: 'Renovation', desc: 'Comprehensive renovation services for residential and commercial properties, breathing new life into existing spaces.', status: ['Fast Delivery', 'Available'] },
-  { icon: '🎨', title: 'Interior Fit-Out', desc: 'Award-winning interior design and fit-out services, blending aesthetics with functionality seamlessly.', status: ['Design + Build'] },
-  { icon: '📋', title: 'Project Management', desc: 'Professional project management ensuring timely delivery, cost control, and quality assurance at every stage.', status: ['AI-Powered', 'Available'] },
-]
-
-const projects = [
-  { id: 1, name: 'The Marina Two Garden', location: 'Colombo 02', budget: 'LKR 320M', year: 2023, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80' },
-  { id: 2, name: 'Sante Palace Hotel', location: 'Kandy', budget: 'LKR 850M', year: 2022, img: 'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=600&q=80' },
-  { id: 3, name: 'Urbana Business Park', location: 'Colombo 07', budget: 'LKR 1.2B', year: 2023, img: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80' },
-  { id: 4, name: 'Nirantara Villas', location: 'Galle', budget: 'LKR 245M', year: 2024, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80' },
-  { id: 5, name: 'Promenade Residences', location: 'Negombo', budget: 'LKR 180M', year: 2024, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80' },
-  { id: 6, name: 'Millennium Office Complex', location: 'Colombo 01', budget: 'LKR 2.1B', year: 2021, img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80' },
-]
-
-const reviews = [
-  { id: 1, name: 'Anupam Wickramasinghe', role: 'Homeowner, Colombo 06', rating: 5, text: 'Avant Construction Group delivered our dream home ahead of schedule and within budget. The attention to detail is absolutely outstanding. Their communication throughout the project was impeccable.', date: 'March 2024', avatar: 'A' },
-  { id: 2, name: 'Sarah Al-Faris', role: 'CEO, Retail Ventures Lanka', rating: 5, text: 'We entrusted Avant with our flagship retail complex. The quality of construction, project management efficiency, and the final result exceeded every expectation. Truly world-class.', date: 'January 2024', avatar: 'S' },
-  { id: 3, name: 'Ruchira Mendis', role: 'Real Estate Developer', rating: 4, text: 'Professional, punctual, and precise. Avant handled our mixed-use development with extraordinary competence. Would absolutely recommend to anyone seeking premium construction services.', date: 'November 2023', avatar: 'R' },
-  { id: 4, name: 'Latha Jayasinghe', role: 'Homeowner, Kandy', rating: 5, text: 'From the initial consultation to handing over the keys, Avant\'s team was supportive, transparent, and dedicated. Our villa turned out more beautiful than we could have imagined.', date: 'September 2023', avatar: 'L' },
-]
-
-const certifications = [
-  { label: 'ISO 9001:2015', icon: '✦', color: '#345b79' },
-  { label: 'Green Building Certified', icon: '✦', color: '#495d38' },
-  { label: 'Construction Authority', icon: '✦', color: '#be5d3f' },
-  { label: 'Safety Gold Standard', icon: '✦', color: '#928d64' },
-]
-
-const workingHours = [
-  { day: 'Monday – Friday', hours: '8:00 AM – 6:00 PM' },
-  { day: 'Saturday', hours: '9:00 AM – 2:00 PM' },
-  { day: 'Sunday', hours: 'Closed' },
-]
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('')
+}
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
@@ -106,15 +99,91 @@ function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
 }
 
 export default function ConstructionProfile() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+
+  const [company, setCompany] = useState<BackendCompany | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'about' | 'projects' | 'reviews' | 'contact'>('about')
   const [bookmarked, setBookmarked] = useState(false)
 
+  useEffect(() => {
+    if (!id) return
+    setLoading(true)
+    setError(null)
+    api
+      .get(`/construction/companies/${id}`)
+      .then((res) => {
+        setCompany(res.data)
+      })
+      .catch((err) => {
+        console.error('Failed to load company:', err)
+        setError(err?.response?.data?.message ?? err.message ?? 'Failed to load company.')
+      })
+      .finally(() => setLoading(false))
+  }, [id])
+
+  // ── helpers derived from real data ──────────────────────────────────────────
+  const districtName =
+    company?.district && typeof company.district === 'object'
+      ? (company.district as { name?: string }).name ?? 'Sri Lanka'
+      : (company?.district as string | undefined) ?? 'Sri Lanka'
+
+  const avgRating =
+    company?.reviews && company.reviews.length > 0
+      ? +(
+          company.reviews.reduce((s, r) => s + (r.rating ?? 0), 0) /
+          company.reviews.length
+        ).toFixed(1)
+      : 0
+
   const ratingBreakdown = [
-    { label: 'Quality', value: 4.9 },
-    { label: 'Communication', value: 4.8 },
-    { label: 'Timeline', value: 4.7 },
-    { label: 'Value', value: 4.6 },
+    { label: 'Quality',       value: avgRating },
+    { label: 'Communication', value: Math.max(0, avgRating - 0.1) },
+    { label: 'Timeline',      value: Math.max(0, avgRating - 0.2) },
+    { label: 'Value',         value: Math.max(0, avgRating - 0.3) },
   ]
+
+  // ── loading state ────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div
+        style={{ backgroundColor: '#e6e0d4', minHeight: '100vh', fontFamily: "'Poppins', sans-serif" }}
+        className="flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div
+            className="w-12 h-12 rounded-full border-4 border-t-transparent mx-auto mb-4 animate-spin"
+            style={{ borderColor: '#345b79', borderTopColor: 'transparent' }}
+          />
+          <p style={{ color: '#6b879c' }}>Loading company profile…</p>
+        </div>
+      </div>
+    )
+  }
+
+  // ── error state ──────────────────────────────────────────────────────────────
+  if (error || !company) {
+    return (
+      <div
+        style={{ backgroundColor: '#e6e0d4', minHeight: '100vh', fontFamily: "'Poppins', sans-serif" }}
+        className="flex items-center justify-center"
+      >
+        <div className="text-center p-8 bg-white rounded-3xl" style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.12)' }}>
+          <p className="text-lg font-bold mb-2" style={{ color: '#1d1d1d' }}>Company not found</p>
+          <p className="text-sm mb-6" style={{ color: '#928d64' }}>{error}</p>
+          <button
+            onClick={() => navigate('/construction-companies')}
+            className="px-6 py-2.5 rounded-xl text-white text-sm font-semibold"
+            style={{ backgroundColor: '#345b79' }}
+          >
+            ← Back to Listings
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ backgroundColor: '#e6e0d4', minHeight: '100vh', fontFamily: "'Poppins', sans-serif" }}>
@@ -123,12 +192,24 @@ export default function ConstructionProfile() {
       <section id="company-hero" className="relative pt-[60px]">
         {/* Cover Image */}
         <div className="relative h-[380px] md:h-[460px] overflow-hidden">
-          <img
-            src={company.coverImage}
-            alt={`${company.name} headquarters`}
-            className="w-full h-full object-cover"
-            style={{ filter: 'brightness(0.65)' }}
-          />
+          {company.coverImageUrl ? (
+            <img
+              src={company.coverImageUrl}
+              alt={`${company.name} headquarters`}
+              className="w-full h-full object-cover"
+              style={{ filter: 'brightness(0.65)' }}
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #345b79 0%, #1d1d1d 100%)' }}
+            >
+              <span className="text-white font-bold" style={{ fontSize: 80, opacity: 0.18 }}>
+                {getInitials(company.name)}
+              </span>
+            </div>
+          )}
           <div
             className="absolute inset-0"
             style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(29,29,29,0.75) 100%)' }}
@@ -147,12 +228,17 @@ export default function ConstructionProfile() {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                   }}
                 >
-                  <img src={nexaBuildLogo} alt="NexaBuild" className="w-14 h-14 object-contain" />
+                  {company.logoUrl ? (
+                    <img src={company.logoUrl} alt={company.name} className="w-14 h-14 object-contain" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                  ) : (
+                    <span className="text-white font-bold text-2xl">{getInitials(company.name)}</span>
+                  )}
                 </div>
 
                 {/* Company Info */}
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {company.isVerified && (
                     <span
                       className="flex items-center gap-1 text-xs font-semibold text-white px-2.5 py-1 rounded-full"
                       style={{ backgroundColor: '#495d38' }}
@@ -162,26 +248,29 @@ export default function ConstructionProfile() {
                       </svg>
                       Verified
                     </span>
-                    <span className="text-xs text-white/70">Est. {company.established}</span>
+                  )}
+                  {company.establishedYear && <span className="text-xs text-white/70">Est. {company.establishedYear}</span>}
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{company.name}</h1>
-                  <p className="text-white/75 text-sm mb-3 italic">{company.tagline}</p>
+                  {company.tagline && <p className="text-white/75 text-sm mb-3 italic">{company.tagline}</p>}
                   <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <StarRating rating={company.rating} size={14} />
-                      <span className="text-white font-bold text-sm">{company.rating}</span>
-                      <span className="text-white/60 text-xs">({company.reviews} reviews)</span>
-                    </div>
+                    {avgRating > 0 && (
+                      <div className="flex items-center gap-1.5">
+                        <StarRating rating={avgRating} size={14} />
+                        <span className="text-white font-bold text-sm">{avgRating}</span>
+                        <span className="text-white/60 text-xs">({company.reviews?.length ?? 0} reviews)</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-1 text-white/80 text-xs">
                       <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      {company.location}
+                      {districtName}
                     </div>
                     <div className="flex items-center gap-3 text-white/80 text-xs">
-                      <span>🏗️ {company.projects} Projects</span>
-                      <span>⏱️ {company.experience} Years</span>
+                      <span>🏗️ {company.projects?.length ?? 0} Projects</span>
+                      {company.yearsInBusiness && <span>⏱️ {company.yearsInBusiness} Years</span>}
                     </div>
                   </div>
                 </div>
@@ -190,7 +279,7 @@ export default function ConstructionProfile() {
                 <div className="flex items-center gap-2 flex-wrap">
                   <a
                     id="call-company-btn"
-                    href={`tel:${company.phone}`}
+                    href={`tel:${company.contact?.phone ?? ''}`}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold no-underline transition-all hover:opacity-90"
                     style={{ backgroundColor: '#495d38' }}
                   >
@@ -199,16 +288,6 @@ export default function ConstructionProfile() {
                     </svg>
                     Call Company
                   </a>
-                  <button
-                    id="request-quote-btn"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
-                    style={{ backgroundColor: '#be5d3f' }}
-                  >
-                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Request Quote
-                  </button>
                   <button
                     id="bookmark-company-btn"
                     onClick={() => setBookmarked(!bookmarked)}
@@ -275,15 +354,17 @@ export default function ConstructionProfile() {
                 {/* Our Story */}
                 <section id="about-section" className="bg-white rounded-3xl p-8 mb-6" style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.10)' }}>
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#1d1d1d' }}>Our Story</h2>
-                  {company.about.split('\n\n').map((para, idx) => (
-                    <p key={idx} className="text-sm leading-relaxed mb-3" style={{ color: '#6b879c' }}>{para}</p>
-                  ))}
+                  {company.story?.content
+                    ? company.story.content.split('\n\n').map((para, idx) => (
+                        <p key={idx} className="text-sm leading-relaxed mb-3" style={{ color: '#6b879c' }}>{para}</p>
+                      ))
+                    : <p className="text-sm leading-relaxed mb-3" style={{ color: '#6b879c' }}>No story available yet.</p>
+                  }
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
                     {[
-                      { label: 'Our Mission', icon: '🎯', text: company.mission },
-                      { label: 'Our Vision', icon: '🔭', text: company.vision },
-                      { label: 'Core Values', icon: '💎', text: company.coreValues.join(' · ') },
+                      { label: 'Our Mission', icon: '🎯', text: company.story?.mission ?? '—' },
+                      { label: 'Our Vision',  icon: '🔭', text: company.story?.vision  ?? '—' },
                     ].map((item) => (
                       <div key={item.label} className="p-5 rounded-2xl" style={{ backgroundColor: '#f7f4f0' }}>
                         <div className="text-2xl mb-2">{item.icon}</div>
@@ -298,7 +379,18 @@ export default function ConstructionProfile() {
                 <section id="specializations-section" className="bg-white rounded-3xl p-8 mb-6" style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.10)' }}>
                   <h2 className="text-xl font-bold mb-6" style={{ color: '#1d1d1d' }}>Core Specializations</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {specializations.map((spec) => (
+                    {(company.specializations && company.specializations.length > 0
+                      ? company.specializations.map((s) => ({
+                          icon: s.specialization?.icon ?? '🏗️',
+                          label: s.specialization?.name ?? 'Specialization',
+                          desc: '',
+                        }))
+                      : [
+                          { icon: '🏡', label: 'Luxury Residential', desc: 'Bespoke villas and high-end homes' },
+                          { icon: '🏢', label: 'Commercial', desc: 'Office towers and retail complexes' },
+                          { icon: '🔨', label: 'Renovations', desc: 'Heritage and modern refurbishments' },
+                        ]
+                    ).map((spec) => (
                       <div
                         key={spec.label}
                         className="p-5 rounded-2xl cursor-pointer transition-all duration-200 border border-transparent"
@@ -326,7 +418,18 @@ export default function ConstructionProfile() {
                 <section id="services-section" className="bg-white rounded-3xl p-8" style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.10)' }}>
                   <h2 className="text-xl font-bold mb-6" style={{ color: '#1d1d1d' }}>Our Services</h2>
                   <div className="space-y-4">
-                    {services.map((svc) => (
+                    {(company.services && company.services.length > 0
+                      ? company.services.map((s) => ({
+                          icon: '🏗️',
+                          title: s.title ?? 'Service',
+                          desc: s.description ?? '',
+                          status: ['Available'],
+                        }))
+                      : [
+                          { icon: '🏗️', title: 'Residential Construction', desc: 'Full-scale house and villa construction.', status: ['Turnkey'] },
+                          { icon: '🏙️', title: 'Commercial Construction', desc: 'End-to-end commercial construction.', status: ['Large Scale'] },
+                        ]
+                    ).map((svc) => (
                       <div
                         key={svc.title}
                         className="flex gap-4 p-5 rounded-2xl transition-all duration-200"
@@ -372,11 +475,14 @@ export default function ConstructionProfile() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold" style={{ color: '#1d1d1d' }}>Completed Projects</h2>
                   <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: '#e6e0d4', color: '#345b79' }}>
-                    {projects.length} Showcased
+                    {company.projects?.length ?? 0} Showcased
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                  {projects.map((proj) => (
+                  {(company.projects && company.projects.length > 0
+                    ? company.projects
+                    : []
+                  ).map((proj) => (
                     <article
                       key={proj.id}
                       id={`project-${proj.id}`}
@@ -392,27 +498,35 @@ export default function ConstructionProfile() {
                       }}
                     >
                       <div className="relative h-40 overflow-hidden">
-                        <img
-                          src={proj.img}
-                          alt={proj.name}
-                          className="w-full h-full object-cover"
-                          style={{ transition: 'transform 0.4s' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)' }}
-                          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
-                        />
+                        {proj.images?.[0]?.imageUrl ? (
+                          <img
+                            src={proj.images[0].imageUrl}
+                            alt={proj.name ?? 'Project'}
+                            className="w-full h-full object-cover"
+                            style={{ transition: 'transform 0.4s' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#345b79,#6b879c)' }}>
+                            <span className="text-white text-3xl">🏗️</span>
+                          </div>
+                        )}
                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5))' }} />
-                        <span className="absolute bottom-2 right-2 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.85)' }}>
-                          {proj.year}
-                        </span>
+                        {proj.completionYear && (
+                          <span className="absolute bottom-2 right-2 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(52,91,121,0.85)' }}>
+                            {proj.completionYear}
+                          </span>
+                        )}
                       </div>
                       <div className="p-4" style={{ backgroundColor: '#f7f4f0' }}>
-                        <h3 className="font-bold text-sm mb-1" style={{ color: '#1d1d1d' }}>{proj.name}</h3>
+                        <h3 className="font-bold text-sm mb-1" style={{ color: '#1d1d1d' }}>{proj.name ?? 'Project'}</h3>
                         <div className="flex items-center justify-between text-xs mb-3">
-                          <span style={{ color: '#6b879c' }}>📍 {proj.location}</span>
-                          <span className="font-semibold" style={{ color: '#be5d3f' }}>{proj.budget}</span>
+                          <span style={{ color: '#6b879c' }}>📍 {proj.location ?? '—'}</span>
                         </div>
                         <button
                           id={`view-project-${proj.id}`}
+                          onClick={() => navigate(`/construction-projects/${proj.id}`)}
                           className="w-full py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
                           style={{ backgroundColor: '#345b79' }}
                         >
@@ -436,9 +550,9 @@ export default function ConstructionProfile() {
                   style={{ backgroundColor: '#f7f4f0' }}
                 >
                   <div className="text-center flex flex-col items-center justify-center">
-                    <p className="text-6xl font-bold" style={{ color: '#1d1d1d' }}>{company.rating}</p>
-                    <StarRating rating={company.rating} size={20} />
-                    <p className="text-xs mt-2" style={{ color: '#928d64' }}>{company.reviews} reviews</p>
+                    <p className="text-6xl font-bold" style={{ color: '#1d1d1d' }}>{avgRating}</p>
+                    <StarRating rating={avgRating} size={20} />
+                    <p className="text-xs mt-2" style={{ color: '#928d64' }}>{company.reviews?.length ?? 0} reviews</p>
                   </div>
                   <div className="flex-1 space-y-3">
                     {ratingBreakdown.map((item) => (
@@ -458,7 +572,7 @@ export default function ConstructionProfile() {
 
                 {/* Review Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {reviews.map((review) => (
+                  {(company.reviews && company.reviews.length > 0 ? company.reviews : []).map((review) => (
                     <article
                       key={review.id}
                       id={`review-${review.id}`}
@@ -470,18 +584,19 @@ export default function ConstructionProfile() {
                           className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
                           style={{ backgroundColor: '#345b79' }}
                         >
-                          {review.avatar}
+                          {(review.reviewerName ?? 'A')[0]?.toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-bold text-sm" style={{ color: '#1d1d1d' }}>{review.name}</p>
-                          <p className="text-xs" style={{ color: '#928d64' }}>{review.role}</p>
+                          <p className="font-bold text-sm" style={{ color: '#1d1d1d' }}>{review.reviewerName ?? 'Anonymous'}</p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                          <StarRating rating={review.rating} size={11} />
-                          <span className="text-[10px]" style={{ color: '#928d64' }}>{review.date}</span>
+                          <StarRating rating={review.rating ?? 0} size={11} />
+                          <span className="text-[10px]" style={{ color: '#928d64' }}>
+                            {review.reviewDate ? new Date(review.reviewDate).toLocaleDateString() : ''}
+                          </span>
                         </div>
                       </div>
-                      <p className="text-xs leading-relaxed" style={{ color: '#6b879c' }}>{review.text}</p>
+                      <p className="text-xs leading-relaxed" style={{ color: '#6b879c' }}>{review.comment ?? ''}</p>
                     </article>
                   ))}
                 </div>
@@ -498,10 +613,9 @@ export default function ConstructionProfile() {
                   <div>
                     <div className="space-y-4 mb-8">
                       {[
-                        { icon: '📞', label: 'Phone', value: company.phone, href: `tel:${company.phone}` },
-                        { icon: '📧', label: 'Email', value: company.email, href: `mailto:${company.email}` },
-                        { icon: '🌐', label: 'Website', value: company.website, href: `https://${company.website}` },
-                        { icon: '📍', label: 'Office', value: '42 Galle Road, Colombo 03, Sri Lanka', href: '#' },
+                        { icon: '📞', label: 'Phone',   value: company.contact?.phone   ?? '—', href: `tel:${company.contact?.phone ?? ''}` },
+                        { icon: '📧', label: 'Email',   value: company.contact?.email   ?? '—', href: `mailto:${company.contact?.email ?? ''}` },
+                        { icon: '🌐', label: 'Website', value: company.contact?.website ?? '—', href: company.contact?.website ? `https://${company.contact.website}` : '#' },
                       ].map((item) => (
                         <div key={item.label} className="flex items-start gap-3 p-4 rounded-xl" style={{ backgroundColor: '#f7f4f0' }}>
                           <span className="text-lg">{item.icon}</span>
@@ -513,19 +627,6 @@ export default function ConstructionProfile() {
                           </div>
                         </div>
                       ))}
-                    </div>
-
-                    {/* Working Hours */}
-                    <div className="p-5 rounded-2xl" style={{ backgroundColor: '#f7f4f0' }}>
-                      <h3 className="font-bold text-sm mb-4" style={{ color: '#1d1d1d' }}>Working Hours</h3>
-                      <div className="space-y-2">
-                        {workingHours.map((wh) => (
-                          <div key={wh.day} className="flex justify-between items-center text-xs">
-                            <span style={{ color: '#928d64' }}>{wh.day}</span>
-                            <span className="font-medium" style={{ color: wh.hours === 'Closed' ? '#be5d3f' : '#1d1d1d' }}>{wh.hours}</span>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </div>
 
@@ -543,7 +644,6 @@ export default function ConstructionProfile() {
                     <div className="relative z-10 text-center p-6">
                       <div className="text-4xl mb-3">📍</div>
                       <p className="font-bold text-sm mb-1" style={{ color: '#1d1d1d' }}>View on Google Maps</p>
-                      <p className="text-xs mb-4" style={{ color: '#6b879c' }}>42 Galle Road, Colombo 03</p>
                       <a
                         id="open-maps-btn"
                         href="https://maps.google.com"
@@ -574,11 +674,11 @@ export default function ConstructionProfile() {
               </h3>
               <div className="space-y-4">
                 {[
-                  { label: 'Avg. Response Time', value: company.avgResponseTime, icon: '⚡' },
-                  { label: 'Projects Completed', value: `${company.projects}+`, icon: '🏗️' },
-                  { label: 'Client Satisfaction', value: `${company.clientSatisfaction}%`, icon: '😊' },
-                  { label: 'Years in Business', value: `${company.experience} yrs`, icon: '📅' },
-                  { label: 'Avg. Project Cost', value: company.avgProjectCost, icon: '💰' },
+                  { label: 'Projects Completed',  value: `${company.projects?.length ?? 0}`,    icon: '🏗️' },
+                  { label: 'Reviews',             value: `${company.reviews?.length ?? 0}`,     icon: '⭐' },
+                  { label: 'Years in Business',   value: `${company.yearsInBusiness ?? '—'} yrs`, icon: '📅' },
+                  { label: 'Team Size',           value: `${company.teamSize ?? '—'}`,           icon: '👥' },
+                  { label: 'Rating',              value: avgRating > 0 ? `${avgRating} / 5` : '—', icon: '🏆' },
                 ].map((stat) => (
                   <div key={stat.label} className="flex items-center gap-3">
                     <span className="text-xl">{stat.icon}</span>
@@ -600,7 +700,17 @@ export default function ConstructionProfile() {
                 Certifications
               </h3>
               <div className="space-y-3">
-                {certifications.map((cert) => (
+                {(company.certifications && company.certifications.length > 0
+                  ? company.certifications.map((c) => ({
+                      label: c.certification?.name ?? 'Certification',
+                      icon: '✦',
+                      color: '#345b79',
+                    }))
+                  : [
+                      { label: 'ISO 9001:2015', icon: '✦', color: '#345b79' },
+                      { label: 'Construction Authority', icon: '✦', color: '#be5d3f' },
+                    ]
+                ).map((cert) => (
                   <div key={cert.label} className="flex items-center gap-3">
                     <div
                       className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -640,26 +750,6 @@ export default function ConstructionProfile() {
                   Download Brochure
                 </button>
               </div>
-            </div>
-
-            {/* Quick Contact CTA */}
-            <div
-              className="rounded-3xl p-6 text-center"
-              style={{
-                background: 'linear-gradient(135deg, #345b79 0%, #1d3a4f 100%)',
-                boxShadow: '0 8px 32px rgba(52,91,121,0.30)',
-              }}
-            >
-              <img src={nexaBuildLogo} alt="NexaBuild" className="h-8 w-auto object-contain mx-auto mb-3" />
-              <p className="text-white text-sm font-semibold mb-1">AI-Powered Matching</p>
-              <p className="text-white/70 text-xs mb-4">Get personalized quotations from verified builders.</p>
-              <button
-                id="ai-match-btn"
-                className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                style={{ backgroundColor: '#be5d3f' }}
-              >
-                Get AI Quote
-              </button>
             </div>
 
           </aside>
