@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -221,6 +222,7 @@ export default function SavedLand({
 
   return (
     <div className="w-full flex flex-col gap-6 sm:gap-8 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto font-normal text-[#111827]">
+      <BuyerHeaderBar />
       
       {/* Global Error Banner */}
       {error && (

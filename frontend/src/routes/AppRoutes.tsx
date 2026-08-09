@@ -66,7 +66,7 @@ function AppRoutes() {
 
   return (
     <>
-      {!isAdminPath && !isAuthPath && <Navbar />}
+      {!isAdminPath && !isAuthPath && !isDashboardPath && <Navbar />}
 
       <Routes>
         {/* Home */}
