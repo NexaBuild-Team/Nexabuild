@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { fetchSavedLands, toggleSaveLandApi } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -155,13 +156,49 @@ export default function SavedLand({
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [savedStateMap, setSavedStateMap] = useState<Record<string | number, boolean>>({});
 
-  const landPlots = data?.landPlots !== undefined ? data.landPlots : defaultSavedLands;
+  const [apiLands, setApiLands] = useState<SavedLandPlotItem[] | null>(null);
+  const [_fetching, setFetching] = useState(!data);
 
-  const handleToggleBookmark = (id: string | number) => {
+  useEffect(() => {
+    if (!data) {
+      fetchSavedLands()
+        .then((res) => {
+          const mapped: SavedLandPlotItem[] = res.map((l: any) => ({
+            id: l.id,
+            title: l.name || l.title || 'Prime Land Plot',
+            locationDistrict: l.location || 'Colombo',
+            subLocation: l.location || 'Homagama',
+            sizePerches: l.perches || 15,
+            priceAmount: l.price ? l.price / 1000000 : 8.5,
+            pricePerPerchText: 'LKR 4.25 Lakhs / perch',
+            matchScore: l.matchScore || 92,
+            potentialLevel: 'HIGH POTENTIAL',
+            tags: ['Residential', 'Direct Road Access'],
+            imageUrl: (l.images && l.images.length > 0) ? l.images[0] : '/property_card_1.png',
+            isSaved: true,
+          }));
+          setApiLands(mapped);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch saved lands:', err);
+          setFetching(false);
+        });
+    }
+  }, [data]);
+
+  const landPlots = apiLands !== null ? apiLands : (data?.landPlots !== undefined ? data.landPlots : defaultSavedLands);
+
+  const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveLand) {
       onToggleSaveLand(id);
     } else {
-      setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      try {
+        await toggleSaveLandApi(String(id));
+        setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      } catch {
+        setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      }
     }
   };
 

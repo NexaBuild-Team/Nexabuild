@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ArchitectureModule } from './architecture/architecture.module';
 import { LandModule } from './land/land.module';
 import { BuyerModule } from './buyer/buyer.module';
+import { AgentModule } from './agent/agent.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { BuyerModule } from './buyer/buyer.module';
     ArchitectureModule,
     LandModule,
     BuyerModule,
+    AgentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

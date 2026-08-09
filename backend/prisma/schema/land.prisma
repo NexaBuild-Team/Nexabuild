@@ -13,6 +13,10 @@ model Land {
   developmentPlan String?
   images          String[]
   matchScore      Int?
+  views           Int      @default(0)
+  agentId         String?
+  agent           User?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
   latitude        Float?
   longitude       Float?
   createdAt       DateTime @default(now())

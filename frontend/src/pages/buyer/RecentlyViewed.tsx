@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { fetchRecentlyViewed } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -136,7 +137,33 @@ export default function RecentlyViewed({
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [savedStatusMap, setSavedStatusMap] = useState<Record<string | number, boolean>>({});
 
-  const historyItems = data?.historyItems !== undefined ? data.historyItems : defaultHistoryItems;
+  const [apiItems, setApiItems] = useState<ViewedHistoryItem[] | null>(null);
+
+  useEffect(() => {
+    if (!data) {
+      fetchRecentlyViewed()
+        .then((res) => {
+          if (res && res.length > 0) {
+            const mapped = res.map((item: any) => ({
+              id: item.id,
+              title: item.query || '4BHK Villa Colombo 7',
+              location: item.location || 'Colombo 7',
+              price: 'LKR 28.5M',
+              type: (item.category === 'LAND' ? 'LAND' : 'PROPERTY') as 'PROPERTY' | 'LAND',
+              viewedTimeAgo: 'Just now',
+              imageUrl: item.category === 'LAND' ? '/property_card_1.png' : '/hero_property.png',
+              isSaved: false,
+            }));
+            setApiItems(mapped);
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to fetch recently viewed items:', err);
+        });
+    }
+  }, [data]);
+
+  const historyItems = apiItems !== null ? apiItems : (data?.historyItems !== undefined ? data.historyItems : defaultHistoryItems);
 
   const totalViews = data?.metrics?.totalViewsCount ?? historyItems.length;
   const propertiesCount = data?.metrics?.propertiesViewedCount ?? historyItems.filter(i => i.type === 'PROPERTY').length;

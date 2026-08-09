@@ -6,6 +6,7 @@ export interface NavItem {
   label: string;
   href: string;
   icon: string | React.ReactNode;
+  sectionHeader?: string;
 }
 
 export interface RoleSidebarLayoutProps {
@@ -59,24 +60,30 @@ export const RoleSidebarLayout: React.FC<RoleSidebarLayoutProps> = ({
           </div>
 
           {/* Navigation Items */}
-          <nav className="space-y-1.5 mt-2">
+          <nav className="space-y-1 mt-2">
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
-                    active
-                      ? 'bg-[#52748c] text-white font-bold shadow-sm'
-                      : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                  }`}
-                >
-                  <span className="size-4 shrink-0 flex items-center justify-center">
-                    {renderIcon(item.icon)}
-                  </span>
-                  <span className="whitespace-normal leading-tight text-left min-w-0 flex-1">{item.label}</span>
-                </Link>
+                <React.Fragment key={item.href}>
+                  {item.sectionHeader && (
+                    <div className="pt-4 pb-1.5 px-3 text-[10px] font-extrabold tracking-widest text-white/40 uppercase">
+                      {item.sectionHeader}
+                    </div>
+                  )}
+                  <Link
+                    to={item.href}
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
+                      active
+                        ? 'bg-[#52748c] text-white font-bold shadow-sm'
+                        : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
+                    }`}
+                  >
+                    <span className="size-4 shrink-0 flex items-center justify-center">
+                      {renderIcon(item.icon)}
+                    </span>
+                    <span className="whitespace-normal leading-tight text-left min-w-0 flex-1">{item.label}</span>
+                  </Link>
+                </React.Fragment>
               );
             })}
           </nav>

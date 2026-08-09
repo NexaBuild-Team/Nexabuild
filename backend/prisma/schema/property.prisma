@@ -43,6 +43,11 @@ model Property {
 
   matchScore     Int?     // AI recommendation score (0-100)
   
+  views       Int      @default(0)
+  status      String   @default("Active") // "Active", "Pending", "Inactive"
+  agentId     String?
+  agent       User?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
   latitude    Float?
   longitude   Float?
 

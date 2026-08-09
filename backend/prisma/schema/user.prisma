@@ -24,4 +24,8 @@ model User {
   savedLands      SavedLand[]
   searchHistories SearchHistory[]
   notifications   Notification[]
+  properties      Property[]
+  lands           Land[]
+  enquiries       Enquiry[]
+  agentActivities AgentActivity[]
 }

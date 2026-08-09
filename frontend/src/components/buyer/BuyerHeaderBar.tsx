@@ -1,9 +1,59 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-export const BuyerHeaderBar: React.FC = () => {
+interface BuyerHeaderBarProps {
+  searchPlaceholder?: string;
+  roleLabel?: string;
+  onSearch?: (query: string) => void;
+}
+
+export const BuyerHeaderBar: React.FC<BuyerHeaderBarProps> = ({
+  searchPlaceholder = "Search properties, lands, areas...",
+  roleLabel,
+  onSearch,
+}) => {
   const { user } = useAuth();
-  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : (user?.email || 'Kasun Perera');
+
+  // Dynamic user name from auth context
+  const userName = user?.firstName
+    ? `${user.firstName} ${user.lastName || ''}`.trim()
+    : user?.email
+    ? user.email.split('@')[0]
+    : 'Valued User';
+
+  // Dynamic role label mapping
+  const formatRole = (role?: string) => {
+    if (roleLabel) return roleLabel;
+    if (!role) return 'Property Buyer';
+    const r = role.toUpperCase();
+    switch (r) {
+      case 'USER':
+      case 'BUYER':
+        return 'Property Buyer';
+      case 'AGENT':
+        return 'Real Estate Agent';
+      case 'SELLER':
+        return 'Property Owner';
+      case 'CONTRACTOR':
+      case 'CONSTRUCTION':
+      case 'CONSTRUCTION_COMPANY':
+        return 'Construction Partner';
+      case 'ARCHITECT':
+      case 'ARCHITECTURE':
+        return 'Architectural Designer';
+      case 'ADMIN':
+        return 'System Administrator';
+      default:
+        return 'Property Buyer';
+    }
+  };
+
+  const displayRole = formatRole(user?.role);
+  const avatarInitial = user?.firstName
+    ? user.firstName[0].toUpperCase()
+    : user?.email
+    ? user.email[0].toUpperCase()
+    : 'U';
 
   return (
     <header className="flex items-center justify-between gap-4 w-full mb-6">
@@ -16,7 +66,8 @@ export const BuyerHeaderBar: React.FC = () => {
         </div>
         <input
           type="text"
-          placeholder="Search properties, lands, areas..."
+          placeholder={searchPlaceholder}
+          onChange={(e) => onSearch && onSearch(e.target.value)}
           className="w-full bg-white rounded-full pl-11 pr-5 py-3 text-xs sm:text-sm text-gray-800 placeholder-gray-400 border border-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#345b79]/20 transition-all"
         />
       </div>
@@ -35,11 +86,20 @@ export const BuyerHeaderBar: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex flex-col text-right leading-tight hidden sm:flex">
             <span className="text-sm font-extrabold text-[#111827]">{userName}</span>
-            <span className="text-[11px] text-gray-500 font-semibold">Property Buyer</span>
+            <span className="text-[11px] text-gray-500 font-semibold">{displayRole}</span>
           </div>
-          <div className="size-11 rounded-full bg-[#be5d3f] text-white font-extrabold flex items-center justify-center text-sm shadow-sm shrink-0 border-2 border-white">
-            {user?.firstName ? user.firstName[0] : user?.email ? user.email[0].toUpperCase() : 'K'}
-          </div>
+          
+          {(user as any)?.avatar ? (
+            <img
+              src={(user as any).avatar}
+              alt={userName}
+              className="size-11 rounded-full object-cover shadow-sm shrink-0 border-2 border-white"
+            />
+          ) : (
+            <div className="size-11 rounded-full bg-[#be5d3f] text-white font-extrabold flex items-center justify-center text-sm shadow-sm shrink-0 border-2 border-white">
+              {avatarInitial}
+            </div>
+          )}
         </div>
       </div>
     </header>

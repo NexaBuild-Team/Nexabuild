@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { fetchBuyerDashboard, toggleSavePropertyApi, toggleSaveLandApi } from '../../services/buyerApi';
+import type { BuyerDashboardData as ApiDashboardData } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -175,32 +177,88 @@ export default function BuyerDashboard({
   onClearSearches
 }: BuyerDashboardProps) {
   const { user } = useAuth();
-  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : (data?.userName || "Valued Member");
-  const aiInsightText = data?.aiInsightText || "Today's AI Insight: Property prices in Colombo 5—7 expected to rise 8—12% this quarter.";
-  
-  const properties = data?.propertyPicks !== undefined ? data.propertyPicks : defaultProperties;
-  const lands = data?.landPicks !== undefined ? data.landPicks : defaultLands;
-  const searches = data?.recentSearches !== undefined ? data.recentSearches : defaultRecentSearches;
-  const recentlyViewed = data?.recentlyViewed !== undefined ? data.recentlyViewed : defaultRecentlyViewed;
 
-  // Local state fallbacks for toggling if external handlers are not supplied
+  const [apiData, setApiData] = useState<ApiDashboardData | null>(null);
+  const [fetching, setFetching] = useState(!data);
+
   const [localSavedProps, setLocalSavedProps] = useState<Record<string | number, boolean>>({});
   const [localSavedLands, setLocalSavedLands] = useState<Record<string | number, boolean>>({});
-  const [localSearches, setLocalSearches] = useState<SearchItem[]>(searches);
+  const [localSearches, setLocalSearches] = useState<SearchItem[]>(defaultRecentSearches);
 
-  const handleTogglePropSave = (id: string | number) => {
+  useEffect(() => {
+    if (!data) {
+      fetchBuyerDashboard()
+        .then((res) => {
+          setApiData(res);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error("Dashboard fetch error:", err);
+          setFetching(false);
+        });
+    }
+  }, [data]);
+
+  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : (apiData?.user?.firstName || data?.userName || "Valued Member");
+  const aiInsightText = apiData?.aiInsightText || data?.aiInsightText || "Today's AI Insight: Property demand in Colombo 5–7 and Homagama land plots expected to rise 8–12% this quarter.";
+
+  // Normalize Property Picks from API or props
+  const rawProps: any[] | undefined = apiData?.properties || data?.propertyPicks;
+  const properties: PropertyItem[] = rawProps
+    ? rawProps.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        location: p.location,
+        price: typeof p.price === 'number' ? (p.price >= 1000000 ? `LKR ${(p.price / 1000000).toFixed(1)}M` : `LKR ${p.price.toLocaleString()}`) : String(p.price || 'LKR 28.5M'),
+        match: p.matchScore ? `${p.matchScore}%` : '95%',
+        beds: p.bedrooms || p.beds || 3,
+        baths: p.bathrooms || p.baths || 2,
+        sqft: p.area ? `${p.area} sqft` : (p.sqft || '2,100 sqft'),
+        image: (p.images && p.images.length > 0) ? p.images[0] : (p.image || '/hero_property.png'),
+        isAiPick: true,
+        isSaved: p.isSaved || false,
+      }))
+    : defaultProperties;
+
+  // Normalize Land Picks from API or props
+  const rawLands: any[] | undefined = apiData?.lands || data?.landPicks;
+  const lands: LandItem[] = rawLands
+    ? rawLands.map((l: any) => ({
+        id: l.id,
+        title: l.name || l.title || 'Prime Land Plot',
+        location: l.location,
+        price: typeof l.price === 'number' ? (l.price >= 1000000 ? `LKR ${(l.price / 1000000).toFixed(1)}M` : `LKR ${l.price.toLocaleString()}`) : String(l.price || 'LKR 8.5M'),
+        match: l.matchScore ? `${l.matchScore}%` : '92%',
+        size: l.perches ? `${l.perches} Perches` : (l.size || '15 Perches'),
+        potential: l.landType || l.potential || 'High Growth',
+        image: (l.images && l.images.length > 0) ? l.images[0] : (l.image || '/property_card_1.png'),
+        isSaved: l.isSaved || false,
+      }))
+    : defaultLands;
+
+  const handleTogglePropSave = async (id: string | number) => {
     if (onToggleSaveProperty) {
       onToggleSaveProperty(id);
     } else {
-      setLocalSavedProps(prev => ({ ...prev, [id]: !prev[id] }));
+      try {
+        await toggleSavePropertyApi(String(id));
+        setLocalSavedProps((prev) => ({ ...prev, [id]: !prev[id] }));
+      } catch {
+        setLocalSavedProps((prev) => ({ ...prev, [id]: !prev[id] }));
+      }
     }
   };
 
-  const handleToggleLandSave = (id: string | number) => {
+  const handleToggleLandSave = async (id: string | number) => {
     if (onToggleSaveLand) {
       onToggleSaveLand(id);
     } else {
-      setLocalSavedLands(prev => ({ ...prev, [id]: !prev[id] }));
+      try {
+        await toggleSaveLandApi(String(id));
+        setLocalSavedLands((prev) => ({ ...prev, [id]: !prev[id] }));
+      } catch {
+        setLocalSavedLands((prev) => ({ ...prev, [id]: !prev[id] }));
+      }
     }
   };
 
@@ -212,8 +270,10 @@ export default function BuyerDashboard({
     }
   };
 
+  const recentlyViewed: RecentlyViewedItem[] = data?.recentlyViewed ?? defaultRecentlyViewed;
+
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
       <div className="p-6 lg:p-10 space-y-8 w-full max-w-[1400px] mx-auto animate-pulse">
         {/* Banner Skeleton */}
@@ -284,7 +344,7 @@ export default function BuyerDashboard({
               { label: 'Saved Properties', val: data?.kpis?.savedPropertiesCount ?? properties.filter(p => p.isSaved).length, change: '+2 this week', icon: '/svg/bookmark.svg', bg: 'bg-[#345b79]/10 text-[#345b79]' },
               { label: 'Saved Lands', val: data?.kpis?.savedLandsCount ?? lands.filter(l => l.isSaved).length, change: '+1 this week', icon: '/svg/location.svg', bg: 'bg-[#be5d3f]/10 text-[#be5d3f]' },
               { label: 'AI Matches', val: data?.kpis?.aiMatchesCount ?? 38, change: 'Updated today', icon: '/svg/sparks-icon.svg', bg: 'bg-[#2563eb]/10 text-[#2563eb]' },
-              { label: 'Recent Searches', val: data?.kpis?.recentSearchesCount ?? (localSearches.length || searches.length), change: 'Last 30 days', icon: '/svg/clock.svg', bg: 'bg-gray-100 text-gray-500' }
+              { label: 'Recent Searches', val: apiData?.kpis?.recentSearchesCount ?? data?.kpis?.recentSearchesCount ?? localSearches.length, change: 'Last 30 days', icon: '/svg/clock.svg', bg: 'bg-gray-100 text-gray-500' }
             ].map((kpi, idx) => (
               <div key={idx} className="bg-white rounded-[20px] p-5 lg:p-6 border border-[#ccb7a3]/20 shadow-sm flex flex-col items-center text-center">
                 <div className={`p-3 rounded-2xl flex items-center justify-center size-12 ${kpi.bg} mb-3`}>

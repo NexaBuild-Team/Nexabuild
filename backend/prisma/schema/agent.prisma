@@ -1,0 +1,24 @@
+model Enquiry {
+  id          String   @id @default(uuid())
+  agentId     String?
+  propertyId  String?
+  landId      String?
+  senderName  String
+  senderEmail String
+  senderPhone String?
+  message     String
+  status      String   @default("UNREAD") // "UNREAD", "READ", "REPLIED"
+  createdAt   DateTime @default(now())
+
+  agent User? @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
+
+model AgentActivity {
+  id          String   @id @default(uuid())
+  agentId     String
+  description String
+  type        String   @default("views") // "views", "saved", "enquiry"
+  createdAt   DateTime @default(now())
+
+  agent User @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
