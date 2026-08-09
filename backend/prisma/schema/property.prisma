@@ -48,4 +48,6 @@ model Property {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  savedByUsers SavedProperty[]
 }

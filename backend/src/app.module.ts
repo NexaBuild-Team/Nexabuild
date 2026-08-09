@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ArchitectureModule } from './architecture/architecture.module';
 import { LandModule } from './land/land.module';
+import { BuyerModule } from './buyer/buyer.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LandModule } from './land/land.module';
     PropertyModule, UserModule, AuthModule,
     ArchitectureModule,
     LandModule,
+    BuyerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

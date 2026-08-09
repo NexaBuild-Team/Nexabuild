@@ -19,4 +19,9 @@ model User {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  savedProperties SavedProperty[]
+  savedLands      SavedLand[]
+  searchHistories SearchHistory[]
+  notifications   Notification[]
 }

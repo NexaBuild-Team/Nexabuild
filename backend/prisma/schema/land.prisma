@@ -17,4 +17,6 @@ model Land {
   longitude       Float?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  savedByUsers SavedLand[]
 }
