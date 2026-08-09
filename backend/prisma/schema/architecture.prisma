@@ -112,19 +112,22 @@ model HouseDesign {
   id            String   @id @default(uuid())
   title         String   // e.g. "Villa Lumina"
   style         String   // e.g. "Modern", "Colonial"
-  priceLkr      Int   // stored in LKR
+  priceLkr      Int      // stored in LKR
   architectName String   // denormalised for fast card render
   imageUrl      String
   bedrooms      Int
   bathrooms     Int
   sqftArea      Int
   locationLabel String   // e.g. "Colombo 05"
+  views         Int      @default(0)
+  likes         Int      @default(0)
+  status        String   @default("Active") // "Active", "Completed", "In Review", "Pending"
   isSaved       Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  company       ArchitectureCompany @relation(fields: [companyId], references: [id])
-  companyId     String
+  company       ArchitectureCompany? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  companyId     String?
   tags          HouseDesignTag[]
   detail        DesignDetail?
 

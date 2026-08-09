@@ -53,6 +53,7 @@ import AddNewProperty from '../pages/agent/AddNewProperty'
 
 import { ArchitectLayout } from '../pages/architecture/ArchitectLayout'
 import ArchitechtureDashboard from '../pages/architecture/ArchitechtureDashboard'
+import AddArchitectureProject from '../pages/architecture/AddArchitectureProject'
 
 import { ContractorLayout } from '../pages/construction-company/ContractorLayout'
 import ConstructionCompanyDashboard from '../pages/construction-company/ConstructionCompanyDashboard'
@@ -121,6 +122,7 @@ function AppRoutes() {
           {/* Architect Sub-routes */}
           <Route path="/dashboard/architecture" element={<ArchitectLayout />}>
             <Route index element={<ArchitechtureDashboard />} />
+            <Route path="add-project" element={<AddArchitectureProject />} />
           </Route>
 
           {/* Contractor Sub-routes */}
