@@ -1,65 +1,111 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { QueryConstructionCompanyDto } from './dto/query-construction-company.dto';
+import { CreateConstructionCompanyDto } from './dto/create-construction-company.dto';
+import { UpdateConstructionCompanyDto } from './dto/update-construction-company.dto';
+
+// Full include for company profile endpoint
+const COMPANY_FULL_INCLUDE = {
+  district: true,
+  story: true,
+  contact: true,
+  services: {
+    orderBy: { displayOrder: 'asc' as const },
+  },
+  brochures: {
+    orderBy: { uploadedAt: 'desc' as const },
+  },
+  projects: {
+    orderBy: { displayOrder: 'asc' as const },
+    include: {
+      images: {
+        orderBy: { sortOrder: 'asc' as const },
+      },
+    },
+  },
+  reviews: {
+    orderBy: { reviewDate: 'desc' as const },
+  },
+  specializations: {
+    include: {
+      specialization: true,
+    },
+  },
+  certifications: {
+    include: {
+      certification: true,
+    },
+  },
+} as const;
+
+// Lightweight include for listing
+const COMPANY_LIST_INCLUDE = {
+  district: true,
+  specializations: {
+    include: { specialization: true },
+  },
+  certifications: {
+    include: { certification: true },
+  },
+} as const;
 
 @Injectable()
 export class ConstructionService {
   constructor(private prisma: PrismaService) {}
 
-  async findCompanies(query: any) {
-    const page = Math.max(1, parseInt(query.page || '1', 10));
-    const limit = Math.min(100, Math.max(1, parseInt(query.limit || '10', 10)));
+  // ──────────────────────────────────────────────────────────
+  // LIST COMPANIES
+  // ──────────────────────────────────────────────────────────
+
+  async findAll(query: QueryConstructionCompanyDto) {
+    const page = Math.max(1, parseInt(String(query.page ?? '1'), 10));
+    const limit = Math.min(100, Math.max(1, parseInt(String(query.limit ?? '10'), 10)));
     const skip = (page - 1) * limit;
 
     const where: any = {};
+
     if (query.search) {
-      where.OR = [{ name: { contains: query.search, mode: 'insensitive' } }, { description: { contains: query.search, mode: 'insensitive' } }];
-    }
-    if (query.district) where.district = { equals: query.district };
-    if (query.minExperience) where.yearsOfExperience = { gte: parseInt(query.minExperience, 10) };
-    if (query.specialization) {
-      // filter via relation
-      where.specializations = { some: { specialization: { name: { equals: query.specialization } } } };
-    }
-    if (query.minRating) where.rating = { gte: parseFloat(query.minRating) };
-    if (query.verified) where.verified = { equals: query.verified === 'true' };
-    if (query.featured) where.featured = { equals: query.featured === 'true' };
-    if (query.minBudget || query.maxBudget) {
-      const gte = query.minBudget ? parseFloat(query.minBudget) : undefined;
-      const lte = query.maxBudget ? parseFloat(query.maxBudget) : undefined;
-      where.startingBudget = {};
-      if (gte !== undefined) where.startingBudget.gte = gte;
-      if (lte !== undefined) where.startingBudget.lte = lte;
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { tagline: { contains: query.search, mode: 'insensitive' } },
+      ];
     }
 
-    // sorting
+    if (query.districtId) {
+      where.districtId = query.districtId;
+    }
+
+    if (query.isVerified !== undefined) {
+      where.isVerified = query.isVerified === 'true';
+    }
+
+    if (query.isFeatured !== undefined) {
+      where.isFeatured = query.isFeatured === 'true';
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
     const orderBy: any = {};
-    switch (query.sort) {
-      case 'rating_asc':
-        orderBy.rating = 'asc';
-        break;
-      case 'rating_desc':
-      default:
-        orderBy.rating = 'desc';
-        break;
-      case 'experience_asc':
-        orderBy.yearsOfExperience = 'asc';
-        break;
-      case 'experience_desc':
-        orderBy.yearsOfExperience = 'desc';
-        break;
-      case 'budget_asc':
-        orderBy.startingBudget = 'asc';
-        break;
-      case 'budget_desc':
-        orderBy.startingBudget = 'desc';
-        break;
-      case 'newest':
-        orderBy.createdAt = 'desc';
-        break;
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? 'desc';
+    } else {
+      orderBy.isFeatured = 'desc';
     }
 
     const [data, total] = await Promise.all([
-      this.prisma.constructionCompany.findMany({ where, skip, take: limit, orderBy, include: { images: true } }),
+      this.prisma.constructionCompany.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy,
+        include: COMPANY_LIST_INCLUDE,
+      }),
       this.prisma.constructionCompany.count({ where }),
     ]);
 
@@ -74,171 +120,266 @@ export class ConstructionService {
     };
   }
 
-  async findOne(id: string) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id }, include: { projects: true, reviews: true, images: true, specializations: { include: { specialization: true } } } });
-    if (!company) throw new NotFoundException('Company not found');
+  // ──────────────────────────────────────────────────────────
+  // GET ONE COMPANY (full profile — by UUID or slug)
+  // ──────────────────────────────────────────────────────────
+
+  async findOne(idOrSlug: string) {
+    // Search by id first, then fall back to slug
+    // (handles both UUID primary keys and string IDs like 'construction-demo-001')
+    const company = await this.prisma.constructionCompany.findFirst({
+      where: {
+        OR: [
+          { id: idOrSlug },
+          { slug: idOrSlug },
+        ],
+      },
+      include: COMPANY_FULL_INCLUDE,
+    });
+
+    if (!company) throw new NotFoundException(`Construction company "${idOrSlug}" not found`);
     return company;
   }
 
-  async createCompany(data: any) {
-    if (!data.name) throw new BadRequestException('name is required');
-    const slug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    // check duplicate slug
-    const exists = await this.prisma.constructionCompany.findUnique({ where: { slug } });
-    if (exists) throw new BadRequestException('Duplicate company slug');
+  // ──────────────────────────────────────────────────────────
+  // CREATE
+  // ──────────────────────────────────────────────────────────
 
-    const specializations = data.specializations || [];
+  async create(data: CreateConstructionCompanyDto) {
+    if (!data.name) throw new BadRequestException('name is required');
 
     return this.prisma.constructionCompany.create({
       data: {
-        name: data.name,
-        slug,
-        description: data.description,
-        logo: data.logo,
-        district: data.district,
-        address: data.address,
-        phone: data.phone,
-        email: data.email,
-        website: data.website,
-        yearsOfExperience: data.yearsOfExperience || 0,
-        startingBudget: data.startingBudget,
-        verified: !!data.verified,
-        featured: !!data.featured,
-        specializations: {
-          create: specializations.map((s: string) => ({
-            specialization: {
-              connectOrCreate: {
-                where: { name: s },
-                create: { name: s },
-              },
-            },
-          })),
-        },
+        name:             data.name,
+        slug:             data.slug,
+        tagline:          data.tagline,
+        logoUrl:          data.logoUrl,
+        coverImageUrl:    data.coverImageUrl,
+        districtId:       data.districtId,
+        establishedYear:  data.establishedYear,
+        yearsInBusiness:  data.yearsInBusiness,
+        isVerified:       data.isVerified ?? false,
+        isFeatured:       data.isFeatured ?? false,
+        status:           (data.status as any) ?? 'active',
+        teamSize:         data.teamSize ?? 0,
+        budgetMin:        data.budgetMin,
+        budgetMax:        data.budgetMax,
+      },
+      include: COMPANY_FULL_INCLUDE,
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // UPDATE
+  // ──────────────────────────────────────────────────────────
+
+  async update(id: string, data: UpdateConstructionCompanyDto) {
+    await this.ensureExists(id);
+
+    return this.prisma.constructionCompany.update({
+      where: { id },
+      data: {
+        ...(data.name            !== undefined && { name: data.name }),
+        ...(data.slug            !== undefined && { slug: data.slug }),
+        ...(data.tagline         !== undefined && { tagline: data.tagline }),
+        ...(data.logoUrl         !== undefined && { logoUrl: data.logoUrl }),
+        ...(data.coverImageUrl   !== undefined && { coverImageUrl: data.coverImageUrl }),
+        ...(data.districtId      !== undefined && { districtId: data.districtId }),
+        ...(data.establishedYear !== undefined && { establishedYear: data.establishedYear }),
+        ...(data.yearsInBusiness !== undefined && { yearsInBusiness: data.yearsInBusiness }),
+        ...(data.isVerified      !== undefined && { isVerified: data.isVerified }),
+        ...(data.isFeatured      !== undefined && { isFeatured: data.isFeatured }),
+        ...(data.status          !== undefined && { status: data.status as any }),
+        ...(data.teamSize        !== undefined && { teamSize: data.teamSize }),
+        ...(data.budgetMin       !== undefined && { budgetMin: data.budgetMin }),
+        ...(data.budgetMax       !== undefined && { budgetMax: data.budgetMax }),
+      },
+      include: COMPANY_FULL_INCLUDE,
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // SOFT DELETE (suspend)
+  // ──────────────────────────────────────────────────────────
+
+  async remove(id: string) {
+    await this.ensureExists(id);
+
+    return this.prisma.constructionCompany.update({
+      where: { id },
+      data: { status: 'suspended' as any },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // STORY
+  // ──────────────────────────────────────────────────────────
+
+  async getStory(companyId: string) {
+    await this.ensureExists(companyId);
+
+    const story = await this.prisma.constructionCompanyStory.findUnique({
+      where: { companyId },
+    });
+
+    if (!story) throw new NotFoundException(`No story found for company "${companyId}"`);
+    return story;
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // SERVICES
+  // ──────────────────────────────────────────────────────────
+
+  async getServices(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionService.findMany({
+      where: { companyId },
+      orderBy: { displayOrder: 'asc' },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // PROJECTS
+  // ──────────────────────────────────────────────────────────
+
+  async getProjects(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionProject.findMany({
+      where: { companyId },
+      orderBy: { displayOrder: 'asc' },
+      include: {
+        images: { orderBy: { sortOrder: 'asc' } },
       },
     });
   }
 
-  async updateCompany(id: string, data: any) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id } });
-    if (!company) throw new NotFoundException('Company not found');
-    const updateData: any = { ...data };
-    if (data.specializations) {
-      // replace specializations: delete existing join rows then create new join rows with connectOrCreate on specialization
-      updateData.specializations = {
-        deleteMany: {},
-        create: data.specializations.map((s: string) => ({
-          specialization: { connectOrCreate: { where: { name: s }, create: { name: s } } },
-        })),
-      };
-    }
+  // ──────────────────────────────────────────────────────────
+  // REVIEWS
+  // ──────────────────────────────────────────────────────────
 
-    return this.prisma.constructionCompany.update({ where: { id }, data: updateData });
+  async getReviews(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionReview.findMany({
+      where: { companyId },
+      orderBy: { reviewDate: 'desc' },
+    });
   }
 
-  async deleteCompany(id: string) {
-    const exists = await this.prisma.constructionCompany.findUnique({ where: { id } });
-    if (!exists) throw new NotFoundException('Company not found');
-    return this.prisma.constructionCompany.delete({ where: { id } });
+  // ──────────────────────────────────────────────────────────
+  // CONTACT
+  // ──────────────────────────────────────────────────────────
+
+  async getContact(companyId: string) {
+    await this.ensureExists(companyId);
+
+    const contact = await this.prisma.constructionContactInfo.findUnique({
+      where: { companyId },
+    });
+
+    if (!contact) throw new NotFoundException(`No contact info found for company "${companyId}"`);
+    return contact;
   }
 
-  // Projects
-  async findProjects(companyId: string, opts: { page: number; limit: number }) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id: companyId } });
-    if (!company) throw new NotFoundException('Company not found');
-    const skip = (opts.page - 1) * opts.limit;
-    const [data, total] = await Promise.all([
-      this.prisma.constructionProject.findMany({ where: { companyId }, skip, take: opts.limit }),
-      this.prisma.constructionProject.count({ where: { companyId } }),
-    ]);
-    return { data, meta: { page: opts.page, limit: opts.limit, total, totalPages: Math.ceil(total / opts.limit) } };
+  // ──────────────────────────────────────────────────────────
+  // CERTIFICATIONS
+  // ──────────────────────────────────────────────────────────
+
+  async getCertifications(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionCompanyCertification.findMany({
+      where: { companyId },
+      include: { certification: true },
+    });
   }
 
-  async createProject(companyId: string, data: any) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id: companyId } });
-    if (!company) throw new NotFoundException('Company not found');
-    const project = await this.prisma.constructionProject.create({ data: { ...data, companyId } });
-    await this.prisma.constructionCompany.update({ where: { id: companyId }, data: { projectCount: { increment: 1 } as any } });
-    return project;
+  // ──────────────────────────────────────────────────────────
+  // SPECIALIZATIONS
+  // ──────────────────────────────────────────────────────────
+
+  async getSpecializations(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionCompanySpecialization.findMany({
+      where: { companyId },
+      include: { specialization: true },
+    });
   }
 
-  async getProject(id: string) {
-    const p = await this.prisma.constructionProject.findUnique({
+  // ──────────────────────────────────────────────────────────
+  // BROCHURES
+  // ──────────────────────────────────────────────────────────
+
+  async getBrochures(companyId: string) {
+    await this.ensureExists(companyId);
+
+    return this.prisma.constructionBrochure.findMany({
+      where: { companyId },
+      orderBy: { uploadedAt: 'desc' },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // DISTRICTS
+  // ──────────────────────────────────────────────────────────
+
+  async getDistricts() {
+    return this.prisma.constructionDistrict.findMany({
+      orderBy: { name: 'asc' },
+      include: {
+        _count: { select: { companies: true } },
+      },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // MARKET INSIGHTS
+  // ──────────────────────────────────────────────────────────
+
+  async getMarketInsights(districtId?: string) {
+    return this.prisma.constructionMarketInsight.findMany({
+      where: districtId ? { districtId } : undefined,
+      include: { district: true },
+      orderBy: { monthYear: 'desc' },
+    });
+  }
+
+  async getMarketInsightsByDistrict(districtId: string) {
+    return this.prisma.constructionMarketInsight.findMany({
+      where: { districtId },
+      include: { district: true },
+      orderBy: { monthYear: 'desc' },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // REFERENCE DATA
+  // ──────────────────────────────────────────────────────────
+
+  async getAllSpecializations() {
+    return this.prisma.constructionSpecialization.findMany({
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  async getAllCertifications() {
+    return this.prisma.constructionCertification.findMany({
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // PRIVATE HELPERS
+  // ──────────────────────────────────────────────────────────
+
+  private async ensureExists(id: string): Promise<void> {
+    const exists = await this.prisma.constructionCompany.findUnique({
       where: { id },
-      include: { company: true },
-    })
-    if (!p) throw new NotFoundException('Project not found')
-    return p
-  }
-
-  async updateProject(id: string, data: any) {
-    const p = await this.prisma.constructionProject.findUnique({ where: { id } });
-    if (!p) throw new NotFoundException('Project not found');
-    return this.prisma.constructionProject.update({ where: { id }, data });
-  }
-
-  async deleteProject(id: string) {
-    const p = await this.prisma.constructionProject.findUnique({ where: { id } });
-    if (!p) throw new NotFoundException('Project not found');
-    const res = await this.prisma.constructionProject.delete({ where: { id } });
-    await this.prisma.constructionCompany.update({ where: { id: p.companyId }, data: { projectCount: { decrement: 1 } as any } });
-    return res;
-  }
-
-  // Reviews
-  async findReviews(companyId: string, opts: { page: number; limit: number }) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id: companyId } });
-    if (!company) throw new NotFoundException('Company not found');
-    const skip = (opts.page - 1) * opts.limit;
-    const [data, total] = await Promise.all([
-      this.prisma.constructionReview.findMany({ where: { companyId }, skip, take: opts.limit, orderBy: { createdAt: 'desc' } }),
-      this.prisma.constructionReview.count({ where: { companyId } }),
-    ]);
-    return { data, meta: { page: opts.page, limit: opts.limit, total, totalPages: Math.ceil(total / opts.limit) } };
-  }
-
-  async createReview(companyId: string, data: any) {
-    const company = await this.prisma.constructionCompany.findUnique({ where: { id: companyId } });
-    if (!company) throw new NotFoundException('Company not found');
-    const rating = parseInt(data.rating, 10);
-    if (isNaN(rating) || rating < 1 || rating > 5) throw new BadRequestException('rating must be 1-5');
-
-    // create review and recalc aggregates
-    const review = await this.prisma.constructionReview.create({ data: { companyId, rating, comment: data.comment } });
-    const agg = await this.prisma.constructionReview.aggregate({ where: { companyId }, _avg: { rating: true }, _count: { rating: true } });
-    const avg = agg._avg.rating ?? 0;
-    const count = agg._count.rating ?? 0;
-    await this.prisma.constructionCompany.update({ where: { id: companyId }, data: { rating: avg, reviewCount: count } });
-    return review;
-  }
-
-  async updateReview(id: string, data: any) {
-    const r = await this.prisma.constructionReview.findUnique({ where: { id } });
-    if (!r) throw new NotFoundException('Review not found');
-    if (data.rating) {
-      const rating = parseInt(data.rating, 10);
-      if (isNaN(rating) || rating < 1 || rating > 5) throw new BadRequestException('rating must be 1-5');
-    }
-    const updated = await this.prisma.constructionReview.update({ where: { id }, data });
-    const agg = await this.prisma.constructionReview.aggregate({ where: { companyId: updated.companyId }, _avg: { rating: true }, _count: { rating: true } });
-    await this.prisma.constructionCompany.update({ where: { id: updated.companyId }, data: { rating: agg._avg.rating ?? 0, reviewCount: agg._count.rating ?? 0 } });
-    return updated;
-  }
-
-  async deleteReview(id: string) {
-    const r = await this.prisma.constructionReview.findUnique({ where: { id } });
-    if (!r) throw new NotFoundException('Review not found');
-    const deleted = await this.prisma.constructionReview.delete({ where: { id } });
-    const agg = await this.prisma.constructionReview.aggregate({ where: { companyId: r.companyId }, _avg: { rating: true }, _count: { rating: true } });
-    await this.prisma.constructionCompany.update({ where: { id: r.companyId }, data: { rating: agg._avg.rating ?? 0, reviewCount: agg._count.rating ?? 0 } });
-    return deleted;
-  }
-
-  async findTopRated(limit = 5) {
-    const companies = await this.prisma.constructionCompany.findMany({ orderBy: [{ rating: 'desc' }, { reviewCount: 'desc' }], take: limit, include: { images: true } });
-    return companies;
-  }
-
-  async getMarketInsights() {
-    return this.prisma.constructionMarketInsight.findMany({ orderBy: { year: 'desc' } });
+      select: { id: true },
+    });
+    if (!exists) throw new NotFoundException(`Construction company "${id}" not found`);
   }
 }

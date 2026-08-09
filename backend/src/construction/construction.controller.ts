@@ -1,88 +1,194 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ConstructionService } from './construction.service';
+import { QueryConstructionCompanyDto } from './dto/query-construction-company.dto';
 import { CreateConstructionCompanyDto } from './dto/create-construction-company.dto';
 import { UpdateConstructionCompanyDto } from './dto/update-construction-company.dto';
-import { QueryConstructionCompanyDto } from './dto/query-construction-company.dto';
 
 @Controller('construction')
 export class ConstructionController {
   constructor(private readonly svc: ConstructionService) {}
 
+  // ──────────────────────────────────────────────────────────
+  // COMPANIES
+  // ──────────────────────────────────────────────────────────
+
+  /**
+   * GET /construction/companies
+   * List all construction companies with optional filtering & pagination.
+   */
   @Get('companies')
   findAll(@Query() query: QueryConstructionCompanyDto) {
-    return this.svc.findCompanies(query);
+    return this.svc.findAll(query);
   }
 
-  @Get('companies/top-rated')
-  topRated(@Query('limit') limit?: string) {
-    const l = limit ? parseInt(limit, 10) : 5;
-    return this.svc.findTopRated(l);
+  /**
+   * GET /construction/companies/:idOrSlug
+   * Get a company by UUID or slug (full profile with all relations).
+   */
+  @Get('companies/:idOrSlug')
+  findOne(@Param('idOrSlug') idOrSlug: string) {
+    return this.svc.findOne(idOrSlug);
   }
 
-  @Get('companies/:id')
-  findOne(@Param('id') id: string) {
-    return this.svc.findOne(id);
-  }
-
+  /**
+   * POST /construction/companies
+   * Create a new construction company.
+   */
   @Post('companies')
-  createCompany(@Body() dto: CreateConstructionCompanyDto) {
-    return this.svc.createCompany(dto);
+  create(@Body() body: CreateConstructionCompanyDto) {
+    return this.svc.create(body);
   }
 
+  /**
+   * PATCH /construction/companies/:id
+   * Update a construction company.
+   */
   @Patch('companies/:id')
-  updateCompany(@Param('id') id: string, @Body() dto: UpdateConstructionCompanyDto) {
-    return this.svc.updateCompany(id, dto);
+  update(@Param('id') id: string, @Body() body: UpdateConstructionCompanyDto) {
+    return this.svc.update(id, body);
   }
 
+  /**
+   * DELETE /construction/companies/:id
+   * Soft-deactivate a construction company (sets status to suspended).
+   */
   @Delete('companies/:id')
-  deleteCompany(@Param('id') id: string) {
-    return this.svc.deleteCompany(id);
+  @HttpCode(HttpStatus.OK)
+  remove(@Param('id') id: string) {
+    return this.svc.remove(id);
   }
 
-  // Projects
-  @Get('companies/:companyId/projects')
-  getProjects(@Param('companyId') companyId: string, @Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.svc.findProjects(companyId, { page: page ? parseInt(page, 10) : 1, limit: limit ? parseInt(limit, 10) : 10 });
+  // ──────────────────────────────────────────────────────────
+  // COMPANY RELATED DATA ENDPOINTS
+  // ──────────────────────────────────────────────────────────
+
+  /**
+   * GET /construction/companies/:id/story
+   */
+  @Get('companies/:id/story')
+  getStory(@Param('id') id: string) {
+    return this.svc.getStory(id);
   }
 
-  @Post('companies/:companyId/projects')
-  createProject(@Param('companyId') companyId: string, @Body() body: any) {
-    return this.svc.createProject(companyId, body);
+  /**
+   * GET /construction/companies/:id/services
+   */
+  @Get('companies/:id/services')
+  getServices(@Param('id') id: string) {
+    return this.svc.getServices(id);
   }
 
-  @Get('projects/:id')
-  getProject(@Param('id') id: string) {
-    return this.svc.getProject(id);
+  /**
+   * GET /construction/companies/:id/projects
+   */
+  @Get('companies/:id/projects')
+  getProjects(@Param('id') id: string) {
+    return this.svc.getProjects(id);
   }
 
-  @Patch('projects/:id')
-  updateProject(@Param('id') id: string, @Body() body: any) {
-    return this.svc.updateProject(id, body);
+  /**
+   * GET /construction/companies/:id/reviews
+   */
+  @Get('companies/:id/reviews')
+  getReviews(@Param('id') id: string) {
+    return this.svc.getReviews(id);
   }
 
-  @Delete('projects/:id')
-  deleteProject(@Param('id') id: string) {
-    return this.svc.deleteProject(id);
+  /**
+   * GET /construction/companies/:id/contact
+   */
+  @Get('companies/:id/contact')
+  getContact(@Param('id') id: string) {
+    return this.svc.getContact(id);
   }
 
-  // Reviews
-  @Get('companies/:companyId/reviews')
-  getReviews(@Param('companyId') companyId: string, @Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.svc.findReviews(companyId, { page: page ? parseInt(page, 10) : 1, limit: limit ? parseInt(limit, 10) : 20 });
+  /**
+   * GET /construction/companies/:id/certifications
+   */
+  @Get('companies/:id/certifications')
+  getCertifications(@Param('id') id: string) {
+    return this.svc.getCertifications(id);
   }
 
-  @Post('companies/:companyId/reviews')
-  createReview(@Param('companyId') companyId: string, @Body() body: any) {
-    return this.svc.createReview(companyId, body);
+  /**
+   * GET /construction/companies/:id/specializations
+   */
+  @Get('companies/:id/specializations')
+  getSpecializations(@Param('id') id: string) {
+    return this.svc.getSpecializations(id);
   }
 
-  @Patch('reviews/:id')
-  updateReview(@Param('id') id: string, @Body() body: any) {
-    return this.svc.updateReview(id, body);
+  /**
+   * GET /construction/companies/:id/brochures
+   */
+  @Get('companies/:id/brochures')
+  getBrochures(@Param('id') id: string) {
+    return this.svc.getBrochures(id);
   }
 
-  @Delete('reviews/:id')
-  deleteReview(@Param('id') id: string) {
-    return this.svc.deleteReview(id);
+  // ──────────────────────────────────────────────────────────
+  // DISTRICTS
+  // ──────────────────────────────────────────────────────────
+
+  /**
+   * GET /construction/districts
+   * List all districts.
+   */
+  @Get('districts')
+  getDistricts() {
+    return this.svc.getDistricts();
+  }
+
+  /**
+   * GET /construction/districts/:id/market-insights
+   */
+  @Get('districts/:id/market-insights')
+  getMarketInsightsByDistrict(@Param('id') id: string) {
+    return this.svc.getMarketInsightsByDistrict(id);
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // MARKET INSIGHTS
+  // ──────────────────────────────────────────────────────────
+
+  /**
+   * GET /construction/market-insights
+   * Get all market insights (optionally filtered by districtId).
+   */
+  @Get('market-insights')
+  getMarketInsights(@Query('districtId') districtId?: string) {
+    return this.svc.getMarketInsights(districtId);
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // SPECIALIZATIONS & CERTIFICATIONS (reference data)
+  // ──────────────────────────────────────────────────────────
+
+  /**
+   * GET /construction/specializations
+   */
+  @Get('specializations')
+  getAllSpecializations() {
+    return this.svc.getAllSpecializations();
+  }
+
+  /**
+   * GET /construction/certifications
+   */
+  @Get('certifications')
+  getAllCertifications() {
+    return this.svc.getAllCertifications();
   }
 }

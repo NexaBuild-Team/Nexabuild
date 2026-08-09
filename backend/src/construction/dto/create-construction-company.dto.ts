@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsNumber, IsBoolean, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsUUID,
+  IsEnum,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateConstructionCompanyDto {
   @IsString()
@@ -10,25 +18,54 @@ export class CreateConstructionCompanyDto {
 
   @IsOptional()
   @IsString()
-  description?: string;
+  tagline?: string;
 
   @IsOptional()
   @IsString()
-  district?: string;
+  logoUrl?: string;
 
   @IsOptional()
-  @IsNumber()
-  yearsOfExperience?: number;
+  @IsString()
+  coverImageUrl?: string;
 
   @IsOptional()
+  @IsString()
+  districtId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  startingBudget?: number;
+  establishedYear?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  yearsInBusiness?: number;
 
   @IsOptional()
   @IsBoolean()
-  verified?: boolean;
+  isVerified?: boolean;
 
   @IsOptional()
-  @IsArray()
-  specializations?: string[];
+  @IsBoolean()
+  isFeatured?: boolean;
+
+  @IsOptional()
+  @IsEnum(['active', 'pending', 'suspended'])
+  status?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  teamSize?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  budgetMin?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  budgetMax?: number;
 }

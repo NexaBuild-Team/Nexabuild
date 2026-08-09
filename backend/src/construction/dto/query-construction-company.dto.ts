@@ -1,5 +1,4 @@
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsNumberString, IsEnum } from 'class-validator';
 
 export class QueryConstructionCompanyDto {
   @IsOptional()
@@ -8,33 +7,33 @@ export class QueryConstructionCompanyDto {
 
   @IsOptional()
   @IsString()
-  district?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page?: number = 1;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  limit?: number = 10;
+  districtId?: string;
 
   @IsOptional()
   @IsString()
-  specialization?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  minRating?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  minExperience?: number;
+  isVerified?: string;
 
   @IsOptional()
   @IsString()
-  sort?: string;
+  isFeatured?: string;
+
+  @IsOptional()
+  @IsEnum(['active', 'pending', 'suspended'])
+  status?: string;
+
+  @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsEnum(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc';
+
+  @IsOptional()
+  @IsNumberString()
+  page?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  limit?: string;
 }

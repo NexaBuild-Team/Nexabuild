@@ -2,19 +2,19 @@ model Land {
   id              String   @id @default(uuid())
   name            String
   description     String
-  price           Float
   location        String
-  perches         Float
-  sqft            Float?
-  landType        String
   status          String
-  purpose         String?
-  environment     String?
-  developmentPlan String?
-  images          String[]
-  matchScore      Int?
   latitude        Float?
   longitude       Float?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  price           Float
+  perches         Float
+  sqft            Float?
+  images          String[]
+  landType        String
+  matchScore      Int?
+  developmentPlan String?
+  environment     String?
+  purpose         String?
 }

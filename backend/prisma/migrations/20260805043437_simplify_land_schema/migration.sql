@@ -1,0 +1,1 @@
+-- Migration applied on shared Neon DB by Land team. Stub created for local tracking.

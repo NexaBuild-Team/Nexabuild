@@ -1,35 +1,71 @@
-import { IsOptional, IsString, IsNumber, IsBoolean, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateConstructionCompanyDto {
-	@IsOptional()
-	@IsString()
-	name?: string;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-	@IsOptional()
-	@IsString()
-	slug?: string;
+  @IsOptional()
+  @IsString()
+  slug?: string;
 
-	@IsOptional()
-	@IsString()
-	description?: string;
+  @IsOptional()
+  @IsString()
+  tagline?: string;
 
-	@IsOptional()
-	@IsString()
-	district?: string;
+  @IsOptional()
+  @IsString()
+  logoUrl?: string;
 
-	@IsOptional()
-	@IsNumber()
-	yearsOfExperience?: number;
+  @IsOptional()
+  @IsString()
+  coverImageUrl?: string;
 
-	@IsOptional()
-	@IsNumber()
-	startingBudget?: number;
+  @IsOptional()
+  @IsString()
+  districtId?: string;
 
-	@IsOptional()
-	@IsBoolean()
-	verified?: boolean;
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  establishedYear?: number;
 
-	@IsOptional()
-	@IsArray()
-	specializations?: string[];
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  yearsInBusiness?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isVerified?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
+
+  @IsOptional()
+  @IsEnum(['active', 'pending', 'suspended'])
+  status?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  teamSize?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  budgetMin?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  budgetMax?: number;
 }
