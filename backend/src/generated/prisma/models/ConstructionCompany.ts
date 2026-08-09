@@ -878,6 +878,11 @@ export type ConstructionCompanyScalarRelationFilter = {
   isNot?: Prisma.ConstructionCompanyWhereInput
 }
 
+export type ConstructionCompanyNullableScalarRelationFilter = {
+  is?: Prisma.ConstructionCompanyWhereInput | null
+  isNot?: Prisma.ConstructionCompanyWhereInput | null
+}
+
 export type ConstructionCompanyCreateNestedManyWithoutDistrictInput = {
   create?: Prisma.XOR<Prisma.ConstructionCompanyCreateWithoutDistrictInput, Prisma.ConstructionCompanyUncheckedCreateWithoutDistrictInput> | Prisma.ConstructionCompanyCreateWithoutDistrictInput[] | Prisma.ConstructionCompanyUncheckedCreateWithoutDistrictInput[]
   connectOrCreate?: Prisma.ConstructionCompanyCreateOrConnectWithoutDistrictInput | Prisma.ConstructionCompanyCreateOrConnectWithoutDistrictInput[]
@@ -1016,10 +1021,12 @@ export type ConstructionCompanyCreateNestedOneWithoutProjectsInput = {
   connect?: Prisma.ConstructionCompanyWhereUniqueInput
 }
 
-export type ConstructionCompanyUpdateOneRequiredWithoutProjectsNestedInput = {
+export type ConstructionCompanyUpdateOneWithoutProjectsNestedInput = {
   create?: Prisma.XOR<Prisma.ConstructionCompanyCreateWithoutProjectsInput, Prisma.ConstructionCompanyUncheckedCreateWithoutProjectsInput>
   connectOrCreate?: Prisma.ConstructionCompanyCreateOrConnectWithoutProjectsInput
   upsert?: Prisma.ConstructionCompanyUpsertWithoutProjectsInput
+  disconnect?: Prisma.ConstructionCompanyWhereInput | boolean
+  delete?: Prisma.ConstructionCompanyWhereInput | boolean
   connect?: Prisma.ConstructionCompanyWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ConstructionCompanyUpdateToOneWithWhereWithoutProjectsInput, Prisma.ConstructionCompanyUpdateWithoutProjectsInput>, Prisma.ConstructionCompanyUncheckedUpdateWithoutProjectsInput>
 }

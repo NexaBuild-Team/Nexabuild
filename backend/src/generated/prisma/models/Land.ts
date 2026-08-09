@@ -27,163 +27,179 @@ export type AggregateLand = {
 }
 
 export type LandAvgAggregateOutputType = {
-  latitude: number | null
-  longitude: number | null
   price: number | null
   perches: number | null
   sqft: number | null
   matchScore: number | null
+  views: number | null
+  latitude: number | null
+  longitude: number | null
 }
 
 export type LandSumAggregateOutputType = {
-  latitude: number | null
-  longitude: number | null
   price: number | null
   perches: number | null
   sqft: number | null
   matchScore: number | null
+  views: number | null
+  latitude: number | null
+  longitude: number | null
 }
 
 export type LandMinAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  price: number | null
   location: string | null
+  perches: number | null
+  sqft: number | null
+  landType: string | null
   status: string | null
+  purpose: string | null
+  environment: string | null
+  developmentPlan: string | null
+  matchScore: number | null
+  views: number | null
+  agentId: string | null
   latitude: number | null
   longitude: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  price: number | null
-  perches: number | null
-  sqft: number | null
-  landType: string | null
-  matchScore: number | null
-  developmentPlan: string | null
-  environment: string | null
-  purpose: string | null
 }
 
 export type LandMaxAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  price: number | null
   location: string | null
+  perches: number | null
+  sqft: number | null
+  landType: string | null
   status: string | null
+  purpose: string | null
+  environment: string | null
+  developmentPlan: string | null
+  matchScore: number | null
+  views: number | null
+  agentId: string | null
   latitude: number | null
   longitude: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  price: number | null
-  perches: number | null
-  sqft: number | null
-  landType: string | null
-  matchScore: number | null
-  developmentPlan: string | null
-  environment: string | null
-  purpose: string | null
 }
 
 export type LandCountAggregateOutputType = {
   id: number
   name: number
   description: number
+  price: number
   location: number
+  perches: number
+  sqft: number
+  landType: number
   status: number
+  purpose: number
+  environment: number
+  developmentPlan: number
+  images: number
+  matchScore: number
+  views: number
+  agentId: number
   latitude: number
   longitude: number
   createdAt: number
   updatedAt: number
-  price: number
-  perches: number
-  sqft: number
-  images: number
-  landType: number
-  matchScore: number
-  developmentPlan: number
-  environment: number
-  purpose: number
   _all: number
 }
 
 
 export type LandAvgAggregateInputType = {
-  latitude?: true
-  longitude?: true
   price?: true
   perches?: true
   sqft?: true
   matchScore?: true
+  views?: true
+  latitude?: true
+  longitude?: true
 }
 
 export type LandSumAggregateInputType = {
-  latitude?: true
-  longitude?: true
   price?: true
   perches?: true
   sqft?: true
   matchScore?: true
+  views?: true
+  latitude?: true
+  longitude?: true
 }
 
 export type LandMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  price?: true
   location?: true
+  perches?: true
+  sqft?: true
+  landType?: true
   status?: true
+  purpose?: true
+  environment?: true
+  developmentPlan?: true
+  matchScore?: true
+  views?: true
+  agentId?: true
   latitude?: true
   longitude?: true
   createdAt?: true
   updatedAt?: true
-  price?: true
-  perches?: true
-  sqft?: true
-  landType?: true
-  matchScore?: true
-  developmentPlan?: true
-  environment?: true
-  purpose?: true
 }
 
 export type LandMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  price?: true
   location?: true
+  perches?: true
+  sqft?: true
+  landType?: true
   status?: true
+  purpose?: true
+  environment?: true
+  developmentPlan?: true
+  matchScore?: true
+  views?: true
+  agentId?: true
   latitude?: true
   longitude?: true
   createdAt?: true
   updatedAt?: true
-  price?: true
-  perches?: true
-  sqft?: true
-  landType?: true
-  matchScore?: true
-  developmentPlan?: true
-  environment?: true
-  purpose?: true
 }
 
 export type LandCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  price?: true
   location?: true
+  perches?: true
+  sqft?: true
+  landType?: true
   status?: true
+  purpose?: true
+  environment?: true
+  developmentPlan?: true
+  images?: true
+  matchScore?: true
+  views?: true
+  agentId?: true
   latitude?: true
   longitude?: true
   createdAt?: true
   updatedAt?: true
-  price?: true
-  perches?: true
-  sqft?: true
-  images?: true
-  landType?: true
-  matchScore?: true
-  developmentPlan?: true
-  environment?: true
-  purpose?: true
   _all?: true
 }
 
@@ -277,21 +293,23 @@ export type LandGroupByOutputType = {
   id: string
   name: string
   description: string
+  price: number
   location: string
+  perches: number
+  sqft: number | null
+  landType: string
   status: string
+  purpose: string | null
+  environment: string | null
+  developmentPlan: string | null
+  images: string[]
+  matchScore: number | null
+  views: number
+  agentId: string | null
   latitude: number | null
   longitude: number | null
   createdAt: Date
   updatedAt: Date
-  price: number
-  perches: number
-  sqft: number | null
-  images: string[]
-  landType: string
-  matchScore: number | null
-  developmentPlan: string | null
-  environment: string | null
-  purpose: string | null
   _count: LandCountAggregateOutputType | null
   _avg: LandAvgAggregateOutputType | null
   _sum: LandSumAggregateOutputType | null
@@ -321,42 +339,50 @@ export type LandWhereInput = {
   id?: Prisma.StringFilter<"Land"> | string
   name?: Prisma.StringFilter<"Land"> | string
   description?: Prisma.StringFilter<"Land"> | string
+  price?: Prisma.FloatFilter<"Land"> | number
   location?: Prisma.StringFilter<"Land"> | string
+  perches?: Prisma.FloatFilter<"Land"> | number
+  sqft?: Prisma.FloatNullableFilter<"Land"> | number | null
+  landType?: Prisma.StringFilter<"Land"> | string
   status?: Prisma.StringFilter<"Land"> | string
+  purpose?: Prisma.StringNullableFilter<"Land"> | string | null
+  environment?: Prisma.StringNullableFilter<"Land"> | string | null
+  developmentPlan?: Prisma.StringNullableFilter<"Land"> | string | null
+  images?: Prisma.StringNullableListFilter<"Land">
+  matchScore?: Prisma.IntNullableFilter<"Land"> | number | null
+  views?: Prisma.IntFilter<"Land"> | number
+  agentId?: Prisma.StringNullableFilter<"Land"> | string | null
   latitude?: Prisma.FloatNullableFilter<"Land"> | number | null
   longitude?: Prisma.FloatNullableFilter<"Land"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Land"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Land"> | Date | string
-  price?: Prisma.FloatFilter<"Land"> | number
-  perches?: Prisma.FloatFilter<"Land"> | number
-  sqft?: Prisma.FloatNullableFilter<"Land"> | number | null
-  images?: Prisma.StringNullableListFilter<"Land">
-  landType?: Prisma.StringFilter<"Land"> | string
-  matchScore?: Prisma.IntNullableFilter<"Land"> | number | null
-  developmentPlan?: Prisma.StringNullableFilter<"Land"> | string | null
-  environment?: Prisma.StringNullableFilter<"Land"> | string | null
-  purpose?: Prisma.StringNullableFilter<"Land"> | string | null
+  agent?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  savedByUsers?: Prisma.SavedLandListRelationFilter
 }
 
 export type LandOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  price?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  perches?: Prisma.SortOrder
+  sqft?: Prisma.SortOrderInput | Prisma.SortOrder
+  landType?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  purpose?: Prisma.SortOrderInput | Prisma.SortOrder
+  environment?: Prisma.SortOrderInput | Prisma.SortOrder
+  developmentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  agentId?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  price?: Prisma.SortOrder
-  perches?: Prisma.SortOrder
-  sqft?: Prisma.SortOrderInput | Prisma.SortOrder
-  images?: Prisma.SortOrder
-  landType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
-  developmentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
-  environment?: Prisma.SortOrderInput | Prisma.SortOrder
-  purpose?: Prisma.SortOrderInput | Prisma.SortOrder
+  agent?: Prisma.UserOrderByWithRelationInput
+  savedByUsers?: Prisma.SavedLandOrderByRelationAggregateInput
 }
 
 export type LandWhereUniqueInput = Prisma.AtLeast<{
@@ -366,42 +392,48 @@ export type LandWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.LandWhereInput | Prisma.LandWhereInput[]
   name?: Prisma.StringFilter<"Land"> | string
   description?: Prisma.StringFilter<"Land"> | string
+  price?: Prisma.FloatFilter<"Land"> | number
   location?: Prisma.StringFilter<"Land"> | string
+  perches?: Prisma.FloatFilter<"Land"> | number
+  sqft?: Prisma.FloatNullableFilter<"Land"> | number | null
+  landType?: Prisma.StringFilter<"Land"> | string
   status?: Prisma.StringFilter<"Land"> | string
+  purpose?: Prisma.StringNullableFilter<"Land"> | string | null
+  environment?: Prisma.StringNullableFilter<"Land"> | string | null
+  developmentPlan?: Prisma.StringNullableFilter<"Land"> | string | null
+  images?: Prisma.StringNullableListFilter<"Land">
+  matchScore?: Prisma.IntNullableFilter<"Land"> | number | null
+  views?: Prisma.IntFilter<"Land"> | number
+  agentId?: Prisma.StringNullableFilter<"Land"> | string | null
   latitude?: Prisma.FloatNullableFilter<"Land"> | number | null
   longitude?: Prisma.FloatNullableFilter<"Land"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Land"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Land"> | Date | string
-  price?: Prisma.FloatFilter<"Land"> | number
-  perches?: Prisma.FloatFilter<"Land"> | number
-  sqft?: Prisma.FloatNullableFilter<"Land"> | number | null
-  images?: Prisma.StringNullableListFilter<"Land">
-  landType?: Prisma.StringFilter<"Land"> | string
-  matchScore?: Prisma.IntNullableFilter<"Land"> | number | null
-  developmentPlan?: Prisma.StringNullableFilter<"Land"> | string | null
-  environment?: Prisma.StringNullableFilter<"Land"> | string | null
-  purpose?: Prisma.StringNullableFilter<"Land"> | string | null
+  agent?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  savedByUsers?: Prisma.SavedLandListRelationFilter
 }, "id">
 
 export type LandOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  price?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  perches?: Prisma.SortOrder
+  sqft?: Prisma.SortOrderInput | Prisma.SortOrder
+  landType?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  purpose?: Prisma.SortOrderInput | Prisma.SortOrder
+  environment?: Prisma.SortOrderInput | Prisma.SortOrder
+  developmentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  agentId?: Prisma.SortOrderInput | Prisma.SortOrder
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  price?: Prisma.SortOrder
-  perches?: Prisma.SortOrder
-  sqft?: Prisma.SortOrderInput | Prisma.SortOrder
-  images?: Prisma.SortOrder
-  landType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
-  developmentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
-  environment?: Prisma.SortOrderInput | Prisma.SortOrder
-  purpose?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.LandCountOrderByAggregateInput
   _avg?: Prisma.LandAvgOrderByAggregateInput
   _max?: Prisma.LandMaxOrderByAggregateInput
@@ -416,247 +448,303 @@ export type LandScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Land"> | string
   name?: Prisma.StringWithAggregatesFilter<"Land"> | string
   description?: Prisma.StringWithAggregatesFilter<"Land"> | string
+  price?: Prisma.FloatWithAggregatesFilter<"Land"> | number
   location?: Prisma.StringWithAggregatesFilter<"Land"> | string
+  perches?: Prisma.FloatWithAggregatesFilter<"Land"> | number
+  sqft?: Prisma.FloatNullableWithAggregatesFilter<"Land"> | number | null
+  landType?: Prisma.StringWithAggregatesFilter<"Land"> | string
   status?: Prisma.StringWithAggregatesFilter<"Land"> | string
+  purpose?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
+  environment?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
+  developmentPlan?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
+  images?: Prisma.StringNullableListFilter<"Land">
+  matchScore?: Prisma.IntNullableWithAggregatesFilter<"Land"> | number | null
+  views?: Prisma.IntWithAggregatesFilter<"Land"> | number
+  agentId?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
   latitude?: Prisma.FloatNullableWithAggregatesFilter<"Land"> | number | null
   longitude?: Prisma.FloatNullableWithAggregatesFilter<"Land"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Land"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Land"> | Date | string
-  price?: Prisma.FloatWithAggregatesFilter<"Land"> | number
-  perches?: Prisma.FloatWithAggregatesFilter<"Land"> | number
-  sqft?: Prisma.FloatNullableWithAggregatesFilter<"Land"> | number | null
-  images?: Prisma.StringNullableListFilter<"Land">
-  landType?: Prisma.StringWithAggregatesFilter<"Land"> | string
-  matchScore?: Prisma.IntNullableWithAggregatesFilter<"Land"> | number | null
-  developmentPlan?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
-  environment?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
-  purpose?: Prisma.StringNullableWithAggregatesFilter<"Land"> | string | null
 }
 
 export type LandCreateInput = {
   id?: string
   name: string
   description: string
+  price: number
   location: string
+  perches: number
+  sqft?: number | null
+  landType: string
   status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
   latitude?: number | null
   longitude?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  price: number
-  perches: number
-  sqft?: number | null
-  images?: Prisma.LandCreateimagesInput | string[]
-  landType: string
-  matchScore?: number | null
-  developmentPlan?: string | null
-  environment?: string | null
-  purpose?: string | null
+  agent?: Prisma.UserCreateNestedOneWithoutLandsInput
+  savedByUsers?: Prisma.SavedLandCreateNestedManyWithoutLandInput
 }
 
 export type LandUncheckedCreateInput = {
   id?: string
   name: string
   description: string
+  price: number
   location: string
+  perches: number
+  sqft?: number | null
+  landType: string
   status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  agentId?: string | null
   latitude?: number | null
   longitude?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  price: number
-  perches: number
-  sqft?: number | null
-  images?: Prisma.LandCreateimagesInput | string[]
-  landType: string
-  matchScore?: number | null
-  developmentPlan?: string | null
-  environment?: string | null
-  purpose?: string | null
+  savedByUsers?: Prisma.SavedLandUncheckedCreateNestedManyWithoutLandInput
 }
 
 export type LandUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
-  perches?: Prisma.FloatFieldUpdateOperationsInput | number
-  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  images?: Prisma.LandUpdateimagesInput | string[]
-  landType?: Prisma.StringFieldUpdateOperationsInput | string
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  agent?: Prisma.UserUpdateOneWithoutLandsNestedInput
+  savedByUsers?: Prisma.SavedLandUpdateManyWithoutLandNestedInput
 }
 
 export type LandUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
-  perches?: Prisma.FloatFieldUpdateOperationsInput | number
-  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  images?: Prisma.LandUpdateimagesInput | string[]
-  landType?: Prisma.StringFieldUpdateOperationsInput | string
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  savedByUsers?: Prisma.SavedLandUncheckedUpdateManyWithoutLandNestedInput
 }
 
 export type LandCreateManyInput = {
   id?: string
   name: string
   description: string
+  price: number
   location: string
+  perches: number
+  sqft?: number | null
+  landType: string
   status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  agentId?: string | null
   latitude?: number | null
   longitude?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  price: number
-  perches: number
-  sqft?: number | null
-  images?: Prisma.LandCreateimagesInput | string[]
-  landType: string
-  matchScore?: number | null
-  developmentPlan?: string | null
-  environment?: string | null
-  purpose?: string | null
 }
 
 export type LandUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
-  perches?: Prisma.FloatFieldUpdateOperationsInput | number
-  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  images?: Prisma.LandUpdateimagesInput | string[]
-  landType?: Prisma.StringFieldUpdateOperationsInput | string
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LandUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
-  perches?: Prisma.FloatFieldUpdateOperationsInput | number
-  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  images?: Prisma.LandUpdateimagesInput | string[]
-  landType?: Prisma.StringFieldUpdateOperationsInput | string
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type LandScalarRelationFilter = {
+  is?: Prisma.LandWhereInput
+  isNot?: Prisma.LandWhereInput
 }
 
 export type LandCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  price?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  perches?: Prisma.SortOrder
+  sqft?: Prisma.SortOrder
+  landType?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  developmentPlan?: Prisma.SortOrder
+  images?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  price?: Prisma.SortOrder
-  perches?: Prisma.SortOrder
-  sqft?: Prisma.SortOrder
-  images?: Prisma.SortOrder
-  landType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  developmentPlan?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  purpose?: Prisma.SortOrder
 }
 
 export type LandAvgOrderByAggregateInput = {
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
   price?: Prisma.SortOrder
   perches?: Prisma.SortOrder
   sqft?: Prisma.SortOrder
   matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
 }
 
 export type LandMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  price?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  perches?: Prisma.SortOrder
+  sqft?: Prisma.SortOrder
+  landType?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  developmentPlan?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  price?: Prisma.SortOrder
-  perches?: Prisma.SortOrder
-  sqft?: Prisma.SortOrder
-  landType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  developmentPlan?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  purpose?: Prisma.SortOrder
 }
 
 export type LandMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  price?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  perches?: Prisma.SortOrder
+  sqft?: Prisma.SortOrder
+  landType?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
+  developmentPlan?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  price?: Prisma.SortOrder
-  perches?: Prisma.SortOrder
-  sqft?: Prisma.SortOrder
-  landType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  developmentPlan?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  purpose?: Prisma.SortOrder
 }
 
 export type LandSumOrderByAggregateInput = {
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
   price?: Prisma.SortOrder
   perches?: Prisma.SortOrder
   sqft?: Prisma.SortOrder
   matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+}
+
+export type LandListRelationFilter = {
+  every?: Prisma.LandWhereInput
+  some?: Prisma.LandWhereInput
+  none?: Prisma.LandWhereInput
+}
+
+export type LandOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type LandCreateNestedOneWithoutSavedByUsersInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutSavedByUsersInput, Prisma.LandUncheckedCreateWithoutSavedByUsersInput>
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutSavedByUsersInput
+  connect?: Prisma.LandWhereUniqueInput
+}
+
+export type LandUpdateOneRequiredWithoutSavedByUsersNestedInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutSavedByUsersInput, Prisma.LandUncheckedCreateWithoutSavedByUsersInput>
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutSavedByUsersInput
+  upsert?: Prisma.LandUpsertWithoutSavedByUsersInput
+  connect?: Prisma.LandWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LandUpdateToOneWithWhereWithoutSavedByUsersInput, Prisma.LandUpdateWithoutSavedByUsersInput>, Prisma.LandUncheckedUpdateWithoutSavedByUsersInput>
 }
 
 export type LandCreateimagesInput = {
@@ -676,116 +764,512 @@ export type LandUpdateimagesInput = {
   push?: string | string[]
 }
 
+export type LandCreateNestedManyWithoutAgentInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput> | Prisma.LandCreateWithoutAgentInput[] | Prisma.LandUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutAgentInput | Prisma.LandCreateOrConnectWithoutAgentInput[]
+  createMany?: Prisma.LandCreateManyAgentInputEnvelope
+  connect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+}
+
+export type LandUncheckedCreateNestedManyWithoutAgentInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput> | Prisma.LandCreateWithoutAgentInput[] | Prisma.LandUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutAgentInput | Prisma.LandCreateOrConnectWithoutAgentInput[]
+  createMany?: Prisma.LandCreateManyAgentInputEnvelope
+  connect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+}
+
+export type LandUpdateManyWithoutAgentNestedInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput> | Prisma.LandCreateWithoutAgentInput[] | Prisma.LandUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutAgentInput | Prisma.LandCreateOrConnectWithoutAgentInput[]
+  upsert?: Prisma.LandUpsertWithWhereUniqueWithoutAgentInput | Prisma.LandUpsertWithWhereUniqueWithoutAgentInput[]
+  createMany?: Prisma.LandCreateManyAgentInputEnvelope
+  set?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  disconnect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  delete?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  connect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  update?: Prisma.LandUpdateWithWhereUniqueWithoutAgentInput | Prisma.LandUpdateWithWhereUniqueWithoutAgentInput[]
+  updateMany?: Prisma.LandUpdateManyWithWhereWithoutAgentInput | Prisma.LandUpdateManyWithWhereWithoutAgentInput[]
+  deleteMany?: Prisma.LandScalarWhereInput | Prisma.LandScalarWhereInput[]
+}
+
+export type LandUncheckedUpdateManyWithoutAgentNestedInput = {
+  create?: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput> | Prisma.LandCreateWithoutAgentInput[] | Prisma.LandUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.LandCreateOrConnectWithoutAgentInput | Prisma.LandCreateOrConnectWithoutAgentInput[]
+  upsert?: Prisma.LandUpsertWithWhereUniqueWithoutAgentInput | Prisma.LandUpsertWithWhereUniqueWithoutAgentInput[]
+  createMany?: Prisma.LandCreateManyAgentInputEnvelope
+  set?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  disconnect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  delete?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  connect?: Prisma.LandWhereUniqueInput | Prisma.LandWhereUniqueInput[]
+  update?: Prisma.LandUpdateWithWhereUniqueWithoutAgentInput | Prisma.LandUpdateWithWhereUniqueWithoutAgentInput[]
+  updateMany?: Prisma.LandUpdateManyWithWhereWithoutAgentInput | Prisma.LandUpdateManyWithWhereWithoutAgentInput[]
+  deleteMany?: Prisma.LandScalarWhereInput | Prisma.LandScalarWhereInput[]
+}
+
+export type LandCreateWithoutSavedByUsersInput = {
+  id?: string
+  name: string
+  description: string
+  price: number
+  location: string
+  perches: number
+  sqft?: number | null
+  landType: string
+  status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agent?: Prisma.UserCreateNestedOneWithoutLandsInput
+}
+
+export type LandUncheckedCreateWithoutSavedByUsersInput = {
+  id?: string
+  name: string
+  description: string
+  price: number
+  location: string
+  perches: number
+  sqft?: number | null
+  landType: string
+  status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  agentId?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type LandCreateOrConnectWithoutSavedByUsersInput = {
+  where: Prisma.LandWhereUniqueInput
+  create: Prisma.XOR<Prisma.LandCreateWithoutSavedByUsersInput, Prisma.LandUncheckedCreateWithoutSavedByUsersInput>
+}
+
+export type LandUpsertWithoutSavedByUsersInput = {
+  update: Prisma.XOR<Prisma.LandUpdateWithoutSavedByUsersInput, Prisma.LandUncheckedUpdateWithoutSavedByUsersInput>
+  create: Prisma.XOR<Prisma.LandCreateWithoutSavedByUsersInput, Prisma.LandUncheckedCreateWithoutSavedByUsersInput>
+  where?: Prisma.LandWhereInput
+}
+
+export type LandUpdateToOneWithWhereWithoutSavedByUsersInput = {
+  where?: Prisma.LandWhereInput
+  data: Prisma.XOR<Prisma.LandUpdateWithoutSavedByUsersInput, Prisma.LandUncheckedUpdateWithoutSavedByUsersInput>
+}
+
+export type LandUpdateWithoutSavedByUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agent?: Prisma.UserUpdateOneWithoutLandsNestedInput
+}
+
+export type LandUncheckedUpdateWithoutSavedByUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LandCreateWithoutAgentInput = {
+  id?: string
+  name: string
+  description: string
+  price: number
+  location: string
+  perches: number
+  sqft?: number | null
+  landType: string
+  status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  savedByUsers?: Prisma.SavedLandCreateNestedManyWithoutLandInput
+}
+
+export type LandUncheckedCreateWithoutAgentInput = {
+  id?: string
+  name: string
+  description: string
+  price: number
+  location: string
+  perches: number
+  sqft?: number | null
+  landType: string
+  status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  savedByUsers?: Prisma.SavedLandUncheckedCreateNestedManyWithoutLandInput
+}
+
+export type LandCreateOrConnectWithoutAgentInput = {
+  where: Prisma.LandWhereUniqueInput
+  create: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput>
+}
+
+export type LandCreateManyAgentInputEnvelope = {
+  data: Prisma.LandCreateManyAgentInput | Prisma.LandCreateManyAgentInput[]
+  skipDuplicates?: boolean
+}
+
+export type LandUpsertWithWhereUniqueWithoutAgentInput = {
+  where: Prisma.LandWhereUniqueInput
+  update: Prisma.XOR<Prisma.LandUpdateWithoutAgentInput, Prisma.LandUncheckedUpdateWithoutAgentInput>
+  create: Prisma.XOR<Prisma.LandCreateWithoutAgentInput, Prisma.LandUncheckedCreateWithoutAgentInput>
+}
+
+export type LandUpdateWithWhereUniqueWithoutAgentInput = {
+  where: Prisma.LandWhereUniqueInput
+  data: Prisma.XOR<Prisma.LandUpdateWithoutAgentInput, Prisma.LandUncheckedUpdateWithoutAgentInput>
+}
+
+export type LandUpdateManyWithWhereWithoutAgentInput = {
+  where: Prisma.LandScalarWhereInput
+  data: Prisma.XOR<Prisma.LandUpdateManyMutationInput, Prisma.LandUncheckedUpdateManyWithoutAgentInput>
+}
+
+export type LandScalarWhereInput = {
+  AND?: Prisma.LandScalarWhereInput | Prisma.LandScalarWhereInput[]
+  OR?: Prisma.LandScalarWhereInput[]
+  NOT?: Prisma.LandScalarWhereInput | Prisma.LandScalarWhereInput[]
+  id?: Prisma.StringFilter<"Land"> | string
+  name?: Prisma.StringFilter<"Land"> | string
+  description?: Prisma.StringFilter<"Land"> | string
+  price?: Prisma.FloatFilter<"Land"> | number
+  location?: Prisma.StringFilter<"Land"> | string
+  perches?: Prisma.FloatFilter<"Land"> | number
+  sqft?: Prisma.FloatNullableFilter<"Land"> | number | null
+  landType?: Prisma.StringFilter<"Land"> | string
+  status?: Prisma.StringFilter<"Land"> | string
+  purpose?: Prisma.StringNullableFilter<"Land"> | string | null
+  environment?: Prisma.StringNullableFilter<"Land"> | string | null
+  developmentPlan?: Prisma.StringNullableFilter<"Land"> | string | null
+  images?: Prisma.StringNullableListFilter<"Land">
+  matchScore?: Prisma.IntNullableFilter<"Land"> | number | null
+  views?: Prisma.IntFilter<"Land"> | number
+  agentId?: Prisma.StringNullableFilter<"Land"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Land"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Land"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Land"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Land"> | Date | string
+}
+
+export type LandCreateManyAgentInput = {
+  id?: string
+  name: string
+  description: string
+  price: number
+  location: string
+  perches: number
+  sqft?: number | null
+  landType: string
+  status: string
+  purpose?: string | null
+  environment?: string | null
+  developmentPlan?: string | null
+  images?: Prisma.LandCreateimagesInput | string[]
+  matchScore?: number | null
+  views?: number
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type LandUpdateWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedByUsers?: Prisma.SavedLandUpdateManyWithoutLandNestedInput
+}
+
+export type LandUncheckedUpdateWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedByUsers?: Prisma.SavedLandUncheckedUpdateManyWithoutLandNestedInput
+}
+
+export type LandUncheckedUpdateManyWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  perches?: Prisma.FloatFieldUpdateOperationsInput | number
+  sqft?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  landType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  environment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developmentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.LandUpdateimagesInput | string[]
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type LandCountOutputType
+ */
+
+export type LandCountOutputType = {
+  savedByUsers: number
+}
+
+export type LandCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  savedByUsers?: boolean | LandCountOutputTypeCountSavedByUsersArgs
+}
+
+/**
+ * LandCountOutputType without action
+ */
+export type LandCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LandCountOutputType
+   */
+  select?: Prisma.LandCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LandCountOutputType without action
+ */
+export type LandCountOutputTypeCountSavedByUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavedLandWhereInput
+}
 
 
 export type LandSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
+  price?: boolean
   location?: boolean
+  perches?: boolean
+  sqft?: boolean
+  landType?: boolean
   status?: boolean
+  purpose?: boolean
+  environment?: boolean
+  developmentPlan?: boolean
+  images?: boolean
+  matchScore?: boolean
+  views?: boolean
+  agentId?: boolean
   latitude?: boolean
   longitude?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  price?: boolean
-  perches?: boolean
-  sqft?: boolean
-  images?: boolean
-  landType?: boolean
-  matchScore?: boolean
-  developmentPlan?: boolean
-  environment?: boolean
-  purpose?: boolean
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
+  savedByUsers?: boolean | Prisma.Land$savedByUsersArgs<ExtArgs>
+  _count?: boolean | Prisma.LandCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["land"]>
 
 export type LandSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
+  price?: boolean
   location?: boolean
+  perches?: boolean
+  sqft?: boolean
+  landType?: boolean
   status?: boolean
+  purpose?: boolean
+  environment?: boolean
+  developmentPlan?: boolean
+  images?: boolean
+  matchScore?: boolean
+  views?: boolean
+  agentId?: boolean
   latitude?: boolean
   longitude?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  price?: boolean
-  perches?: boolean
-  sqft?: boolean
-  images?: boolean
-  landType?: boolean
-  matchScore?: boolean
-  developmentPlan?: boolean
-  environment?: boolean
-  purpose?: boolean
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
 }, ExtArgs["result"]["land"]>
 
 export type LandSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
+  price?: boolean
   location?: boolean
+  perches?: boolean
+  sqft?: boolean
+  landType?: boolean
   status?: boolean
+  purpose?: boolean
+  environment?: boolean
+  developmentPlan?: boolean
+  images?: boolean
+  matchScore?: boolean
+  views?: boolean
+  agentId?: boolean
   latitude?: boolean
   longitude?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  price?: boolean
-  perches?: boolean
-  sqft?: boolean
-  images?: boolean
-  landType?: boolean
-  matchScore?: boolean
-  developmentPlan?: boolean
-  environment?: boolean
-  purpose?: boolean
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
 }, ExtArgs["result"]["land"]>
 
 export type LandSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
+  price?: boolean
   location?: boolean
+  perches?: boolean
+  sqft?: boolean
+  landType?: boolean
   status?: boolean
+  purpose?: boolean
+  environment?: boolean
+  developmentPlan?: boolean
+  images?: boolean
+  matchScore?: boolean
+  views?: boolean
+  agentId?: boolean
   latitude?: boolean
   longitude?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  price?: boolean
-  perches?: boolean
-  sqft?: boolean
-  images?: boolean
-  landType?: boolean
-  matchScore?: boolean
-  developmentPlan?: boolean
-  environment?: boolean
-  purpose?: boolean
 }
 
-export type LandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "location" | "status" | "latitude" | "longitude" | "createdAt" | "updatedAt" | "price" | "perches" | "sqft" | "images" | "landType" | "matchScore" | "developmentPlan" | "environment" | "purpose", ExtArgs["result"]["land"]>
+export type LandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "location" | "perches" | "sqft" | "landType" | "status" | "purpose" | "environment" | "developmentPlan" | "images" | "matchScore" | "views" | "agentId" | "latitude" | "longitude" | "createdAt" | "updatedAt", ExtArgs["result"]["land"]>
+export type LandInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
+  savedByUsers?: boolean | Prisma.Land$savedByUsersArgs<ExtArgs>
+  _count?: boolean | Prisma.LandCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type LandIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
+}
+export type LandIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Land$agentArgs<ExtArgs>
+}
 
 export type $LandPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Land"
-  objects: {}
+  objects: {
+    agent: Prisma.$UserPayload<ExtArgs> | null
+    savedByUsers: Prisma.$SavedLandPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     description: string
+    price: number
     location: string
+    perches: number
+    sqft: number | null
+    landType: string
     status: string
+    purpose: string | null
+    environment: string | null
+    developmentPlan: string | null
+    images: string[]
+    matchScore: number | null
+    views: number
+    agentId: string | null
     latitude: number | null
     longitude: number | null
     createdAt: Date
     updatedAt: Date
-    price: number
-    perches: number
-    sqft: number | null
-    images: string[]
-    landType: string
-    matchScore: number | null
-    developmentPlan: string | null
-    environment: string | null
-    purpose: string | null
   }, ExtArgs["result"]["land"]>
   composites: {}
 }
@@ -1180,6 +1664,8 @@ readonly fields: LandFieldRefs;
  */
 export interface Prisma__LandClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  agent<T extends Prisma.Land$agentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Land$agentArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  savedByUsers<T extends Prisma.Land$savedByUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Land$savedByUsersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedLandPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1212,21 +1698,23 @@ export interface LandFieldRefs {
   readonly id: Prisma.FieldRef<"Land", 'String'>
   readonly name: Prisma.FieldRef<"Land", 'String'>
   readonly description: Prisma.FieldRef<"Land", 'String'>
+  readonly price: Prisma.FieldRef<"Land", 'Float'>
   readonly location: Prisma.FieldRef<"Land", 'String'>
+  readonly perches: Prisma.FieldRef<"Land", 'Float'>
+  readonly sqft: Prisma.FieldRef<"Land", 'Float'>
+  readonly landType: Prisma.FieldRef<"Land", 'String'>
   readonly status: Prisma.FieldRef<"Land", 'String'>
+  readonly purpose: Prisma.FieldRef<"Land", 'String'>
+  readonly environment: Prisma.FieldRef<"Land", 'String'>
+  readonly developmentPlan: Prisma.FieldRef<"Land", 'String'>
+  readonly images: Prisma.FieldRef<"Land", 'String[]'>
+  readonly matchScore: Prisma.FieldRef<"Land", 'Int'>
+  readonly views: Prisma.FieldRef<"Land", 'Int'>
+  readonly agentId: Prisma.FieldRef<"Land", 'String'>
   readonly latitude: Prisma.FieldRef<"Land", 'Float'>
   readonly longitude: Prisma.FieldRef<"Land", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Land", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Land", 'DateTime'>
-  readonly price: Prisma.FieldRef<"Land", 'Float'>
-  readonly perches: Prisma.FieldRef<"Land", 'Float'>
-  readonly sqft: Prisma.FieldRef<"Land", 'Float'>
-  readonly images: Prisma.FieldRef<"Land", 'String[]'>
-  readonly landType: Prisma.FieldRef<"Land", 'String'>
-  readonly matchScore: Prisma.FieldRef<"Land", 'Int'>
-  readonly developmentPlan: Prisma.FieldRef<"Land", 'String'>
-  readonly environment: Prisma.FieldRef<"Land", 'String'>
-  readonly purpose: Prisma.FieldRef<"Land", 'String'>
 }
     
 
@@ -1243,6 +1731,10 @@ export type LandFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
   /**
    * Filter, which Land to fetch.
    */
@@ -1262,6 +1754,10 @@ export type LandFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
+  /**
    * Filter, which Land to fetch.
    */
   where: Prisma.LandWhereUniqueInput
@@ -1279,6 +1775,10 @@ export type LandFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
   /**
    * Filter, which Land to fetch.
    */
@@ -1328,6 +1828,10 @@ export type LandFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
+  /**
    * Filter, which Land to fetch.
    */
   where?: Prisma.LandWhereInput
@@ -1375,6 +1879,10 @@ export type LandFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
   /**
    * Filter, which Lands to fetch.
    */
@@ -1424,6 +1932,10 @@ export type LandCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
+  /**
    * The data needed to create a Land.
    */
   data: Prisma.XOR<Prisma.LandCreateInput, Prisma.LandUncheckedCreateInput>
@@ -1457,6 +1969,10 @@ export type LandCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.LandCreateManyInput | Prisma.LandCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1471,6 +1987,10 @@ export type LandUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
   /**
    * The data needed to update a Land.
    */
@@ -1523,6 +2043,10 @@ export type LandUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Lands to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1537,6 +2061,10 @@ export type LandUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
   /**
    * The filter to search for the Land to update in case it exists.
    */
@@ -1564,6 +2092,10 @@ export type LandDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
+  /**
    * Filter which Land to delete.
    */
   where: Prisma.LandWhereUniqueInput
@@ -1584,6 +2116,49 @@ export type LandDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Land.agent
+ */
+export type Land$agentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Land.savedByUsers
+ */
+export type Land$savedByUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SavedLand
+   */
+  select?: Prisma.SavedLandSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SavedLand
+   */
+  omit?: Prisma.SavedLandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SavedLandInclude<ExtArgs> | null
+  where?: Prisma.SavedLandWhereInput
+  orderBy?: Prisma.SavedLandOrderByWithRelationInput | Prisma.SavedLandOrderByWithRelationInput[]
+  cursor?: Prisma.SavedLandWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SavedLandScalarFieldEnum | Prisma.SavedLandScalarFieldEnum[]
+}
+
+/**
  * Land without action
  */
 export type LandDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1595,4 +2170,8 @@ export type LandDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Land
    */
   omit?: Prisma.LandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandInclude<ExtArgs> | null
 }

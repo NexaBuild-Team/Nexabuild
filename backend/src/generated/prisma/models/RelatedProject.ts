@@ -244,7 +244,7 @@ export type RelatedProjectWhereInput = {
   priceLkr?: Prisma.IntFilter<"RelatedProject"> | number
   sortOrder?: Prisma.IntFilter<"RelatedProject"> | number
   detailId?: Prisma.StringFilter<"RelatedProject"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type RelatedProjectOrderByWithRelationInput = {
@@ -256,7 +256,7 @@ export type RelatedProjectOrderByWithRelationInput = {
   priceLkr?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   detailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type RelatedProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -271,7 +271,7 @@ export type RelatedProjectWhereUniqueInput = Prisma.AtLeast<{
   priceLkr?: Prisma.IntFilter<"RelatedProject"> | number
   sortOrder?: Prisma.IntFilter<"RelatedProject"> | number
   detailId?: Prisma.StringFilter<"RelatedProject"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id">
 
 export type RelatedProjectOrderByWithAggregationInput = {
@@ -305,18 +305,18 @@ export type RelatedProjectScalarWhereWithAggregatesInput = {
 }
 
 export type RelatedProjectCreateInput = {
-  id: string
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
   style: string
   priceLkr: number
   sortOrder?: number
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutRelatedProjectInput
+  detail: Prisma.DesignDetailCreateNestedOneWithoutRelatedProjectsInput
 }
 
 export type RelatedProjectUncheckedCreateInput = {
-  id: string
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
@@ -334,7 +334,7 @@ export type RelatedProjectUpdateInput = {
   style?: Prisma.StringFieldUpdateOperationsInput | string
   priceLkr?: Prisma.IntFieldUpdateOperationsInput | number
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutRelatedProjectNestedInput
+  detail?: Prisma.DesignDetailUpdateOneRequiredWithoutRelatedProjectsNestedInput
 }
 
 export type RelatedProjectUncheckedUpdateInput = {
@@ -349,7 +349,7 @@ export type RelatedProjectUncheckedUpdateInput = {
 }
 
 export type RelatedProjectCreateManyInput = {
-  id: string
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
@@ -433,50 +433,50 @@ export type RelatedProjectSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type RelatedProjectCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput> | Prisma.RelatedProjectCreateWithoutDesignDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.RelatedProjectCreateManyDesignDetailInputEnvelope
+export type RelatedProjectCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput> | Prisma.RelatedProjectCreateWithoutDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.RelatedProjectCreateManyDetailInputEnvelope
   connect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
 }
 
-export type RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput> | Prisma.RelatedProjectCreateWithoutDesignDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.RelatedProjectCreateManyDesignDetailInputEnvelope
+export type RelatedProjectUncheckedCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput> | Prisma.RelatedProjectCreateWithoutDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.RelatedProjectCreateManyDetailInputEnvelope
   connect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
 }
 
-export type RelatedProjectUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput> | Prisma.RelatedProjectCreateWithoutDesignDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.RelatedProjectCreateManyDesignDetailInputEnvelope
+export type RelatedProjectUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput> | Prisma.RelatedProjectCreateWithoutDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDetailInput | Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.RelatedProjectCreateManyDetailInputEnvelope
   set?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   disconnect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   delete?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   connect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
-  update?: Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.RelatedProjectUpdateManyWithWhereWithoutDesignDetailInput | Prisma.RelatedProjectUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDetailInput | Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.RelatedProjectUpdateManyWithWhereWithoutDetailInput | Prisma.RelatedProjectUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.RelatedProjectScalarWhereInput | Prisma.RelatedProjectScalarWhereInput[]
 }
 
-export type RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput> | Prisma.RelatedProjectCreateWithoutDesignDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.RelatedProjectCreateManyDesignDetailInputEnvelope
+export type RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput> | Prisma.RelatedProjectCreateWithoutDetailInput[] | Prisma.RelatedProjectUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.RelatedProjectCreateOrConnectWithoutDetailInput | Prisma.RelatedProjectCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDetailInput | Prisma.RelatedProjectUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.RelatedProjectCreateManyDetailInputEnvelope
   set?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   disconnect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   delete?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
   connect?: Prisma.RelatedProjectWhereUniqueInput | Prisma.RelatedProjectWhereUniqueInput[]
-  update?: Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.RelatedProjectUpdateManyWithWhereWithoutDesignDetailInput | Prisma.RelatedProjectUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDetailInput | Prisma.RelatedProjectUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.RelatedProjectUpdateManyWithWhereWithoutDetailInput | Prisma.RelatedProjectUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.RelatedProjectScalarWhereInput | Prisma.RelatedProjectScalarWhereInput[]
 }
 
-export type RelatedProjectCreateWithoutDesignDetailInput = {
-  id: string
+export type RelatedProjectCreateWithoutDetailInput = {
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
@@ -485,8 +485,8 @@ export type RelatedProjectCreateWithoutDesignDetailInput = {
   sortOrder?: number
 }
 
-export type RelatedProjectUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type RelatedProjectUncheckedCreateWithoutDetailInput = {
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
@@ -495,30 +495,30 @@ export type RelatedProjectUncheckedCreateWithoutDesignDetailInput = {
   sortOrder?: number
 }
 
-export type RelatedProjectCreateOrConnectWithoutDesignDetailInput = {
+export type RelatedProjectCreateOrConnectWithoutDetailInput = {
   where: Prisma.RelatedProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput>
 }
 
-export type RelatedProjectCreateManyDesignDetailInputEnvelope = {
-  data: Prisma.RelatedProjectCreateManyDesignDetailInput | Prisma.RelatedProjectCreateManyDesignDetailInput[]
+export type RelatedProjectCreateManyDetailInputEnvelope = {
+  data: Prisma.RelatedProjectCreateManyDetailInput | Prisma.RelatedProjectCreateManyDetailInput[]
   skipDuplicates?: boolean
 }
 
-export type RelatedProjectUpsertWithWhereUniqueWithoutDesignDetailInput = {
+export type RelatedProjectUpsertWithWhereUniqueWithoutDetailInput = {
   where: Prisma.RelatedProjectWhereUniqueInput
-  update: Prisma.XOR<Prisma.RelatedProjectUpdateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDesignDetailInput>
+  update: Prisma.XOR<Prisma.RelatedProjectUpdateWithoutDetailInput, Prisma.RelatedProjectUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.RelatedProjectCreateWithoutDetailInput, Prisma.RelatedProjectUncheckedCreateWithoutDetailInput>
 }
 
-export type RelatedProjectUpdateWithWhereUniqueWithoutDesignDetailInput = {
+export type RelatedProjectUpdateWithWhereUniqueWithoutDetailInput = {
   where: Prisma.RelatedProjectWhereUniqueInput
-  data: Prisma.XOR<Prisma.RelatedProjectUpdateWithoutDesignDetailInput, Prisma.RelatedProjectUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.RelatedProjectUpdateWithoutDetailInput, Prisma.RelatedProjectUncheckedUpdateWithoutDetailInput>
 }
 
-export type RelatedProjectUpdateManyWithWhereWithoutDesignDetailInput = {
+export type RelatedProjectUpdateManyWithWhereWithoutDetailInput = {
   where: Prisma.RelatedProjectScalarWhereInput
-  data: Prisma.XOR<Prisma.RelatedProjectUpdateManyMutationInput, Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.RelatedProjectUpdateManyMutationInput, Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailInput>
 }
 
 export type RelatedProjectScalarWhereInput = {
@@ -535,8 +535,8 @@ export type RelatedProjectScalarWhereInput = {
   detailId?: Prisma.StringFilter<"RelatedProject"> | string
 }
 
-export type RelatedProjectCreateManyDesignDetailInput = {
-  id: string
+export type RelatedProjectCreateManyDetailInput = {
+  id?: string
   targetDesignId: string
   title: string
   imageUrl: string
@@ -545,7 +545,7 @@ export type RelatedProjectCreateManyDesignDetailInput = {
   sortOrder?: number
 }
 
-export type RelatedProjectUpdateWithoutDesignDetailInput = {
+export type RelatedProjectUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetDesignId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -555,7 +555,7 @@ export type RelatedProjectUpdateWithoutDesignDetailInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type RelatedProjectUncheckedUpdateWithoutDesignDetailInput = {
+export type RelatedProjectUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetDesignId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -565,7 +565,7 @@ export type RelatedProjectUncheckedUpdateWithoutDesignDetailInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type RelatedProjectUncheckedUpdateManyWithoutDesignDetailInput = {
+export type RelatedProjectUncheckedUpdateManyWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   targetDesignId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -586,7 +586,7 @@ export type RelatedProjectSelect<ExtArgs extends runtime.Types.Extensions.Intern
   priceLkr?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["relatedProject"]>
 
 export type RelatedProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -598,7 +598,7 @@ export type RelatedProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   priceLkr?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["relatedProject"]>
 
 export type RelatedProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -610,7 +610,7 @@ export type RelatedProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   priceLkr?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["relatedProject"]>
 
 export type RelatedProjectSelectScalar = {
@@ -626,19 +626,19 @@ export type RelatedProjectSelectScalar = {
 
 export type RelatedProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "targetDesignId" | "title" | "imageUrl" | "style" | "priceLkr" | "sortOrder" | "detailId", ExtArgs["result"]["relatedProject"]>
 export type RelatedProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type RelatedProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type RelatedProjectIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $RelatedProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RelatedProject"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    detail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1043,7 +1043,7 @@ readonly fields: RelatedProjectFieldRefs;
  */
 export interface Prisma__RelatedProjectClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  detail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

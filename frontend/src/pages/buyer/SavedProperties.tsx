@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { fetchSavedProperties, toggleSavePropertyApi } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -154,13 +156,50 @@ export default function SavedProperties({
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [savedStateMap, setSavedStateMap] = useState<Record<string | number, boolean>>({});
 
-  const properties = data?.properties !== undefined ? data.properties : defaultSavedProperties;
+  const [apiProps, setApiProps] = useState<SavedPropertyItem[] | null>(null);
+  const [_fetching, setFetching] = useState(!data);
 
-  const handleToggleBookmark = (id: string | number) => {
+  useEffect(() => {
+    if (!data) {
+      fetchSavedProperties()
+        .then((res) => {
+          const mapped = res.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            locationDistrict: p.location || 'Colombo',
+            address: p.location || 'Colombo 7',
+            neighborhood: p.location || 'Colombo 7',
+            priceAmount: p.price ? p.price / 1000000 : 28.5,
+            matchScore: p.matchScore || 95,
+            beds: p.bedrooms || 4,
+            baths: p.bathrooms || 3,
+            sqft: p.area || 3200,
+            imageUrl: (p.images && p.images.length > 0) ? p.images[0] : '/hero_property.png',
+            aiInsightText: 'Matches your preferred location and bedroom criteria.',
+            isSaved: true,
+          }));
+          setApiProps(mapped);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch saved properties:', err);
+          setFetching(false);
+        });
+    }
+  }, [data]);
+
+  const properties = apiProps !== null ? apiProps : (data?.properties !== undefined ? data.properties : defaultSavedProperties);
+
+  const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveProperty) {
       onToggleSaveProperty(id);
     } else {
-      setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      try {
+        await toggleSavePropertyApi(String(id));
+        setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      } catch {
+        setSavedStateMap(prev => ({ ...prev, [id]: prev[id] !== undefined ? !prev[id] : false }));
+      }
     }
   };
 
@@ -221,6 +260,7 @@ export default function SavedProperties({
 
   return (
     <div className="w-full flex flex-col gap-6 sm:gap-8 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto font-normal text-[#194360]">
+      <BuyerHeaderBar />
       
       {/* Global Error Banner */}
       {error && (

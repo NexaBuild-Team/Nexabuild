@@ -240,7 +240,7 @@ export type FirmTestimonialWhereInput = {
   avatarUrl?: Prisma.StringFilter<"FirmTestimonial"> | string
   createdAt?: Prisma.DateTimeFilter<"FirmTestimonial"> | Date | string
   companyId?: Prisma.StringFilter<"FirmTestimonial"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }
 
 export type FirmTestimonialOrderByWithRelationInput = {
@@ -252,7 +252,7 @@ export type FirmTestimonialOrderByWithRelationInput = {
   avatarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
-  ArchitectureCompany?: Prisma.ArchitectureCompanyOrderByWithRelationInput
+  company?: Prisma.ArchitectureCompanyOrderByWithRelationInput
 }
 
 export type FirmTestimonialWhereUniqueInput = Prisma.AtLeast<{
@@ -267,7 +267,7 @@ export type FirmTestimonialWhereUniqueInput = Prisma.AtLeast<{
   avatarUrl?: Prisma.StringFilter<"FirmTestimonial"> | string
   createdAt?: Prisma.DateTimeFilter<"FirmTestimonial"> | Date | string
   companyId?: Prisma.StringFilter<"FirmTestimonial"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }, "id">
 
 export type FirmTestimonialOrderByWithAggregationInput = {
@@ -301,18 +301,18 @@ export type FirmTestimonialScalarWhereWithAggregatesInput = {
 }
 
 export type FirmTestimonialCreateInput = {
-  id: string
+  id?: string
   rating: number
   text: string
   author: string
   role: string
   avatarUrl: string
   createdAt?: Date | string
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutFirmTestimonialInput
+  company: Prisma.ArchitectureCompanyCreateNestedOneWithoutTestimonialsInput
 }
 
 export type FirmTestimonialUncheckedCreateInput = {
-  id: string
+  id?: string
   rating: number
   text: string
   author: string
@@ -330,7 +330,7 @@ export type FirmTestimonialUpdateInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutFirmTestimonialNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutTestimonialsNestedInput
 }
 
 export type FirmTestimonialUncheckedUpdateInput = {
@@ -345,7 +345,7 @@ export type FirmTestimonialUncheckedUpdateInput = {
 }
 
 export type FirmTestimonialCreateManyInput = {
-  id: string
+  id?: string
   rating: number
   text: string
   author: string
@@ -427,50 +427,50 @@ export type FirmTestimonialSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
 }
 
-export type FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTestimonialCreateManyArchitectureCompanyInputEnvelope
+export type FirmTestimonialCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput> | Prisma.FirmTestimonialCreateWithoutCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmTestimonialCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
 }
 
-export type FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTestimonialCreateManyArchitectureCompanyInputEnvelope
+export type FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput> | Prisma.FirmTestimonialCreateWithoutCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmTestimonialCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
 }
 
-export type FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTestimonialCreateManyArchitectureCompanyInputEnvelope
+export type FirmTestimonialUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput> | Prisma.FirmTestimonialCreateWithoutCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmTestimonialCreateManyCompanyInputEnvelope
   set?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   disconnect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   delete?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   connect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
-  update?: Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmTestimonialUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmTestimonialUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmTestimonialUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmTestimonialScalarWhereInput | Prisma.FirmTestimonialScalarWhereInput[]
 }
 
-export type FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTestimonialCreateManyArchitectureCompanyInputEnvelope
+export type FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput> | Prisma.FirmTestimonialCreateWithoutCompanyInput[] | Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput | Prisma.FirmTestimonialCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmTestimonialUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmTestimonialCreateManyCompanyInputEnvelope
   set?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   disconnect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   delete?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
   connect?: Prisma.FirmTestimonialWhereUniqueInput | Prisma.FirmTestimonialWhereUniqueInput[]
-  update?: Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmTestimonialUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmTestimonialUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmTestimonialUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmTestimonialUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmTestimonialUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmTestimonialScalarWhereInput | Prisma.FirmTestimonialScalarWhereInput[]
 }
 
-export type FirmTestimonialCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmTestimonialCreateWithoutCompanyInput = {
+  id?: string
   rating: number
   text: string
   author: string
@@ -479,8 +479,8 @@ export type FirmTestimonialCreateWithoutArchitectureCompanyInput = {
   createdAt?: Date | string
 }
 
-export type FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmTestimonialUncheckedCreateWithoutCompanyInput = {
+  id?: string
   rating: number
   text: string
   author: string
@@ -489,30 +489,30 @@ export type FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput = {
   createdAt?: Date | string
 }
 
-export type FirmTestimonialCreateOrConnectWithoutArchitectureCompanyInput = {
+export type FirmTestimonialCreateOrConnectWithoutCompanyInput = {
   where: Prisma.FirmTestimonialWhereUniqueInput
-  create: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput>
+  create: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmTestimonialCreateManyArchitectureCompanyInputEnvelope = {
-  data: Prisma.FirmTestimonialCreateManyArchitectureCompanyInput | Prisma.FirmTestimonialCreateManyArchitectureCompanyInput[]
+export type FirmTestimonialCreateManyCompanyInputEnvelope = {
+  data: Prisma.FirmTestimonialCreateManyCompanyInput | Prisma.FirmTestimonialCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type FirmTestimonialUpsertWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmTestimonialWhereUniqueInput
-  update: Prisma.XOR<Prisma.FirmTestimonialUpdateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedUpdateWithoutArchitectureCompanyInput>
-  create: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutArchitectureCompanyInput>
+  update: Prisma.XOR<Prisma.FirmTestimonialUpdateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.FirmTestimonialCreateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmTestimonialUpdateWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmTestimonialWhereUniqueInput
-  data: Prisma.XOR<Prisma.FirmTestimonialUpdateWithoutArchitectureCompanyInput, Prisma.FirmTestimonialUncheckedUpdateWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmTestimonialUpdateWithoutCompanyInput, Prisma.FirmTestimonialUncheckedUpdateWithoutCompanyInput>
 }
 
-export type FirmTestimonialUpdateManyWithWhereWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.FirmTestimonialScalarWhereInput
-  data: Prisma.XOR<Prisma.FirmTestimonialUpdateManyMutationInput, Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmTestimonialUpdateManyMutationInput, Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type FirmTestimonialScalarWhereInput = {
@@ -529,8 +529,8 @@ export type FirmTestimonialScalarWhereInput = {
   companyId?: Prisma.StringFilter<"FirmTestimonial"> | string
 }
 
-export type FirmTestimonialCreateManyArchitectureCompanyInput = {
-  id: string
+export type FirmTestimonialCreateManyCompanyInput = {
+  id?: string
   rating: number
   text: string
   author: string
@@ -539,7 +539,7 @@ export type FirmTestimonialCreateManyArchitectureCompanyInput = {
   createdAt?: Date | string
 }
 
-export type FirmTestimonialUpdateWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -549,7 +549,7 @@ export type FirmTestimonialUpdateWithoutArchitectureCompanyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type FirmTestimonialUncheckedUpdateWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -559,7 +559,7 @@ export type FirmTestimonialUncheckedUpdateWithoutArchitectureCompanyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyInput = {
+export type FirmTestimonialUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.StringFieldUpdateOperationsInput | string
@@ -580,7 +580,7 @@ export type FirmTestimonialSelect<ExtArgs extends runtime.Types.Extensions.Inter
   avatarUrl?: boolean
   createdAt?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTestimonial"]>
 
 export type FirmTestimonialSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -592,7 +592,7 @@ export type FirmTestimonialSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   avatarUrl?: boolean
   createdAt?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTestimonial"]>
 
 export type FirmTestimonialSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -604,7 +604,7 @@ export type FirmTestimonialSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   avatarUrl?: boolean
   createdAt?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTestimonial"]>
 
 export type FirmTestimonialSelectScalar = {
@@ -620,19 +620,19 @@ export type FirmTestimonialSelectScalar = {
 
 export type FirmTestimonialOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "rating" | "text" | "author" | "role" | "avatarUrl" | "createdAt" | "companyId", ExtArgs["result"]["firmTestimonial"]>
 export type FirmTestimonialInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmTestimonialIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmTestimonialIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 
 export type $FirmTestimonialPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FirmTestimonial"
   objects: {
-    ArchitectureCompany: Prisma.$ArchitectureCompanyPayload<ExtArgs>
+    company: Prisma.$ArchitectureCompanyPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1037,7 +1037,7 @@ readonly fields: FirmTestimonialFieldRefs;
  */
 export interface Prisma__FirmTestimonialClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ArchitectureCompany<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

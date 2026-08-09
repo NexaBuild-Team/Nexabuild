@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
+import { useState, useEffect } from 'react';
+import { adminApi } from '../../services/adminApi';
 
 export interface UserManagementRecord {
   id: string;
@@ -35,54 +34,65 @@ export interface AdminUserManagementProps {
   onExportCSV?: () => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultUsers: UserManagementRecord[] = [
-  { id: '#USR1000', name: 'Amara Diallo', avatar: 'AD', role: 'Property Buyer', email: 'amara.diallo@email.com', status: 'Active', joined: 'Jan 14, 2024', lastLogin: 'Dec 12, 2024' },
-  { id: '#USR1001', name: 'James Osei', avatar: 'JO', role: 'Real Estate Agent', email: 'james.osei@email.com', status: 'Pending', joined: 'Jan 13, 2024', lastLogin: 'Dec 11, 2024' },
-  { id: '#USR1002', name: 'Priya Sharma', avatar: 'PS', role: 'Construction Firm', email: 'priya.sharma@email.com', status: 'Active', joined: 'Jan 11, 2024', lastLogin: 'Dec 12, 2024' },
-  { id: '#USR1003', name: 'Kwame Mensah', avatar: 'KM', role: 'Architect', email: 'kwame.mensah@email.com', status: 'Active', joined: 'Jan 10, 2024', lastLogin: 'Dec 10, 2024' },
-  { id: '#USR1004', name: 'Elena Petrov', avatar: 'EP', role: 'Property Buyer', email: 'elena.petrov@email.com', status: 'Suspended', joined: 'Jan 08, 2024', lastLogin: 'Dec 05, 2024' },
-  { id: '#USR1005', name: 'Tariq Al-Mansoor', avatar: 'TA', role: 'Real Estate Agent', email: 'tariq.mansoor@email.com', status: 'Active', joined: 'Jan 05, 2024', lastLogin: 'Dec 12, 2024' },
-  { id: '#USR1006', name: 'Siti Aminah', avatar: 'SA', role: 'Architect', email: 'siti.aminah@email.com', status: 'Pending', joined: 'Jan 04, 2024', lastLogin: 'Dec 09, 2024' },
-  { id: '#USR1007', name: 'Kasun Fernando', avatar: 'KF', role: 'Property Buyer', email: 'kasun.f@email.com', status: 'Active', joined: 'Jan 03, 2024', lastLogin: 'Dec 08, 2024' },
-  { id: '#USR1008', name: 'Nimali Silva', avatar: 'NS', role: 'Real Estate Agent', email: 'nimali.s@email.com', status: 'Active', joined: 'Jan 02, 2024', lastLogin: 'Dec 07, 2024' }
-];
-
-// ─── Component Implementation ───────────────────────────────────────────────
-
 export default function AdminUserManagement({
-  data = null,
-  isLoading = false,
-  error = null,
-  onAddUser,
-  onDeleteUser,
-  onToggleStatus,
-  onExportCSV
+  data: propsData = null,
+  isLoading: propsLoading = false,
+  error: propsError = null,
+  onAddUser: _onAddUser,
+  onDeleteUser: _onDeleteUser,
+  onToggleStatus: _onToggleStatus,
+  onExportCSV: _onExportCSV
 }: AdminUserManagementProps) {
-  const [usersState, setUsersState] = useState<UserManagementRecord[]>([]);
+  const [usersData, setUsersData] = useState<{ metrics: UserManagementMetrics; users: UserManagementRecord[] } | null>(
+    propsData ? { metrics: propsData.metrics || {}, users: propsData.users || [] } : null
+  );
+  const [loading, setLoading] = useState<boolean>(!propsData && propsLoading);
+  const [error, setError] = useState<string | null>(propsError);
+
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All Roles');
   const [statusFilter, setStatusFilter] = useState('All Statuses');
-  const [showAddUserModal, setShowAddUserModal] = useState(false);
-  const [newUserName, setNewUserName] = useState('');
-  const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserRole, setNewUserRole] = useState('Property Buyer');
+
+  // Edit Modal State
+  const [editingUser, setEditingUser] = useState<UserManagementRecord | null>(null);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole, setEditRole] = useState('BUYER');
+  const [editStatus, setEditStatus] = useState<'Active' | 'Pending' | 'Suspended'>('Active');
+  const [savingUser, setSavingUser] = useState(false);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
 
-  const users = data?.users !== undefined 
-    ? data.users 
-    : (usersState.length > 0 ? usersState : defaultUsers);
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await adminApi.getUsers();
+      setUsersData(res as any);
+    } catch (err: any) {
+      console.error('Failed to fetch user management data:', err);
+      setError('Failed to load user management data from backend.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const metrics = data?.metrics;
+  useEffect(() => {
+    if (!propsData) {
+      fetchUsers();
+    }
+  }, [propsData]);
 
-  const totalUsersCount = metrics?.totalUsersCount ?? 12480;
-  const activeCount = metrics?.activeCount ?? 9842;
-  const pendingCount = metrics?.pendingCount ?? 184;
-  const suspendedCount = metrics?.suspendedCount ?? 62;
+  const users = usersData?.users || [];
+  const metrics = usersData?.metrics;
+
+  const totalUsersCount = metrics?.totalUsersCount ?? 0;
+  const activeCount = metrics?.activeCount ?? 0;
+  const pendingCount = metrics?.pendingCount ?? 0;
+  const suspendedCount = metrics?.suspendedCount ?? 0;
 
   // Filter Logic
   const filteredUsers = users.filter((u) => {
@@ -106,78 +116,61 @@ export default function AdminUserManagement({
     }
   };
 
-  const handleToggleStatus = (id: string) => {
-    if (onToggleStatus) {
-      onToggleStatus(id);
-    } else {
-      setUsersState(prev => {
-        const source = prev.length > 0 ? prev : defaultUsers;
-        return source.map((u) => {
-          if (u.id === id) {
-            let nextStatus: 'Active' | 'Pending' | 'Suspended' = 'Active';
-            if (u.status === 'Active') nextStatus = 'Suspended';
-            else if (u.status === 'Suspended') nextStatus = 'Pending';
-            return { ...u, status: nextStatus };
-          }
-          return u;
-        });
+  const handleOpenEditModal = (u: UserManagementRecord) => {
+    setEditingUser(u);
+    const nameParts = u.name.split(' ');
+    setEditFirstName(nameParts[0] || '');
+    setEditLastName(nameParts.slice(1).join(' ') || '');
+    setEditEmail(u.email);
+    setEditRole(u.role);
+    setEditStatus(u.status);
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+
+    try {
+      setSavingUser(true);
+      await adminApi.updateUser(editingUser.id, {
+        firstName: editFirstName,
+        lastName: editLastName,
+        email: editEmail,
+        role: editRole,
+        status: editStatus,
       });
+      alert('User updated successfully!');
+      setEditingUser(null);
+      fetchUsers();
+    } catch (err: any) {
+      console.error('Failed to update user:', err);
+      alert(err.response?.data?.message || 'Failed to update user.');
+    } finally {
+      setSavingUser(false);
     }
   };
 
-  const handleDeleteUser = (id: string) => {
-    if (onDeleteUser) {
-      onDeleteUser(id);
-    } else {
-      if (window.confirm('Are you sure you want to delete this user?')) {
-        setUsersState(prev => {
-          const source = prev.length > 0 ? prev : defaultUsers;
-          return source.filter((u) => u.id !== id);
-        });
+  const handleDeleteUser = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await adminApi.deleteUser(id);
+        alert('User deleted successfully!');
+        fetchUsers();
+      } catch (err: any) {
+        console.error('Failed to delete user:', err);
+        alert('Failed to delete user.');
       }
     }
   };
 
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newUserName || !newUserEmail) return;
-
-    const initials = newUserName
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase();
-
-    const newUser: UserManagementRecord = {
-      id: `#USR${1000 + users.length}`,
-      name: newUserName,
-      avatar: initials || 'US',
-      role: newUserRole,
-      email: newUserEmail,
-      status: 'Active',
-      joined: 'Jan 15, 2026',
-      lastLogin: 'Dec 12, 2026'
-    };
-
-    if (onAddUser) {
-      onAddUser(newUser);
-    } else {
-      setUsersState(prev => [newUser, ...(prev.length > 0 ? prev : defaultUsers)]);
-    }
-
-    setNewUserName('');
-    setNewUserEmail('');
-    setShowAddUserModal(false);
-  };
-
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  // Skeleton Loading State
+  if (loading) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
+      <div className="w-full min-h-screen bg-[#f8fafc] p-6 lg:p-8 animate-pulse space-y-6 max-w-[1400px] mx-auto">
         <div className="h-16 bg-gray-200 rounded-2xl w-full" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-28 bg-gray-200 rounded-2xl" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
           ))}
         </div>
         <div className="h-96 bg-gray-200 rounded-2xl w-full" />
@@ -186,208 +179,167 @@ export default function AdminUserManagement({
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start p-6 lg:p-8 space-y-8 bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
-      <div className="w-full max-w-[1400px] mx-auto space-y-8">
-        
-        {/* Global Error Banner */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-              <span className="font-semibold">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-              Retry
-            </button>
-          </div>
-        )}
+    <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8 text-[#111827] bg-[#f8fafc] min-h-screen">
+      
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">User Management</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-semibold mt-0.5">
+            Overview of registered system users, roles and access permissions
+          </p>
+        </div>
 
-        {/* Header Title */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1d1d1d] tracking-tight">User Management</h1>
-            <p className="text-xs text-gray-500 mt-1">Manage system administrators, agents, architects, and buyers</p>
+        <button
+          type="button"
+          onClick={() => {
+            const csvContent = "data:text/csv;charset=utf-8," + users.map(u => `${u.id},${u.name},${u.email},${u.role},${u.status}`).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "users_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }}
+          className="bg-[#194360] hover:bg-[#123249] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+        >
+          <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span>Export CSV</span>
+        </button>
+      </div>
+
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <span className="font-semibold">{error}</span>
           </div>
-          <button
-            onClick={() => setShowAddUserModal(true)}
-            className="flex items-center gap-2 rounded-xl bg-[#345b79] hover:bg-[#345b79]/90 px-5 py-2.5 text-xs font-bold text-white shadow-sm"
-          >
-            <span className="text-base font-bold">+</span>
-            <span>Add New User</span>
+          <button onClick={fetchUsers} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold cursor-pointer">
+            Retry
           </button>
         </div>
+      )}
 
-        {/* Stats row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex items-center gap-5">
-            <div className="size-14 rounded-full bg-[#345b79]/10 flex items-center justify-center text-[#345b79] shrink-0">
-              <img src="/svg/agent.svg" alt="" className="size-6" />
+      {/* Top 4 Metric Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        {[
+          { label: 'Total Registered Users', val: totalUsersCount, icon: '/svg/agent.svg', bg: 'bg-blue-50 text-[#194360]' },
+          { label: 'Active Users', val: activeCount, icon: '/svg/checkMark.svg', bg: 'bg-emerald-50 text-emerald-600' },
+          { label: 'Pending Approvals', val: pendingCount, icon: '/svg/info.svg', bg: 'bg-amber-50 text-amber-600' },
+          { label: 'Suspended Users', val: suspendedCount, icon: '/svg/construction.svg', bg: 'bg-red-50 text-red-600' }
+        ].map((card, idx) => (
+          <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-gray-500">{card.label}</span>
+              <div className={`size-9 rounded-xl ${card.bg} flex items-center justify-center shrink-0`}>
+                <img alt="" className="size-4.5 opacity-80" src={card.icon} />
+              </div>
             </div>
-            <div>
-              <h4 className="text-2xl font-extrabold text-[#1d1d1d]">
-                {totalUsersCount.toLocaleString()}
-              </h4>
-              <span className="text-[11px] font-bold text-[#6b879c] tracking-wider uppercase">
-                Total Users
-              </span>
-            </div>
+            <h3 className="text-2xl lg:text-3xl font-extrabold text-[#111827]">{card.val}</h3>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Table Card */}
+      <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-6">
+        
+        {/* Search & Filter Control Toolbar */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <input 
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+              placeholder="Search by name, email..."
+              className="w-full bg-gray-50/80 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-[#194360]"
+            />
+            <svg className="size-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
 
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex items-center gap-5">
-            <div className="size-14 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700 shrink-0">
-              <img src="/svg/checkMark.svg" alt="" className="size-6 filter drop-shadow" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-extrabold text-[#1d1d1d]">
-                {activeCount.toLocaleString()}
-              </h4>
-              <span className="text-[11px] font-bold text-[#6b879c] tracking-wider uppercase">
-                Active Users
-              </span>
-            </div>
-          </div>
+          <div className="flex items-center gap-3">
+            <select
+              value={roleFilter}
+              onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-extrabold text-gray-700 focus:outline-none cursor-pointer"
+            >
+              <option value="All Roles">All Roles</option>
+              <option value="Property Buyer">Property Buyer</option>
+              <option value="Real Estate Agent">Real Estate Agent</option>
+              <option value="Architect">Architect</option>
+              <option value="Construction Firm">Construction Firm</option>
+            </select>
 
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex items-center gap-5">
-            <div className="size-14 rounded-full bg-amber-50 flex items-center justify-center text-amber-700 shrink-0">
-              <img src="/svg/clock.svg" alt="" className="size-6" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-extrabold text-[#1d1d1d]">
-                {pendingCount}
-              </h4>
-              <span className="text-[11px] font-bold text-[#6b879c] tracking-wider uppercase">
-                Pending Approval
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex items-center gap-5">
-            <div className="size-14 rounded-full bg-red-50 flex items-center justify-center text-red-700 shrink-0">
-              <img src="/svg/info.svg" alt="" className="size-6" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-extrabold text-[#1d1d1d]">
-                {suspendedCount}
-              </h4>
-              <span className="text-[11px] font-bold text-[#6b879c] tracking-wider uppercase">
-                Suspended
-              </span>
-            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-extrabold text-gray-700 focus:outline-none cursor-pointer"
+            >
+              <option value="All Statuses">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+              <option value="Suspended">Suspended</option>
+            </select>
           </div>
         </div>
 
-        {/* Filtering & Table Section */}
-        <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl shadow-sm overflow-hidden w-full">
-          {/* Filter Toolbar */}
-          <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-3 flex-1">
-              {/* Search */}
-              <div className="relative w-full sm:w-72">
-                <input
-                  type="text"
-                  placeholder="Search by name or email..."
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-                  className="w-full rounded-xl bg-gray-50 border border-gray-200 py-2.5 pl-10 pr-4 text-xs font-medium text-[#1d1d1d] placeholder-gray-400 focus:outline-none focus:border-[#345b79]"
-                />
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <img src="/svg/eye.svg" alt="" className="size-4 opacity-50" />
-                </div>
-              </div>
-
-              {/* Role dropdown */}
-              <select
-                value={roleFilter}
-                onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
-                className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#1d1d1d] focus:outline-none cursor-pointer"
-              >
-                <option>All Roles</option>
-                <option>Property Buyer</option>
-                <option>Real Estate Agent</option>
-                <option>Architect</option>
-                <option>Construction Firm</option>
-              </select>
-
-              {/* Status dropdown */}
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#1d1d1d] focus:outline-none cursor-pointer"
-              >
-                <option>All Statuses</option>
-                <option>Active</option>
-                <option>Pending</option>
-                <option>Suspended</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3 self-end sm:self-auto">
-              <button 
-                onClick={() => onExportCSV ? onExportCSV() : alert('Exporting Users CSV...')}
-                className="flex items-center gap-2 border border-gray-200 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-[#1d1d1d] hover:bg-gray-50 cursor-pointer"
-              >
-                <img src="/svg/bookmark.svg" alt="" className="size-4" />
-                <span>Export CSV</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Data Table */}
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse min-w-[800px] text-xs">
+        {/* User Data Table */}
+        {paginatedUsers.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-                  <th className="py-4 px-6">User</th>
-                  <th className="py-4 px-6">Role</th>
-                  <th className="py-4 px-6">Email</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6">Joined</th>
-                  <th className="py-4 px-6">Last Login</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
+                <tr className="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                  <th className="pb-3 px-3">USER NAME</th>
+                  <th className="pb-3 px-3">ROLE</th>
+                  <th className="pb-3 px-3">STATUS</th>
+                  <th className="pb-3 px-3">JOINED</th>
+                  <th className="pb-3 px-3">LAST LOGIN</th>
+                  <th className="pb-3 px-3 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
-                {paginatedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="py-4 px-6 font-bold text-[#1d1d1d]">
-                      <div className="flex items-center gap-3">
-                        <div className="size-9 rounded-full bg-[#345b79]/10 text-[#345b79] flex items-center justify-center font-bold text-xs shrink-0">
-                          {user.avatar}
-                        </div>
-                        <div>
-                          <div>{user.name}</div>
-                          <div className="text-[10px] text-gray-400 font-normal">ID: {user.id}</div>
-                        </div>
+              <tbody className="divide-y divide-gray-50 text-xs">
+                {paginatedUsers.map((u) => (
+                  <tr key={u.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="py-3.5 px-3 font-extrabold text-[#111827] flex items-center gap-3">
+                      <div className="size-9 rounded-full bg-[#194360]/10 text-[#194360] font-extrabold flex items-center justify-center text-xs shrink-0">
+                        {u.avatar || u.name.charAt(0)}
+                      </div>
+                      <div>
+                        <span className="block font-extrabold text-[#111827]">{u.name}</span>
+                        <span className="text-[10px] text-gray-400 font-semibold">{u.email}</span>
                       </div>
                     </td>
-                    <td className="py-4 px-6">
-                      <span className="inline-block rounded-full bg-blue-50 text-blue-700 px-3 py-1 text-[10px] font-bold">
-                        {user.role}
+                    <td className="py-3.5 px-3 font-bold text-gray-600">{u.role}</td>
+                    <td className="py-3.5 px-3">
+                      <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full ${
+                        u.status === 'Active' ? 'bg-emerald-100 text-emerald-700' :
+                        u.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {u.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-gray-600 font-semibold">{user.email}</td>
-                    <td className="py-4 px-6">
-                      <button
-                        onClick={() => handleToggleStatus(user.id)}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold select-none cursor-pointer ${
-                          user.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : user.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
-                        }`}
-                      >
-                        <span className={`size-1.5 rounded-full ${
-                          user.status === 'Active' ? 'bg-emerald-600' : user.status === 'Pending' ? 'bg-amber-600' : 'bg-red-600'
-                        }`} />
-                        {user.status}
-                      </button>
-                    </td>
-                    <td className="py-4 px-6 text-gray-400 font-medium">{user.joined}</td>
-                    <td className="py-4 px-6 text-gray-400 font-medium">{user.lastLogin}</td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-3.5 px-3 text-gray-500 font-semibold">{u.joined}</td>
+                    <td className="py-3.5 px-3 text-gray-400 font-medium">{u.lastLogin}</td>
+                    <td className="py-3.5 px-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer">
-                          <img src="/svg/eye.svg" alt="View" className="size-3.5" />
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditModal(u)}
+                          className="px-3 py-1.5 rounded-lg bg-blue-50 text-[#194360] hover:bg-blue-100 text-[10px] font-extrabold cursor-pointer transition-colors"
+                        >
+                          Edit
                         </button>
-                        <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer">
-                          <img src="/svg/clock.svg" alt="Delete" className="size-3.5 filter hue-rotate-320" />
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUser(u.id)}
+                          className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-[10px] font-extrabold cursor-pointer transition-colors"
+                        >
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -396,101 +348,128 @@ export default function AdminUserManagement({
               </tbody>
             </table>
           </div>
+        ) : (
+          <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            <p className="text-xs font-bold text-gray-400">No registered users found in database.</p>
+          </div>
+        )}
 
-          {/* Pagination Controls Bar */}
-          <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-gray-500 bg-white">
-            <span className="text-gray-400">
-              Showing {filteredUsers.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + itemsPerPage, filteredUsers.length)} of {filteredUsers.length} users
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <span className="text-xs font-bold text-gray-400">
+              Page {currentPage} of {totalPages}
             </span>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-extrabold text-gray-600 disabled:opacity-40 cursor-pointer"
               >
                 Previous
               </button>
-              
-              <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`size-8 rounded-lg flex items-center justify-center font-bold text-xs cursor-pointer transition-colors ${
-                      currentPage === page ? 'bg-[#345b79] text-white' : 'hover:bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-              </div>
-
               <button
+                type="button"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-extrabold text-gray-600 disabled:opacity-40 cursor-pointer"
               >
                 Next
               </button>
             </div>
           </div>
-
-        </div>
+        )}
 
       </div>
 
-      {/* Add User Modal */}
-      {showAddUserModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
-            <h4 className="text-lg font-bold text-[#1d1d1d]">Add New User</h4>
-            <p className="text-xs text-gray-400 mb-5">Create a new administrator, agent, or client profile.</p>
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 max-w-md w-full shadow-xl border border-gray-100 space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <h3 className="text-base font-extrabold text-[#111827]">Edit User Account</h3>
+              <button onClick={() => setEditingUser(null)} className="text-xs font-bold text-gray-400 hover:text-gray-600">✕</button>
+            </div>
 
-            <form onSubmit={handleAddUser} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-extrabold text-[#6b879c] uppercase tracking-wider mb-1">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Priyantha Perera"
-                  value={newUserName}
-                  onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-semibold text-[#1d1d1d] outline-none focus:border-[#345b79]"
-                />
+            <form onSubmit={handleSaveUser} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold uppercase text-gray-500">First Name</label>
+                  <input 
+                    type="text"
+                    value={editFirstName}
+                    onChange={(e) => setEditFirstName(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold uppercase text-gray-500">Last Name</label>
+                  <input 
+                    type="text"
+                    value={editLastName}
+                    onChange={(e) => setEditLastName(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-extrabold text-[#6b879c] uppercase tracking-wider mb-1">Email Address</label>
-                <input
+              <div className="space-y-1">
+                <label className="text-[10px] font-extrabold uppercase text-gray-500">Email Address</label>
+                <input 
                   type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800"
                   required
-                  placeholder="e.g. priyantha@email.com"
-                  value={newUserEmail}
-                  onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-semibold text-[#1d1d1d] outline-none focus:border-[#345b79]"
                 />
               </div>
 
-              <div>
-                <label className="block text-[10px] font-extrabold text-[#6b879c] uppercase tracking-wider mb-1">System Role</label>
-                <select
-                  value={newUserRole}
-                  onChange={(e) => setNewUserRole(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-[#1d1d1d] outline-none cursor-pointer"
-                >
-                  <option>Property Buyer</option>
-                  <option>Real Estate Agent</option>
-                  <option>Architect</option>
-                  <option>Construction Firm</option>
-                </select>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold uppercase text-gray-500">Role</label>
+                  <select 
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800"
+                  >
+                    <option value="BUYER">Property Buyer</option>
+                    <option value="AGENT">Real Estate Agent</option>
+                    <option value="ARCHITECT">Architect</option>
+                    <option value="CONTRACTOR">Construction Firm</option>
+                    <option value="ADMIN">Administrator</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-extrabold uppercase text-gray-500">Status</label>
+                  <select 
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowAddUserModal(false)} className="px-5 py-2.5 rounded-full text-xs font-bold text-gray-500 cursor-pointer">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-xs font-extrabold text-gray-600"
+                >
                   Cancel
                 </button>
-                <button type="submit" className="px-6 py-2.5 bg-[#345b79] text-white rounded-full text-xs font-bold shadow-sm cursor-pointer">
-                  Add User
+                <button
+                  type="submit"
+                  disabled={savingUser}
+                  className="flex-1 py-2.5 rounded-xl bg-[#194360] text-white text-xs font-extrabold disabled:opacity-50"
+                >
+                  {savingUser ? 'Saving...' : 'Save User'}
                 </button>
               </div>
             </form>

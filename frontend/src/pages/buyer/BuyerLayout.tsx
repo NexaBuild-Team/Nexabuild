@@ -1,108 +1,71 @@
-import React, { useState } from 'react';
-import { Link, useLocation, Outlet } from 'react-router';
-import { useAuth } from '../../context/AuthContext';
+import React from 'react';
+import { Outlet } from 'react-router';
+import { RoleSidebarLayout } from '../../components/RoleSidebarLayout';
 
 export const BuyerLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
-  const { user, logout } = useAuth();
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
   const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: '📊' },
-    { label: 'Saved Properties', href: '/dashboard/buyer/saved-properties', icon: '❤️' },
-    { label: 'Saved Lands', href: '/dashboard/buyer/saved-lands', icon: '🏞️' },
-    { label: 'Recently Viewed', href: '/dashboard/buyer/recently-viewed', icon: '👁️' },
-    { label: 'Browse Properties', href: '/property-listing', icon: '🏠' },
-    { label: 'Browse Lands', href: '/land', icon: '📍' },
+    {
+      label: 'Dashboard',
+      href: '/dashboard',
+      icon: '/svg/grid-view-icon.svg',
+    },
+    {
+      label: 'AI Property Recommendations',
+      href: '/property-listing',
+      icon: '/svg/home.svg',
+    },
+    {
+      label: 'AI Land Recommendations',
+      href: '/land',
+      icon: '/svg/land-plot-icon.svg',
+    },
+    {
+      label: 'Saved Properties',
+      href: '/dashboard/buyer/saved-properties',
+      icon: '/svg/heart.svg',
+    },
+    {
+      label: 'Saved Lands',
+      href: '/dashboard/buyer/saved-lands',
+      icon: '/svg/bookmark.svg',
+    },
+    {
+      label: 'Recent Searches',
+      href: '/dashboard/buyer/recently-viewed',
+      icon: (
+        <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Notifications',
+      href: '/dashboard/buyer/notifications',
+      icon: (
+        <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      ),
+    },
+    {
+      label: 'My Profile',
+      href: '/dashboard/buyer/profile',
+      icon: (
+        <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Settings',
+      href: '/dashboard/buyer/settings',
+      icon: '/svg/sparks-settings-icon.svg',
+    },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard') return location.pathname === '/dashboard' || location.pathname === '/dashboard/buyer';
-    return location.pathname.startsWith(href);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col pt-[68px]">
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
-        {/* Left Sidebar */}
-        <aside className="hidden lg:flex flex-col w-64 bg-white rounded-2xl border border-gray-200/80 p-5 shrink-0 shadow-sm self-start sticky top-[88px]">
-          {/* User Profile Header */}
-          <div className="flex items-center gap-3 pb-5 mb-5 border-b border-gray-100">
-            <div className="size-11 rounded-full bg-[#be5d3f] text-white flex items-center justify-center font-bold text-lg">
-              {user?.firstName ? user.firstName[0] : user?.email[0]}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-gray-900 truncate">
-                {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : user?.email}
-              </span>
-              <span className="text-xs text-gray-500 font-medium capitalize">Buyer Account</span>
-            </div>
-          </div>
-
-          {/* Navigation Items */}
-          <nav className="space-y-1.5 flex-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  isActive(item.href)
-                    ? 'bg-[#345b79] text-white shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                <span className="text-base">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Logout Footer */}
-          <div className="pt-4 mt-6 border-t border-gray-100">
-            <button
-              onClick={logout}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <span className="text-base">🚪</span>
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </aside>
-
-        {/* Mobile Toggle Button */}
-        <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-xl border border-gray-200 mb-2 w-full">
-          <span className="text-xs font-bold text-[#345b79] uppercase tracking-wider">Buyer Portal</span>
-          <button
-            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            className="text-xs bg-[#345b79] text-white font-bold px-3 py-1.5 rounded-lg"
-          >
-            {mobileSidebarOpen ? 'Close Menu' : 'Dashboard Menu'}
-          </button>
-        </div>
-
-        {mobileSidebarOpen && (
-          <div className="lg:hidden bg-white p-4 rounded-xl border border-gray-200 mb-4 w-full space-y-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setMobileSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${
-                  isActive(item.href) ? 'bg-[#345b79] text-white' : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Main Content Area */}
-        <main className="flex-1 min-w-0">
-          {children ? children : <Outlet />}
-        </main>
-      </div>
-    </div>
+    <RoleSidebarLayout portalTitle="Buyer Portal" roleLabel="Property Buyer" navItems={navItems}>
+      {children ? children : <Outlet />}
+    </RoleSidebarLayout>
   );
 };

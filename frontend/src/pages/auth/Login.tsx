@@ -49,7 +49,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
   // Validation & Internal Submission States
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // Fallback defaults for Hero Banner
   const heroTagline = data?.heroTagline || "AI-POWERED INTELLIGENCE";

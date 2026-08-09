@@ -1,87 +1,10 @@
-import React, { useState } from 'react';
-
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
-
-export interface AdminKPICardData {
-  name: string;
-  value: string | number;
-  change: string;
-  isPositive: boolean;
-  icon: string;
-  color: string;
-}
-
-export interface GovernanceListingItem {
-  id: string;
-  title: string;
-  type: 'Property' | 'Land';
-  owner: string;
-  district: string;
-  price: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-}
-
-export interface AdminUserRegistrationItem {
-  name: string;
-  email: string;
-  role: string;
-  district: string;
-  date: string;
-  status: 'Active' | 'Pending';
-}
-
-export interface AdminListingCardItem {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  type: string;
-  status: string;
-  imageUrl?: string;
-}
-
-export interface PopularDistrictItem {
-  name: string;
-  count: number;
-  percentage: number;
-  color: string;
-}
-
-export interface AdminActivityItem {
-  text: string;
-  time: string;
-  type: 'user' | 'listing' | 'system' | 'company';
-}
-
-export interface AdminNotificationItem {
-  text: string;
-  type: 'warning' | 'info' | 'critical';
-}
-
-export interface AdminAIAnalyticsData {
-  recommendationsToday?: number | string;
-  avgMatchScore?: string;
-  convertedToViews?: number | string;
-  leadsGenerated?: number | string;
-}
-
-export interface AdminDashboardPageData {
-  kpiStats?: AdminKPICardData[];
-  userGrowthBars?: number[];
-  propertyGrowthBars?: number[];
-  landGrowthBars?: number[];
-  aiAnalytics?: AdminAIAnalyticsData;
-  governanceListings?: GovernanceListingItem[];
-  recentRegistrations?: AdminUserRegistrationItem[];
-  latestProperties?: AdminListingCardItem[];
-  latestLands?: AdminListingCardItem[];
-  popularDistricts?: PopularDistrictItem[];
-  activities?: AdminActivityItem[];
-  notifications?: AdminNotificationItem[];
-}
+import { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { adminApi } from '../../services/adminApi';
+import type { AdminDashboardData } from '../../services/adminApi';
 
 export interface AdminDashboardProps {
-  data?: AdminDashboardPageData | null;
+  data?: AdminDashboardData | null;
   isLoading?: boolean;
   error?: string | null;
   onApproveGovernance?: (id: string) => void;
@@ -90,96 +13,77 @@ export interface AdminDashboardProps {
   onViewAllProperties?: () => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultKpis: AdminKPICardData[] = [
-  { name: 'Total Users', value: '12,480', change: '+8.2%', isPositive: true, icon: '/svg/agent.svg', color: 'bg-[#345b79]/10 text-[#345b79]' },
-  { name: 'Total Properties', value: '4,852', change: '+5.4%', isPositive: true, icon: '/svg/home.svg', color: 'bg-[#495d38]/10 text-[#495d38]' },
-  { name: 'Total Lands', value: '2,316', change: '+3.1%', isPositive: true, icon: '/svg/land-plot-icon.svg', color: 'bg-[#be5d3f]/10 text-[#be5d3f]' },
-  { name: 'Total Companies', value: '348', change: '+2.8%', isPositive: true, icon: '/svg/construction.svg', color: 'bg-[#6b879c]/10 text-[#6b879c]' }
-];
-
-const defaultUserBars = [38, 48, 43, 57, 72, 62, 76, 91];
-const defaultPropertyBars = [28, 33, 38, 52, 48, 62, 81, 86];
-const defaultLandBars = [19, 28, 24, 43, 38, 57, 72, 81];
-
-const defaultGovernanceListings: GovernanceListingItem[] = [
-  { id: 'G1', title: '3-Bed Apartment', type: 'Property', owner: 'Kofi Acheampong', district: 'Spintex', price: 'LKR 680K', status: 'Pending' },
-  { id: 'G2', title: 'Industrial Plot 4A', type: 'Land', owner: 'BuildRight Ltd.', district: 'Tema', price: 'LKR 320K', status: 'Pending' }
-];
-
-const defaultRegistrations: AdminUserRegistrationItem[] = [
-  { name: 'Amara Diallo', email: 'amara.diallo@email.com', role: 'Property Buyer', district: 'Accra Central', date: 'Dec 12, 2024', status: 'Active' },
-  { name: 'James Osei', email: 'james.osei@email.com', role: 'Architect', district: 'East Legon', date: 'Dec 11, 2024', status: 'Pending' },
-  { name: 'Priya Sharma', email: 'priya.sharma@email.com', role: 'Land Buyer', district: 'Airport Res.', date: 'Dec 11, 2024', status: 'Active' }
-];
-
-const defaultProperties: AdminListingCardItem[] = [
-  { id: '1', title: '4-Bed Luxury Villa', location: 'East Legon, Accra', price: 'LKR 2.4M', type: 'SALE', status: 'Pending', imageUrl: '/property_card_1.png' },
-  { id: '2', title: 'Commercial Office', location: 'Airport City, Accra', price: 'LKR 850K', type: 'RENT', status: 'Active', imageUrl: '/property_card_2.png' }
-];
-
-const defaultLands: AdminListingCardItem[] = [
-  { id: '3', title: 'Residential Plot 12', location: 'Adenta, Accra • 500 sqm', price: 'LKR 85K', type: 'LAND', status: 'Active', imageUrl: '/property_card_3.png' },
-  { id: '4', title: 'Commercial Land B4', location: 'Tema Industrial • 2000 sqm', price: 'LKR 420K', type: 'LAND', status: 'Pending', imageUrl: '/property_card_4.png' }
-];
-
-const defaultDistricts: PopularDistrictItem[] = [
-  { name: 'East Legon', count: 284, percentage: 85, color: 'bg-[#345b79]' },
-  { name: 'Airport City', count: 218, percentage: 70, color: 'bg-[#be5d3f]' },
-  { name: 'Labone', count: 195, percentage: 60, color: 'bg-[#928d64]' },
-  { name: 'Tema', count: 162, percentage: 50, color: 'bg-[#345b79]' }
-];
-
-const defaultActivities: AdminActivityItem[] = [
-  { text: 'Amara Diallo registered as Property Buyer', time: '10 mins ago', type: 'user' },
-  { text: 'James Harrington added Skyline Residences listing', time: '1 hour ago', type: 'listing' },
-  { text: 'System backup completed successfully', time: '2 hours ago', type: 'system' },
-  { text: 'New verification request from ArchTech Ltd', time: '4 hours ago', type: 'company' }
-];
-
-const defaultNotifications: AdminNotificationItem[] = [
-  { text: '3 pending agent verifications require review', type: 'warning' },
-  { text: 'API usage limits reached 85% of monthly quota', type: 'info' },
-  { text: 'Server response time spike detected in Region East', type: 'critical' }
-];
-
-// ─── Component Implementation ───────────────────────────────────────────────
-
 export default function AdminDashboard({
-  data = null,
-  isLoading = false,
-  error = null,
+  data: propsData = null,
+  isLoading: propsLoading = false,
+  error: propsError = null,
   onApproveGovernance,
   onRejectGovernance,
   onViewAllUsers,
   onViewAllProperties
 }: AdminDashboardProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [governanceState, setGovernanceState] = useState<GovernanceListingItem[]>([]);
+  const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(propsData);
+  const [loading, setLoading] = useState<boolean>(!propsData && propsLoading);
+  const [error, setError] = useState<string | null>(propsError);
+  const [governanceState, setGovernanceState] = useState<any[]>([]);
 
-  const kpis = data?.kpiStats || defaultKpis;
-  const userGrowthBars = data?.userGrowthBars || defaultUserBars;
-  const propertyGrowthBars = data?.propertyGrowthBars || defaultPropertyBars;
-  const landGrowthBars = data?.landGrowthBars || defaultLandBars;
-  const governanceListings = data?.governanceListings !== undefined 
-    ? data.governanceListings 
-    : (governanceState.length > 0 ? governanceState : defaultGovernanceListings);
-  const registrations = data?.recentRegistrations || defaultRegistrations;
-  const latestProperties = data?.latestProperties || defaultProperties;
-  const latestLands = data?.latestLands || defaultLands;
-  const popularDistricts = data?.popularDistricts || defaultDistricts;
-  const activities = data?.activities || defaultActivities;
-  const notifications = data?.notifications || defaultNotifications;
+  // Edit User Modal State
+  const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRole, setEditRole] = useState('BUYER');
+  const [editDistrict, setEditDistrict] = useState('');
+  const [editStatus, setEditStatus] = useState('Active');
+  const [savingUser, setSavingUser] = useState(false);
+
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await adminApi.getDashboardData();
+      setDashboardData(res);
+    } catch (err: any) {
+      console.error('Failed to fetch admin dashboard data:', err);
+      setError('Failed to load admin dashboard data from backend server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!propsData) {
+      fetchDashboard();
+    }
+  }, [propsData]);
+
+  const kpis = dashboardData?.kpiStats || [
+    { name: 'TOTAL USERS', value: '0', change: '0%', isPositive: false },
+    { name: 'TOTAL PROPERTIES', value: '0', change: '0%', isPositive: false },
+    { name: 'TOTAL LANDS', value: '0', change: '0%', isPositive: false },
+    { name: 'TOTAL COMPANIES', value: '0', change: '0%', isPositive: false },
+  ];
+
+  const userGrowthData = dashboardData?.userGrowthData || [];
+  const propertyGrowthData = dashboardData?.propertyGrowthData || [];
+  const landGrowthData = dashboardData?.landGrowthData || [];
+  const aiBarData = dashboardData?.aiBarData || [];
+  const registrations = dashboardData?.registrations || [];
+  const latestProperties = dashboardData?.latestProperties || [];
+  const latestLands = dashboardData?.latestLands || [];
+  const governanceListings = dashboardData?.governanceListings !== undefined 
+    ? dashboardData.governanceListings 
+    : governanceState;
+  const popularDistricts = dashboardData?.popularDistricts || [];
+  const activities = dashboardData?.activities || [];
+  const notifications = dashboardData?.notifications || [];
+  const health = dashboardData?.systemHealth || { cpuUsage: 0, memoryUsage: 0, apiUptime: 100, storageUsedGb: 0, storageTotalGb: 2000 };
 
   const handleApprove = (id: string) => {
     if (onApproveGovernance) {
       onApproveGovernance(id);
     } else {
-      setGovernanceState(prev => {
-        const source = prev.length > 0 ? prev : defaultGovernanceListings;
-        return source.map(item => item.id === id ? { ...item, status: 'Approved' } : item);
-      });
+      setGovernanceState((prev) => prev.map((item) => item.id === id ? { ...item, status: 'Approved' } : item));
     }
   };
 
@@ -187,21 +91,70 @@ export default function AdminDashboard({
     if (onRejectGovernance) {
       onRejectGovernance(id);
     } else {
-      setGovernanceState(prev => {
-        const source = prev.length > 0 ? prev : defaultGovernanceListings;
-        return source.map(item => item.id === id ? { ...item, status: 'Rejected' } : item);
-      });
+      setGovernanceState((prev) => prev.map((item) => item.id === id ? { ...item, status: 'Rejected' } : item));
     }
   };
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  // Open Edit User Modal
+  const handleOpenEditModal = (u: any) => {
+    setEditingUser(u);
+    const nameParts = (u.name || '').split(' ');
+    setEditFirstName(nameParts[0] || '');
+    setEditLastName(nameParts.slice(1).join(' ') || '');
+    setEditEmail(u.email || '');
+    setEditRole(u.role || 'BUYER');
+    setEditDistrict(u.district || '');
+    setEditStatus(u.status || 'Active');
+  };
+
+  // Submit User Edit
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+
+    try {
+      setSavingUser(true);
+      await adminApi.updateUser(editingUser.id, {
+        firstName: editFirstName,
+        lastName: editLastName,
+        email: editEmail,
+        role: editRole,
+        district: editDistrict,
+        status: editStatus,
+      });
+      alert('User details updated successfully!');
+      setEditingUser(null);
+      fetchDashboard();
+    } catch (err: any) {
+      console.error('Failed to update user:', err);
+      alert(err.response?.data?.message || 'Failed to update user details.');
+    } finally {
+      setSavingUser(false);
+    }
+  };
+
+  // Delete User
+  const handleDeleteUser = async (u: any) => {
+    if (window.confirm(`Are you sure you want to delete user "${u.name}" (${u.email})?`)) {
+      try {
+        await adminApi.deleteUser(u.id);
+        alert('User deleted successfully!');
+        fetchDashboard();
+      } catch (err: any) {
+        console.error('Failed to delete user:', err);
+        alert(err.response?.data?.message || 'Failed to delete user.');
+      }
+    }
+  };
+
+  // Skeleton Loading State
+  if (loading) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
+      <div className="w-full min-h-screen bg-[#e6e0d4]/40 p-6 lg:p-8 animate-pulse space-y-6">
         <div className="h-16 bg-gray-200 rounded-2xl w-full" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-36 bg-gray-200 rounded-2xl" />
+            <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
           ))}
         </div>
         <div className="h-96 bg-gray-200 rounded-2xl w-full" />
@@ -210,299 +163,665 @@ export default function AdminDashboard({
   }
 
   return (
-    <div className="h-full w-full flex flex-col lg:flex-row overflow-hidden bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
+    <div className="w-full min-h-screen bg-[#e6e0d4]/40 p-4 sm:p-6 lg:p-8 space-y-6 text-[#1d1d1d] relative">
       
-      {/* Mobile Drawer Trigger Header */}
-      <header className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50">
-            <svg className="size-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <svg className="size-5 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
+            <span className="font-semibold">{error}</span>
+          </div>
+          <button onClick={fetchDashboard} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold cursor-pointer">
+            Retry
           </button>
-          <h1 className="text-lg font-bold text-[#1b1b1b]">Admin Dashboard</h1>
         </div>
-      </header>
+      )}
 
-      {/* Main Content Scroll Container */}
-      <main className="flex-1 h-full overflow-y-auto p-6 lg:p-8 space-y-8 max-w-[1400px]">
+      {/* TOP 4 KPI CARDS ROW */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        {kpis.map((kpi, idx) => (
+          <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-200/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <div className="size-9 rounded-xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {idx === 0 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />}
+                  {idx === 1 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />}
+                  {idx === 2 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />}
+                  {idx === 3 && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />}
+                </svg>
+              </div>
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-0.5 ${kpi.isPositive ? 'text-emerald-600 bg-emerald-50' : 'text-gray-500 bg-gray-100'}`}>
+                {kpi.change}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-black text-[#1d1d1d] tracking-tight">{kpi.value}</h3>
+              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mt-0.5">{kpi.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MAIN TWO-COLUMN DASHBOARD GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* Global Error Banner */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-              <span className="font-semibold">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* TOP ROW KPI METRICS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-          {kpis.map((kpi) => (
-            <div key={kpi.name} className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-44 relative overflow-hidden">
-              <div className="flex items-center justify-between">
-                <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${kpi.color}`}>
-                  <img src={kpi.icon} alt="" className="size-5" />
-                </div>
-                <div className="bg-emerald-50 px-2 py-1 rounded text-emerald-700 text-xs font-bold flex items-center gap-1">
-                  <span>↑</span>
-                  <span>{kpi.change}</span>
-                </div>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-2xl font-bold text-[#1b1b1b]">{kpi.value}</h3>
-              </div>
-              <div className="mt-3">
-                <span className="text-xs font-semibold text-[#72787e] tracking-wider uppercase">{kpi.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* TREND GROWTH CHARTS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* LEFT COLUMN (8 COLS) */}
+        <div className="lg:col-span-8 space-y-6">
           
-          {/* User Growth Chart */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-64">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-xs font-bold text-[#72787e] tracking-wider uppercase block">User Growth</span>
-                <h4 className="text-xl font-bold text-[#1b1b1b] mt-1">12,480 <span className="text-emerald-600 text-xs font-normal pl-1">↑ 8.2%</span></h4>
+          {/* Row 1: Recharts Growth Charts */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            {/* User Growth Chart */}
+            <div className="bg-white rounded-[20px] p-5 border border-gray-200/60 shadow-sm flex flex-col justify-between h-52">
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">USER GROWTH</span>
+                  <h4 className="text-lg font-extrabold text-[#1d1d1d] mt-0.5">{kpis[0]?.value || 0}</h4>
+                </div>
+                <span className="text-[9px] font-bold text-gray-400">Last 12 mo</span>
               </div>
-              <span className="text-xs font-semibold text-[#72787e] text-right">Last 12 mo</span>
+              <div className="h-24 w-full pt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={userGrowthData}>
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                    <Tooltip cursor={{ fill: '#e2e8f0' }} contentStyle={{ borderRadius: 8, fontSize: 10 }} />
+                    <Bar dataKey="count" fill="#345b79" radius={[4, 4, 0, 0]} barSize={8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="flex items-end justify-between h-24 px-2 mt-4">
-              {userGrowthBars.map((val, idx) => (
-                <div
-                  key={idx}
-                  className={`w-3 rounded-t transition-all ${idx === userGrowthBars.length - 1 ? 'bg-[#345b79]' : 'bg-[#345b79]/20'}`}
-                  style={{ height: `${val}%` }}
-                />
-              ))}
+
+            {/* Property Growth Chart */}
+            <div className="bg-white rounded-[20px] p-5 border border-gray-200/60 shadow-sm flex flex-col justify-between h-52">
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">PROPERTY GROWTH</span>
+                  <h4 className="text-lg font-extrabold text-[#1d1d1d] mt-0.5">{kpis[1]?.value || 0}</h4>
+                </div>
+                <span className="text-[9px] font-bold text-gray-400">Last 12 mo</span>
+              </div>
+              <div className="h-24 w-full pt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={propertyGrowthData}>
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                    <Tooltip cursor={{ fill: '#e2e8f0' }} contentStyle={{ borderRadius: 8, fontSize: 10 }} />
+                    <Bar dataKey="count" fill="#be5d3f" radius={[4, 4, 0, 0]} barSize={8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Land Growth Chart */}
+            <div className="bg-white rounded-[20px] p-5 border border-gray-200/60 shadow-sm flex flex-col justify-between h-52">
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">LAND GROWTH</span>
+                  <h4 className="text-lg font-extrabold text-[#1d1d1d] mt-0.5">{kpis[2]?.value || 0}</h4>
+                </div>
+                <span className="text-[9px] font-bold text-gray-400">Last 12 mo</span>
+              </div>
+              <div className="h-24 w-full pt-2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={landGrowthData}>
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                    <Tooltip cursor={{ fill: '#e2e8f0' }} contentStyle={{ borderRadius: 8, fontSize: 10 }} />
+                    <Bar dataKey="count" fill="#928d64" radius={[4, 4, 0, 0]} barSize={8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Row 2: Recent Registrations Table with Actions */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-[#1d1d1d]">Recent Registrations</h3>
+              <button onClick={onViewAllUsers} className="text-xs font-extrabold text-[#345b79] hover:underline cursor-pointer">
+                View All
+              </button>
+            </div>
+
+            {registrations.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[550px]">
+                  <thead>
+                    <tr className="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                      <th className="pb-3 px-2">USER</th>
+                      <th className="pb-3 px-2">ROLE</th>
+                      <th className="pb-3 px-2">DISTRICT</th>
+                      <th className="pb-3 px-2">DATE</th>
+                      <th className="pb-3 px-2">STATUS</th>
+                      <th className="pb-3 px-2 text-right">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50 text-xs">
+                    {registrations.map((u) => (
+                      <tr key={u.id || u.email} className="hover:bg-gray-50/80 transition-colors">
+                        <td className="py-3 px-2 font-extrabold text-[#1d1d1d] flex items-center gap-2.5">
+                          <div className="size-7 rounded-full bg-[#345b79]/10 text-[#345b79] flex items-center justify-center font-bold text-[10px]">
+                            {u.name.charAt(0)}
+                          </div>
+                          <div>
+                            <span className="block font-extrabold text-[#1d1d1d]">{u.name}</span>
+                            <span className="text-[10px] text-gray-400 font-normal">{u.email}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-2 font-semibold text-gray-600">{u.role}</td>
+                        <td className="py-3 px-2 font-semibold text-gray-500">{u.district}</td>
+                        <td className="py-3 px-2 font-medium text-gray-400">{u.date}</td>
+                        <td className="py-3 px-2">
+                          <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
+                            u.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {u.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModal(u)}
+                              className="px-2.5 py-1 rounded-lg bg-blue-50 text-[#345b79] hover:bg-blue-100 text-[10px] font-extrabold transition-colors cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteUser(u)}
+                              className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-[10px] font-extrabold transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-xs font-bold text-gray-400">No users registered in database.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Row 3: Latest Properties & Latest Lands */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* Latest Properties */}
+            <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#1d1d1d]">Latest Properties</h3>
+                <button onClick={onViewAllProperties} className="text-xs font-bold text-[#345b79] hover:underline cursor-pointer">View All</button>
+              </div>
+
+              {latestProperties.length > 0 ? (
+                <div className="space-y-3">
+                  {latestProperties.map((p) => (
+                    <div key={p.id} className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 bg-gray-50/50">
+                      <img src={p.imageUrl} alt="" className="size-14 rounded-lg object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-extrabold text-[#1d1d1d] truncate">{p.title}</h4>
+                        <p className="text-[10px] text-gray-400 font-medium truncate">{p.location}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] font-black uppercase bg-gray-200 px-1.5 py-0.5 rounded">{p.type}</span>
+                          <span className="text-[9px] font-extrabold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">{p.status}</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black text-[#345b79] shrink-0">{p.price}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                  <p className="text-xs font-bold text-gray-400">No properties submitted.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Latest Lands */}
+            <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#1d1d1d]">Latest Lands</h3>
+                <button onClick={onViewAllProperties} className="text-xs font-bold text-[#345b79] hover:underline cursor-pointer">View All</button>
+              </div>
+
+              {latestLands.length > 0 ? (
+                <div className="space-y-3">
+                  {latestLands.map((l) => (
+                    <div key={l.id} className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 bg-gray-50/50">
+                      <img src={l.imageUrl} alt="" className="size-14 rounded-lg object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-extrabold text-[#1d1d1d] truncate">{l.title}</h4>
+                        <p className="text-[10px] text-gray-400 font-medium truncate">{l.location}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded ${l.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                            {l.status}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black text-[#345b79] shrink-0">{l.price}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                  <p className="text-xs font-bold text-gray-400">No lands submitted.</p>
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* Row 4: Most Popular Districts & Market Insights */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* Most Popular Districts */}
+            <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#1d1d1d]">Most Popular Districts</h3>
+                <span className="text-[10px] font-bold text-gray-400">By active listings</span>
+              </div>
+
+              {popularDistricts.length > 0 ? (
+                <div className="space-y-3">
+                  {popularDistricts.map((d, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex justify-between text-xs font-bold">
+                        <span className="text-[#1d1d1d]">{d.name}</span>
+                        <span className="text-gray-500">{d.count}</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-[#345b79] h-full rounded-full" style={{ width: `${(d.count / 300) * 100}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                  <p className="text-xs font-bold text-gray-400">No district metrics available.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Market Insights */}
+            <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-[#1d1d1d]">Market Insights</h3>
+                <span className="text-[10px] font-bold text-gray-400 font-medium">Sri Lanka Region</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-gray-50/80 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-bold text-gray-400 uppercase block">AVG. PROPERTY PRICE</span>
+                  <h4 className="text-sm font-black text-[#1d1d1d] mt-1">LKR 0</h4>
+                  <span className="text-[9px] font-bold text-gray-400">0%</span>
+                </div>
+                <div className="p-3 bg-gray-50/80 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-bold text-gray-400 uppercase block">AVG. LAND PRICE / PERCH</span>
+                  <h4 className="text-sm font-black text-[#1d1d1d] mt-1">LKR 0</h4>
+                  <span className="text-[9px] font-bold text-gray-400">0%</span>
+                </div>
+                <div className="p-3 bg-gray-50/80 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-bold text-gray-400 uppercase block">DAYS ON MARKET (AVG)</span>
+                  <h4 className="text-sm font-black text-[#1d1d1d] mt-1">0 days</h4>
+                  <span className="text-[9px] font-bold text-gray-400">0%</span>
+                </div>
+                <div className="p-3 bg-gray-50/80 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-bold text-gray-400 uppercase block">AGENT ACTIVITY SCORE</span>
+                  <h4 className="text-sm font-black text-[#1d1d1d] mt-1">0/100</h4>
+                  <span className="text-[9px] font-bold text-gray-400">0%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Row 5: AI Recommendation Analytics (Dark Blue Card with Recharts) */}
+          <div className="bg-[#194360] rounded-[24px] p-6 lg:p-8 text-white space-y-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-extrabold tracking-tight">AI Recommendation Analytics</h3>
+                <p className="text-xs text-white/70 font-medium">Powered by NexAI Engine • Real-time matching and verification</p>
+              </div>
+              <span className="bg-white/15 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                AI Active
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <h4 className="text-2xl lg:text-3xl font-black">0</h4>
+                <span className="text-[9px] font-bold text-white/60 uppercase">RECOMMENDATIONS TODAY</span>
+              </div>
+              <div>
+                <h4 className="text-2xl lg:text-3xl font-black">0%</h4>
+                <span className="text-[9px] font-bold text-white/60 uppercase">AVG. MATCH SCORE</span>
+              </div>
+              <div>
+                <h4 className="text-2xl lg:text-3xl font-black">0</h4>
+                <span className="text-[9px] font-bold text-white/60 uppercase">CONVERTED TO VIEWS</span>
+              </div>
+              <div>
+                <h4 className="text-2xl lg:text-3xl font-black">0</h4>
+                <span className="text-[9px] font-bold text-white/60 uppercase">LEADS GENERATED</span>
+              </div>
+            </div>
+
+            <div className="h-20 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={aiBarData.length > 0 ? aiBarData : [
+                  { month: 'Jul', count: 0 },
+                  { month: 'Aug', count: 0 },
+                  { month: 'Sep', count: 0 },
+                  { month: 'Oct', count: 0 },
+                  { month: 'Nov', count: 0 },
+                  { month: 'Dec', count: 0 },
+                  { month: 'Jan', count: 0 },
+                ]}>
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.6)', fontWeight: 'bold' }} />
+                  <Tooltip cursor={{ fill: 'rgba(255,255,255,0.1)' }} contentStyle={{ backgroundColor: '#123249', border: 'none', borderRadius: 8, fontSize: 10, color: '#fff' }} />
+                  <Bar dataKey="count" fill="#ff906e" radius={[4, 4, 0, 0]} barSize={10} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Property Growth Chart */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-64">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-xs font-bold text-[#72787e] tracking-wider uppercase block">Property Growth</span>
-                <h4 className="text-xl font-bold text-[#1b1b1b] mt-1">4,852 <span className="text-emerald-600 text-xs font-normal pl-1">↑ 5.4%</span></h4>
-              </div>
-              <span className="text-xs font-semibold text-[#72787e] text-right">Last 12 mo</span>
+          {/* Row 6: Governance Pending Listings */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-[#1d1d1d]">Pending Listings</h3>
+              <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-extrabold">
+                {governanceListings.filter(i => i.status === 'Pending').length} Awaiting Review
+              </span>
             </div>
-            <div className="flex items-end justify-between h-24 px-2 mt-4">
-              {propertyGrowthBars.map((val, idx) => (
-                <div
-                  key={idx}
-                  className={`w-3 rounded-t transition-all ${idx === propertyGrowthBars.length - 1 ? 'bg-[#be5d3f]' : 'bg-[#be5d3f]/20'}`}
-                  style={{ height: `${val}%` }}
-                />
-              ))}
-            </div>
-          </div>
 
-          {/* Land Growth Chart */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-64">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-xs font-bold text-[#72787e] tracking-wider uppercase block">Land Growth</span>
-                <h4 className="text-xl font-bold text-[#1b1b1b] mt-1">2,316 <span className="text-emerald-600 text-xs font-normal pl-1">↑ 3.1%</span></h4>
+            {governanceListings.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[500px]">
+                  <thead>
+                    <tr className="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                      <th className="pb-3 px-2">LISTING</th>
+                      <th className="pb-3 px-2">TYPE</th>
+                      <th className="pb-3 px-2">OWNER</th>
+                      <th className="pb-3 px-2">DISTRICT</th>
+                      <th className="pb-3 px-2">PRICE</th>
+                      <th className="pb-3 px-2 text-right">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50 text-xs">
+                    {governanceListings.map((item) => (
+                      <tr key={item.id} className="hover:bg-gray-50/50">
+                        <td className="py-3 px-2 font-extrabold text-[#1d1d1d]">{item.title}</td>
+                        <td className="py-3 px-2"><span className="bg-gray-100 px-2 py-0.5 rounded text-[10px] font-bold">{item.type}</span></td>
+                        <td className="py-3 px-2 text-gray-600 font-medium">{item.owner}</td>
+                        <td className="py-3 px-2 text-gray-500">{item.district}</td>
+                        <td className="py-3 px-2 font-extrabold">{item.price}</td>
+                        <td className="py-3 px-2 text-right">
+                          {item.status === 'Pending' ? (
+                            <div className="flex gap-2 justify-end">
+                              <button onClick={() => handleApprove(item.id)} className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-3 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer">
+                                Approve
+                              </button>
+                              <button onClick={() => handleReject(item.id)} className="bg-rose-100 text-rose-700 hover:bg-rose-200 px-3 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer">
+                                Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span className={`text-[10px] font-extrabold uppercase ${item.status === 'Approved' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                              {item.status}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <span className="text-xs font-semibold text-[#72787e] text-right">Last 12 mo</span>
-            </div>
-            <div className="flex items-end justify-between h-24 px-2 mt-4">
-              {landGrowthBars.map((val, idx) => (
-                <div
-                  key={idx}
-                  className={`w-3 rounded-t transition-all ${idx === landGrowthBars.length - 1 ? 'bg-[#928d64]' : 'bg-[#928d64]/20'}`}
-                  style={{ height: `${val}%` }}
-                />
-              ))}
-            </div>
+            ) : (
+              <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-xs font-bold text-gray-400">No pending listings awaiting review.</p>
+              </div>
+            )}
           </div>
 
         </div>
 
-        {/* AI RECOMMENDATION ANALYTICS */}
-        <div className="bg-[#194360] border border-[#ccb7a3]/20 rounded-2xl p-6 lg:p-8 shadow-sm text-white relative overflow-hidden flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-2xl font-bold tracking-tight">AI Recommendation Analytics</h3>
-            <p className="text-xs text-white/80 font-normal">Powered by NexaAI Engine • Real-time matching and verification</p>
+        {/* RIGHT COLUMN (4 COLS) */}
+        <div className="lg:col-span-4 space-y-6">
+          
+          {/* Recent Activities */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-[#1d1d1d]">Recent Activities</h3>
+              <span className="text-xs font-bold text-[#345b79] cursor-pointer hover:underline">All</span>
+            </div>
+
+            {activities.length > 0 ? (
+              <div className="space-y-3">
+                {activities.map((act, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50/80 transition-colors">
+                    <div className="size-2.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-extrabold text-[#1d1d1d]">{act.title}</h4>
+                      <p className="text-[10px] font-medium text-gray-400 mt-0.5">{act.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-xs font-bold text-gray-400">No recent system activity.</p>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="flex flex-col gap-1">
-              <img src="/svg/sparks-icon.svg" alt="" className="size-5 filter invert" />
-              <h4 className="text-3xl font-bold">{data?.aiAnalytics?.recommendationsToday ?? '1,842'}</h4>
-              <span className="text-[10px] font-bold text-white/70 tracking-wider uppercase">RECOMMENDATIONS TODAY</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <img src="/svg/checkMark.svg" alt="" className="size-5 filter invert" />
-              <h4 className="text-3xl font-bold">{data?.aiAnalytics?.avgMatchScore ?? '87.4%'}</h4>
-              <span className="text-[10px] font-bold text-white/70 tracking-wider uppercase">AVG. MATCH SCORE</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <img src="/svg/eye.svg" alt="" className="size-5 filter invert" />
-              <h4 className="text-3xl font-bold">{data?.aiAnalytics?.convertedToViews ?? '643'}</h4>
-              <span className="text-[10px] font-bold text-white/70 tracking-wider uppercase">CONVERTED TO VIEWS</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <img src="/svg/email.svg" alt="" className="size-5 filter invert" />
-              <h4 className="text-3xl font-bold">{data?.aiAnalytics?.leadsGenerated ?? '127'}</h4>
-              <span className="text-[10px] font-bold text-white/70 tracking-wider uppercase">LEADS GENERATED</span>
+          {/* Notifications */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">Notifications</h3>
+
+            {notifications.length > 0 ? (
+              <div className="space-y-2.5">
+                {notifications.map((n, idx) => (
+                  <div key={idx} className={`p-3 rounded-2xl text-xs font-extrabold ${n.badgeBg} ${n.textColor} flex items-center justify-between`}>
+                    <span>{n.title}</span>
+                    <svg className="size-4 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                <p className="text-xs font-bold text-gray-400">No system notifications.</p>
+              </div>
+            )}
+          </div>
+
+          {/* System Health */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">System Health</h3>
+
+            <div className="space-y-3 text-xs">
+              <div className="space-y-1">
+                <div className="flex justify-between font-extrabold text-gray-600">
+                  <span>CPU USAGE</span>
+                  <span>{health.cpuUsage}%</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-emerald-600 h-full rounded-full" style={{ width: `${health.cpuUsage}%` }} />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between font-extrabold text-gray-600">
+                  <span>MEMORY</span>
+                  <span>{health.memoryUsage}%</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-amber-600 h-full rounded-full" style={{ width: `${health.memoryUsage}%` }} />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between font-extrabold text-gray-600">
+                  <span>API UPTIME</span>
+                  <span>{health.apiUptime}%</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-[#345b79] h-full rounded-full" style={{ width: `${health.apiUptime}%` }} />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* GOVERNANCE PENDING LISTINGS */}
-        <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-[#1b1b1b]">Pending Listings Governance</h3>
-            <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded text-xs font-bold">
-              {governanceListings.filter(i => i.status === 'Pending').length} Awaiting Review
+          {/* Storage Usage */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-3">
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">Storage Usage</h3>
+            <div className="flex items-baseline justify-between">
+              <h4 className="text-xl font-black text-[#1d1d1d]">
+                {health.storageUsedGb} GB <span className="text-xs font-medium text-gray-400">of {health.storageTotalGb} GB used</span>
+              </h4>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-[#345b79] h-full rounded-full" 
+                style={{ width: `${health.storageTotalGb > 0 ? (health.storageUsedGb / health.storageTotalGb) * 100 : 0}%` }} 
+              />
+            </div>
+            <span className="text-[10px] font-extrabold text-gray-400 block">
+              Used {health.storageUsedGb} GB ({health.storageTotalGb > 0 ? Math.round((health.storageUsedGb / health.storageTotalGb) * 100) : 0}%) | Free {health.storageTotalGb - health.storageUsedGb} GB
             </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[600px]">
-              <thead>
-                <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-                  <th className="pb-3">LISTING</th>
-                  <th className="pb-3">TYPE</th>
-                  <th className="pb-3">OWNER</th>
-                  <th className="pb-3">DISTRICT</th>
-                  <th className="pb-3">PRICE</th>
-                  <th className="pb-3 text-right">ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {governanceListings.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="py-4 font-bold text-[#1b1b1b]">{item.title}</td>
-                    <td className="py-4"><span className="bg-gray-100 px-2 py-0.5 rounded font-bold">{item.type}</span></td>
-                    <td className="py-4 text-gray-600">{item.owner}</td>
-                    <td className="py-4 text-gray-600">{item.district}</td>
-                    <td className="py-4 font-bold">{item.price}</td>
-                    <td className="py-4 text-right">
-                      {item.status === 'Pending' ? (
-                        <div className="flex gap-2 justify-end">
-                          <button onClick={() => handleReject(item.id)} className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1 rounded font-bold">
-                            Reject
-                          </button>
-                          <button onClick={() => handleApprove(item.id)} className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1 rounded font-bold">
-                            Approve
-                          </button>
-                        </div>
-                      ) : (
-                        <span className={`font-bold uppercase ${item.status === 'Approved' ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {item.status}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
 
-        {/* RECENT REGISTRATIONS TABLE */}
-        <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-[#1b1b1b]">Recent Registrations</h3>
-            <button onClick={onViewAllUsers} className="text-xs font-bold text-[#345b79] hover:underline">
-              View All
-            </button>
-          </div>
+      </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[600px]">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-                  <th className="py-3 px-4">USER</th>
-                  <th className="py-3 px-4">ROLE</th>
-                  <th className="py-3 px-4">DISTRICT</th>
-                  <th className="py-3 px-4">DATE</th>
-                  <th className="py-3 px-4">STATUS</th>
-                  <th className="py-3 px-4 text-right">ACTION</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {registrations.map((user) => (
-                  <tr key={user.email} className="hover:bg-gray-50/30">
-                    <td className="py-3.5 px-4 font-bold text-[#1b1b1b]">
-                      <div>{user.name}</div>
-                      <div className="text-[10px] text-gray-400 font-normal">{user.email}</div>
-                    </td>
-                    <td className="py-3.5 px-4 text-gray-600 font-bold">{user.role}</td>
-                    <td className="py-3.5 px-4 text-gray-600 font-medium">{user.district}</td>
-                    <td className="py-3.5 px-4 text-gray-400">{user.date}</td>
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                        user.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                      }`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button className="text-xs font-bold text-[#345b79] hover:underline">View</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </main>
-
-      {/* Right Column Notifications & Health Panel */}
-      <aside className={`w-full lg:w-80 shrink-0 border-l border-[#ccb7a3]/30 bg-white p-6 space-y-8 overflow-y-auto ${
-        sidebarOpen ? 'block' : 'hidden lg:block'
-      }`}>
-        <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#1b1b1b]">Notifications</h3>
-          <div className="space-y-3">
-            {notifications.map((n, idx) => (
-              <div key={idx} className="p-3 rounded-xl text-xs font-semibold bg-gray-50 border border-gray-100 flex gap-2 items-start">
-                <img src="/svg/info.svg" alt="" className="size-4 shrink-0 mt-0.5" />
-                <span>{n.text}</span>
+      {/* EDIT USER MODAL OVERLAY */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 max-w-md w-full shadow-xl border border-gray-100 space-y-6 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shrink-0">
+                  <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-[#1d1d1d]">Edit User & Role</h3>
+                  <p className="text-xs text-gray-500 font-medium">Update account information and system privileges</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+              <button 
+                onClick={() => setEditingUser(null)} 
+                className="size-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
 
-        <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#1b1b1b]">Recent Activities</h3>
-          <div className="space-y-3 text-xs">
-            {activities.map((act, idx) => (
-              <div key={idx} className="flex flex-col border-b border-gray-50 pb-2">
-                <p className="font-semibold text-gray-800">{act.text}</p>
-                <span className="text-[10px] text-gray-400">{act.time}</span>
+            <form onSubmit={handleSaveUser} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">First Name</label>
+                  <input 
+                    type="text" 
+                    value={editFirstName} 
+                    onChange={(e) => setEditFirstName(e.target.value)} 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#345b79]"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Last Name</label>
+                  <input 
+                    type="text" 
+                    value={editLastName} 
+                    onChange={(e) => setEditLastName(e.target.value)} 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#345b79]"
+                  />
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="space-y-4">
-          <h3 className="text-base font-bold text-[#1b1b1b]">System Health</h3>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-xs font-bold text-gray-600 mb-1"><span>Server CPU</span><span>34%</span></div>
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="bg-emerald-600 h-full" style={{ width: '34%' }} /></div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs font-bold text-gray-600 mb-1"><span>RAM Usage</span><span>56%</span></div>
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="bg-amber-600 h-full" style={{ width: '56%' }} /></div>
-            </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Email Address</label>
+                <input 
+                  type="email" 
+                  value={editEmail} 
+                  onChange={(e) => setEditEmail(e.target.value)} 
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#345b79]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">System Role</label>
+                  <select 
+                    value={editRole} 
+                    onChange={(e) => setEditRole(e.target.value)} 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#345b79] cursor-pointer"
+                  >
+                    <option value="BUYER">BUYER (Property Buyer)</option>
+                    <option value="AGENT">AGENT (Real Estate Agent)</option>
+                    <option value="ARCHITECT">ARCHITECT (Architectural Designer)</option>
+                    <option value="CONTRACTOR">CONTRACTOR (Construction Company)</option>
+                    <option value="ADMIN">ADMIN (System Administrator)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Account Status</label>
+                  <select 
+                    value={editStatus} 
+                    onChange={(e) => setEditStatus(e.target.value)} 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-extrabold text-gray-800 focus:outline-none focus:border-[#345b79] cursor-pointer"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">District / Location</label>
+                <input 
+                  type="text" 
+                  value={editDistrict} 
+                  onChange={(e) => setEditDistrict(e.target.value)} 
+                  placeholder="e.g. Colombo Central"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-800 focus:outline-none focus:border-[#345b79]"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                <button 
+                  type="button" 
+                  onClick={() => setEditingUser(null)} 
+                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-xs font-extrabold hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={savingUser}
+                  className="flex-1 py-2.5 rounded-xl bg-[#345b79] hover:bg-[#28475f] text-white text-xs font-extrabold transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {savingUser ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      </aside>
+      )}
 
     </div>
   );

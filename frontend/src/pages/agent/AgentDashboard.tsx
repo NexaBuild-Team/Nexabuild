@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { ComingSoonMetric } from '../../components/ComingSoonMetric';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { fetchAgentDashboard, updateListingStatusApi, deleteListingApi } from '../../services/agentApi';
+import type { AgentDashboardData as ApiAgentData } from '../../services/agentApi';
 
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
+// ─── 1. Comprehensive Interfaces ───────────────────────────────────────────
 
 export interface AgentDashboardListingItem {
   id: string | number;
@@ -65,82 +68,35 @@ export interface AgentDashboardProps {
   onDeleteListing?: (id: string | number) => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultListings: AgentDashboardListingItem[] = [
-  {
-    id: 1,
-    title: 'Palm Villa, Jumeirah',
-    type: 'PROPERTY',
-    status: 'Active',
-    views: 3240,
-    saved: 182,
-    imageUrl: '/hero_property.png'
-  },
-  {
-    id: 2,
-    title: 'Sky Apt, Downtown Dubai',
-    type: 'PROPERTY',
-    status: 'Active',
-    views: 2180,
-    saved: 97,
-    imageUrl: '/property_card_1.png'
-  },
-  {
-    id: 3,
-    title: 'Townhouse, Arabian Ranches',
-    type: 'PROPERTY',
-    status: 'Pending',
-    views: 1540,
-    saved: 64,
-    imageUrl: '/property_card_2.png'
-  },
-  {
-    id: 4,
-    title: 'Commercial Plot #A-09, Expo City',
-    type: 'LAND',
-    status: 'Active',
-    views: 1870,
-    saved: 53,
-    imageUrl: '/property_card_3.png'
-  },
-  {
-    id: 5,
-    title: 'Residential Plot, JVC Phase 3',
-    type: 'LAND',
-    status: 'Active',
-    views: 1290,
-    saved: 41,
-    imageUrl: '/property_card_4.png'
-  },
-  {
-    id: 6,
-    title: 'Industrial Zone Plot, DIP',
-    type: 'LAND',
-    status: 'Inactive',
-    views: 620,
-    saved: 18,
-    imageUrl: '/property_card_1.png'
-  }
+// Recharts Dataset for Performance
+const propertyPerformanceData = [
+  { month: 'JAN', views: 420 },
+  { month: 'FEB', views: 680 },
+  { month: 'MAR', views: 520 },
+  { month: 'APR', views: 890 },
+  { month: 'MAY', views: 760 },
+  { month: 'JUN', views: 940 },
+  { month: 'JUL', views: 1120 },
 ];
 
-const defaultNotifications: AgentDashboardNotification[] = [
-  { id: 1, message: 'New enquiry on Palm Villa', timeAgo: '5m ago', type: 'enquiry' },
-  { id: 2, message: '42 new views on plot #A-09', timeAgo: '1h ago', type: 'views' },
-  { id: 3, message: 'Villa saved by 3 buyers', timeAgo: '2h ago', type: 'saved' }
+const landPerformanceData = [
+  { month: 'JAN', views: 280 },
+  { month: 'FEB', views: 420 },
+  { month: 'MAR', views: 390 },
+  { month: 'APR', views: 610 },
+  { month: 'MAY', views: 580 },
+  { month: 'JUN', views: 890 },
+  { month: 'JUL', views: 780 },
 ];
 
-const defaultActivities: AgentDashboardActivity[] = [
-  { id: 1, description: 'Palm Villa viewed 24 times today', timeAgo: '2h ago', type: 'views' },
-  { id: 2, description: 'Plot #A-09 saved by 5 buyers', timeAgo: '4h ago', type: 'saved' },
-  { id: 3, description: 'Enquiry from Sara M. on Sky Apt', timeAgo: '6h ago', type: 'enquiry' }
-];
-
-const defaultLocations: AgentDashboardLocationMetric[] = [
-  { locationName: 'Jumeirah', percentage: 84 },
-  { locationName: 'Downtown Dubai', percentage: 71 },
-  { locationName: 'Expo City', percentage: 63 },
-  { locationName: 'JVC', percentage: 55 }
+const monthlyViewsData = [
+  { month: 'JAN', views: 310 },
+  { month: 'FEB', views: 480 },
+  { month: 'MAR', views: 410 },
+  { month: 'APR', views: 680 },
+  { month: 'MAY', views: 640 },
+  { month: 'JUN', views: 890 },
+  { month: 'JUL', views: 1020 },
 ];
 
 // ─── Component Implementation ───────────────────────────────────────────────
@@ -151,273 +107,466 @@ export default function AgentDashboard({
   error = null,
   onViewListing,
   onToggleStatus,
-  onDeleteListing
+  onDeleteListing,
 }: AgentDashboardProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [listingsState, setListingsState] = useState<AgentDashboardListingItem[]>([]);
+  const [apiData, setApiData] = useState<ApiAgentData | null>(null);
+  const [fetching, setFetching] = useState(!data);
 
-  const listings = data?.listings !== undefined 
-    ? data.listings 
-    : (listingsState.length > 0 ? listingsState : defaultListings);
-
-  const notifications = data?.notifications || defaultNotifications;
-  const activities = data?.activities || defaultActivities;
-  const topLocations = data?.topLocations || defaultLocations;
-
-  const metrics = data?.metrics;
-
-  const handleStatusToggle = (id: string | number) => {
-    if (onToggleStatus) {
-      onToggleStatus(id);
-    } else {
-      setListingsState(prev => {
-        const source = prev.length > 0 ? prev : defaultListings;
-        return source.map(item => {
-          if (item.id === id) {
-            const nextStatusMap: Record<'Active' | 'Pending' | 'Inactive', 'Active' | 'Pending' | 'Inactive'> = {
-              Active: 'Pending',
-              Pending: 'Inactive',
-              Inactive: 'Active'
-            };
-            return { ...item, status: nextStatusMap[item.status] };
-          }
-          return item;
+  useEffect(() => {
+    if (!data) {
+      fetchAgentDashboard()
+        .then((res) => {
+          setApiData(res);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load agent dashboard data:', err);
+          setFetching(false);
         });
-      });
     }
-  };
+  }, [data]);
 
-  const handleListingDelete = (id: string | number) => {
+  const [localListings, setLocalListings] = useState<AgentDashboardListingItem[]>([]);
+
+  const listings: AgentDashboardListingItem[] = apiData?.listings
+    ? (apiData.listings as AgentDashboardListingItem[])
+    : data?.listings !== undefined
+    ? data.listings
+    : localListings;
+
+  const notifications = apiData?.notifications ?? (data?.notifications !== undefined ? data.notifications : []);
+  const activities = apiData?.activities ?? (data?.activities !== undefined ? data.activities : []);
+  const topLocations = apiData?.topLocations ?? (data?.topLocations !== undefined ? data.topLocations : []);
+  const metrics = apiData?.metrics ?? data?.metrics;
+
+  const handleDelete = async (id: string | number) => {
     if (onDeleteListing) {
       onDeleteListing(id);
     } else {
-      if (window.confirm('Are you sure you want to delete this listing?')) {
-        setListingsState(prev => {
-          const source = prev.length > 0 ? prev : defaultListings;
-          return source.filter(item => item.id !== id);
-        });
+      try {
+        const item = listings.find(l => l.id === id);
+        await deleteListingApi(String(id), item?.type || 'PROPERTY');
+        if (apiData) {
+          setApiData(prev => prev ? { ...prev, listings: prev.listings.filter(l => l.id !== id) } : null);
+        } else {
+          setLocalListings(prev => prev.filter(l => l.id !== id));
+        }
+      } catch {
+        setLocalListings(prev => prev.filter(l => l.id !== id));
       }
     }
   };
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  const handleStatusChange = async (id: string | number) => {
+    if (onToggleStatus) {
+      onToggleStatus(id);
+    } else {
+      const item = listings.find(l => l.id === id);
+      const nextStatus = item?.status === 'Active' ? 'Pending' : item?.status === 'Pending' ? 'Inactive' : 'Active';
+      try {
+        await updateListingStatusApi(String(id), item?.type || 'PROPERTY', nextStatus);
+        if (apiData) {
+          setApiData(prev => prev ? {
+            ...prev,
+            listings: prev.listings.map(l => l.id === id ? { ...l, status: nextStatus as any } : l)
+          } : null);
+        } else {
+          setLocalListings(prev => prev.map(l => l.id === id ? { ...l, status: nextStatus as any } : l));
+        }
+      } catch {
+        setLocalListings(prev => prev.map(l => l.id === id ? { ...l, status: nextStatus as any } : l));
+      }
+    }
+  };
+
+  // ─── Skeleton Loading State ─────────────────────────────────────────────
+  if (isLoading || fetching) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse">
-        <div className="h-16 bg-gray-200 rounded-2xl w-full" />
+      <div className="p-6 lg:p-8 space-y-8 w-full max-w-[1400px] mx-auto animate-pulse">
+        <div className="h-12 bg-gray-200 rounded-2xl w-1/3" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[1, 2, 3, 4, 5].map(i => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-28 bg-gray-200 rounded-2xl" />
           ))}
         </div>
-        <div className="h-80 bg-gray-200 rounded-2xl w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="h-72 bg-gray-200 rounded-2xl lg:col-span-2" />
+          <div className="h-72 bg-gray-200 rounded-2xl" />
+        </div>
       </div>
     );
   }
 
-  const { user } = useAuth();
-  const agentName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Agent';
-
   return (
-    <div className="flex-1 min-w-0 flex flex-col font-normal text-[#111827]">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-[#e5e7eb] px-6 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm gap-4">
-        <div className="flex flex-col gap-0.5">
-          <h1 className="text-xl font-bold text-[#1a1c1e] tracking-tight">Welcome back, {agentName}</h1>
-          <p className="text-xs text-[#42474d] hidden sm:block">Manage your properties, lands, and performance metrics</p>
+    <div className="w-full font-normal text-[#111827] flex flex-col xl:flex-row items-start min-h-screen">
+      
+      {/* Main Agent Scrolling Content Area */}
+      <div className="flex-1 min-w-0 space-y-8 w-full p-4 sm:p-6 lg:p-8">
+        
+        {/* Top Header Bar */}
+        <BuyerHeaderBar />
+
+        {/* Global Error Banner */}
+        {error && (
+          <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3">
+              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+              <span className="font-semibold">{error}</span>
+            </div>
+            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Header Title */}
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Agent Dashboard</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-semibold">Manage your properties, lands, and performance metrics</p>
         </div>
-      </header>
 
-        {/* Body Layout */}
-        <div className="p-6 lg:p-8 flex flex-col gap-8 w-full max-w-[1400px] mx-auto">
+        {/* A. 5 Top KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[
+            { label: 'Total Properties', val: metrics?.totalPropertiesCount ?? 0, change: metrics?.propertiesGrowthPercent ?? '0%', icon: '/svg/home.svg', bg: 'bg-blue-50 text-[#345b79]' },
+            { label: 'Total Lands', val: metrics?.totalLandsCount ?? 0, change: metrics?.landsGrowthPercent ?? '0%', icon: '/svg/land-plot-icon.svg', bg: 'bg-orange-50 text-[#be5d3f]' },
+            { label: 'Total Views', val: metrics?.totalViewsCount ?? 0, change: metrics?.viewsGrowthPercent ?? '0%', icon: '/svg/eye.svg', bg: 'bg-indigo-50 text-indigo-600' },
+            { label: 'Saved by Users', val: metrics?.savedByUsersCount ?? 0, change: metrics?.savedGrowthPercent ?? '0%', icon: '/svg/heart.svg', bg: 'bg-rose-50 text-rose-600' },
+            { label: 'Total Enquiries', val: metrics?.totalEnquiriesCount ?? 0, change: metrics?.enquiriesGrowthPercent ?? '0%', icon: '/svg/email.svg', bg: 'bg-amber-50 text-amber-700' },
+          ].map((kpi, idx) => (
+            <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between mb-2">
+                <div className={`size-10 rounded-xl ${kpi.bg} flex items-center justify-center shrink-0`}>
+                  <img src={kpi.icon} alt="" className="size-5 opacity-80" />
+                </div>
+                <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                  {kpi.change}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-2xl lg:text-3xl font-extrabold text-[#111827] leading-none mb-1">{kpi.val}</h3>
+                <span className="text-[11px] font-bold text-gray-400">{kpi.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* B. Performance Charts & Notifications Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* Global Error Banner */}
-          {error && (
-            <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-              <div className="flex items-center gap-3">
-                <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-                <span className="font-semibold">{error}</span>
+          {/* Property Performance BarChart (Recharts) */}
+          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Property Performance</h3>
+                <p className="text-[11px] text-gray-400 font-semibold">Views & enquiries over 7 months</p>
               </div>
-              <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-                Retry
-              </button>
+              <span className="size-3 rounded-full bg-[#345b79]" />
             </div>
-          )}
-
-          {/* Top Metrics Row */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 w-full">
-            {[
-              { title: 'Total Properties', val: metrics?.totalPropertiesCount ?? 48, growth: metrics?.propertiesGrowthPercent ?? '+6%', icon: '/svg/home.svg', bg: 'bg-[#194360]/10' },
-              { title: 'Total Lands', val: metrics?.totalLandsCount ?? 23, growth: metrics?.landsGrowthPercent ?? '+3%', icon: '/svg/land-plot-icon.svg', bg: 'bg-[#be5d3f]/10' },
-              { title: 'Total Views', val: metrics?.totalViewsCount ?? '14.2K', growth: metrics?.viewsGrowthPercent ?? '+18%', icon: '/svg/eye.svg', bg: 'bg-[#345b79]/10' },
-              { title: 'Saved by Users', val: metrics?.savedByUsersCount ?? 892, growth: metrics?.savedGrowthPercent ?? '+9%', icon: '/svg/bookmark.svg', bg: 'bg-[#928d64]/10' },
-              { title: 'Total Enquiries', val: metrics?.totalEnquiriesCount ?? 317, growth: metrics?.enquiriesGrowthPercent ?? '+22%', icon: '/svg/email.svg', bg: 'bg-[#73511d]/10' }
-            ].map((card, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3 hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between w-full">
-                  <div className={`flex items-center justify-center rounded-xl size-12 ${card.bg}`}>
-                    <img alt="" className="size-5" src={card.icon} />
-                  </div>
-                  <span className="bg-emerald-50 rounded-lg px-2 py-1 text-emerald-700 text-xs font-bold">{card.growth}</span>
-                </div>
-                <div>
-                  <p className="text-2xl sm:text-3xl font-bold text-[#1a1c1e] leading-tight">{card.val}</p>
-                  <p className="text-xs text-[#42474d] mt-1 font-medium">{card.title}</p>
-                </div>
-              </div>
-            ))}
+            <div className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={apiData?.propertyPerformance ?? propertyPerformanceData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 12, fontSize: 11, fontWeight: 'bold' }} />
+                  <Bar dataKey="views" fill="#345b79" radius={[6, 6, 0, 0]} barSize={18} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          {/* Charts & Notifications Section */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full">
-            <div className="xl:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-base font-bold text-[#1a1c1e]">Property Performance</h3>
-                    <p className="text-xs text-[#42474d]">Views & enquiries over 7 months</p>
-                  </div>
-                  <div className="bg-[#345b79] rounded-full size-3" />
-                </div>
-                <div className="flex items-end justify-between h-44 px-2 pt-4 border-b border-gray-100">
-                  {[72, 104, 88, 136, 120, 156, 142].map((h, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2 w-6">
-                      <div className="bg-[#345b79] opacity-80 w-full rounded-t hover:opacity-100 transition-opacity" style={{ height: `${h}px` }} />
-                      <span className="text-[10px] text-gray-400 font-bold uppercase">{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][i]}</span>
-                    </div>
-                  ))}
-                </div>
+          {/* Land Performance BarChart (Recharts) */}
+          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Land Performance</h3>
+                <p className="text-[11px] text-gray-400 font-semibold">Views & enquiries over 7 months</p>
               </div>
+              <span className="size-3 rounded-full bg-[#be5d3f]" />
+            </div>
+            <div className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={apiData?.landPerformance ?? landPerformanceData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 12, fontSize: 11, fontWeight: 'bold' }} />
+                  <Bar dataKey="views" fill="#be5d3f" radius={[6, 6, 0, 0]} barSize={18} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-base font-bold text-[#1a1c1e]">Land Performance</h3>
-                    <p className="text-xs text-[#42474d]">Views & enquiries over 7 months</p>
-                  </div>
-                  <div className="bg-[#be5d3f] rounded-full size-3" />
-                </div>
-                <div className="flex items-end justify-between h-44 px-2 pt-4 border-b border-gray-100">
-                  {[48, 80, 72, 112, 96, 144, 128].map((h, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2 w-6">
-                      <div className="bg-[#be5d3f] opacity-80 w-full rounded-t hover:opacity-100 transition-opacity" style={{ height: `${h}px` }} />
-                      <span className="text-[10px] text-gray-400 font-bold uppercase">{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][i]}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {/* Notifications Panel */}
+          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-[#111827]">Notifications</h3>
+              <span className="size-5 rounded-full bg-orange-500 text-white text-[10px] font-extrabold flex items-center justify-center">
+                {notifications.length}
+              </span>
             </div>
 
-            {/* Side Info Panel */}
-            <div className="xl:col-span-3 flex flex-col gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-                <div className="flex justify-between items-center w-full">
-                  <h4 className="text-sm font-bold text-[#1a1c1e]">Notifications</h4>
-                  <span className="bg-[#be5d3f] text-white rounded-full size-5 flex items-center justify-center text-[10px] font-bold">
-                    {notifications.length}
-                  </span>
+            <div className="space-y-3.5 flex-1">
+              {notifications.map((n) => (
+                <div key={n.id} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div className="size-8 rounded-full bg-blue-50 text-[#345b79] flex items-center justify-center shrink-0 mt-0.5">
+                    <img src={n.type === 'enquiry' ? '/svg/email.svg' : n.type === 'views' ? '/svg/eye.svg' : '/svg/heart.svg'} alt="" className="size-4 opacity-80" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-[#111827] leading-snug">{n.message}</p>
+                    <span className="text-[9px] font-bold text-gray-400 block mt-0.5 uppercase tracking-wider">{n.timeAgo}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-4">
-                  {notifications.map(n => (
-                    <div key={n.id} className="flex items-start gap-3 text-xs">
-                      <div className="bg-gray-100 p-2 rounded-full shrink-0">
-                        <img src="/svg/email.svg" alt="" className="size-3.5" />
-                      </div>
-                      <div>
-                        <p className="text-gray-800 font-medium leading-snug">{n.message}</p>
-                        <span className="text-[10px] text-gray-400 mt-0.5 block">{n.timeAgo}</span>
-                      </div>
-                    </div>
-                  ))}
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* C. Featured Card, Activity & Insights Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* Featured Listing Card */}
+          <div className="lg:col-span-5 bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm flex flex-col justify-between">
+            <div className="h-[180px] w-full overflow-hidden relative">
+              <img src="/hero_property.png" alt="Palm Villa" className="size-full object-cover" />
+              <span className="absolute top-4 left-4 bg-amber-500 text-white text-[9px] font-extrabold tracking-widest px-2.5 py-1 rounded-full shadow-sm uppercase">
+                MOST VIEWED
+              </span>
+            </div>
+
+            <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <h3 className="text-lg font-extrabold text-[#111827]">Palm Villa, Jumeirah</h3>
+                <p className="text-xs text-gray-500 font-semibold mt-0.5">5 Bed • 6 Bath • 7,200 sqft</p>
+                <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mt-2">
+                  <span className="flex items-center gap-1.5"><img src="/svg/eye.svg" alt="" className="size-3.5 opacity-70" /> 3,240 views</span>
+                  <span className="flex items-center gap-1.5"><img src="/svg/heart.svg" alt="" className="size-3.5 opacity-70" /> 182 saved</span>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <Link to="/property-listing" className="flex-1 bg-[#345b79] text-white text-xs font-extrabold py-2.5 rounded-xl text-center hover:bg-[#2a4a63] transition-colors">
+                  View Listing
+                </Link>
+                <button className="flex-1 bg-gray-100 text-[#111827] text-xs font-extrabold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-200 transition-colors">
+                  Edit
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Latest Listings Table */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-5 w-full">
-            <div className="flex justify-between items-center w-full">
-              <h3 className="text-base font-bold text-[#1a1c1e]">Latest Listings</h3>
-              <a href="/view-all-properties" className="text-xs font-bold text-[#194360] hover:underline">
-                View All
-              </a>
+          {/* Recent Activity */}
+          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+            <h3 className="text-base font-extrabold text-[#111827]">Recent Activity</h3>
+            <div className="space-y-4 flex-1">
+              {activities.map((act) => (
+                <div key={act.id} className="flex items-start gap-3">
+                  <div className="size-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <img src={act.type === 'views' ? '/svg/eye.svg' : act.type === 'saved' ? '/svg/heart.svg' : '/svg/email.svg'} alt="" className="size-4 opacity-70" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-[#111827] leading-snug">{act.description}</p>
+                    <span className="text-[9px] font-bold text-gray-400 block mt-0.5 uppercase">{act.timeAgo}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Locations */}
+          <div className="lg:col-span-3 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+            <h3 className="text-base font-extrabold text-[#111827]">Top Locations</h3>
+            <div className="space-y-3.5 flex-1">
+              {topLocations.map((loc, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-[#111827]">
+                    <span>{loc.locationName}</span>
+                    <span className="text-gray-500">{loc.percentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                    <div className="bg-[#345b79] h-full rounded-full" style={{ width: `${loc.percentage}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* D. Market Insights & Monthly Views Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* Property Market Insight */}
+          <div className="lg:col-span-4 bg-[#2a4d69] text-white rounded-[24px] p-6 shadow-md flex flex-col justify-between space-y-4">
+            <div>
+              <h3 className="text-base font-extrabold mb-1">Property Market Insight</h3>
+              <p className="text-xs text-white/80 font-medium leading-relaxed mt-2">
+                Dubai residential prices up 8.2% this quarter. High demand in JVC and Al Barsha.
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-2 rounded-xl text-[10px] font-bold tracking-wider uppercase inline-block self-start">
+              Trending: Apartment Sales
+            </div>
+          </div>
+
+          {/* Land Market Insight */}
+          <div className="lg:col-span-4 bg-[#be5d3f] text-white rounded-[24px] p-6 shadow-md flex flex-col justify-between space-y-4">
+            <div>
+              <h3 className="text-base font-extrabold mb-1">Land Market Insight</h3>
+              <p className="text-xs text-white/80 font-medium leading-relaxed mt-2">
+                Commercial plots near Expo City seeing 14% appreciation. Strong investor activity.
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-2 rounded-xl text-[10px] font-bold tracking-wider uppercase inline-block self-start">
+              Hot Zone: Dubai South
+            </div>
+          </div>
+
+          {/* Monthly Views (Recharts) & Buyer Interest */}
+          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-extrabold text-[#111827]">Monthly Views</h3>
+              <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+34%</span>
+            </div>
+            
+            <div className="h-[120px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={apiData?.monthlyViews ?? monthlyViewsData} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 10, fontSize: 10 }} />
+                  <Bar dataKey="views" fill="#345b79" radius={[4, 4, 0, 0]} barSize={14} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
-            <div className="w-full overflow-x-auto">
-              <table className="w-full text-xs border-collapse min-w-[650px]">
-                <thead>
-                  <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-left">
-                    <th className="pb-3 pl-3 w-16">Thumb</th>
-                    <th className="pb-3 pl-3">Title</th>
-                    <th className="pb-3 pl-3">Status</th>
-                    <th className="pb-3 pl-3">Views</th>
-                    <th className="pb-3 pl-3">Saved</th>
-                    <th className="pb-3 pl-3 text-center w-36">Action</th>
+            <div className="bg-amber-50/60 border border-amber-200/60 p-3 rounded-xl flex items-center justify-between">
+              <span className="text-xs font-bold text-[#111827]">Buyer Interest Matches</span>
+              <span className="text-xs font-extrabold text-[#be5d3f]">+34% this month</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* E. Bottom Views Summaries */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="size-12 rounded-2xl bg-blue-50 text-[#345b79] flex items-center justify-center">
+                <img src="/svg/home.svg" alt="" className="size-6 opacity-80" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Property Views</span>
+                <h4 className="text-2xl font-extrabold text-[#111827]">{metrics?.propertyViewsSubSummary ?? 0}</h4>
+              </div>
+            </div>
+            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{metrics?.propertyViewsSubSummary ? '+15% this month' : '0%'}</span>
+          </div>
+
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="size-12 rounded-2xl bg-orange-50 text-[#be5d3f] flex items-center justify-center">
+                <img src="/svg/land-plot-icon.svg" alt="" className="size-6 opacity-80" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Land Views</span>
+                <h4 className="text-2xl font-extrabold text-[#111827]">{metrics?.landViewsSubSummary ?? 0}</h4>
+              </div>
+            </div>
+            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{metrics?.landViewsSubSummary ? '+9% this month' : '0%'}</span>
+          </div>
+        </div>
+
+        {/* F. Latest Listings Table */}
+        <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-[#111827]">Latest Listings</h3>
+            <Link to="/property-listing" className="text-xs font-bold text-[#345b79] hover:underline uppercase tracking-wider">
+              View All
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-gray-100 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">
+                  <th className="pb-3 px-3">THUMB</th>
+                  <th className="pb-3 px-3">TITLE</th>
+                  <th className="pb-3 px-3">STATUS</th>
+                  <th className="pb-3 px-3">VIEWS</th>
+                  <th className="pb-3 px-3">SAVED</th>
+                  <th className="pb-3 px-3 text-right">ACTION</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50 text-xs">
+                {listings.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-gray-400 font-semibold text-xs">
+                      No active property or land listings found in the database.
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {listings.map(item => (
-                    <tr key={item.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                      <td className="py-3 pl-3">
-                        <div className="h-10 w-14 rounded-lg overflow-hidden bg-gray-100">
-                          <img alt={item.title} className="size-full object-cover" src={item.imageUrl} />
-                        </div>
+                ) : (
+                  listings.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="py-3 px-3">
+                        <img src={item.imageUrl} alt={item.title} className="size-12 rounded-xl object-cover" />
                       </td>
-                      <td className="py-3 pl-3 font-bold text-gray-800">
-                        <div>
-                          <p>{item.title}</p>
-                          <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${
-                            item.type === 'PROPERTY' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700'
-                          }`}>
-                            {item.type}
-                          </span>
-                        </div>
+                      <td className="py-3 px-3">
+                        <h4 className="font-bold text-[#111827]">{item.title}</h4>
+                        <span className="text-[9px] font-extrabold bg-blue-50 text-[#345b79] px-2 py-0.5 rounded-md uppercase block mt-0.5 w-max">
+                          {item.type}
+                        </span>
                       </td>
-                      <td className="py-3 pl-3">
-                        <span 
-                          onClick={() => handleStatusToggle(item.id)}
-                          className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold cursor-pointer select-none ${
-                            item.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                      <td className="py-3 px-3">
+                        <button
+                          onClick={() => handleStatusChange(item.id)}
+                          className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full cursor-pointer transition-transform hover:scale-105 ${
+                            item.status === 'Active'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : item.status === 'Pending'
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-gray-100 text-gray-600'
                           }`}
                         >
                           {item.status}
-                        </span>
+                        </button>
                       </td>
-                      <td className="py-3 pl-3 font-semibold text-gray-600">{item.views.toLocaleString()}</td>
-                      <td className="py-3 pl-3 font-semibold text-gray-600">{item.saved}</td>
-                      <td className="py-3 pl-3">
-                        <div className="flex items-center justify-center gap-2">
-                          <button 
+                      <td className="py-3 px-3 font-bold text-[#111827]">{item.views.toLocaleString()}</td>
+                      <td className="py-3 px-3 font-bold text-[#111827]">{item.saved}</td>
+                      <td className="py-3 px-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
                             onClick={() => onViewListing && onViewListing(item.id, item.type)}
-                            className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors" 
-                            title="View details"
+                            className="size-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                            title="View Listing"
                           >
-                            <img alt="View" className="size-3.5" src="/svg/eye.svg" />
+                            <img src="/svg/eye.svg" alt="View" className="size-4 opacity-70" />
                           </button>
-                          <button 
-                            onClick={() => handleStatusToggle(item.id)}
-                            className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors" 
-                            title="Quick Edit"
+                          <button
+                            className="size-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                            title="Edit Listing"
                           >
-                            <img alt="Edit" className="size-3.5" src="/svg/sparks-settings-icon.svg" />
+                            <svg className="size-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
                           </button>
-                          <button 
-                            onClick={() => handleListingDelete(item.id)}
-                            className="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors" 
-                            title="Delete listing"
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="size-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
+                            title="Delete Listing"
                           >
-                            <img alt="Delete" className="size-3.5 filter hue-rotate-320" src="/svg/clock.svg" />
+                            <svg className="size-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                           </button>
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-
         </div>
+
+      </div>
     </div>
   );
 }

@@ -31,10 +31,11 @@ export type PropertyAvgAggregateOutputType = {
   bedrooms: number | null
   bathrooms: number | null
   area: number | null
+  parkingSpaces: number | null
   matchScore: number | null
+  views: number | null
   latitude: number | null
   longitude: number | null
-  parkingSpaces: number | null
 }
 
 export type PropertySumAggregateOutputType = {
@@ -42,16 +43,16 @@ export type PropertySumAggregateOutputType = {
   bedrooms: number | null
   bathrooms: number | null
   area: number | null
+  parkingSpaces: number | null
   matchScore: number | null
+  views: number | null
   latitude: number | null
   longitude: number | null
-  parkingSpaces: number | null
 }
 
 export type PropertyMinAggregateOutputType = {
   id: string | null
   title: string | null
-  createdAt: Date | null
   description: string | null
   price: number | null
   location: string | null
@@ -60,36 +61,39 @@ export type PropertyMinAggregateOutputType = {
   area: number | null
   propertyType: string | null
   listingType: string | null
-  matchScore: number | null
-  latitude: number | null
-  longitude: number | null
-  updatedAt: Date | null
-  hasGarden: boolean | null
-  hasModernKitchen: boolean | null
   hasPool: boolean | null
+  hasGarden: boolean | null
   hasSeaView: boolean | null
   hasSecurity: boolean | null
-  isCityCenter: boolean | null
-  isCoastal: boolean | null
-  isInvestment: boolean | null
-  isNearBeach: boolean | null
-  isNearHighway: boolean | null
-  isNearHospital: boolean | null
-  isNearSchools: boolean | null
-  isOwnHome: boolean | null
-  isQuietArea: boolean | null
-  isRentalIncome: boolean | null
-  isRural: boolean | null
-  isSuburban: boolean | null
-  isUrban: boolean | null
-  isVacationHome: boolean | null
+  hasModernKitchen: boolean | null
   parkingSpaces: number | null
+  isInvestment: boolean | null
+  isOwnHome: boolean | null
+  isVacationHome: boolean | null
+  isRentalIncome: boolean | null
+  isUrban: boolean | null
+  isSuburban: boolean | null
+  isCoastal: boolean | null
+  isRural: boolean | null
+  isCityCenter: boolean | null
+  isNearSchools: boolean | null
+  isNearHospital: boolean | null
+  isNearHighway: boolean | null
+  isQuietArea: boolean | null
+  isNearBeach: boolean | null
+  matchScore: number | null
+  views: number | null
+  status: string | null
+  agentId: string | null
+  latitude: number | null
+  longitude: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type PropertyMaxAggregateOutputType = {
   id: string | null
   title: string | null
-  createdAt: Date | null
   description: string | null
   price: number | null
   location: string | null
@@ -98,36 +102,39 @@ export type PropertyMaxAggregateOutputType = {
   area: number | null
   propertyType: string | null
   listingType: string | null
-  matchScore: number | null
-  latitude: number | null
-  longitude: number | null
-  updatedAt: Date | null
-  hasGarden: boolean | null
-  hasModernKitchen: boolean | null
   hasPool: boolean | null
+  hasGarden: boolean | null
   hasSeaView: boolean | null
   hasSecurity: boolean | null
-  isCityCenter: boolean | null
-  isCoastal: boolean | null
-  isInvestment: boolean | null
-  isNearBeach: boolean | null
-  isNearHighway: boolean | null
-  isNearHospital: boolean | null
-  isNearSchools: boolean | null
-  isOwnHome: boolean | null
-  isQuietArea: boolean | null
-  isRentalIncome: boolean | null
-  isRural: boolean | null
-  isSuburban: boolean | null
-  isUrban: boolean | null
-  isVacationHome: boolean | null
+  hasModernKitchen: boolean | null
   parkingSpaces: number | null
+  isInvestment: boolean | null
+  isOwnHome: boolean | null
+  isVacationHome: boolean | null
+  isRentalIncome: boolean | null
+  isUrban: boolean | null
+  isSuburban: boolean | null
+  isCoastal: boolean | null
+  isRural: boolean | null
+  isCityCenter: boolean | null
+  isNearSchools: boolean | null
+  isNearHospital: boolean | null
+  isNearHighway: boolean | null
+  isQuietArea: boolean | null
+  isNearBeach: boolean | null
+  matchScore: number | null
+  views: number | null
+  status: string | null
+  agentId: string | null
+  latitude: number | null
+  longitude: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type PropertyCountAggregateOutputType = {
   id: number
   title: number
-  createdAt: number
   description: number
   price: number
   location: number
@@ -137,30 +144,34 @@ export type PropertyCountAggregateOutputType = {
   propertyType: number
   listingType: number
   images: number
-  matchScore: number
-  latitude: number
-  longitude: number
-  updatedAt: number
-  hasGarden: number
-  hasModernKitchen: number
   hasPool: number
+  hasGarden: number
   hasSeaView: number
   hasSecurity: number
-  isCityCenter: number
-  isCoastal: number
-  isInvestment: number
-  isNearBeach: number
-  isNearHighway: number
-  isNearHospital: number
-  isNearSchools: number
-  isOwnHome: number
-  isQuietArea: number
-  isRentalIncome: number
-  isRural: number
-  isSuburban: number
-  isUrban: number
-  isVacationHome: number
+  hasModernKitchen: number
   parkingSpaces: number
+  isInvestment: number
+  isOwnHome: number
+  isVacationHome: number
+  isRentalIncome: number
+  isUrban: number
+  isSuburban: number
+  isCoastal: number
+  isRural: number
+  isCityCenter: number
+  isNearSchools: number
+  isNearHospital: number
+  isNearHighway: number
+  isQuietArea: number
+  isNearBeach: number
+  matchScore: number
+  views: number
+  status: number
+  agentId: number
+  latitude: number
+  longitude: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -170,10 +181,11 @@ export type PropertyAvgAggregateInputType = {
   bedrooms?: true
   bathrooms?: true
   area?: true
+  parkingSpaces?: true
   matchScore?: true
+  views?: true
   latitude?: true
   longitude?: true
-  parkingSpaces?: true
 }
 
 export type PropertySumAggregateInputType = {
@@ -181,16 +193,16 @@ export type PropertySumAggregateInputType = {
   bedrooms?: true
   bathrooms?: true
   area?: true
+  parkingSpaces?: true
   matchScore?: true
+  views?: true
   latitude?: true
   longitude?: true
-  parkingSpaces?: true
 }
 
 export type PropertyMinAggregateInputType = {
   id?: true
   title?: true
-  createdAt?: true
   description?: true
   price?: true
   location?: true
@@ -199,36 +211,39 @@ export type PropertyMinAggregateInputType = {
   area?: true
   propertyType?: true
   listingType?: true
-  matchScore?: true
-  latitude?: true
-  longitude?: true
-  updatedAt?: true
-  hasGarden?: true
-  hasModernKitchen?: true
   hasPool?: true
+  hasGarden?: true
   hasSeaView?: true
   hasSecurity?: true
-  isCityCenter?: true
-  isCoastal?: true
-  isInvestment?: true
-  isNearBeach?: true
-  isNearHighway?: true
-  isNearHospital?: true
-  isNearSchools?: true
-  isOwnHome?: true
-  isQuietArea?: true
-  isRentalIncome?: true
-  isRural?: true
-  isSuburban?: true
-  isUrban?: true
-  isVacationHome?: true
+  hasModernKitchen?: true
   parkingSpaces?: true
+  isInvestment?: true
+  isOwnHome?: true
+  isVacationHome?: true
+  isRentalIncome?: true
+  isUrban?: true
+  isSuburban?: true
+  isCoastal?: true
+  isRural?: true
+  isCityCenter?: true
+  isNearSchools?: true
+  isNearHospital?: true
+  isNearHighway?: true
+  isQuietArea?: true
+  isNearBeach?: true
+  matchScore?: true
+  views?: true
+  status?: true
+  agentId?: true
+  latitude?: true
+  longitude?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type PropertyMaxAggregateInputType = {
   id?: true
   title?: true
-  createdAt?: true
   description?: true
   price?: true
   location?: true
@@ -237,36 +252,39 @@ export type PropertyMaxAggregateInputType = {
   area?: true
   propertyType?: true
   listingType?: true
-  matchScore?: true
-  latitude?: true
-  longitude?: true
-  updatedAt?: true
-  hasGarden?: true
-  hasModernKitchen?: true
   hasPool?: true
+  hasGarden?: true
   hasSeaView?: true
   hasSecurity?: true
-  isCityCenter?: true
-  isCoastal?: true
-  isInvestment?: true
-  isNearBeach?: true
-  isNearHighway?: true
-  isNearHospital?: true
-  isNearSchools?: true
-  isOwnHome?: true
-  isQuietArea?: true
-  isRentalIncome?: true
-  isRural?: true
-  isSuburban?: true
-  isUrban?: true
-  isVacationHome?: true
+  hasModernKitchen?: true
   parkingSpaces?: true
+  isInvestment?: true
+  isOwnHome?: true
+  isVacationHome?: true
+  isRentalIncome?: true
+  isUrban?: true
+  isSuburban?: true
+  isCoastal?: true
+  isRural?: true
+  isCityCenter?: true
+  isNearSchools?: true
+  isNearHospital?: true
+  isNearHighway?: true
+  isQuietArea?: true
+  isNearBeach?: true
+  matchScore?: true
+  views?: true
+  status?: true
+  agentId?: true
+  latitude?: true
+  longitude?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type PropertyCountAggregateInputType = {
   id?: true
   title?: true
-  createdAt?: true
   description?: true
   price?: true
   location?: true
@@ -276,30 +294,34 @@ export type PropertyCountAggregateInputType = {
   propertyType?: true
   listingType?: true
   images?: true
-  matchScore?: true
-  latitude?: true
-  longitude?: true
-  updatedAt?: true
-  hasGarden?: true
-  hasModernKitchen?: true
   hasPool?: true
+  hasGarden?: true
   hasSeaView?: true
   hasSecurity?: true
-  isCityCenter?: true
-  isCoastal?: true
-  isInvestment?: true
-  isNearBeach?: true
-  isNearHighway?: true
-  isNearHospital?: true
-  isNearSchools?: true
-  isOwnHome?: true
-  isQuietArea?: true
-  isRentalIncome?: true
-  isRural?: true
-  isSuburban?: true
-  isUrban?: true
-  isVacationHome?: true
+  hasModernKitchen?: true
   parkingSpaces?: true
+  isInvestment?: true
+  isOwnHome?: true
+  isVacationHome?: true
+  isRentalIncome?: true
+  isUrban?: true
+  isSuburban?: true
+  isCoastal?: true
+  isRural?: true
+  isCityCenter?: true
+  isNearSchools?: true
+  isNearHospital?: true
+  isNearHighway?: true
+  isQuietArea?: true
+  isNearBeach?: true
+  matchScore?: true
+  views?: true
+  status?: true
+  agentId?: true
+  latitude?: true
+  longitude?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -392,7 +414,6 @@ export type PropertyGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type PropertyGroupByOutputType = {
   id: string
   title: string
-  createdAt: Date
   description: string | null
   price: number
   location: string
@@ -402,30 +423,34 @@ export type PropertyGroupByOutputType = {
   propertyType: string
   listingType: string
   images: string[]
-  matchScore: number | null
-  latitude: number | null
-  longitude: number | null
-  updatedAt: Date
-  hasGarden: boolean
-  hasModernKitchen: boolean
   hasPool: boolean
+  hasGarden: boolean
   hasSeaView: boolean
   hasSecurity: boolean
-  isCityCenter: boolean
-  isCoastal: boolean
-  isInvestment: boolean
-  isNearBeach: boolean
-  isNearHighway: boolean
-  isNearHospital: boolean
-  isNearSchools: boolean
-  isOwnHome: boolean
-  isQuietArea: boolean
-  isRentalIncome: boolean
-  isRural: boolean
-  isSuburban: boolean
-  isUrban: boolean
-  isVacationHome: boolean
+  hasModernKitchen: boolean
   parkingSpaces: number
+  isInvestment: boolean
+  isOwnHome: boolean
+  isVacationHome: boolean
+  isRentalIncome: boolean
+  isUrban: boolean
+  isSuburban: boolean
+  isCoastal: boolean
+  isRural: boolean
+  isCityCenter: boolean
+  isNearSchools: boolean
+  isNearHospital: boolean
+  isNearHighway: boolean
+  isQuietArea: boolean
+  isNearBeach: boolean
+  matchScore: number | null
+  views: number
+  status: string
+  agentId: string | null
+  latitude: number | null
+  longitude: number | null
+  createdAt: Date
+  updatedAt: Date
   _count: PropertyCountAggregateOutputType | null
   _avg: PropertyAvgAggregateOutputType | null
   _sum: PropertySumAggregateOutputType | null
@@ -454,7 +479,6 @@ export type PropertyWhereInput = {
   NOT?: Prisma.PropertyWhereInput | Prisma.PropertyWhereInput[]
   id?: Prisma.StringFilter<"Property"> | string
   title?: Prisma.StringFilter<"Property"> | string
-  createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   description?: Prisma.StringNullableFilter<"Property"> | string | null
   price?: Prisma.FloatFilter<"Property"> | number
   location?: Prisma.StringFilter<"Property"> | string
@@ -464,36 +488,41 @@ export type PropertyWhereInput = {
   propertyType?: Prisma.StringFilter<"Property"> | string
   listingType?: Prisma.StringFilter<"Property"> | string
   images?: Prisma.StringNullableListFilter<"Property">
-  matchScore?: Prisma.IntNullableFilter<"Property"> | number | null
-  latitude?: Prisma.FloatNullableFilter<"Property"> | number | null
-  longitude?: Prisma.FloatNullableFilter<"Property"> | number | null
-  updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
-  hasGarden?: Prisma.BoolFilter<"Property"> | boolean
-  hasModernKitchen?: Prisma.BoolFilter<"Property"> | boolean
   hasPool?: Prisma.BoolFilter<"Property"> | boolean
+  hasGarden?: Prisma.BoolFilter<"Property"> | boolean
   hasSeaView?: Prisma.BoolFilter<"Property"> | boolean
   hasSecurity?: Prisma.BoolFilter<"Property"> | boolean
-  isCityCenter?: Prisma.BoolFilter<"Property"> | boolean
-  isCoastal?: Prisma.BoolFilter<"Property"> | boolean
-  isInvestment?: Prisma.BoolFilter<"Property"> | boolean
-  isNearBeach?: Prisma.BoolFilter<"Property"> | boolean
-  isNearHighway?: Prisma.BoolFilter<"Property"> | boolean
-  isNearHospital?: Prisma.BoolFilter<"Property"> | boolean
-  isNearSchools?: Prisma.BoolFilter<"Property"> | boolean
-  isOwnHome?: Prisma.BoolFilter<"Property"> | boolean
-  isQuietArea?: Prisma.BoolFilter<"Property"> | boolean
-  isRentalIncome?: Prisma.BoolFilter<"Property"> | boolean
-  isRural?: Prisma.BoolFilter<"Property"> | boolean
-  isSuburban?: Prisma.BoolFilter<"Property"> | boolean
-  isUrban?: Prisma.BoolFilter<"Property"> | boolean
-  isVacationHome?: Prisma.BoolFilter<"Property"> | boolean
+  hasModernKitchen?: Prisma.BoolFilter<"Property"> | boolean
   parkingSpaces?: Prisma.IntFilter<"Property"> | number
+  isInvestment?: Prisma.BoolFilter<"Property"> | boolean
+  isOwnHome?: Prisma.BoolFilter<"Property"> | boolean
+  isVacationHome?: Prisma.BoolFilter<"Property"> | boolean
+  isRentalIncome?: Prisma.BoolFilter<"Property"> | boolean
+  isUrban?: Prisma.BoolFilter<"Property"> | boolean
+  isSuburban?: Prisma.BoolFilter<"Property"> | boolean
+  isCoastal?: Prisma.BoolFilter<"Property"> | boolean
+  isRural?: Prisma.BoolFilter<"Property"> | boolean
+  isCityCenter?: Prisma.BoolFilter<"Property"> | boolean
+  isNearSchools?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHospital?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHighway?: Prisma.BoolFilter<"Property"> | boolean
+  isQuietArea?: Prisma.BoolFilter<"Property"> | boolean
+  isNearBeach?: Prisma.BoolFilter<"Property"> | boolean
+  matchScore?: Prisma.IntNullableFilter<"Property"> | number | null
+  views?: Prisma.IntFilter<"Property"> | number
+  status?: Prisma.StringFilter<"Property"> | string
+  agentId?: Prisma.StringNullableFilter<"Property"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+  agent?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  savedByUsers?: Prisma.SavedPropertyListRelationFilter
 }
 
 export type PropertyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -503,30 +532,36 @@ export type PropertyOrderByWithRelationInput = {
   propertyType?: Prisma.SortOrder
   listingType?: Prisma.SortOrder
   images?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
-  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  hasGarden?: Prisma.SortOrder
-  hasModernKitchen?: Prisma.SortOrder
   hasPool?: Prisma.SortOrder
+  hasGarden?: Prisma.SortOrder
   hasSeaView?: Prisma.SortOrder
   hasSecurity?: Prisma.SortOrder
-  isCityCenter?: Prisma.SortOrder
-  isCoastal?: Prisma.SortOrder
-  isInvestment?: Prisma.SortOrder
-  isNearBeach?: Prisma.SortOrder
-  isNearHighway?: Prisma.SortOrder
-  isNearHospital?: Prisma.SortOrder
-  isNearSchools?: Prisma.SortOrder
-  isOwnHome?: Prisma.SortOrder
-  isQuietArea?: Prisma.SortOrder
-  isRentalIncome?: Prisma.SortOrder
-  isRural?: Prisma.SortOrder
-  isSuburban?: Prisma.SortOrder
-  isUrban?: Prisma.SortOrder
-  isVacationHome?: Prisma.SortOrder
+  hasModernKitchen?: Prisma.SortOrder
   parkingSpaces?: Prisma.SortOrder
+  isInvestment?: Prisma.SortOrder
+  isOwnHome?: Prisma.SortOrder
+  isVacationHome?: Prisma.SortOrder
+  isRentalIncome?: Prisma.SortOrder
+  isUrban?: Prisma.SortOrder
+  isSuburban?: Prisma.SortOrder
+  isCoastal?: Prisma.SortOrder
+  isRural?: Prisma.SortOrder
+  isCityCenter?: Prisma.SortOrder
+  isNearSchools?: Prisma.SortOrder
+  isNearHospital?: Prisma.SortOrder
+  isNearHighway?: Prisma.SortOrder
+  isQuietArea?: Prisma.SortOrder
+  isNearBeach?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  agentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  agent?: Prisma.UserOrderByWithRelationInput
+  savedByUsers?: Prisma.SavedPropertyOrderByRelationAggregateInput
 }
 
 export type PropertyWhereUniqueInput = Prisma.AtLeast<{
@@ -535,7 +570,6 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PropertyWhereInput[]
   NOT?: Prisma.PropertyWhereInput | Prisma.PropertyWhereInput[]
   title?: Prisma.StringFilter<"Property"> | string
-  createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   description?: Prisma.StringNullableFilter<"Property"> | string | null
   price?: Prisma.FloatFilter<"Property"> | number
   location?: Prisma.StringFilter<"Property"> | string
@@ -545,36 +579,41 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   propertyType?: Prisma.StringFilter<"Property"> | string
   listingType?: Prisma.StringFilter<"Property"> | string
   images?: Prisma.StringNullableListFilter<"Property">
-  matchScore?: Prisma.IntNullableFilter<"Property"> | number | null
-  latitude?: Prisma.FloatNullableFilter<"Property"> | number | null
-  longitude?: Prisma.FloatNullableFilter<"Property"> | number | null
-  updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
-  hasGarden?: Prisma.BoolFilter<"Property"> | boolean
-  hasModernKitchen?: Prisma.BoolFilter<"Property"> | boolean
   hasPool?: Prisma.BoolFilter<"Property"> | boolean
+  hasGarden?: Prisma.BoolFilter<"Property"> | boolean
   hasSeaView?: Prisma.BoolFilter<"Property"> | boolean
   hasSecurity?: Prisma.BoolFilter<"Property"> | boolean
-  isCityCenter?: Prisma.BoolFilter<"Property"> | boolean
-  isCoastal?: Prisma.BoolFilter<"Property"> | boolean
-  isInvestment?: Prisma.BoolFilter<"Property"> | boolean
-  isNearBeach?: Prisma.BoolFilter<"Property"> | boolean
-  isNearHighway?: Prisma.BoolFilter<"Property"> | boolean
-  isNearHospital?: Prisma.BoolFilter<"Property"> | boolean
-  isNearSchools?: Prisma.BoolFilter<"Property"> | boolean
-  isOwnHome?: Prisma.BoolFilter<"Property"> | boolean
-  isQuietArea?: Prisma.BoolFilter<"Property"> | boolean
-  isRentalIncome?: Prisma.BoolFilter<"Property"> | boolean
-  isRural?: Prisma.BoolFilter<"Property"> | boolean
-  isSuburban?: Prisma.BoolFilter<"Property"> | boolean
-  isUrban?: Prisma.BoolFilter<"Property"> | boolean
-  isVacationHome?: Prisma.BoolFilter<"Property"> | boolean
+  hasModernKitchen?: Prisma.BoolFilter<"Property"> | boolean
   parkingSpaces?: Prisma.IntFilter<"Property"> | number
+  isInvestment?: Prisma.BoolFilter<"Property"> | boolean
+  isOwnHome?: Prisma.BoolFilter<"Property"> | boolean
+  isVacationHome?: Prisma.BoolFilter<"Property"> | boolean
+  isRentalIncome?: Prisma.BoolFilter<"Property"> | boolean
+  isUrban?: Prisma.BoolFilter<"Property"> | boolean
+  isSuburban?: Prisma.BoolFilter<"Property"> | boolean
+  isCoastal?: Prisma.BoolFilter<"Property"> | boolean
+  isRural?: Prisma.BoolFilter<"Property"> | boolean
+  isCityCenter?: Prisma.BoolFilter<"Property"> | boolean
+  isNearSchools?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHospital?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHighway?: Prisma.BoolFilter<"Property"> | boolean
+  isQuietArea?: Prisma.BoolFilter<"Property"> | boolean
+  isNearBeach?: Prisma.BoolFilter<"Property"> | boolean
+  matchScore?: Prisma.IntNullableFilter<"Property"> | number | null
+  views?: Prisma.IntFilter<"Property"> | number
+  status?: Prisma.StringFilter<"Property"> | string
+  agentId?: Prisma.StringNullableFilter<"Property"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+  agent?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  savedByUsers?: Prisma.SavedPropertyListRelationFilter
 }, "id">
 
 export type PropertyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -584,30 +623,34 @@ export type PropertyOrderByWithAggregationInput = {
   propertyType?: Prisma.SortOrder
   listingType?: Prisma.SortOrder
   images?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
-  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  hasGarden?: Prisma.SortOrder
-  hasModernKitchen?: Prisma.SortOrder
   hasPool?: Prisma.SortOrder
+  hasGarden?: Prisma.SortOrder
   hasSeaView?: Prisma.SortOrder
   hasSecurity?: Prisma.SortOrder
-  isCityCenter?: Prisma.SortOrder
-  isCoastal?: Prisma.SortOrder
-  isInvestment?: Prisma.SortOrder
-  isNearBeach?: Prisma.SortOrder
-  isNearHighway?: Prisma.SortOrder
-  isNearHospital?: Prisma.SortOrder
-  isNearSchools?: Prisma.SortOrder
-  isOwnHome?: Prisma.SortOrder
-  isQuietArea?: Prisma.SortOrder
-  isRentalIncome?: Prisma.SortOrder
-  isRural?: Prisma.SortOrder
-  isSuburban?: Prisma.SortOrder
-  isUrban?: Prisma.SortOrder
-  isVacationHome?: Prisma.SortOrder
+  hasModernKitchen?: Prisma.SortOrder
   parkingSpaces?: Prisma.SortOrder
+  isInvestment?: Prisma.SortOrder
+  isOwnHome?: Prisma.SortOrder
+  isVacationHome?: Prisma.SortOrder
+  isRentalIncome?: Prisma.SortOrder
+  isUrban?: Prisma.SortOrder
+  isSuburban?: Prisma.SortOrder
+  isCoastal?: Prisma.SortOrder
+  isRural?: Prisma.SortOrder
+  isCityCenter?: Prisma.SortOrder
+  isNearSchools?: Prisma.SortOrder
+  isNearHospital?: Prisma.SortOrder
+  isNearHighway?: Prisma.SortOrder
+  isQuietArea?: Prisma.SortOrder
+  isNearBeach?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  agentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.PropertyCountOrderByAggregateInput
   _avg?: Prisma.PropertyAvgOrderByAggregateInput
   _max?: Prisma.PropertyMaxOrderByAggregateInput
@@ -621,7 +664,6 @@ export type PropertyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PropertyScalarWhereWithAggregatesInput | Prisma.PropertyScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Property"> | string
   title?: Prisma.StringWithAggregatesFilter<"Property"> | string
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   price?: Prisma.FloatWithAggregatesFilter<"Property"> | number
   location?: Prisma.StringWithAggregatesFilter<"Property"> | string
@@ -631,36 +673,39 @@ export type PropertyScalarWhereWithAggregatesInput = {
   propertyType?: Prisma.StringWithAggregatesFilter<"Property"> | string
   listingType?: Prisma.StringWithAggregatesFilter<"Property"> | string
   images?: Prisma.StringNullableListFilter<"Property">
-  matchScore?: Prisma.IntNullableWithAggregatesFilter<"Property"> | number | null
-  latitude?: Prisma.FloatNullableWithAggregatesFilter<"Property"> | number | null
-  longitude?: Prisma.FloatNullableWithAggregatesFilter<"Property"> | number | null
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
-  hasGarden?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  hasModernKitchen?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
   hasPool?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  hasGarden?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
   hasSeaView?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
   hasSecurity?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isCityCenter?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isCoastal?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isInvestment?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isNearBeach?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isNearHighway?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isNearHospital?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isNearSchools?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isOwnHome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isQuietArea?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isRentalIncome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isRural?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isSuburban?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isUrban?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
-  isVacationHome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  hasModernKitchen?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
   parkingSpaces?: Prisma.IntWithAggregatesFilter<"Property"> | number
+  isInvestment?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isOwnHome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isVacationHome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isRentalIncome?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isUrban?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isSuburban?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isCoastal?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isRural?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isCityCenter?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isNearSchools?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isNearHospital?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isNearHighway?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isQuietArea?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  isNearBeach?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
+  matchScore?: Prisma.IntNullableWithAggregatesFilter<"Property"> | number | null
+  views?: Prisma.IntWithAggregatesFilter<"Property"> | number
+  status?: Prisma.StringWithAggregatesFilter<"Property"> | string
+  agentId?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  latitude?: Prisma.FloatNullableWithAggregatesFilter<"Property"> | number | null
+  longitude?: Prisma.FloatNullableWithAggregatesFilter<"Property"> | number | null
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
 }
 
 export type PropertyCreateInput = {
   id?: string
   title: string
-  createdAt?: Date | string
   description?: string | null
   price: number
   location: string
@@ -670,36 +715,40 @@ export type PropertyCreateInput = {
   propertyType: string
   listingType: string
   images?: Prisma.PropertyCreateimagesInput | string[]
-  matchScore?: number | null
-  latitude?: number | null
-  longitude?: number | null
-  updatedAt?: Date | string
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agent?: Prisma.UserCreateNestedOneWithoutPropertiesInput
+  savedByUsers?: Prisma.SavedPropertyCreateNestedManyWithoutPropertyInput
 }
 
 export type PropertyUncheckedCreateInput = {
   id?: string
   title: string
-  createdAt?: Date | string
   description?: string | null
   price: number
   location: string
@@ -709,36 +758,40 @@ export type PropertyUncheckedCreateInput = {
   propertyType: string
   listingType: string
   images?: Prisma.PropertyCreateimagesInput | string[]
-  matchScore?: number | null
-  latitude?: number | null
-  longitude?: number | null
-  updatedAt?: Date | string
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  agentId?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  savedByUsers?: Prisma.SavedPropertyUncheckedCreateNestedManyWithoutPropertyInput
 }
 
 export type PropertyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
@@ -748,36 +801,40 @@ export type PropertyUpdateInput = {
   propertyType?: Prisma.StringFieldUpdateOperationsInput | string
   listingType?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.PropertyUpdateimagesInput | string[]
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agent?: Prisma.UserUpdateOneWithoutPropertiesNestedInput
+  savedByUsers?: Prisma.SavedPropertyUpdateManyWithoutPropertyNestedInput
 }
 
 export type PropertyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
@@ -787,36 +844,40 @@ export type PropertyUncheckedUpdateInput = {
   propertyType?: Prisma.StringFieldUpdateOperationsInput | string
   listingType?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.PropertyUpdateimagesInput | string[]
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedByUsers?: Prisma.SavedPropertyUncheckedUpdateManyWithoutPropertyNestedInput
 }
 
 export type PropertyCreateManyInput = {
   id?: string
   title: string
-  createdAt?: Date | string
   description?: string | null
   price: number
   location: string
@@ -826,36 +887,39 @@ export type PropertyCreateManyInput = {
   propertyType: string
   listingType: string
   images?: Prisma.PropertyCreateimagesInput | string[]
-  matchScore?: number | null
-  latitude?: number | null
-  longitude?: number | null
-  updatedAt?: Date | string
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  agentId?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type PropertyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
@@ -865,36 +929,38 @@ export type PropertyUpdateManyMutationInput = {
   propertyType?: Prisma.StringFieldUpdateOperationsInput | string
   listingType?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.PropertyUpdateimagesInput | string[]
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PropertyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   location?: Prisma.StringFieldUpdateOperationsInput | string
@@ -904,36 +970,44 @@ export type PropertyUncheckedUpdateManyInput = {
   propertyType?: Prisma.StringFieldUpdateOperationsInput | string
   listingType?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.PropertyUpdateimagesInput | string[]
-  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PropertyScalarRelationFilter = {
+  is?: Prisma.PropertyWhereInput
+  isNot?: Prisma.PropertyWhereInput
 }
 
 export type PropertyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -943,30 +1017,34 @@ export type PropertyCountOrderByAggregateInput = {
   propertyType?: Prisma.SortOrder
   listingType?: Prisma.SortOrder
   images?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  hasGarden?: Prisma.SortOrder
-  hasModernKitchen?: Prisma.SortOrder
   hasPool?: Prisma.SortOrder
+  hasGarden?: Prisma.SortOrder
   hasSeaView?: Prisma.SortOrder
   hasSecurity?: Prisma.SortOrder
-  isCityCenter?: Prisma.SortOrder
-  isCoastal?: Prisma.SortOrder
-  isInvestment?: Prisma.SortOrder
-  isNearBeach?: Prisma.SortOrder
-  isNearHighway?: Prisma.SortOrder
-  isNearHospital?: Prisma.SortOrder
-  isNearSchools?: Prisma.SortOrder
-  isOwnHome?: Prisma.SortOrder
-  isQuietArea?: Prisma.SortOrder
-  isRentalIncome?: Prisma.SortOrder
-  isRural?: Prisma.SortOrder
-  isSuburban?: Prisma.SortOrder
-  isUrban?: Prisma.SortOrder
-  isVacationHome?: Prisma.SortOrder
+  hasModernKitchen?: Prisma.SortOrder
   parkingSpaces?: Prisma.SortOrder
+  isInvestment?: Prisma.SortOrder
+  isOwnHome?: Prisma.SortOrder
+  isVacationHome?: Prisma.SortOrder
+  isRentalIncome?: Prisma.SortOrder
+  isUrban?: Prisma.SortOrder
+  isSuburban?: Prisma.SortOrder
+  isCoastal?: Prisma.SortOrder
+  isRural?: Prisma.SortOrder
+  isCityCenter?: Prisma.SortOrder
+  isNearSchools?: Prisma.SortOrder
+  isNearHospital?: Prisma.SortOrder
+  isNearHighway?: Prisma.SortOrder
+  isQuietArea?: Prisma.SortOrder
+  isNearBeach?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PropertyAvgOrderByAggregateInput = {
@@ -974,16 +1052,16 @@ export type PropertyAvgOrderByAggregateInput = {
   bedrooms?: Prisma.SortOrder
   bathrooms?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  parkingSpaces?: Prisma.SortOrder
   matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
-  parkingSpaces?: Prisma.SortOrder
 }
 
 export type PropertyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -992,36 +1070,39 @@ export type PropertyMaxOrderByAggregateInput = {
   area?: Prisma.SortOrder
   propertyType?: Prisma.SortOrder
   listingType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  hasGarden?: Prisma.SortOrder
-  hasModernKitchen?: Prisma.SortOrder
   hasPool?: Prisma.SortOrder
+  hasGarden?: Prisma.SortOrder
   hasSeaView?: Prisma.SortOrder
   hasSecurity?: Prisma.SortOrder
-  isCityCenter?: Prisma.SortOrder
-  isCoastal?: Prisma.SortOrder
-  isInvestment?: Prisma.SortOrder
-  isNearBeach?: Prisma.SortOrder
-  isNearHighway?: Prisma.SortOrder
-  isNearHospital?: Prisma.SortOrder
-  isNearSchools?: Prisma.SortOrder
-  isOwnHome?: Prisma.SortOrder
-  isQuietArea?: Prisma.SortOrder
-  isRentalIncome?: Prisma.SortOrder
-  isRural?: Prisma.SortOrder
-  isSuburban?: Prisma.SortOrder
-  isUrban?: Prisma.SortOrder
-  isVacationHome?: Prisma.SortOrder
+  hasModernKitchen?: Prisma.SortOrder
   parkingSpaces?: Prisma.SortOrder
+  isInvestment?: Prisma.SortOrder
+  isOwnHome?: Prisma.SortOrder
+  isVacationHome?: Prisma.SortOrder
+  isRentalIncome?: Prisma.SortOrder
+  isUrban?: Prisma.SortOrder
+  isSuburban?: Prisma.SortOrder
+  isCoastal?: Prisma.SortOrder
+  isRural?: Prisma.SortOrder
+  isCityCenter?: Prisma.SortOrder
+  isNearSchools?: Prisma.SortOrder
+  isNearHospital?: Prisma.SortOrder
+  isNearHighway?: Prisma.SortOrder
+  isQuietArea?: Prisma.SortOrder
+  isNearBeach?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PropertyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -1030,30 +1111,34 @@ export type PropertyMinOrderByAggregateInput = {
   area?: Prisma.SortOrder
   propertyType?: Prisma.SortOrder
   listingType?: Prisma.SortOrder
-  matchScore?: Prisma.SortOrder
-  latitude?: Prisma.SortOrder
-  longitude?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  hasGarden?: Prisma.SortOrder
-  hasModernKitchen?: Prisma.SortOrder
   hasPool?: Prisma.SortOrder
+  hasGarden?: Prisma.SortOrder
   hasSeaView?: Prisma.SortOrder
   hasSecurity?: Prisma.SortOrder
-  isCityCenter?: Prisma.SortOrder
-  isCoastal?: Prisma.SortOrder
-  isInvestment?: Prisma.SortOrder
-  isNearBeach?: Prisma.SortOrder
-  isNearHighway?: Prisma.SortOrder
-  isNearHospital?: Prisma.SortOrder
-  isNearSchools?: Prisma.SortOrder
-  isOwnHome?: Prisma.SortOrder
-  isQuietArea?: Prisma.SortOrder
-  isRentalIncome?: Prisma.SortOrder
-  isRural?: Prisma.SortOrder
-  isSuburban?: Prisma.SortOrder
-  isUrban?: Prisma.SortOrder
-  isVacationHome?: Prisma.SortOrder
+  hasModernKitchen?: Prisma.SortOrder
   parkingSpaces?: Prisma.SortOrder
+  isInvestment?: Prisma.SortOrder
+  isOwnHome?: Prisma.SortOrder
+  isVacationHome?: Prisma.SortOrder
+  isRentalIncome?: Prisma.SortOrder
+  isUrban?: Prisma.SortOrder
+  isSuburban?: Prisma.SortOrder
+  isCoastal?: Prisma.SortOrder
+  isRural?: Prisma.SortOrder
+  isCityCenter?: Prisma.SortOrder
+  isNearSchools?: Prisma.SortOrder
+  isNearHospital?: Prisma.SortOrder
+  isNearHighway?: Prisma.SortOrder
+  isQuietArea?: Prisma.SortOrder
+  isNearBeach?: Prisma.SortOrder
+  matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  agentId?: Prisma.SortOrder
+  latitude?: Prisma.SortOrder
+  longitude?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PropertySumOrderByAggregateInput = {
@@ -1061,10 +1146,35 @@ export type PropertySumOrderByAggregateInput = {
   bedrooms?: Prisma.SortOrder
   bathrooms?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  parkingSpaces?: Prisma.SortOrder
   matchScore?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
-  parkingSpaces?: Prisma.SortOrder
+}
+
+export type PropertyListRelationFilter = {
+  every?: Prisma.PropertyWhereInput
+  some?: Prisma.PropertyWhereInput
+  none?: Prisma.PropertyWhereInput
+}
+
+export type PropertyOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type PropertyCreateNestedOneWithoutSavedByUsersInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutSavedByUsersInput, Prisma.PropertyUncheckedCreateWithoutSavedByUsersInput>
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutSavedByUsersInput
+  connect?: Prisma.PropertyWhereUniqueInput
+}
+
+export type PropertyUpdateOneRequiredWithoutSavedByUsersNestedInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutSavedByUsersInput, Prisma.PropertyUncheckedCreateWithoutSavedByUsersInput>
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutSavedByUsersInput
+  upsert?: Prisma.PropertyUpsertWithoutSavedByUsersInput
+  connect?: Prisma.PropertyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PropertyUpdateToOneWithWhereWithoutSavedByUsersInput, Prisma.PropertyUpdateWithoutSavedByUsersInput>, Prisma.PropertyUncheckedUpdateWithoutSavedByUsersInput>
 }
 
 export type PropertyCreateimagesInput = {
@@ -1076,12 +1186,587 @@ export type PropertyUpdateimagesInput = {
   push?: string | string[]
 }
 
+export type PropertyCreateNestedManyWithoutAgentInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput> | Prisma.PropertyCreateWithoutAgentInput[] | Prisma.PropertyUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAgentInput | Prisma.PropertyCreateOrConnectWithoutAgentInput[]
+  createMany?: Prisma.PropertyCreateManyAgentInputEnvelope
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+}
+
+export type PropertyUncheckedCreateNestedManyWithoutAgentInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput> | Prisma.PropertyCreateWithoutAgentInput[] | Prisma.PropertyUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAgentInput | Prisma.PropertyCreateOrConnectWithoutAgentInput[]
+  createMany?: Prisma.PropertyCreateManyAgentInputEnvelope
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+}
+
+export type PropertyUpdateManyWithoutAgentNestedInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput> | Prisma.PropertyCreateWithoutAgentInput[] | Prisma.PropertyUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAgentInput | Prisma.PropertyCreateOrConnectWithoutAgentInput[]
+  upsert?: Prisma.PropertyUpsertWithWhereUniqueWithoutAgentInput | Prisma.PropertyUpsertWithWhereUniqueWithoutAgentInput[]
+  createMany?: Prisma.PropertyCreateManyAgentInputEnvelope
+  set?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  disconnect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  delete?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  update?: Prisma.PropertyUpdateWithWhereUniqueWithoutAgentInput | Prisma.PropertyUpdateWithWhereUniqueWithoutAgentInput[]
+  updateMany?: Prisma.PropertyUpdateManyWithWhereWithoutAgentInput | Prisma.PropertyUpdateManyWithWhereWithoutAgentInput[]
+  deleteMany?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+}
+
+export type PropertyUncheckedUpdateManyWithoutAgentNestedInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput> | Prisma.PropertyCreateWithoutAgentInput[] | Prisma.PropertyUncheckedCreateWithoutAgentInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAgentInput | Prisma.PropertyCreateOrConnectWithoutAgentInput[]
+  upsert?: Prisma.PropertyUpsertWithWhereUniqueWithoutAgentInput | Prisma.PropertyUpsertWithWhereUniqueWithoutAgentInput[]
+  createMany?: Prisma.PropertyCreateManyAgentInputEnvelope
+  set?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  disconnect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  delete?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  update?: Prisma.PropertyUpdateWithWhereUniqueWithoutAgentInput | Prisma.PropertyUpdateWithWhereUniqueWithoutAgentInput[]
+  updateMany?: Prisma.PropertyUpdateManyWithWhereWithoutAgentInput | Prisma.PropertyUpdateManyWithWhereWithoutAgentInput[]
+  deleteMany?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+}
+
+export type PropertyCreateWithoutSavedByUsersInput = {
+  id?: string
+  title: string
+  description?: string | null
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  propertyType: string
+  listingType: string
+  images?: Prisma.PropertyCreateimagesInput | string[]
+  hasPool?: boolean
+  hasGarden?: boolean
+  hasSeaView?: boolean
+  hasSecurity?: boolean
+  hasModernKitchen?: boolean
+  parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  agent?: Prisma.UserCreateNestedOneWithoutPropertiesInput
+}
+
+export type PropertyUncheckedCreateWithoutSavedByUsersInput = {
+  id?: string
+  title: string
+  description?: string | null
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  propertyType: string
+  listingType: string
+  images?: Prisma.PropertyCreateimagesInput | string[]
+  hasPool?: boolean
+  hasGarden?: boolean
+  hasSeaView?: boolean
+  hasSecurity?: boolean
+  hasModernKitchen?: boolean
+  parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  agentId?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PropertyCreateOrConnectWithoutSavedByUsersInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutSavedByUsersInput, Prisma.PropertyUncheckedCreateWithoutSavedByUsersInput>
+}
+
+export type PropertyUpsertWithoutSavedByUsersInput = {
+  update: Prisma.XOR<Prisma.PropertyUpdateWithoutSavedByUsersInput, Prisma.PropertyUncheckedUpdateWithoutSavedByUsersInput>
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutSavedByUsersInput, Prisma.PropertyUncheckedCreateWithoutSavedByUsersInput>
+  where?: Prisma.PropertyWhereInput
+}
+
+export type PropertyUpdateToOneWithWhereWithoutSavedByUsersInput = {
+  where?: Prisma.PropertyWhereInput
+  data: Prisma.XOR<Prisma.PropertyUpdateWithoutSavedByUsersInput, Prisma.PropertyUncheckedUpdateWithoutSavedByUsersInput>
+}
+
+export type PropertyUpdateWithoutSavedByUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.FloatFieldUpdateOperationsInput | number
+  propertyType?: Prisma.StringFieldUpdateOperationsInput | string
+  listingType?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.PropertyUpdateimagesInput | string[]
+  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  agent?: Prisma.UserUpdateOneWithoutPropertiesNestedInput
+}
+
+export type PropertyUncheckedUpdateWithoutSavedByUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.FloatFieldUpdateOperationsInput | number
+  propertyType?: Prisma.StringFieldUpdateOperationsInput | string
+  listingType?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.PropertyUpdateimagesInput | string[]
+  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  agentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PropertyCreateWithoutAgentInput = {
+  id?: string
+  title: string
+  description?: string | null
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  propertyType: string
+  listingType: string
+  images?: Prisma.PropertyCreateimagesInput | string[]
+  hasPool?: boolean
+  hasGarden?: boolean
+  hasSeaView?: boolean
+  hasSecurity?: boolean
+  hasModernKitchen?: boolean
+  parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  savedByUsers?: Prisma.SavedPropertyCreateNestedManyWithoutPropertyInput
+}
+
+export type PropertyUncheckedCreateWithoutAgentInput = {
+  id?: string
+  title: string
+  description?: string | null
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  propertyType: string
+  listingType: string
+  images?: Prisma.PropertyCreateimagesInput | string[]
+  hasPool?: boolean
+  hasGarden?: boolean
+  hasSeaView?: boolean
+  hasSecurity?: boolean
+  hasModernKitchen?: boolean
+  parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  savedByUsers?: Prisma.SavedPropertyUncheckedCreateNestedManyWithoutPropertyInput
+}
+
+export type PropertyCreateOrConnectWithoutAgentInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput>
+}
+
+export type PropertyCreateManyAgentInputEnvelope = {
+  data: Prisma.PropertyCreateManyAgentInput | Prisma.PropertyCreateManyAgentInput[]
+  skipDuplicates?: boolean
+}
+
+export type PropertyUpsertWithWhereUniqueWithoutAgentInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  update: Prisma.XOR<Prisma.PropertyUpdateWithoutAgentInput, Prisma.PropertyUncheckedUpdateWithoutAgentInput>
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutAgentInput, Prisma.PropertyUncheckedCreateWithoutAgentInput>
+}
+
+export type PropertyUpdateWithWhereUniqueWithoutAgentInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  data: Prisma.XOR<Prisma.PropertyUpdateWithoutAgentInput, Prisma.PropertyUncheckedUpdateWithoutAgentInput>
+}
+
+export type PropertyUpdateManyWithWhereWithoutAgentInput = {
+  where: Prisma.PropertyScalarWhereInput
+  data: Prisma.XOR<Prisma.PropertyUpdateManyMutationInput, Prisma.PropertyUncheckedUpdateManyWithoutAgentInput>
+}
+
+export type PropertyScalarWhereInput = {
+  AND?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+  OR?: Prisma.PropertyScalarWhereInput[]
+  NOT?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+  id?: Prisma.StringFilter<"Property"> | string
+  title?: Prisma.StringFilter<"Property"> | string
+  description?: Prisma.StringNullableFilter<"Property"> | string | null
+  price?: Prisma.FloatFilter<"Property"> | number
+  location?: Prisma.StringFilter<"Property"> | string
+  bedrooms?: Prisma.IntFilter<"Property"> | number
+  bathrooms?: Prisma.IntFilter<"Property"> | number
+  area?: Prisma.FloatFilter<"Property"> | number
+  propertyType?: Prisma.StringFilter<"Property"> | string
+  listingType?: Prisma.StringFilter<"Property"> | string
+  images?: Prisma.StringNullableListFilter<"Property">
+  hasPool?: Prisma.BoolFilter<"Property"> | boolean
+  hasGarden?: Prisma.BoolFilter<"Property"> | boolean
+  hasSeaView?: Prisma.BoolFilter<"Property"> | boolean
+  hasSecurity?: Prisma.BoolFilter<"Property"> | boolean
+  hasModernKitchen?: Prisma.BoolFilter<"Property"> | boolean
+  parkingSpaces?: Prisma.IntFilter<"Property"> | number
+  isInvestment?: Prisma.BoolFilter<"Property"> | boolean
+  isOwnHome?: Prisma.BoolFilter<"Property"> | boolean
+  isVacationHome?: Prisma.BoolFilter<"Property"> | boolean
+  isRentalIncome?: Prisma.BoolFilter<"Property"> | boolean
+  isUrban?: Prisma.BoolFilter<"Property"> | boolean
+  isSuburban?: Prisma.BoolFilter<"Property"> | boolean
+  isCoastal?: Prisma.BoolFilter<"Property"> | boolean
+  isRural?: Prisma.BoolFilter<"Property"> | boolean
+  isCityCenter?: Prisma.BoolFilter<"Property"> | boolean
+  isNearSchools?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHospital?: Prisma.BoolFilter<"Property"> | boolean
+  isNearHighway?: Prisma.BoolFilter<"Property"> | boolean
+  isQuietArea?: Prisma.BoolFilter<"Property"> | boolean
+  isNearBeach?: Prisma.BoolFilter<"Property"> | boolean
+  matchScore?: Prisma.IntNullableFilter<"Property"> | number | null
+  views?: Prisma.IntFilter<"Property"> | number
+  status?: Prisma.StringFilter<"Property"> | string
+  agentId?: Prisma.StringNullableFilter<"Property"> | string | null
+  latitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  longitude?: Prisma.FloatNullableFilter<"Property"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
+}
+
+export type PropertyCreateManyAgentInput = {
+  id?: string
+  title: string
+  description?: string | null
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  propertyType: string
+  listingType: string
+  images?: Prisma.PropertyCreateimagesInput | string[]
+  hasPool?: boolean
+  hasGarden?: boolean
+  hasSeaView?: boolean
+  hasSecurity?: boolean
+  hasModernKitchen?: boolean
+  parkingSpaces?: number
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: number | null
+  views?: number
+  status?: string
+  latitude?: number | null
+  longitude?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PropertyUpdateWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.FloatFieldUpdateOperationsInput | number
+  propertyType?: Prisma.StringFieldUpdateOperationsInput | string
+  listingType?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.PropertyUpdateimagesInput | string[]
+  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedByUsers?: Prisma.SavedPropertyUpdateManyWithoutPropertyNestedInput
+}
+
+export type PropertyUncheckedUpdateWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.FloatFieldUpdateOperationsInput | number
+  propertyType?: Prisma.StringFieldUpdateOperationsInput | string
+  listingType?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.PropertyUpdateimagesInput | string[]
+  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedByUsers?: Prisma.SavedPropertyUncheckedUpdateManyWithoutPropertyNestedInput
+}
+
+export type PropertyUncheckedUpdateManyWithoutAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.FloatFieldUpdateOperationsInput | number
+  propertyType?: Prisma.StringFieldUpdateOperationsInput | string
+  listingType?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.PropertyUpdateimagesInput | string[]
+  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasGarden?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSeaView?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSecurity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasModernKitchen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parkingSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  isInvestment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOwnHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVacationHome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRentalIncome?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUrban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isSuburban?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCoastal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRural?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isCityCenter?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearSchools?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHospital?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearHighway?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isQuietArea?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isNearBeach?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  matchScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type PropertyCountOutputType
+ */
+
+export type PropertyCountOutputType = {
+  savedByUsers: number
+}
+
+export type PropertyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  savedByUsers?: boolean | PropertyCountOutputTypeCountSavedByUsersArgs
+}
+
+/**
+ * PropertyCountOutputType without action
+ */
+export type PropertyCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PropertyCountOutputType
+   */
+  select?: Prisma.PropertyCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PropertyCountOutputType without action
+ */
+export type PropertyCountOutputTypeCountSavedByUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavedPropertyWhereInput
+}
 
 
 export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  createdAt?: boolean
   description?: boolean
   price?: boolean
   location?: boolean
@@ -1091,36 +1776,42 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   propertyType?: boolean
   listingType?: boolean
   images?: boolean
-  matchScore?: boolean
-  latitude?: boolean
-  longitude?: boolean
-  updatedAt?: boolean
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: boolean
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: boolean
+  views?: boolean
+  status?: boolean
+  agentId?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
+  savedByUsers?: boolean | Prisma.Property$savedByUsersArgs<ExtArgs>
+  _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
 export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  createdAt?: boolean
   description?: boolean
   price?: boolean
   location?: boolean
@@ -1130,36 +1821,40 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   propertyType?: boolean
   listingType?: boolean
   images?: boolean
-  matchScore?: boolean
-  latitude?: boolean
-  longitude?: boolean
-  updatedAt?: boolean
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: boolean
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: boolean
+  views?: boolean
+  status?: boolean
+  agentId?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
 export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  createdAt?: boolean
   description?: boolean
   price?: boolean
   location?: boolean
@@ -1169,36 +1864,40 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   propertyType?: boolean
   listingType?: boolean
   images?: boolean
-  matchScore?: boolean
-  latitude?: boolean
-  longitude?: boolean
-  updatedAt?: boolean
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: boolean
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: boolean
+  views?: boolean
+  status?: boolean
+  agentId?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
 export type PropertySelectScalar = {
   id?: boolean
   title?: boolean
-  createdAt?: boolean
   description?: boolean
   price?: boolean
   location?: boolean
@@ -1208,41 +1907,58 @@ export type PropertySelectScalar = {
   propertyType?: boolean
   listingType?: boolean
   images?: boolean
-  matchScore?: boolean
-  latitude?: boolean
-  longitude?: boolean
-  updatedAt?: boolean
-  hasGarden?: boolean
-  hasModernKitchen?: boolean
   hasPool?: boolean
+  hasGarden?: boolean
   hasSeaView?: boolean
   hasSecurity?: boolean
-  isCityCenter?: boolean
-  isCoastal?: boolean
-  isInvestment?: boolean
-  isNearBeach?: boolean
-  isNearHighway?: boolean
-  isNearHospital?: boolean
-  isNearSchools?: boolean
-  isOwnHome?: boolean
-  isQuietArea?: boolean
-  isRentalIncome?: boolean
-  isRural?: boolean
-  isSuburban?: boolean
-  isUrban?: boolean
-  isVacationHome?: boolean
+  hasModernKitchen?: boolean
   parkingSpaces?: boolean
+  isInvestment?: boolean
+  isOwnHome?: boolean
+  isVacationHome?: boolean
+  isRentalIncome?: boolean
+  isUrban?: boolean
+  isSuburban?: boolean
+  isCoastal?: boolean
+  isRural?: boolean
+  isCityCenter?: boolean
+  isNearSchools?: boolean
+  isNearHospital?: boolean
+  isNearHighway?: boolean
+  isQuietArea?: boolean
+  isNearBeach?: boolean
+  matchScore?: boolean
+  views?: boolean
+  status?: boolean
+  agentId?: boolean
+  latitude?: boolean
+  longitude?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "createdAt" | "description" | "price" | "location" | "bedrooms" | "bathrooms" | "area" | "propertyType" | "listingType" | "images" | "matchScore" | "latitude" | "longitude" | "updatedAt" | "hasGarden" | "hasModernKitchen" | "hasPool" | "hasSeaView" | "hasSecurity" | "isCityCenter" | "isCoastal" | "isInvestment" | "isNearBeach" | "isNearHighway" | "isNearHospital" | "isNearSchools" | "isOwnHome" | "isQuietArea" | "isRentalIncome" | "isRural" | "isSuburban" | "isUrban" | "isVacationHome" | "parkingSpaces", ExtArgs["result"]["property"]>
+export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "price" | "location" | "bedrooms" | "bathrooms" | "area" | "propertyType" | "listingType" | "images" | "hasPool" | "hasGarden" | "hasSeaView" | "hasSecurity" | "hasModernKitchen" | "parkingSpaces" | "isInvestment" | "isOwnHome" | "isVacationHome" | "isRentalIncome" | "isUrban" | "isSuburban" | "isCoastal" | "isRural" | "isCityCenter" | "isNearSchools" | "isNearHospital" | "isNearHighway" | "isQuietArea" | "isNearBeach" | "matchScore" | "views" | "status" | "agentId" | "latitude" | "longitude" | "createdAt" | "updatedAt", ExtArgs["result"]["property"]>
+export type PropertyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
+  savedByUsers?: boolean | Prisma.Property$savedByUsersArgs<ExtArgs>
+  _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type PropertyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
+}
+export type PropertyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agent?: boolean | Prisma.Property$agentArgs<ExtArgs>
+}
 
 export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Property"
-  objects: {}
+  objects: {
+    agent: Prisma.$UserPayload<ExtArgs> | null
+    savedByUsers: Prisma.$SavedPropertyPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
-    createdAt: Date
     description: string | null
     price: number
     location: string
@@ -1252,30 +1968,34 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     propertyType: string
     listingType: string
     images: string[]
-    matchScore: number | null
-    latitude: number | null
-    longitude: number | null
-    updatedAt: Date
-    hasGarden: boolean
-    hasModernKitchen: boolean
     hasPool: boolean
+    hasGarden: boolean
     hasSeaView: boolean
     hasSecurity: boolean
-    isCityCenter: boolean
-    isCoastal: boolean
-    isInvestment: boolean
-    isNearBeach: boolean
-    isNearHighway: boolean
-    isNearHospital: boolean
-    isNearSchools: boolean
-    isOwnHome: boolean
-    isQuietArea: boolean
-    isRentalIncome: boolean
-    isRural: boolean
-    isSuburban: boolean
-    isUrban: boolean
-    isVacationHome: boolean
+    hasModernKitchen: boolean
     parkingSpaces: number
+    isInvestment: boolean
+    isOwnHome: boolean
+    isVacationHome: boolean
+    isRentalIncome: boolean
+    isUrban: boolean
+    isSuburban: boolean
+    isCoastal: boolean
+    isRural: boolean
+    isCityCenter: boolean
+    isNearSchools: boolean
+    isNearHospital: boolean
+    isNearHighway: boolean
+    isQuietArea: boolean
+    isNearBeach: boolean
+    matchScore: number | null
+    views: number
+    status: string
+    agentId: string | null
+    latitude: number | null
+    longitude: number | null
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["property"]>
   composites: {}
 }
@@ -1670,6 +2390,8 @@ readonly fields: PropertyFieldRefs;
  */
 export interface Prisma__PropertyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  agent<T extends Prisma.Property$agentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$agentArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  savedByUsers<T extends Prisma.Property$savedByUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$savedByUsersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedPropertyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1701,7 +2423,6 @@ export interface Prisma__PropertyClient<T, Null = never, ExtArgs extends runtime
 export interface PropertyFieldRefs {
   readonly id: Prisma.FieldRef<"Property", 'String'>
   readonly title: Prisma.FieldRef<"Property", 'String'>
-  readonly createdAt: Prisma.FieldRef<"Property", 'DateTime'>
   readonly description: Prisma.FieldRef<"Property", 'String'>
   readonly price: Prisma.FieldRef<"Property", 'Float'>
   readonly location: Prisma.FieldRef<"Property", 'String'>
@@ -1711,30 +2432,34 @@ export interface PropertyFieldRefs {
   readonly propertyType: Prisma.FieldRef<"Property", 'String'>
   readonly listingType: Prisma.FieldRef<"Property", 'String'>
   readonly images: Prisma.FieldRef<"Property", 'String[]'>
-  readonly matchScore: Prisma.FieldRef<"Property", 'Int'>
-  readonly latitude: Prisma.FieldRef<"Property", 'Float'>
-  readonly longitude: Prisma.FieldRef<"Property", 'Float'>
-  readonly updatedAt: Prisma.FieldRef<"Property", 'DateTime'>
-  readonly hasGarden: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly hasModernKitchen: Prisma.FieldRef<"Property", 'Boolean'>
   readonly hasPool: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly hasGarden: Prisma.FieldRef<"Property", 'Boolean'>
   readonly hasSeaView: Prisma.FieldRef<"Property", 'Boolean'>
   readonly hasSecurity: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isCityCenter: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isCoastal: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isInvestment: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isNearBeach: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isNearHighway: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isNearHospital: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isNearSchools: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isOwnHome: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isQuietArea: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isRentalIncome: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isRural: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isSuburban: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isUrban: Prisma.FieldRef<"Property", 'Boolean'>
-  readonly isVacationHome: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly hasModernKitchen: Prisma.FieldRef<"Property", 'Boolean'>
   readonly parkingSpaces: Prisma.FieldRef<"Property", 'Int'>
+  readonly isInvestment: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isOwnHome: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isVacationHome: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isRentalIncome: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isUrban: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isSuburban: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isCoastal: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isRural: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isCityCenter: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isNearSchools: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isNearHospital: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isNearHighway: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isQuietArea: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly isNearBeach: Prisma.FieldRef<"Property", 'Boolean'>
+  readonly matchScore: Prisma.FieldRef<"Property", 'Int'>
+  readonly views: Prisma.FieldRef<"Property", 'Int'>
+  readonly status: Prisma.FieldRef<"Property", 'String'>
+  readonly agentId: Prisma.FieldRef<"Property", 'String'>
+  readonly latitude: Prisma.FieldRef<"Property", 'Float'>
+  readonly longitude: Prisma.FieldRef<"Property", 'Float'>
+  readonly createdAt: Prisma.FieldRef<"Property", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Property", 'DateTime'>
 }
     
 
@@ -1751,6 +2476,10 @@ export type PropertyFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
   /**
    * Filter, which Property to fetch.
    */
@@ -1770,6 +2499,10 @@ export type PropertyFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
+  /**
    * Filter, which Property to fetch.
    */
   where: Prisma.PropertyWhereUniqueInput
@@ -1787,6 +2520,10 @@ export type PropertyFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
   /**
    * Filter, which Property to fetch.
    */
@@ -1836,6 +2573,10 @@ export type PropertyFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
+  /**
    * Filter, which Property to fetch.
    */
   where?: Prisma.PropertyWhereInput
@@ -1883,6 +2624,10 @@ export type PropertyFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
   /**
    * Filter, which Properties to fetch.
    */
@@ -1932,6 +2677,10 @@ export type PropertyCreateArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
+  /**
    * The data needed to create a Property.
    */
   data: Prisma.XOR<Prisma.PropertyCreateInput, Prisma.PropertyUncheckedCreateInput>
@@ -1965,6 +2714,10 @@ export type PropertyCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    */
   data: Prisma.PropertyCreateManyInput | Prisma.PropertyCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1979,6 +2732,10 @@ export type PropertyUpdateArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
   /**
    * The data needed to update a Property.
    */
@@ -2031,6 +2788,10 @@ export type PropertyUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many Properties to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -2045,6 +2806,10 @@ export type PropertyUpsertArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
   /**
    * The filter to search for the Property to update in case it exists.
    */
@@ -2072,6 +2837,10 @@ export type PropertyDeleteArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
+  /**
    * Filter which Property to delete.
    */
   where: Prisma.PropertyWhereUniqueInput
@@ -2092,6 +2861,49 @@ export type PropertyDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * Property.agent
+ */
+export type Property$agentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Property.savedByUsers
+ */
+export type Property$savedByUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SavedProperty
+   */
+  select?: Prisma.SavedPropertySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SavedProperty
+   */
+  omit?: Prisma.SavedPropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SavedPropertyInclude<ExtArgs> | null
+  where?: Prisma.SavedPropertyWhereInput
+  orderBy?: Prisma.SavedPropertyOrderByWithRelationInput | Prisma.SavedPropertyOrderByWithRelationInput[]
+  cursor?: Prisma.SavedPropertyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SavedPropertyScalarFieldEnum | Prisma.SavedPropertyScalarFieldEnum[]
+}
+
+/**
  * Property without action
  */
 export type PropertyDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2103,4 +2915,8 @@ export type PropertyDefaultArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Property
    */
   omit?: Prisma.PropertyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PropertyInclude<ExtArgs> | null
 }

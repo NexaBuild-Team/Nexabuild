@@ -232,7 +232,7 @@ export type DesignReviewWhereInput = {
   text?: Prisma.StringFilter<"DesignReview"> | string
   reviewDate?: Prisma.StringFilter<"DesignReview"> | string
   detailId?: Prisma.StringFilter<"DesignReview"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type DesignReviewOrderByWithRelationInput = {
@@ -243,7 +243,7 @@ export type DesignReviewOrderByWithRelationInput = {
   text?: Prisma.SortOrder
   reviewDate?: Prisma.SortOrder
   detailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type DesignReviewWhereUniqueInput = Prisma.AtLeast<{
@@ -257,7 +257,7 @@ export type DesignReviewWhereUniqueInput = Prisma.AtLeast<{
   rating?: Prisma.IntFilter<"DesignReview"> | number
   text?: Prisma.StringFilter<"DesignReview"> | string
   reviewDate?: Prisma.StringFilter<"DesignReview"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id" | "detailId">
 
 export type DesignReviewOrderByWithAggregationInput = {
@@ -289,17 +289,17 @@ export type DesignReviewScalarWhereWithAggregatesInput = {
 }
 
 export type DesignReviewCreateInput = {
-  id: string
+  id?: string
   author: string
   avatarUrl: string
   rating: number
   text: string
   reviewDate: string
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutDesignReviewInput
+  detail: Prisma.DesignDetailCreateNestedOneWithoutReviewInput
 }
 
 export type DesignReviewUncheckedCreateInput = {
-  id: string
+  id?: string
   author: string
   avatarUrl: string
   rating: number
@@ -315,7 +315,7 @@ export type DesignReviewUpdateInput = {
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   text?: Prisma.StringFieldUpdateOperationsInput | string
   reviewDate?: Prisma.StringFieldUpdateOperationsInput | string
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutDesignReviewNestedInput
+  detail?: Prisma.DesignDetailUpdateOneRequiredWithoutReviewNestedInput
 }
 
 export type DesignReviewUncheckedUpdateInput = {
@@ -329,7 +329,7 @@ export type DesignReviewUncheckedUpdateInput = {
 }
 
 export type DesignReviewCreateManyInput = {
-  id: string
+  id?: string
   author: string
   avatarUrl: string
   rating: number
@@ -400,40 +400,40 @@ export type DesignReviewSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
 }
 
-export type DesignReviewCreateNestedOneWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDesignDetailInput
+export type DesignReviewCreateNestedOneWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDetailInput
   connect?: Prisma.DesignReviewWhereUniqueInput
 }
 
-export type DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDesignDetailInput
+export type DesignReviewUncheckedCreateNestedOneWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDetailInput
   connect?: Prisma.DesignReviewWhereUniqueInput
 }
 
-export type DesignReviewUpdateOneWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDesignDetailInput
-  upsert?: Prisma.DesignReviewUpsertWithoutDesignDetailInput
+export type DesignReviewUpdateOneWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDetailInput
+  upsert?: Prisma.DesignReviewUpsertWithoutDetailInput
   disconnect?: Prisma.DesignReviewWhereInput | boolean
   delete?: Prisma.DesignReviewWhereInput | boolean
   connect?: Prisma.DesignReviewWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignReviewUpdateToOneWithWhereWithoutDesignDetailInput, Prisma.DesignReviewUpdateWithoutDesignDetailInput>, Prisma.DesignReviewUncheckedUpdateWithoutDesignDetailInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignReviewUpdateToOneWithWhereWithoutDetailInput, Prisma.DesignReviewUpdateWithoutDetailInput>, Prisma.DesignReviewUncheckedUpdateWithoutDetailInput>
 }
 
-export type DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDesignDetailInput
-  upsert?: Prisma.DesignReviewUpsertWithoutDesignDetailInput
+export type DesignReviewUncheckedUpdateOneWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.DesignReviewCreateOrConnectWithoutDetailInput
+  upsert?: Prisma.DesignReviewUpsertWithoutDetailInput
   disconnect?: Prisma.DesignReviewWhereInput | boolean
   delete?: Prisma.DesignReviewWhereInput | boolean
   connect?: Prisma.DesignReviewWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignReviewUpdateToOneWithWhereWithoutDesignDetailInput, Prisma.DesignReviewUpdateWithoutDesignDetailInput>, Prisma.DesignReviewUncheckedUpdateWithoutDesignDetailInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignReviewUpdateToOneWithWhereWithoutDetailInput, Prisma.DesignReviewUpdateWithoutDetailInput>, Prisma.DesignReviewUncheckedUpdateWithoutDetailInput>
 }
 
-export type DesignReviewCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignReviewCreateWithoutDetailInput = {
+  id?: string
   author: string
   avatarUrl: string
   rating: number
@@ -441,8 +441,8 @@ export type DesignReviewCreateWithoutDesignDetailInput = {
   reviewDate: string
 }
 
-export type DesignReviewUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignReviewUncheckedCreateWithoutDetailInput = {
+  id?: string
   author: string
   avatarUrl: string
   rating: number
@@ -450,23 +450,23 @@ export type DesignReviewUncheckedCreateWithoutDesignDetailInput = {
   reviewDate: string
 }
 
-export type DesignReviewCreateOrConnectWithoutDesignDetailInput = {
+export type DesignReviewCreateOrConnectWithoutDetailInput = {
   where: Prisma.DesignReviewWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
 }
 
-export type DesignReviewUpsertWithoutDesignDetailInput = {
-  update: Prisma.XOR<Prisma.DesignReviewUpdateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.DesignReviewCreateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDesignDetailInput>
+export type DesignReviewUpsertWithoutDetailInput = {
+  update: Prisma.XOR<Prisma.DesignReviewUpdateWithoutDetailInput, Prisma.DesignReviewUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.DesignReviewCreateWithoutDetailInput, Prisma.DesignReviewUncheckedCreateWithoutDetailInput>
   where?: Prisma.DesignReviewWhereInput
 }
 
-export type DesignReviewUpdateToOneWithWhereWithoutDesignDetailInput = {
+export type DesignReviewUpdateToOneWithWhereWithoutDetailInput = {
   where?: Prisma.DesignReviewWhereInput
-  data: Prisma.XOR<Prisma.DesignReviewUpdateWithoutDesignDetailInput, Prisma.DesignReviewUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.DesignReviewUpdateWithoutDetailInput, Prisma.DesignReviewUncheckedUpdateWithoutDetailInput>
 }
 
-export type DesignReviewUpdateWithoutDesignDetailInput = {
+export type DesignReviewUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -475,7 +475,7 @@ export type DesignReviewUpdateWithoutDesignDetailInput = {
   reviewDate?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type DesignReviewUncheckedUpdateWithoutDesignDetailInput = {
+export type DesignReviewUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -494,7 +494,7 @@ export type DesignReviewSelect<ExtArgs extends runtime.Types.Extensions.Internal
   text?: boolean
   reviewDate?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designReview"]>
 
 export type DesignReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -505,7 +505,7 @@ export type DesignReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   text?: boolean
   reviewDate?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designReview"]>
 
 export type DesignReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -516,7 +516,7 @@ export type DesignReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   text?: boolean
   reviewDate?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designReview"]>
 
 export type DesignReviewSelectScalar = {
@@ -531,19 +531,19 @@ export type DesignReviewSelectScalar = {
 
 export type DesignReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "author" | "avatarUrl" | "rating" | "text" | "reviewDate" | "detailId", ExtArgs["result"]["designReview"]>
 export type DesignReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignReviewIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignReviewIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $DesignReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DesignReview"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    detail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -947,7 +947,7 @@ readonly fields: DesignReviewFieldRefs;
  */
 export interface Prisma__DesignReviewClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  detail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

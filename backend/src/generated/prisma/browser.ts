@@ -18,6 +18,16 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
+ * Model Enquiry
+ * 
+ */
+export type Enquiry = Prisma.EnquiryModel
+/**
+ * Model AgentActivity
+ * 
+ */
+export type AgentActivity = Prisma.AgentActivityModel
+/**
  * Model ArchitectureCompany
  * 
  */
@@ -27,31 +37,6 @@ export type ArchitectureCompany = Prisma.ArchitectureCompanyModel
  * 
  */
 export type CompanySpecialization = Prisma.CompanySpecializationModel
-/**
- * Model ConstructionPhase
- * 
- */
-export type ConstructionPhase = Prisma.ConstructionPhaseModel
-/**
- * Model DesignDetail
- * 
- */
-export type DesignDetail = Prisma.DesignDetailModel
-/**
- * Model DesignFeature
- * 
- */
-export type DesignFeature = Prisma.DesignFeatureModel
-/**
- * Model DesignGalleryImage
- * 
- */
-export type DesignGalleryImage = Prisma.DesignGalleryImageModel
-/**
- * Model DesignReview
- * 
- */
-export type DesignReview = Prisma.DesignReviewModel
 /**
  * Model FirmService
  * 
@@ -68,11 +53,6 @@ export type FirmTeamMember = Prisma.FirmTeamMemberModel
  */
 export type FirmTestimonial = Prisma.FirmTestimonialModel
 /**
- * Model FloorPlan
- * 
- */
-export type FloorPlan = Prisma.FloorPlanModel
-/**
  * Model HouseDesign
  * 
  */
@@ -83,10 +63,60 @@ export type HouseDesign = Prisma.HouseDesignModel
  */
 export type HouseDesignTag = Prisma.HouseDesignTagModel
 /**
+ * Model DesignDetail
+ * 
+ */
+export type DesignDetail = Prisma.DesignDetailModel
+/**
+ * Model DesignGalleryImage
+ * 
+ */
+export type DesignGalleryImage = Prisma.DesignGalleryImageModel
+/**
+ * Model FloorPlan
+ * 
+ */
+export type FloorPlan = Prisma.FloorPlanModel
+/**
+ * Model DesignFeature
+ * 
+ */
+export type DesignFeature = Prisma.DesignFeatureModel
+/**
+ * Model ConstructionPhase
+ * 
+ */
+export type ConstructionPhase = Prisma.ConstructionPhaseModel
+/**
+ * Model DesignReview
+ * 
+ */
+export type DesignReview = Prisma.DesignReviewModel
+/**
  * Model RelatedProject
  * 
  */
 export type RelatedProject = Prisma.RelatedProjectModel
+/**
+ * Model SavedProperty
+ * 
+ */
+export type SavedProperty = Prisma.SavedPropertyModel
+/**
+ * Model SavedLand
+ * 
+ */
+export type SavedLand = Prisma.SavedLandModel
+/**
+ * Model SearchHistory
+ * 
+ */
+export type SearchHistory = Prisma.SearchHistoryModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
 /**
  * Model ConstructionDistrict
  * 

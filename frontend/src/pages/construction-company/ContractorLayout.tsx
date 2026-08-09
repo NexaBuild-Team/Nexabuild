@@ -1,100 +1,79 @@
-import React, { useState } from 'react';
-import { Link, useLocation, Outlet } from 'react-router';
-import { useAuth } from '../../context/AuthContext';
+import React from 'react';
+import { RoleSidebarLayout } from '../../components/RoleSidebarLayout';
+import type { NavItem } from '../../components/RoleSidebarLayout';
 
 export const ContractorLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
-  const { user, logout } = useAuth();
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  const navItems = [
-    { label: 'Overview', href: '/dashboard', icon: '📊' },
-    { label: 'Construction Companies', href: '/construction-companies', icon: '🏗️' },
+  const navItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      href: '/dashboard',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Projects',
+      href: '/contractor/projects',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Services',
+      href: '/contractor/services',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Gallery',
+      href: '/contractor/gallery',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Testimonials',
+      href: '/contractor/testimonials',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Company Profile',
+      href: '/contractor/company-profile',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0-4h.01M12 11h.01M12 7h.01" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Settings',
+      href: '/contractor/settings',
+      icon: (
+        <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+    },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard') return location.pathname === '/dashboard' || location.pathname === '/dashboard/construction';
-    return location.pathname.startsWith(href);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col pt-[68px]">
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
-        {/* Left Sidebar */}
-        <aside className="hidden lg:flex flex-col w-64 bg-white rounded-2xl border border-gray-200/80 p-5 shrink-0 shadow-sm self-start sticky top-[88px]">
-          <div className="flex items-center gap-3 pb-5 mb-5 border-b border-gray-100">
-            <div className="size-11 rounded-full bg-[#be5d3f] text-white flex items-center justify-center font-bold text-lg">
-              {user?.firstName ? user.firstName[0] : user?.email[0]}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-gray-900 truncate">
-                {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : user?.email}
-              </span>
-              <span className="text-xs text-amber-600 font-bold uppercase tracking-wider">Contractor Account</span>
-            </div>
-          </div>
-
-          <nav className="space-y-1.5 flex-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  isActive(item.href)
-                    ? 'bg-[#be5d3f] text-white shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                <span className="text-base">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="pt-4 mt-6 border-t border-gray-100">
-            <button
-              onClick={logout}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <span className="text-base">🚪</span>
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </aside>
-
-        {/* Mobile Toggle */}
-        <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-xl border border-gray-200 mb-2 w-full">
-          <span className="text-xs font-bold text-[#be5d3f] uppercase tracking-wider">Contractor Portal</span>
-          <button
-            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            className="text-xs bg-[#be5d3f] text-white font-bold px-3 py-1.5 rounded-lg"
-          >
-            {mobileSidebarOpen ? 'Close Menu' : 'Contractor Menu'}
-          </button>
-        </div>
-
-        {mobileSidebarOpen && (
-          <div className="lg:hidden bg-white p-4 rounded-xl border border-gray-200 mb-4 w-full space-y-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setMobileSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold ${
-                  isActive(item.href) ? 'bg-[#be5d3f] text-white' : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <main className="flex-1 min-w-0">
-          {children ? children : <Outlet />}
-        </main>
-      </div>
-    </div>
+    <RoleSidebarLayout portalTitle="Construction Co." roleLabel="Contractor" navItems={navItems}>
+      {children}
+    </RoleSidebarLayout>
   );
 };

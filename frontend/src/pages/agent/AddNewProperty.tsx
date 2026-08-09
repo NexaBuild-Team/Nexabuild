@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { createPropertyApi } from '../../services/agentApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -60,8 +63,6 @@ export default function AddNewProperty({
   onSaveDraft,
   onDeleteDraft
 }: AddNewPropertyProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   // Form State initialized with backend data or fallbacks
   const [title, setTitle] = useState(data?.initialFields?.title || '');
   const [description, setDescription] = useState(data?.initialFields?.description || '');
@@ -73,9 +74,9 @@ export default function AddNewProperty({
   const [locationName, setLocationName] = useState(data?.initialFields?.locationName || '');
   const [fullAddress, setFullAddress] = useState(data?.initialFields?.fullAddress || '');
 
-  const [beds, setBeds] = useState(data?.initialFields?.beds ?? 4);
-  const [baths, setBaths] = useState(data?.initialFields?.baths ?? 3);
-  const [garage, setGarage] = useState(data?.initialFields?.garage ?? 2);
+  const [beds, setBeds] = useState(data?.initialFields?.beds ?? 0);
+  const [baths, setBaths] = useState(data?.initialFields?.baths ?? 0);
+  const [garage, setGarage] = useState(data?.initialFields?.garage ?? 0);
   const [floorArea, setFloorArea] = useState(data?.initialFields?.floorArea ? String(data.initialFields.floorArea) : '');
   const [landArea, setLandArea] = useState(data?.initialFields?.landArea ? String(data.initialFields.landArea) : '');
   const [yearBuilt, setYearBuilt] = useState(data?.initialFields?.yearBuilt ? String(data.initialFields.yearBuilt) : '');
@@ -83,27 +84,19 @@ export default function AddNewProperty({
   // Amenities
   const [amenities, setAmenities] = useState<Record<string, boolean>>(
     data?.initialFields?.amenities || {
-      'Swimming Pool': true,
-      'Garden': true,
-      'Parking': true,
-      'Solar Panels': true,
+      'Swimming Pool': false,
+      'Garden': false,
+      'Parking': false,
+      'Solar Panels': false,
       'Security': false,
       'Gym': false,
-      'Smart Home': true,
+      'Smart Home': false,
       'Air Conditioning': false
     }
   );
 
-  // Images List
-  const [coverImage, setCoverImage] = useState<string | null>(data?.initialFields?.coverImage ?? '/property_card_1.png');
-  const [galleryImages, setGalleryImages] = useState<string[]>(
-    data?.initialFields?.galleryImages || [
-      '/property_card_1.png',
-      '/property_card_2.png',
-      '/property_card_3.png',
-      '/property_card_4.png'
-    ]
-  );
+  const [coverImage] = useState<string | null>(data?.initialFields?.coverImage ?? null);
+  const [galleryImages] = useState<string[]>(data?.initialFields?.galleryImages || []);
 
   // Sidebar widget states
   const [status, setStatus] = useState<'Draft' | 'Active' | 'Pending Review' | 'Sold'>(data?.initialFields?.status || 'Draft');
@@ -120,31 +113,14 @@ export default function AddNewProperty({
 
   // Dynamic progress tracker calculations
   const [progress, setProgress] = useState(0);
-  const [steps, setSteps] = useState({
-    info: false,
-    location: false,
-    details: false,
-    facilities: false,
-    images: false,
-    tags: false
-  });
 
   useEffect(() => {
     const isInfoDone = !!(title && description && propertyType && price);
     const isLocationDone = !!(province && district && locationName && fullAddress);
     const isDetailsDone = !!(beds > 0 && baths > 0 && floorArea && landArea && yearBuilt);
     const isFacilitiesDone = Object.values(amenities).some(val => val === true);
-    const isImagesDone = !!(coverImage || galleryImages.length > 0);
+    const isImagesDone = true;
     const isTagsDone = aiTags.length > 0;
-
-    setSteps({
-      info: isInfoDone,
-      location: isLocationDone,
-      details: isDetailsDone,
-      facilities: isFacilitiesDone,
-      images: isImagesDone,
-      tags: isTagsDone
-    });
 
     let completedCount = 0;
     if (isInfoDone) completedCount++;
@@ -155,23 +131,19 @@ export default function AddNewProperty({
     if (isTagsDone) completedCount++;
 
     setProgress(Math.round((completedCount / 6) * 100));
-  }, [title, description, propertyType, price, province, district, locationName, fullAddress, beds, baths, floorArea, landArea, yearBuilt, amenities, coverImage, galleryImages, aiTags]);
+  }, [title, description, propertyType, price, province, district, locationName, fullAddress, beds, baths, floorArea, landArea, yearBuilt, amenities, aiTags]);
 
-  const toggleAmenity = (name: string) => {
-    setAmenities(prev => ({ ...prev, [name]: !prev[name] }));
+  const toggleAmenity = (key: string) => {
+    setAmenities(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const removeGalleryImage = (index: number) => {
-    setGalleryImages(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const regenerateTags = () => {
-    const pool = ['Luxury', 'Prime Location', 'Eco-friendly', 'Modern Design', 'High Yield', 'Metro Access', 'Brand New', 'Sea View', 'Gated Community'];
+  const handleRegenerateTags = () => {
+    const pool = ['Waterfront', 'Gated Community', 'Eco-Friendly', 'High ROI', 'Penthouse', 'Modern Architecture', 'Balcony', 'Private Gym'];
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     setAiTags(shuffled.slice(0, 5));
   };
 
-  const constructPayload = (): AddNewPropertyFormFields => ({
+  const constructPayload = (): AddNewPropertyFormFields & { images?: string[] } => ({
     title,
     description,
     propertyType,
@@ -189,16 +161,30 @@ export default function AddNewProperty({
     amenities,
     coverImage,
     galleryImages,
+    images: galleryImages.length > 0 ? galleryImages : (coverImage ? [coverImage] : ['/hero_property.png']),
     status,
     aiTags,
     visibility
   });
 
-  const handlePublishClick = () => {
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+
+  const handlePublishClick = async () => {
     if (onPublish) {
       onPublish(constructPayload());
     } else {
-      alert('Listing published successfully!');
+      setSubmitting(true);
+      try {
+        await createPropertyApi(constructPayload());
+        alert('Listing published successfully!');
+        navigate('/dashboard');
+      } catch (err) {
+        console.error('Failed to create property listing:', err);
+        alert('Failed to publish listing. Please try again.');
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
@@ -220,10 +206,10 @@ export default function AddNewProperty({
     }
   };
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
+  // ─── Skeleton Loading State ─────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
+      <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
         <div className="h-16 bg-gray-200 rounded-2xl w-full" />
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
           <div className="xl:col-span-8 space-y-6">
@@ -240,427 +226,473 @@ export default function AddNewProperty({
   }
 
   return (
-    <div className="min-h-screen w-full relative flex flex-row items-start font-normal text-[#1f2937] bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
+    <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8 text-[#111827]">
       
-      {/* Sidebar Drawer */}
-      <aside 
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[256px] bg-[#345b79] flex flex-col justify-between pt-[76px] pb-[24px] px-[16px] transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="absolute top-[11px] left-0 right-0 px-[32px] flex items-center gap-[12px]">
-          <div className="bg-white/20 flex items-center justify-center rounded-[12px] size-[40px]">
-            <img alt="NexaBuild Logo" className="size-[20px] object-contain" src="/src/assets/logo.png" />
+      {/* Top Search & User Header Bar */}
+      <BuyerHeaderBar searchPlaceholder="Search properties, areas..." />
+
+      {/* Action Header Banner */}
+      <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <Link to="/dashboard" className="text-xs font-extrabold text-[#345b79] hover:underline flex items-center gap-1.5 mb-1">
+            <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Dashboard</span>
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">Add New Property</h1>
+          <p className="text-xs text-gray-500 font-semibold">Create and publish a new property listing to the marketplace</p>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <button 
+            onClick={handleSaveDraftClick}
+            className="border border-gray-200 hover:bg-gray-50 text-[#111827] text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+            <span>Save Draft</span>
+          </button>
+
+          <button 
+            onClick={handleDeleteClick}
+            className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span>Delete</span>
+          </button>
+
+          <button 
+            onClick={handlePublishClick}
+            disabled={submitting}
+            className="bg-[#345b79] hover:bg-[#2a4a63] disabled:opacity-50 text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{submitting ? 'Publishing...' : 'Publish Listing'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <span className="font-semibold">{error}</span>
           </div>
-          <span className="text-[24px] font-extrabold text-white tracking-[-0.6px] leading-[32px]">
-            NexaBuild
-          </span>
+          <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
+            Retry
+          </button>
         </div>
-
-        <div className="flex-1 flex flex-col justify-between overflow-y-auto mt-[20px]">
-          <nav className="flex flex-col gap-[4px]">
-            <a href="/agent-dashboard" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]">
-              <img alt="Dashboard" className="size-[20px] filter brightness-200" src="/svg/home.svg" />
-              <span className="leading-[20px]">Dashboard</span>
-            </a>
-            <a href="/view-all-properties" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]">
-              <img alt="Properties" className="size-[20px] filter brightness-200" src="/svg/home.svg" />
-              <span className="leading-[20px]">Properties</span>
-            </a>
-            <a href="/view-all-land" className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all font-normal text-[14px]">
-              <img alt="Lands" className="size-[20px] filter brightness-200" src="/svg/land-plot-icon.svg" />
-              <span className="leading-[20px]">Lands</span>
-            </a>
-          </nav>
-        </div>
-      </aside>
-
-      {/* Backdrop */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/45 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Main Content */}
-      <main className="flex-grow lg:pl-[256px] min-w-0 flex flex-col">
+      {/* Progress Bar */}
+      <div className="bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm space-y-2">
+        <div className="flex justify-between items-center text-xs font-bold">
+          <span className="text-[#111827]">Listing Completion Progress</span>
+          <span className="text-[#345b79] font-extrabold">{progress}%</span>
+        </div>
+        <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+          <div className="bg-[#345b79] h-full rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+
+      {/* Body Form Layout Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 w-full">
         
-        {/* Sticky Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-[#e5e7eb] px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center justify-between sticky top-0 z-30 shadow-sm gap-4">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <button 
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-1 border border-gray-200 rounded hover:bg-gray-50"
-              >
-                <svg className="size-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <a href="/agent-dashboard" className="hover:underline flex items-center gap-1">
-                <img alt="" className="size-2.5" src="/svg/arrow-back.svg" />
-                <span>Back to Listings</span>
-              </a>
-            </div>
-            <h1 className="text-xl font-bold text-[#1e1e1e] tracking-tight">Add New Property</h1>
-          </div>
-
-          <div className="flex items-center gap-3 self-end md:self-center shrink-0">
-            <button 
-              onClick={handleSaveDraftClick}
-              className="border border-[#d1d5db] hover:bg-gray-50 text-[#1f2937] text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2"
-            >
-              <img alt="" className="size-3.5" src="/svg/bookmark.svg" />
-              <span>Save Draft</span>
-            </button>
-            <button 
-              onClick={handleDeleteClick}
-              className="bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2"
-            >
-              <img alt="" className="size-3.5" src="/svg/clock.svg" />
-              <span>Delete</span>
-            </button>
-            <button 
-              onClick={handlePublishClick}
-              className="bg-[#345b79] hover:bg-[#345b79]/90 text-white text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm"
-            >
-              <img alt="" className="size-3.5" src="/svg/checkMark.svg" />
-              <span>Publish Listing</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Global Error Banner */}
-        {error && (
-          <div className="mx-6 lg:mx-8 mt-6 bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-              <span className="font-semibold">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* Body Form Layout */}
-        <div className="p-6 lg:p-8 grid grid-cols-1 xl:grid-cols-12 gap-8 w-full max-w-[1400px] mx-auto">
+        {/* Left Main Form Column */}
+        <div className="xl:col-span-8 space-y-8">
           
-          {/* Left Column: Main Form */}
-          <div className="xl:col-span-8 flex flex-col gap-8">
-            
-            {/* Property Information */}
-            <section className="bg-white border border-[#f3f4f6] rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-sm">
-              <div className="flex gap-4 items-center">
-                <div className="bg-[#345b79]/10 flex items-center justify-center rounded-xl size-10 shrink-0">
-                  <img alt="" className="size-4.5" src="/svg/info.svg" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[#1f2937]">Property Information</h3>
-                  <p className="text-xs text-[#6b7280]">Basic details about your property listing</p>
-                </div>
+          {/* Section 1: Property Information */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-blue-50 text-[#345b79] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Property Information</h3>
+                <p className="text-xs text-gray-500 font-medium">Basic details about your property listing</p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Property Title</label>
+                <input 
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Elegant 5-Bedroom Villa in Jumeirah"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                />
               </div>
 
-              <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Property Title</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Description</label>
+                <textarea 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Describe the property in detail..."
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20 resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Property Type</label>
+                  <select 
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                  >
+                    <option value="">Select type</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Penthouse">Penthouse</option>
+                    <option value="Townhouse">Townhouse</option>
+                    <option value="Commercial">Commercial</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Listing Price (LKR)</label>
                   <input 
                     type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Elegant 5-Bedroom Villa in Jumeirah"
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-[#345b79]"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Description</label>
-                  <textarea 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={4}
-                    placeholder="Describe the property in detail..."
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-[#345b79] resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Property Type</label>
-                    <select 
-                      value={propertyType}
-                      onChange={(e) => setPropertyType(e.target.value)}
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-[#345b79]"
-                    >
-                      <option value="">Select type</option>
-                      <option value="Villa">Villa</option>
-                      <option value="Apartment">Apartment</option>
-                      <option value="Penthouse">Penthouse</option>
-                      <option value="Townhouse">Townhouse</option>
-                      <option value="Commercial">Commercial</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Listing Price</label>
-                    <input 
-                      type="text"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      placeholder="LKR 0"
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-[#345b79]"
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Location */}
-            <section className="bg-white border border-[#f3f4f6] rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-sm">
-              <div className="flex gap-4 items-center">
-                <div className="bg-[#345b79]/10 flex items-center justify-center rounded-xl size-10 shrink-0">
-                  <img alt="" className="size-4.5" src="/svg/location-pin-icon.svg" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[#1f2937]">Location</h3>
-                  <p className="text-xs text-[#6b7280]">Where is the property located?</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-5">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Province</label>
-                    <input 
-                      type="text"
-                      value={province}
-                      onChange={(e) => setProvince(e.target.value)}
-                      placeholder="e.g. Western"
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">District</label>
-                    <input 
-                      type="text"
-                      value={district}
-                      onChange={(e) => setDistrict(e.target.value)}
-                      placeholder="e.g. Colombo"
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Location</label>
-                    <input 
-                      type="text"
-                      value={locationName}
-                      onChange={(e) => setLocationName(e.target.value)}
-                      placeholder="e.g. Colombo 7"
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Full Address</label>
-                  <input 
-                    type="text"
-                    value={fullAddress}
-                    onChange={(e) => setFullAddress(e.target.value)}
-                    placeholder="Street address..."
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="e.g. 35,000,000"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   />
                 </div>
               </div>
-            </section>
+            </div>
+          </section>
 
-            {/* Property Details */}
-            <section className="bg-white border border-[#f3f4f6] rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-sm">
-              <div className="flex gap-4 items-center">
-                <div className="bg-[#345b79]/10 flex items-center justify-center rounded-xl size-10 shrink-0">
-                  <img alt="" className="size-4.5" src="/svg/l-ruler-icon.svg" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[#1f2937]">Property Details</h3>
-                  <p className="text-xs text-[#6b7280]">Specifications and measurements</p>
-                </div>
+          {/* Section 2: Location */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-orange-50 text-[#be5d3f] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
               </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Location Details</h3>
+                <p className="text-xs text-gray-500 font-medium">Where is the property located?</p>
+              </div>
+            </div>
 
+            <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Floor Area (SQFT)</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Province</label>
                   <input 
                     type="text"
-                    value={floorArea}
-                    onChange={(e) => setFloorArea(e.target.value)}
-                    placeholder="e.g. 3,200"
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800"
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                    placeholder="e.g. Western"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Land Area (SQFT)</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">District</label>
                   <input 
                     type="text"
-                    value={landArea}
-                    onChange={(e) => setLandArea(e.target.value)}
-                    placeholder="e.g. 5,000"
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800"
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    placeholder="e.g. Colombo"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Year Built</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">City / Neighborhood</label>
                   <input 
                     type="text"
-                    value={yearBuilt}
-                    onChange={(e) => setYearBuilt(e.target.value)}
-                    placeholder="e.g. 2022"
-                    className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800"
+                    value={locationName}
+                    onChange={(e) => setLocationName(e.target.value)}
+                    placeholder="e.g. Colombo 7"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
                   />
                 </div>
               </div>
-            </section>
 
-          </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Full Address</label>
+                <input 
+                  type="text"
+                  value={fullAddress}
+                  onChange={(e) => setFullAddress(e.target.value)}
+                  placeholder="Street address..."
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+            </div>
+          </section>
 
-          {/* Right Column: Widgets */}
-          <div className="xl:col-span-4 flex flex-col gap-6">
-            
-            {/* Widget 1: Listing Status */}
-            <div className="bg-white border border-[#f3f4f6] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <span className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Listing Status</span>
-              <div className="flex flex-col gap-2">
-                {[
-                  { key: 'Draft', color: 'bg-gray-400' },
-                  { key: 'Active', color: 'bg-blue-500' },
-                  { key: 'Pending Review', color: 'bg-amber-500' },
-                  { key: 'Sold', color: 'bg-emerald-500' }
-                ].map(({ key, color }) => (
+          {/* Section 3: Details & Dimensions */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Property Specs</h3>
+                <p className="text-xs text-gray-500 font-medium">Beds, baths, dimensions, and age</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Bedrooms</label>
+                <input 
+                  type="number"
+                  value={beds}
+                  onChange={(e) => setBeds(Number(e.target.value))}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Bathrooms</label>
+                <input 
+                  type="number"
+                  value={baths}
+                  onChange={(e) => setBaths(Number(e.target.value))}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Garage Spaces</label>
+                <input 
+                  type="number"
+                  value={garage}
+                  onChange={(e) => setGarage(Number(e.target.value))}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Floor Area (Sqft)</label>
+                <input 
+                  type="text"
+                  value={floorArea}
+                  onChange={(e) => setFloorArea(e.target.value)}
+                  placeholder="e.g. 3,200"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Land Area (Perches)</label>
+                <input 
+                  type="text"
+                  value={landArea}
+                  onChange={(e) => setLandArea(e.target.value)}
+                  placeholder="e.g. 15"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Year Built</label>
+                <input 
+                  type="text"
+                  value={yearBuilt}
+                  onChange={(e) => setYearBuilt(e.target.value)}
+                  placeholder="e.g. 2023"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Section 4: Features & Amenities */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Amenities & Features</h3>
+                <p className="text-xs text-gray-500 font-medium">Select available facilities</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {Object.keys(amenities).map((key) => {
+                const checked = amenities[key];
+                return (
                   <button
+                    type="button"
                     key={key}
-                    onClick={() => setStatus(key as any)}
-                    className={`flex items-center gap-3 p-3.5 rounded-xl border text-xs font-bold text-left transition-all ${
-                      status === key ? 'bg-gray-50 border-[#345b79] text-[#1f2937]' : 'border-gray-100 text-gray-600 hover:bg-gray-50/50'
+                    onClick={() => toggleAmenity(key)}
+                    className={`p-3 rounded-xl text-xs font-extrabold flex items-center justify-between border transition-all cursor-pointer ${
+                      checked
+                        ? 'bg-[#345b79]/10 border-[#345b79] text-[#345b79]'
+                        : 'bg-gray-50/80 border-gray-200 text-gray-600 hover:bg-gray-100'
                     }`}
                   >
-                    <span className={`size-3 rounded-full ${color}`} />
                     <span>{key}</span>
+                    <span className={`size-4 rounded-full flex items-center justify-center text-[10px] ${checked ? 'bg-[#345b79] text-white' : 'bg-gray-200'}`}>
+                      {checked ? '✓' : ''}
+                    </span>
                   </button>
-                ))}
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Section 5: Gallery Upload (Coming Soon) */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 relative overflow-hidden">
+            {/* Coming Soon Overlay */}
+            <div className="absolute inset-0 bg-white/75 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center space-y-3">
+              <div className="size-12 rounded-2xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shadow-inner">
+                <svg className="size-6 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span className="text-xs font-black tracking-widest uppercase bg-[#345b79] text-white px-3 py-1 rounded-full shadow-sm">
+                Coming Soon
+              </span>
+              <p className="text-xs font-extrabold text-gray-700 max-w-sm">
+                Image upload & Cloud storage integration is coming soon. You can publish your listing now with default property visuals!
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100 opacity-40">
+              <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Property Photos</h3>
+                <p className="text-xs text-gray-500 font-medium">Upload high-resolution images</p>
               </div>
             </div>
 
-            {/* Widget 2: AI Smart Tags */}
-            <div className="bg-white border border-[#f3f4f6] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-[#6b7280]">
-                <img alt="" className="size-4 opacity-75" src="/svg/sparks-icon.svg" />
-                <span className="text-[10px] font-extrabold tracking-wider uppercase">AI Smart Tags</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-40">
+              <div className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50">
+                <svg className="size-6 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="text-[10px] font-bold text-gray-500">Add Photo</span>
               </div>
-              <p className="text-[10px] text-[#9ca3af]">Auto-generated tags help match buyers to your listing</p>
-              
-              <div className="flex flex-wrap gap-2">
-                {aiTags.map(tag => (
-                  <span key={tag} className="bg-[#be5d3f]/10 rounded-full px-3 py-1 text-[#be5d3f] text-[10px] font-bold flex items-center gap-1">
-                    <img alt="" className="size-2.5" src="/svg/sparks-icon.svg" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
+            </div>
+          </section>
 
-              <button 
-                onClick={regenerateTags}
-                className="border border-[#be5d3f] hover:bg-[#be5d3f]/5 text-[#be5d3f] text-xs font-bold py-2.5 rounded-xl w-full flex items-center justify-center gap-2 transition-colors mt-1"
-              >
-                <img alt="" className="size-3" src="/svg/sparks-settings-icon.svg" />
-                <span>Regenerate AI Tags</span>
+        </div>
+
+        {/* Right Column: Settings & AI Widgets */}
+        <div className="xl:col-span-4 space-y-8">
+          
+          {/* Widget 1: Listing Status */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Listing Status</h3>
+            <div className="space-y-2">
+              {(['Draft', 'Active', 'Pending Review', 'Sold'] as const).map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatus(st)}
+                  className={`w-full p-3 rounded-xl text-xs font-extrabold flex items-center gap-3 border transition-all cursor-pointer ${
+                    status === st
+                      ? 'bg-[#345b79]/10 border-[#345b79] text-[#345b79]'
+                      : 'bg-gray-50/80 border-gray-100 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className={`size-2.5 rounded-full ${
+                    st === 'Active' ? 'bg-emerald-500' : st === 'Pending Review' ? 'bg-amber-500' : st === 'Sold' ? 'bg-rose-500' : 'bg-gray-400'
+                  }`} />
+                  <span>{st}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Widget 2: AI Smart Tags */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">AI Smart Tags</h3>
+              <button onClick={handleRegenerateTags} className="text-[10px] font-extrabold text-[#345b79] hover:underline">
+                Regenerate
               </button>
             </div>
 
-            {/* Widget 3: Listing Visibility */}
-            <div className="bg-white border border-[#f3f4f6] rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-              <span className="text-[10px] font-extrabold tracking-wider text-[#6b7280] uppercase">Listing Visibility</span>
-              
-              <div className="flex flex-col gap-4">
-                {[
-                  { key: 'public', label: 'Public Listing', sub: 'Visible to all users', icon: '/svg/eye.svg' },
-                  { key: 'agentNetwork', label: 'Agent Network', sub: 'Share with agents', icon: '/svg/agent.svg' },
-                  { key: 'featured', label: 'Featured Listing', sub: 'Promoted placement', icon: '/svg/star.svg' }
-                ].map(item => (
-                  <div key={item.key} className="flex items-center justify-between">
-                    <div className="flex gap-3 items-center">
-                      <div className="bg-gray-100 p-2 rounded-lg shrink-0">
-                        <img alt="" className="size-4" src={item.icon} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-[#1f2937]">{item.label}</p>
-                        <p className="text-[9px] text-[#9ca3af]">{item.sub}</p>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => setVisibility(prev => ({ ...prev, [item.key]: !(prev as any)[item.key] }))}
-                      className={`relative w-10 h-5 rounded-full transition-colors ${
-                        (visibility as any)[item.key] ? 'bg-[#345b79]' : 'bg-gray-200'
-                      }`}
-                    >
-                      <div className={`absolute bg-white rounded-full size-4 top-0.5 transition-transform ${
-                        (visibility as any)[item.key] ? 'translate-x-5.5' : 'translate-x-0.5'
-                      }`} />
-                    </button>
-                  </div>
-                ))}
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {aiTags.map((tag, i) => (
+                <span key={i} className="text-[11px] font-extrabold bg-[#be5d3f]/10 text-[#be5d3f] px-3 py-1 rounded-lg">
+                  #{tag}
+                </span>
+              ))}
             </div>
+          </div>
 
-            {/* Widget 4: Publishing Profile */}
-            <div className="bg-[#345b79] text-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <span className="text-[10px] font-bold tracking-wider text-white/60 uppercase">Publishing As</span>
-              <div className="flex gap-3 items-center">
-                <div className="rounded-full overflow-hidden border border-white/20 size-10">
-                  <img alt="Agent Avatar" className="size-full object-cover" src={data?.agentProfile?.agentAvatarUrl || '/hero_property.png'} />
-                </div>
+          {/* Widget 3: Listing Visibility */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Listing Visibility</h3>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-bold">{data?.agentProfile?.agentName || 'Khalid Al-Rashid'}</p>
-                  <p className="text-[10px] text-white/60">{data?.agentProfile?.agentRole || 'Senior Agent'}</p>
+                  <h4 className="text-xs font-extrabold text-[#111827]">Public Marketplace</h4>
+                  <p className="text-[10px] text-gray-500 font-medium">Visible to all buyers</p>
                 </div>
+                <input
+                  type="checkbox"
+                  checked={visibility.public}
+                  onChange={(e) => setVisibility(prev => ({ ...prev, public: e.target.checked }))}
+                  className="size-4 accent-[#345b79] cursor-pointer"
+                />
               </div>
-              <div className="bg-white/10 rounded-full px-3 py-1 text-[9px] font-semibold flex items-center gap-2 self-start">
-                <img alt="" className="size-2.5 filter brightness-200" src="/svg/star.svg" />
-                <span>Verified NexaBuild Agent</span>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-extrabold text-[#111827]">Agent Network</h4>
+                  <p className="text-[10px] text-gray-500 font-medium">Share with verified partner agents</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={visibility.agentNetwork}
+                  onChange={(e) => setVisibility(prev => ({ ...prev, agentNetwork: e.target.checked }))}
+                  className="size-4 accent-[#345b79] cursor-pointer"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-extrabold text-[#111827]">Featured Listing</h4>
+                  <p className="text-[10px] text-gray-500 font-medium">Promote on homepage AI highlights</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={visibility.featured}
+                  onChange={(e) => setVisibility(prev => ({ ...prev, featured: e.target.checked }))}
+                  className="size-4 accent-[#345b79] cursor-pointer"
+                />
               </div>
             </div>
-
-            {/* Widget 5: Form Completion Tracker */}
-            <div className="bg-white border border-[#f3f4f6] rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <div className="flex justify-between items-center w-full">
-                <span className="text-xs font-bold text-[#1f2937]">Form Completion</span>
-                <span className="text-xs font-extrabold text-[#345b79]">{progress}%</span>
-              </div>
-              <div className="bg-gray-100 h-2 rounded-full overflow-hidden w-full">
-                <div className="bg-[#345b79] h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
-              </div>
-
-              <div className="flex flex-col gap-3 pt-2">
-                {[
-                  { key: 'info', label: 'Property Info' },
-                  { key: 'location', label: 'Location' },
-                  { key: 'details', label: 'Property Details' },
-                  { key: 'facilities', label: 'Facilities' },
-                  { key: 'images', label: 'Images' },
-                  { key: 'tags', label: 'AI Tags' }
-                ].map(step => (
-                  <div key={step.key} className="flex gap-2.5 items-center text-xs text-[#1f2937]">
-                    <img alt="" className="size-3.5" src={(steps as any)[step.key] ? '/svg/checkMark.svg' : '/svg/clock.svg'} />
-                    <span className={(steps as any)[step.key] ? 'font-bold text-gray-500' : 'font-medium'}>{step.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
 
         </div>
-      </main>
+
+      </div>
+
     </div>
   );
 }

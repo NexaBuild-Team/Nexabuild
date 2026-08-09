@@ -224,7 +224,7 @@ export type FirmServiceWhereInput = {
   description?: Prisma.StringFilter<"FirmService"> | string
   sortOrder?: Prisma.IntFilter<"FirmService"> | number
   companyId?: Prisma.StringFilter<"FirmService"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }
 
 export type FirmServiceOrderByWithRelationInput = {
@@ -234,7 +234,7 @@ export type FirmServiceOrderByWithRelationInput = {
   description?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
-  ArchitectureCompany?: Prisma.ArchitectureCompanyOrderByWithRelationInput
+  company?: Prisma.ArchitectureCompanyOrderByWithRelationInput
 }
 
 export type FirmServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -247,7 +247,7 @@ export type FirmServiceWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringFilter<"FirmService"> | string
   sortOrder?: Prisma.IntFilter<"FirmService"> | number
   companyId?: Prisma.StringFilter<"FirmService"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }, "id">
 
 export type FirmServiceOrderByWithAggregationInput = {
@@ -277,16 +277,16 @@ export type FirmServiceScalarWhereWithAggregatesInput = {
 }
 
 export type FirmServiceCreateInput = {
-  id: string
+  id?: string
   icon: string
   title: string
   description: string
   sortOrder?: number
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutFirmServiceInput
+  company: Prisma.ArchitectureCompanyCreateNestedOneWithoutServicesInput
 }
 
 export type FirmServiceUncheckedCreateInput = {
-  id: string
+  id?: string
   icon: string
   title: string
   description: string
@@ -300,7 +300,7 @@ export type FirmServiceUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutFirmServiceNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutServicesNestedInput
 }
 
 export type FirmServiceUncheckedUpdateInput = {
@@ -313,7 +313,7 @@ export type FirmServiceUncheckedUpdateInput = {
 }
 
 export type FirmServiceCreateManyInput = {
-  id: string
+  id?: string
   icon: string
   title: string
   description: string
@@ -383,88 +383,88 @@ export type FirmServiceSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type FirmServiceCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmServiceCreateWithoutArchitectureCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmServiceCreateManyArchitectureCompanyInputEnvelope
+export type FirmServiceCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput> | Prisma.FirmServiceCreateWithoutCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmServiceCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
 }
 
-export type FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmServiceCreateWithoutArchitectureCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmServiceCreateManyArchitectureCompanyInputEnvelope
+export type FirmServiceUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput> | Prisma.FirmServiceCreateWithoutCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmServiceCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
 }
 
-export type FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmServiceCreateWithoutArchitectureCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmServiceUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmServiceUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmServiceCreateManyArchitectureCompanyInputEnvelope
+export type FirmServiceUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput> | Prisma.FirmServiceCreateWithoutCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmServiceUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmServiceUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmServiceCreateManyCompanyInputEnvelope
   set?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   disconnect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   delete?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   connect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
-  update?: Prisma.FirmServiceUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmServiceUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmServiceUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmServiceUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmServiceUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmServiceUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmServiceUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmServiceUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmServiceScalarWhereInput | Prisma.FirmServiceScalarWhereInput[]
 }
 
-export type FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmServiceCreateWithoutArchitectureCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmServiceUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmServiceUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmServiceCreateManyArchitectureCompanyInputEnvelope
+export type FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput> | Prisma.FirmServiceCreateWithoutCompanyInput[] | Prisma.FirmServiceUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmServiceCreateOrConnectWithoutCompanyInput | Prisma.FirmServiceCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmServiceUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmServiceUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmServiceCreateManyCompanyInputEnvelope
   set?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   disconnect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   delete?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
   connect?: Prisma.FirmServiceWhereUniqueInput | Prisma.FirmServiceWhereUniqueInput[]
-  update?: Prisma.FirmServiceUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmServiceUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmServiceUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmServiceUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmServiceUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmServiceUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmServiceUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmServiceUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmServiceScalarWhereInput | Prisma.FirmServiceScalarWhereInput[]
 }
 
-export type FirmServiceCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmServiceCreateWithoutCompanyInput = {
+  id?: string
   icon: string
   title: string
   description: string
   sortOrder?: number
 }
 
-export type FirmServiceUncheckedCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmServiceUncheckedCreateWithoutCompanyInput = {
+  id?: string
   icon: string
   title: string
   description: string
   sortOrder?: number
 }
 
-export type FirmServiceCreateOrConnectWithoutArchitectureCompanyInput = {
+export type FirmServiceCreateOrConnectWithoutCompanyInput = {
   where: Prisma.FirmServiceWhereUniqueInput
-  create: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput>
+  create: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmServiceCreateManyArchitectureCompanyInputEnvelope = {
-  data: Prisma.FirmServiceCreateManyArchitectureCompanyInput | Prisma.FirmServiceCreateManyArchitectureCompanyInput[]
+export type FirmServiceCreateManyCompanyInputEnvelope = {
+  data: Prisma.FirmServiceCreateManyCompanyInput | Prisma.FirmServiceCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type FirmServiceUpsertWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmServiceUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmServiceWhereUniqueInput
-  update: Prisma.XOR<Prisma.FirmServiceUpdateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedUpdateWithoutArchitectureCompanyInput>
-  create: Prisma.XOR<Prisma.FirmServiceCreateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutArchitectureCompanyInput>
+  update: Prisma.XOR<Prisma.FirmServiceUpdateWithoutCompanyInput, Prisma.FirmServiceUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.FirmServiceCreateWithoutCompanyInput, Prisma.FirmServiceUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmServiceUpdateWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmServiceUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmServiceWhereUniqueInput
-  data: Prisma.XOR<Prisma.FirmServiceUpdateWithoutArchitectureCompanyInput, Prisma.FirmServiceUncheckedUpdateWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmServiceUpdateWithoutCompanyInput, Prisma.FirmServiceUncheckedUpdateWithoutCompanyInput>
 }
 
-export type FirmServiceUpdateManyWithWhereWithoutArchitectureCompanyInput = {
+export type FirmServiceUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.FirmServiceScalarWhereInput
-  data: Prisma.XOR<Prisma.FirmServiceUpdateManyMutationInput, Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmServiceUpdateManyMutationInput, Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type FirmServiceScalarWhereInput = {
@@ -479,15 +479,15 @@ export type FirmServiceScalarWhereInput = {
   companyId?: Prisma.StringFilter<"FirmService"> | string
 }
 
-export type FirmServiceCreateManyArchitectureCompanyInput = {
-  id: string
+export type FirmServiceCreateManyCompanyInput = {
+  id?: string
   icon: string
   title: string
   description: string
   sortOrder?: number
 }
 
-export type FirmServiceUpdateWithoutArchitectureCompanyInput = {
+export type FirmServiceUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -495,7 +495,7 @@ export type FirmServiceUpdateWithoutArchitectureCompanyInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FirmServiceUncheckedUpdateWithoutArchitectureCompanyInput = {
+export type FirmServiceUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -503,7 +503,7 @@ export type FirmServiceUncheckedUpdateWithoutArchitectureCompanyInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyInput = {
+export type FirmServiceUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -520,7 +520,7 @@ export type FirmServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   description?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmService"]>
 
 export type FirmServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -530,7 +530,7 @@ export type FirmServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   description?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmService"]>
 
 export type FirmServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -540,7 +540,7 @@ export type FirmServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   description?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmService"]>
 
 export type FirmServiceSelectScalar = {
@@ -554,19 +554,19 @@ export type FirmServiceSelectScalar = {
 
 export type FirmServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "icon" | "title" | "description" | "sortOrder" | "companyId", ExtArgs["result"]["firmService"]>
 export type FirmServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmServiceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmServiceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 
 export type $FirmServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FirmService"
   objects: {
-    ArchitectureCompany: Prisma.$ArchitectureCompanyPayload<ExtArgs>
+    company: Prisma.$ArchitectureCompanyPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -969,7 +969,7 @@ readonly fields: FirmServiceFieldRefs;
  */
 export interface Prisma__FirmServiceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ArchitectureCompany<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

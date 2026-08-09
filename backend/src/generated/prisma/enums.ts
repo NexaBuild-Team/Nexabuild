@@ -9,15 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const ConstructionStatus = {
-  DONE: 'DONE',
-  ACTIVE: 'ACTIVE',
-  PENDING: 'PENDING'
-} as const
-
-export type ConstructionStatus = (typeof ConstructionStatus)[keyof typeof ConstructionStatus]
-
-
 export const DesignStatus = {
   PLANNING: 'PLANNING',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -25,6 +16,15 @@ export const DesignStatus = {
 } as const
 
 export type DesignStatus = (typeof DesignStatus)[keyof typeof DesignStatus]
+
+
+export const ConstructionStatus = {
+  DONE: 'DONE',
+  ACTIVE: 'ACTIVE',
+  PENDING: 'PENDING'
+} as const
+
+export type ConstructionStatus = (typeof ConstructionStatus)[keyof typeof ConstructionStatus]
 
 
 export const ConstructionCompanyStatus = {

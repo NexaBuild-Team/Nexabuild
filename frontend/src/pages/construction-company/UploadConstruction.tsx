@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { constructionApi } from '../../services/constructionApi';
 
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
+// ─── 1. Interfaces ─────────────────────────────────────────────────────────
 
 export interface ConstructionMilestone {
   title: string;
@@ -47,185 +50,195 @@ export interface UploadConstructionProps {
 export default function UploadConstruction({
   data = null,
   isLoading = false,
-  error = null,
-  onSaveDraft,
-  onPublish,
+  error: propsError = null,
+  onSaveDraft: _onSaveDraft,
+  onPublish: _onPublish,
   onDelete,
   onAction
 }: UploadConstructionProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Form States initialized with props data
+  // Form Field States (Clean initial states without dummy data)
   const [projectName, setProjectName] = useState(data?.projectName || "");
   const [projectCategory, setProjectCategory] = useState<string>(data?.projectCategory || "Commercial");
   const [projectDescription, setProjectDescription] = useState(data?.projectDescription || "");
 
-  // Uploaded Media States
-  const [coverImage, setCoverImage] = useState<string | null>(data?.coverImage || null);
-  const [siteImages, setSiteImages] = useState<string[]>(
-    data?.siteImages || ["/hero_property.png", "/property_card_1.png", "/property_card_2.png"]
-  );
+  // Media States
+  const [_coverImage] = useState<string | null>(data?.coverImage || null);
+  const [_siteImages] = useState<string[]>(data?.siteImages || []);
 
   // Blueprints & Document State
-  const [blueprintsPdf, setBlueprintsPdf] = useState(
-    data?.blueprintsPdf !== undefined ? data.blueprintsPdf : { name: "Construction_Site_Spec_V3.pdf", size: "6.4 MB" }
+  const [blueprintsPdf, setBlueprintsPdf] = useState<{ name: string; size: string } | null>(
+    data?.blueprintsPdf !== undefined ? data.blueprintsPdf : null
   );
 
-  // Milestones State
-  const [milestones, setMilestones] = useState<ConstructionMilestone[]>(
-    data?.milestones || [
-      { title: "Site Excavation & Foundation", targetDate: "2025-03-15", status: "Completed" },
-      { title: "Structural Steel Framing", targetDate: "2025-06-30", status: "In Progress" },
-      { title: "Electrical & Plumbing Rough-In", targetDate: "2025-09-15", status: "Pending" }
-    ]
-  );
+  // Milestones State (Clean initial state)
+  const [milestones, setMilestones] = useState<ConstructionMilestone[]>(data?.milestones || []);
   const [newMilestoneTitle, setNewMilestoneTitle] = useState("");
 
-  // Details & Specifications
-  const [clientName, setClientName] = useState(data?.details?.clientName || "BuildCo Infrastructure Corp");
-  const [siteLocation, setSiteLocation] = useState(data?.details?.siteLocation || "Business Bay, Dubai South");
-  const [totalBudget, setTotalBudget] = useState(data?.details?.totalBudget || "$4,500,000");
-  const [estimatedCompletion, setEstimatedCompletion] = useState(data?.details?.estimatedCompletion || "Q4 2026");
-  const [contractorTeamSize, setContractorTeamSize] = useState(data?.details?.contractorTeamSize?.toString() || "45 Workers");
+  // Details & Specifications (Clean initial states)
+  const [clientName, setClientName] = useState(data?.details?.clientName || "");
+  const [siteLocation, setSiteLocation] = useState(data?.details?.siteLocation || "");
+  const [totalBudget, setTotalBudget] = useState(data?.details?.totalBudget || "");
+  const [estimatedCompletion, setEstimatedCompletion] = useState(data?.details?.estimatedCompletion || "");
+  const [contractorTeamSize, setContractorTeamSize] = useState(data?.details?.contractorTeamSize?.toString() || "");
 
-  // Safety Certifications
-  const [certifications, setCertifications] = useState<string[]>(
-    data?.safetyCertifications || ["ISO 45001 Certified", "OSHA Compliant", "Green Building Standard"]
-  );
+  // Safety Certifications (Clean initial state)
+  const [certifications, setCertifications] = useState<string[]>(data?.safetyCertifications || []);
+  const [newCertInput, setNewCertInput] = useState("");
 
   // Visibility
   const [visibility, setVisibility] = useState<'Public' | 'Private' | 'Clients Only'>(
     data?.visibility || 'Public'
   );
 
-  // Sync state if props change dynamically
-  useEffect(() => {
-    if (data) {
-      if (data.projectName !== undefined) setProjectName(data.projectName);
-      if (data.projectCategory !== undefined) setProjectCategory(data.projectCategory);
-      if (data.projectDescription !== undefined) setProjectDescription(data.projectDescription);
-      if (data.coverImage !== undefined) setCoverImage(data.coverImage);
-      if (data.siteImages !== undefined) setSiteImages(data.siteImages);
-      if (data.blueprintsPdf !== undefined) setBlueprintsPdf(data.blueprintsPdf);
-      if (data.milestones !== undefined) setMilestones(data.milestones);
-      if (data.details) {
-        if (data.details.clientName !== undefined) setClientName(data.details.clientName);
-        if (data.details.siteLocation !== undefined) setSiteLocation(data.details.siteLocation);
-        if (data.details.totalBudget !== undefined) setTotalBudget(data.details.totalBudget);
-        if (data.details.estimatedCompletion !== undefined) setEstimatedCompletion(data.details.estimatedCompletion);
-        if (data.details.contractorTeamSize !== undefined) setContractorTeamSize(data.details.contractorTeamSize.toString());
-      }
-      if (data.safetyCertifications !== undefined) setCertifications(data.safetyCertifications);
-      if (data.visibility !== undefined) setVisibility(data.visibility);
-    }
-  }, [data]);
+  // UI State
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(propsError);
 
-  // Completion Progress calculation
+  // File Upload Handler (Simulated local file drop)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setBlueprintsPdf({
+        name: file.name,
+        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+      });
+    }
+  };
+
+  // Dynamic progress calculation based on real filled user inputs
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const isBasicDone = !!(projectName && projectDescription && projectCategory);
-    const isMediaDone = !!(siteImages.length > 0 || coverImage);
-    const isDocDone = !!blueprintsPdf;
-    const isDetailsDone = !!(clientName && siteLocation && totalBudget && estimatedCompletion);
+    const isOverviewDone = !!(projectName.trim() && projectDescription.trim() && projectCategory);
+    const isBlueprintDone = !!blueprintsPdf;
     const isMilestonesDone = milestones.length > 0;
+    const isDetailsDone = !!(clientName.trim() || siteLocation.trim() || totalBudget.trim());
 
-    const count = [isBasicDone, isMediaDone, isDocDone, isDetailsDone, isMilestonesDone].filter(Boolean).length;
-    setProgress(Math.round((count / 5) * 100));
-  }, [projectName, projectDescription, projectCategory, siteImages, coverImage, blueprintsPdf, clientName, siteLocation, totalBudget, estimatedCompletion, milestones]);
+    const completedCount = [isOverviewDone, isBlueprintDone, isMilestonesDone, isDetailsDone].filter(Boolean).length;
+    setProgress(Math.round((completedCount / 4) * 100));
+  }, [projectName, projectDescription, projectCategory, blueprintsPdf, milestones, clientName, siteLocation, totalBudget]);
 
-  // Handlers
-  const handleSaveDraftAction = () => {
-    const payload: ConstructionProjectData = {
-      id: data?.id,
-      projectName,
-      projectCategory: projectCategory as any,
-      projectDescription,
-      coverImage: coverImage || undefined,
-      siteImages,
-      blueprintsPdf,
-      milestones,
-      details: {
-        clientName,
-        siteLocation,
-        totalBudget,
-        estimatedCompletion,
-        contractorTeamSize
-      },
-      safetyCertifications: certifications,
-      visibility,
-      isDraft: true
-    };
-    if (onSaveDraft) onSaveDraft(payload);
-    if (onAction) onAction('SAVE_DRAFT', payload);
+  // Action Handlers
+  const handleSaveDraftAction = async () => {
+    if (!projectName.trim()) {
+      setFormError('Please enter a Project Name to save a draft.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setFormError(null);
+      await constructionApi.createProject({
+        name: projectName.trim(),
+        category: projectCategory || 'Commercial',
+        description: projectDescription.trim() || undefined,
+        clientName: clientName.trim() || undefined,
+        siteLocation: siteLocation.trim() || undefined,
+        totalBudget: totalBudget.trim() || undefined,
+        estimatedCompletion: estimatedCompletion.trim() || undefined,
+        teamSize: contractorTeamSize.trim() || undefined,
+        blueprintFileName: blueprintsPdf?.name || undefined,
+        visibility,
+        status: 'Planning',
+      });
+      alert('Construction project draft saved to database!');
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('Failed to save project draft:', err);
+      setFormError(err.response?.data?.message || 'Failed to save project draft.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handlePublishAction = () => {
-    const payload: ConstructionProjectData = {
-      id: data?.id,
-      projectName,
-      projectCategory: projectCategory as any,
-      projectDescription,
-      coverImage: coverImage || undefined,
-      siteImages,
-      blueprintsPdf,
-      milestones,
-      details: {
-        clientName,
-        siteLocation,
-        totalBudget,
-        estimatedCompletion,
-        contractorTeamSize
-      },
-      safetyCertifications: certifications,
-      visibility,
-      isDraft: false
-    };
-    if (onPublish) onPublish(payload);
-    if (onAction) onAction('PUBLISH', payload);
+  const handlePublishAction = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!projectName.trim()) {
+      setFormError('Project Name is required before publishing.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setFormError(null);
+      await constructionApi.createProject({
+        name: projectName.trim(),
+        category: projectCategory || 'Commercial',
+        description: projectDescription.trim() || undefined,
+        clientName: clientName.trim() || undefined,
+        siteLocation: siteLocation.trim() || undefined,
+        totalBudget: totalBudget.trim() || undefined,
+        estimatedCompletion: estimatedCompletion.trim() || undefined,
+        teamSize: contractorTeamSize.trim() || undefined,
+        blueprintFileName: blueprintsPdf?.name || undefined,
+        visibility,
+        status: 'Active',
+      });
+      alert('Construction project published successfully!');
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('Failed to publish construction project:', err);
+      setFormError(err.response?.data?.message || 'Failed to publish construction project.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleDeleteAction = () => {
-    if (confirm("Are you sure you want to discard this project upload?")) {
+    if (confirm("Are you sure you want to discard this project draft?")) {
       if (onDelete) onDelete(data?.id);
       if (onAction) onAction('DELETE', { id: data?.id });
+      navigate('/dashboard');
     }
   };
 
   const handleAddMilestone = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMilestoneTitle.trim()) return;
-    setMilestones(prev => [
-      ...prev,
-      { title: newMilestoneTitle.trim(), status: 'Pending', targetDate: 'TBD' }
-    ]);
-    setNewMilestoneTitle("");
+    if (newMilestoneTitle.trim()) {
+      setMilestones(prev => [
+        ...prev,
+        { title: newMilestoneTitle.trim(), status: 'Pending', targetDate: new Date().toISOString().split('T')[0] }
+      ]);
+      setNewMilestoneTitle("");
+    }
   };
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
+  const handleToggleMilestoneStatus = (index: number) => {
+    const statuses: Array<'Pending' | 'In Progress' | 'Completed'> = ['Pending', 'In Progress', 'Completed'];
+    setMilestones(prev => prev.map((m, i) => {
+      if (i === index) {
+        const nextIdx = (statuses.indexOf(m.status) + 1) % statuses.length;
+        return { ...m, status: statuses[nextIdx] };
+      }
+      return m;
+    }));
+  };
+
+  const handleAddCert = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && newCertInput.trim()) {
+      e.preventDefault();
+      if (!certifications.includes(newCertInput.trim())) {
+        setCertifications(prev => [...prev, newCertInput.trim()]);
+      }
+      setNewCertInput("");
+    }
+  };
+
+  // Skeleton Loading State
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full bg-[#f8fafc] flex flex-row animate-pulse">
-        <div className="hidden lg:flex w-[260px] bg-[#345b79]/40 flex-col p-6 gap-6">
-          <div className="h-10 bg-white/20 rounded-lg w-3/4" />
-          <div className="flex flex-col gap-4 mt-8">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="h-8 bg-white/10 rounded-md w-full" />
-            ))}
+      <div className="w-full min-h-screen bg-[#f8fafc] p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto space-y-8">
+        <div className="h-12 bg-gray-200 rounded-lg w-1/3" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-6">
+            <div className="h-64 bg-gray-200 rounded-2xl" />
+            <div className="h-48 bg-gray-200 rounded-2xl" />
           </div>
-        </div>
-        <div className="flex-1 p-8 max-w-[1400px] mx-auto space-y-8">
-          <div className="h-12 bg-gray-200 rounded-lg w-1/3" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 space-y-6">
-              <div className="h-56 bg-gray-200 rounded-2xl" />
-              <div className="h-48 bg-gray-200 rounded-2xl" />
-              <div className="h-48 bg-gray-200 rounded-2xl" />
-            </div>
-            <div className="lg:col-span-4 space-y-6">
-              <div className="h-40 bg-gray-200 rounded-2xl" />
-              <div className="h-64 bg-gray-200 rounded-2xl" />
-            </div>
+          <div className="lg:col-span-4 space-y-6">
+            <div className="h-40 bg-gray-200 rounded-2xl" />
+            <div className="h-64 bg-gray-200 rounded-2xl" />
           </div>
         </div>
       </div>
@@ -233,490 +246,423 @@ export default function UploadConstruction({
   }
 
   return (
-    <div 
-      className="min-h-screen w-full relative flex flex-row items-start font-normal text-[#1d1d1d] overflow-x-hidden"
-      style={{ backgroundImage: "linear-gradient(90deg, rgb(230, 224, 212) 0%, rgb(230, 224, 212) 100%), linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%)" }}
-    >
+    <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8 text-[#111827] bg-[#f8fafc] min-h-screen">
       
-      {/* ─── Sidebar Navigation ────────────────────────────────────────────── */}
-      <aside 
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[260px] bg-[#345b79] flex flex-col justify-between pt-[76px] pb-[24px] px-[16px] transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Brand Header */}
-        <div className="absolute top-[11px] left-0 right-0 px-[24px] flex items-center gap-[12px] h-[52px]">
-          <div className="bg-white/10 flex items-center justify-center rounded-[8px] size-[40px] shrink-0">
-            <img alt="NexaBuild" className="size-[20px] object-contain" src="/src/assets/logo.png" />
+      {/* Top Search & User Header Bar */}
+      <BuyerHeaderBar searchPlaceholder="Search construction projects, blueprints..." />
+
+      {/* Global Error Banner */}
+      {formError && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <span className="font-semibold">{formError}</span>
           </div>
-          <div>
-            <h1 className="text-[20px] font-extrabold text-white leading-[25px]">NexaBuild</h1>
-            <p className="text-[10px] text-white/50 tracking-[1px] uppercase leading-[15px]">Construction Firm</p>
-          </div>
+          <button onClick={() => setFormError(null)} className="text-xs bg-red-100 px-3 py-1 rounded-lg hover:bg-red-200 font-bold">
+            Dismiss
+          </button>
         </div>
-
-        {/* Navigation Links */}
-        <div className="flex-grow flex flex-col justify-between overflow-y-auto mt-[20px]">
-          <nav className="flex flex-col gap-[4px] w-full">
-            <a 
-              href="/auth/test" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Dashboard" className="size-[18px]" src="/svg/home.svg" />
-              <span>Dashboard</span>
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] bg-[#3d4d5e] text-white font-semibold text-[15px]"
-            >
-              <img alt="Projects" className="size-[18px] filter brightness-200" src="/svg/construction.svg" />
-              <span>Projects Upload</span>
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Services" className="size-[18px] filter brightness-200" src="/svg/architect.svg" />
-              <span>Services</span>
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Gallery" className="size-[18px] filter brightness-200" src="/svg/sparks-icon.svg" />
-              <span>Gallery</span>
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Testimonials" className="size-[18px] filter brightness-200" src="/svg/agent.svg" />
-              <span>Testimonials</span>
-            </a>
-          </nav>
-
-          <div className="flex flex-col gap-[8px]">
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Company Profile" className="size-[18px] filter brightness-200" src="/svg/agent.svg" />
-              <span>Company Profile</span>
-            </a>
-            <a 
-              href="#" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Settings" className="size-[18px] filter brightness-200" src="/svg/sparks-settings-icon.svg" />
-              <span>Settings</span>
-            </a>
-            <a 
-              href="/auth/login" 
-              className="flex items-center gap-[12px] px-[16px] py-[12px] rounded-[12px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[15px]"
-            >
-              <img alt="Logout" className="size-[18px] filter brightness-200" src="/svg/sign-in.svg" />
-              <span>Logout</span>
-            </a>
-
-            <div className="bg-white/5 rounded-[16px] p-[12px] flex items-center gap-[12px] mt-[12px]">
-              <div className="bg-[#9c4327] rounded-full size-[40px] flex items-center justify-center font-bold text-white shrink-0">
-                BC
-              </div>
-              <div className="min-w-0">
-                <p className="text-[14px] font-bold text-white truncate leading-[20px]">BuildCo Team</p>
-                <p className="text-[10px] text-white/40 leading-[15px]">General Contractor</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Mobile Drawer Backdrop */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/45 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
       )}
 
-      {/* ─── Main Content Area ────────────────────────────────────────────── */}
-      <main className="flex-1 lg:pl-[260px] min-w-0 flex flex-col pt-[32px] pb-[60px] px-[16px] sm:px-[24px] lg:px-[32px] gap-[32px] max-w-[1400px] w-full mx-auto">
-        
-        {/* Error Banner State */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 filter drop-shadow" />
-              <span className="text-sm font-medium">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-semibold">
-              Retry
-            </button>
-          </div>
-        )}
+      {/* Action Header Banner */}
+      <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <Link to="/dashboard" className="text-xs font-extrabold text-[#194360] hover:underline flex items-center gap-1.5 mb-1">
+            <svg className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>Back to Dashboard</span>
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Upload Construction Project</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-semibold">Add new commercial, residential or infrastructure construction project details</p>
+        </div>
 
-        {/* Top Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-          <div>
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none"
-                aria-label="Open menu drawer"
-              >
-                <svg className="size-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        {/* Header Action Controls */}
+        <div className="flex items-center gap-3 self-end md:self-auto">
+          <button 
+            type="button"
+            onClick={handleDeleteAction}
+            className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:text-red-600 text-gray-700 text-xs font-extrabold transition-all cursor-pointer"
+          >
+            Discard
+          </button>
+          <button 
+            type="button"
+            onClick={handleSaveDraftAction}
+            disabled={submitting}
+            className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-800 text-xs font-extrabold transition-all cursor-pointer disabled:opacity-50"
+          >
+            Save Draft
+          </button>
+          <button 
+            type="button"
+            onClick={() => handlePublishAction()}
+            disabled={submitting}
+            className="bg-[#194360] hover:bg-[#123249] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{submitting ? 'Publishing...' : 'Publish Project'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Form Body */}
+      <form onSubmit={handlePublishAction} className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+        
+        {/* Left Form Segment */}
+        <div className="lg:col-span-8 space-y-8">
+          
+          {/* 1. Project Overview */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-blue-50 text-[#194360] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0-4h.01M12 11h.01M12 7h.01" />
                 </svg>
-              </button>
-              <h2 className="text-[28px] font-bold text-[#194360] tracking-tight">
-                Upload Construction Project
-              </h2>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Project Information</h3>
+                <p className="text-xs text-gray-500 font-medium">Title, category and scope description</p>
+              </div>
             </div>
-            <p className="text-[14px] text-[#42474d] mt-1">
-              Add new commercial, residential or infrastructure construction project details
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Project Name <span className="text-red-500">*</span>
+                </label>
+                <input 
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  placeholder="e.g. Skyline Commercial Center"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:border-[#194360]"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Project Category
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {['Residential', 'Commercial', 'Industrial', 'Infrastructure', 'Renovation'].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setProjectCategory(cat)}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all border text-center cursor-pointer ${
+                        projectCategory === cat 
+                          ? 'bg-[#194360] text-white border-[#194360] shadow-sm' 
+                          : 'bg-gray-50/80 text-gray-600 border-gray-200 hover:bg-gray-100'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Project Description & Scope
+                </label>
+                <textarea 
+                  rows={4}
+                  value={projectDescription}
+                  onChange={(e) => setProjectDescription(e.target.value)}
+                  placeholder="Detailed breakdown of construction scope, engineering specs, machinery used..."
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:border-[#194360]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Site Photos (Coming Soon Overlay) */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-white/75 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center space-y-3">
+              <div className="size-12 rounded-2xl bg-[#194360]/10 text-[#194360] flex items-center justify-center shadow-inner">
+                <svg className="size-6 text-[#194360]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span className="text-xs font-black tracking-widest uppercase bg-[#194360] text-white px-3 py-1 rounded-full shadow-sm">
+                Coming Soon
+              </span>
+              <p className="text-xs font-extrabold text-gray-700 max-w-sm">
+                Cloud site photo & drone footage upload is coming soon. Projects will automatically be published with clean site visuals!
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100 opacity-40">
+              <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Site Progress Photos</h3>
+                <p className="text-xs text-gray-500 font-medium">On-site construction photos</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-40">
+              <div className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50">
+                <svg className="size-6 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="text-[10px] font-bold text-gray-500">Add Photo</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Blueprints & Specifications */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-orange-50 text-[#be5d3f] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Site Blueprint & Contract Document</h3>
+                <p className="text-xs text-gray-500 font-medium">Attach PDF drawings or site specification file</p>
+              </div>
+            </div>
+
+            {blueprintsPdf ? (
+              <div className="flex items-center justify-between p-4 bg-gray-50/80 rounded-2xl border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-xl bg-orange-100 text-[#be5d3f] flex items-center justify-center font-bold text-xs">
+                    PDF
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-extrabold text-[#111827]">{blueprintsPdf.name}</h4>
+                    <span className="text-[10px] font-bold text-gray-400">{blueprintsPdf.size}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBlueprintsPdf(null)}
+                  className="text-xs font-bold text-red-600 hover:underline cursor-pointer"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <label className="p-6 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center bg-gray-50/50 hover:bg-gray-100/50 cursor-pointer transition-colors">
+                <input type="file" accept=".pdf,.dwg,.png,.jpg" onChange={handleFileUpload} className="hidden" />
+                <svg className="size-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span className="text-xs font-bold text-gray-600 mb-1">Click to Upload Blueprint Document</span>
+                <span className="text-[10px] font-semibold text-gray-400">PDF, DWG (Max 50MB)</span>
+              </label>
+            )}
+          </div>
+
+          {/* 4. Milestones Tracker */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-3.5">
+                <div className="size-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-[#111827]">Construction Milestones</h3>
+                  <p className="text-xs text-gray-500 font-medium">Key project phases and delivery status</p>
+                </div>
+              </div>
+            </div>
+
+            {milestones.length > 0 && (
+              <div className="space-y-3">
+                {milestones.map((m, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3.5 bg-gray-50/80 rounded-2xl border border-gray-200">
+                    <div>
+                      <h4 className="text-xs font-extrabold text-[#111827]">{m.title}</h4>
+                      <span className="text-[10px] font-semibold text-gray-400">Target: {m.targetDate || 'TBD'}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleMilestoneStatus(idx)}
+                      className={`text-[10px] font-extrabold px-3 py-1 rounded-full cursor-pointer ${
+                        m.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' :
+                        m.status === 'In Progress' ? 'bg-blue-100 text-[#194360]' : 'bg-amber-100 text-amber-700'
+                      }`}
+                    >
+                      {m.status}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={newMilestoneTitle}
+                onChange={(e) => setNewMilestoneTitle(e.target.value)}
+                placeholder="Add milestone (e.g. Foundation Pouring)..."
+                className="flex-1 bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-[#194360]"
+              />
+              <button 
+                type="button" 
+                onClick={handleAddMilestone} 
+                className="bg-[#194360] text-white text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer"
+              >
+                Add Phase
+              </button>
+            </div>
+          </div>
+
+          {/* 5. Project Details & Specs */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0-4h.01M12 11h.01M12 7h.01" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Site Details & Budget</h3>
+                <p className="text-xs text-gray-500 font-medium">Client name, location, and contractor team size</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Client Name</label>
+                <input 
+                  type="text" 
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="e.g. BuildCo Infrastructure"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Site Location</label>
+                <input 
+                  type="text" 
+                  value={siteLocation}
+                  onChange={(e) => setSiteLocation(e.target.value)}
+                  placeholder="e.g. Colombo 03, Sri Lanka"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Total Budget (LKR)</label>
+                <input 
+                  type="text" 
+                  value={totalBudget}
+                  onChange={(e) => setTotalBudget(e.target.value)}
+                  placeholder="e.g. 45,000,000"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Est. Completion Date</label>
+                <input 
+                  type="date" 
+                  value={estimatedCompletion}
+                  onChange={(e) => setEstimatedCompletion(e.target.value)}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Contractor Team Size</label>
+                <input 
+                  type="text" 
+                  value={contractorTeamSize}
+                  onChange={(e) => setContractorTeamSize(e.target.value)}
+                  placeholder="e.g. 45 Workers"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Segment: Widgets & Progress */}
+        <div className="lg:col-span-4 space-y-8">
+          
+          {/* Progress Card */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Completion Progress</h3>
+              <span className="text-xs font-extrabold text-[#194360] bg-blue-50 px-2.5 py-1 rounded-full">{progress}%</span>
+            </div>
+
+            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div className="bg-[#194360] h-full transition-all duration-300" style={{ width: `${progress}%` }} />
+            </div>
+
+            <p className="text-xs text-gray-500 font-medium">
+              Complete project information, site blueprints, and phase milestones to publish your project.
             </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button 
-              onClick={handleDeleteAction}
-              className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-700 text-sm font-bold transition-all flex items-center gap-2"
-              title="Discard Form"
-            >
-              <img src="/svg/clock.svg" alt="" className="size-4" />
-              <span>Discard</span>
-            </button>
-            <button 
-              onClick={handleSaveDraftAction}
-              className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-800 text-sm font-bold transition-all flex items-center gap-2"
-            >
-              <img src="/svg/bookmark.svg" alt="" className="size-4" />
-              <span>Save Draft</span>
-            </button>
-            <button 
-              onClick={handlePublishAction}
-              className="px-5 py-2.5 rounded-xl bg-[#194360] hover:bg-[#194360]/90 text-white text-sm font-bold transition-all shadow-sm flex items-center gap-2"
-            >
-              <img src="/svg/checkMark.svg" alt="" className="size-4" />
-              <span>Publish Project</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Form Grid Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
-          
-          {/* Left Column Form */}
-          <div className="lg:col-span-8 flex flex-col gap-8">
+          {/* Visibility Widget */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Visibility Setting</h3>
             
-            {/* 1. Project Basic Overview */}
-            <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm flex flex-col gap-6">
-              <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-                <div className="bg-[#194360]/10 p-2.5 rounded-xl">
-                  <img src="/svg/construction.svg" alt="" className="size-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#1a1c1e]">Project Overview & Scope</h3>
-                  <p className="text-xs text-gray-500">Project title, category, and construction summary</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Project Name / Title <span className="text-red-500">*</span>
-                  </label>
-                  <input 
-                    type="text"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="e.g. Metro Commerce Tower Structural Build"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#194360] focus:ring-2 focus:ring-[#194360]/10 outline-none text-sm transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Construction Category
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {['Residential', 'Commercial', 'Industrial', 'Infrastructure', 'Renovation'].map((cat) => (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => setProjectCategory(cat)}
-                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border text-center ${
-                          projectCategory === cat 
-                            ? 'bg-[#194360] text-white border-[#194360] shadow-sm' 
-                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Detailed Scope & Description
-                  </label>
-                  <textarea 
-                    rows={4}
-                    value={projectDescription}
-                    onChange={(e) => setProjectDescription(e.target.value)}
-                    placeholder="Provide details regarding the construction phase, materials, contractor team, and safety standards..."
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#194360] focus:ring-2 focus:ring-[#194360]/10 outline-none text-sm transition-all"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Construction Site Gallery */}
-            <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm flex flex-col gap-6">
-              <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-                <div className="bg-[#9c4327]/10 p-2.5 rounded-xl">
-                  <img src="/svg/eye.svg" alt="" className="size-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#1a1c1e]">Site Photos & Progress Photography</h3>
-                  <p className="text-xs text-gray-500">Upload site progress images and renderings</p>
-                </div>
-              </div>
-
-              {/* Upload Dropzone */}
-              <div className="border-2 border-dashed border-gray-200 hover:border-[#194360] bg-gray-50 hover:bg-white rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 group">
-                <div className="bg-[#194360]/10 p-4 rounded-full group-hover:scale-105 transition-transform">
-                  <img src="/svg/arrow-send.svg" alt="" className="size-6" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-800">Upload Site Progress Images</p>
-                  <p className="text-xs text-gray-400 mt-1">High resolution JPG or PNG files up to 15MB</p>
-                </div>
-              </div>
-
-              {/* Images Preview */}
-              {siteImages.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {siteImages.map((imgUrl, idx) => (
-                    <div key={idx} className="group relative rounded-xl overflow-hidden h-32 bg-gray-100 border border-gray-200">
-                      <img src={imgUrl} alt={`Site Shot ${idx + 1}`} className="size-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      <button 
-                        onClick={() => setSiteImages(prev => prev.filter((_, i) => i !== idx))}
-                        className="absolute top-2 right-2 bg-black/60 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors opacity-0 group-hover:opacity-100"
-                        title="Remove Image"
-                      >
-                        <img src="/svg/check.svg" alt="Delete" className="size-3 filter invert" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 3. Blueprints & Structural Docs */}
-            <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm flex flex-col gap-6">
-              <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-                <div className="bg-[#194360]/10 p-2.5 rounded-xl">
-                  <img src="/svg/architect.svg" alt="" className="size-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#1a1c1e]">Blueprints & Structural Documentation</h3>
-                  <p className="text-xs text-gray-500">Attach approved structural engineering PDFs</p>
-                </div>
-              </div>
-
-              {blueprintsPdf ? (
-                <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-[#194360] text-white font-bold text-xs p-2.5 rounded-lg">
-                      PDF
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-800">{blueprintsPdf.name}</p>
-                      <p className="text-xs text-gray-400">{blueprintsPdf.size}</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => setBlueprintsPdf(null)}
-                    className="text-xs text-red-600 hover:text-red-800 font-bold px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
-                  >
-                    Remove PDF
-                  </button>
-                </div>
-              ) : (
-                <div 
-                  onClick={() => setBlueprintsPdf({ name: "Approved_Structural_Blueprint_V1.pdf", size: "8.2 MB" })}
-                  className="border-2 border-dashed border-gray-200 hover:border-[#194360] rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-white transition-all"
+            <div className="space-y-2">
+              {(['Public', 'Private', 'Clients Only'] as const).map((vis) => (
+                <button
+                  key={vis}
+                  type="button"
+                  onClick={() => setVisibility(vis)}
+                  className={`w-full p-3 rounded-xl text-xs font-extrabold text-left border transition-all cursor-pointer flex items-center justify-between ${
+                    visibility === vis
+                      ? 'bg-[#194360]/10 border-[#194360] text-[#194360]'
+                      : 'bg-gray-50/80 border-gray-200 text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
-                  <p className="text-sm font-bold text-gray-700">+ Upload Engineering PDF Blueprint</p>
-                </div>
-              )}
-            </div>
-
-            {/* 4. Milestones Timeline Widget */}
-            <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm flex flex-col gap-6">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-[#9c4327]/10 p-2.5 rounded-xl">
-                    <img src="/svg/clock.svg" alt="" className="size-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#1a1c1e]">Construction Milestones</h3>
-                    <p className="text-xs text-gray-500">Track key phases of project execution</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {milestones.map((m, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 bg-gray-50/50">
-                    <div className="flex items-center gap-3">
-                      <span className={`size-3 rounded-full ${
-                        m.status === 'Completed' ? 'bg-green-500' : m.status === 'In Progress' ? 'bg-blue-500' : 'bg-gray-300'
-                      }`} />
-                      <div>
-                        <p className="text-sm font-bold text-gray-800">{m.title}</p>
-                        <p className="text-xs text-gray-400">Target Date: {m.targetDate || 'N/A'}</p>
-                      </div>
-                    </div>
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-                      m.status === 'Completed' ? 'bg-green-100 text-green-700' : m.status === 'In Progress' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {m.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <form onSubmit={handleAddMilestone} className="flex gap-2 mt-2">
-                <input 
-                  type="text" 
-                  placeholder="Add new milestone (e.g. Interior Finishing)..." 
-                  value={newMilestoneTitle}
-                  onChange={(e) => setNewMilestoneTitle(e.target.value)}
-                  className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#194360]"
-                />
-                <button type="submit" className="px-4 py-2.5 bg-[#194360] text-white text-xs font-bold rounded-xl hover:bg-[#194360]/90">
-                  Add
+                  <span>{vis}</span>
+                  {visibility === vis && <span className="size-2 rounded-full bg-[#194360]" />}
                 </button>
-              </form>
+              ))}
             </div>
-
           </div>
 
-          {/* Right Column Metadata Panel */}
-          <div className="lg:col-span-4 flex flex-col gap-8">
+          {/* Safety Standards Widget */}
+          <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
+            <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Safety Certifications</h3>
             
-            {/* Completion Widget */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-base font-bold text-[#1a1c1e]">Upload Progress</h4>
-                <span className="text-sm font-extrabold text-[#194360]">{progress}%</span>
-              </div>
-              <div className="bg-gray-100 h-2 rounded-full overflow-hidden">
-                <div className="bg-[#194360] h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
-              </div>
-            </div>
-
-            {/* Contract Specifications Panel */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <h4 className="text-base font-bold text-[#1a1c1e] border-b border-gray-100 pb-3">Contract Specifications</h4>
-              
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Client Name</label>
-                  <input 
-                    type="text" 
-                    value={clientName} 
-                    onChange={(e) => setClientName(e.target.value)} 
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-[#194360]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Site Location</label>
-                  <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2 bg-gray-50 focus-within:bg-white">
-                    <img src="/svg/location-pin-icon.svg" alt="" className="size-4" />
-                    <input 
-                      type="text" 
-                      value={siteLocation} 
-                      onChange={(e) => setSiteLocation(e.target.value)} 
-                      className="bg-transparent text-xs w-full outline-none font-bold text-gray-800"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Total Project Budget</label>
-                  <input 
-                    type="text" 
-                    value={totalBudget} 
-                    onChange={(e) => setTotalBudget(e.target.value)} 
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-[#194360]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Estimated Completion</label>
-                  <input 
-                    type="text" 
-                    value={estimatedCompletion} 
-                    onChange={(e) => setEstimatedCompletion(e.target.value)} 
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-[#194360]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">On-Site Team Size</label>
-                  <input 
-                    type="text" 
-                    value={contractorTeamSize} 
-                    onChange={(e) => setContractorTeamSize(e.target.value)} 
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-[#194360]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Safety & Quality Certifications */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <h4 className="text-base font-bold text-[#1a1c1e]">Safety Certifications</h4>
-              
+            {certifications.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {certifications.map((c) => (
-                  <span key={c} className="bg-green-50 text-green-700 border border-green-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                    ✓ {c}
+                {certifications.map((cert) => (
+                  <span key={cert} className="bg-blue-50 text-[#194360] text-[10px] font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    {cert}
+                    <button type="button" onClick={() => setCertifications(prev => prev.filter(c => c !== cert))} className="hover:text-red-500">×</button>
                   </span>
                 ))}
               </div>
-            </div>
+            )}
 
-            {/* Access Visibility Panel */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-              <h4 className="text-base font-bold text-[#1a1c1e]">Listing Visibility</h4>
-              
-              <div className="space-y-2">
-                {(['Public', 'Private', 'Clients Only'] as const).map((mode) => (
-                  <label key={mode} className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="visibility" 
-                      checked={visibility === mode} 
-                      onChange={() => setVisibility(mode)}
-                      className="text-[#194360] focus:ring-[#194360]"
-                    />
-                    <span className="text-xs font-bold text-gray-800">{mode}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
+            <input 
+              type="text" 
+              value={newCertInput}
+              onChange={(e) => setNewCertInput(e.target.value)}
+              onKeyDown={handleAddCert}
+              placeholder="Type certification and press Enter..."
+              className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-[#194360]"
+            />
           </div>
 
-        </section>
-      </main>
+        </div>
+
+      </form>
 
     </div>
   );

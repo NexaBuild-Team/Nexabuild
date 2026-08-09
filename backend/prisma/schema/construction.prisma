@@ -177,19 +177,34 @@ model ConstructionBrochure {
 // ============================================================
 
 model ConstructionProject {
-  id            String   @id @default(uuid())
-  companyId     String   @map("company_id")
-  title         String
-  location      String?
-  completedYear Int?     @map("completed_year")
-  cost          Decimal? @db.Decimal(14, 2)
-  thumbnailUrl  String?  @map("thumbnail_url")
-  description   String?
-  displayOrder  Int      @default(0) @map("display_order")
+  id                  String   @id @default(uuid())
+  companyId           String?  @map("company_id")
+  name                String?
+  title               String?
+  category            String   @default("Commercial")
+  status              String   @default("Active")
+  description         String?  @db.Text
+  views               Int      @default(0)
+  clientName          String?
+  siteLocation        String?
+  location            String?
+  totalBudget         String?
+  estimatedCompletion String?
+  completedYear       Int?     @map("completed_year")
+  cost                Decimal? @db.Decimal(14, 2)
+  teamSize            String?
+  blueprintFileName   String?
+  thumbnailUrl        String?  @map("thumbnail_url")
+  visibility          String   @default("Public")
+  displayOrder        Int      @default(0) @map("display_order")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at")
 
   images  ConstructionProjectImage[]
-  company ConstructionCompany        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company ConstructionCompany?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+  @@index([category])
+  @@index([status])
   @@map("construction_projects")
 }
 
@@ -273,4 +288,4 @@ model ConstructionMarketInsight {
   district ConstructionDistrict? @relation(fields: [districtId], references: [id])
 
   @@map("construction_market_insights")
-}
+}

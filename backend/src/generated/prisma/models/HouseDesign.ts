@@ -31,6 +31,8 @@ export type HouseDesignAvgAggregateOutputType = {
   bedrooms: number | null
   bathrooms: number | null
   sqftArea: number | null
+  views: number | null
+  likes: number | null
 }
 
 export type HouseDesignSumAggregateOutputType = {
@@ -38,6 +40,8 @@ export type HouseDesignSumAggregateOutputType = {
   bedrooms: number | null
   bathrooms: number | null
   sqftArea: number | null
+  views: number | null
+  likes: number | null
 }
 
 export type HouseDesignMinAggregateOutputType = {
@@ -51,6 +55,9 @@ export type HouseDesignMinAggregateOutputType = {
   bathrooms: number | null
   sqftArea: number | null
   locationLabel: string | null
+  views: number | null
+  likes: number | null
+  status: string | null
   isSaved: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -68,6 +75,9 @@ export type HouseDesignMaxAggregateOutputType = {
   bathrooms: number | null
   sqftArea: number | null
   locationLabel: string | null
+  views: number | null
+  likes: number | null
+  status: string | null
   isSaved: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -85,6 +95,9 @@ export type HouseDesignCountAggregateOutputType = {
   bathrooms: number
   sqftArea: number
   locationLabel: number
+  views: number
+  likes: number
+  status: number
   isSaved: number
   createdAt: number
   updatedAt: number
@@ -98,6 +111,8 @@ export type HouseDesignAvgAggregateInputType = {
   bedrooms?: true
   bathrooms?: true
   sqftArea?: true
+  views?: true
+  likes?: true
 }
 
 export type HouseDesignSumAggregateInputType = {
@@ -105,6 +120,8 @@ export type HouseDesignSumAggregateInputType = {
   bedrooms?: true
   bathrooms?: true
   sqftArea?: true
+  views?: true
+  likes?: true
 }
 
 export type HouseDesignMinAggregateInputType = {
@@ -118,6 +135,9 @@ export type HouseDesignMinAggregateInputType = {
   bathrooms?: true
   sqftArea?: true
   locationLabel?: true
+  views?: true
+  likes?: true
+  status?: true
   isSaved?: true
   createdAt?: true
   updatedAt?: true
@@ -135,6 +155,9 @@ export type HouseDesignMaxAggregateInputType = {
   bathrooms?: true
   sqftArea?: true
   locationLabel?: true
+  views?: true
+  likes?: true
+  status?: true
   isSaved?: true
   createdAt?: true
   updatedAt?: true
@@ -152,6 +175,9 @@ export type HouseDesignCountAggregateInputType = {
   bathrooms?: true
   sqftArea?: true
   locationLabel?: true
+  views?: true
+  likes?: true
+  status?: true
   isSaved?: true
   createdAt?: true
   updatedAt?: true
@@ -256,10 +282,13 @@ export type HouseDesignGroupByOutputType = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views: number
+  likes: number
+  status: string
   isSaved: boolean
   createdAt: Date
   updatedAt: Date
-  companyId: string
+  companyId: string | null
   _count: HouseDesignCountAggregateOutputType | null
   _avg: HouseDesignAvgAggregateOutputType | null
   _sum: HouseDesignSumAggregateOutputType | null
@@ -296,13 +325,16 @@ export type HouseDesignWhereInput = {
   bathrooms?: Prisma.IntFilter<"HouseDesign"> | number
   sqftArea?: Prisma.IntFilter<"HouseDesign"> | number
   locationLabel?: Prisma.StringFilter<"HouseDesign"> | string
+  views?: Prisma.IntFilter<"HouseDesign"> | number
+  likes?: Prisma.IntFilter<"HouseDesign"> | number
+  status?: Prisma.StringFilter<"HouseDesign"> | string
   isSaved?: Prisma.BoolFilter<"HouseDesign"> | boolean
   createdAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
-  companyId?: Prisma.StringFilter<"HouseDesign"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailNullableScalarRelationFilter, Prisma.DesignDetailWhereInput> | null
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
-  HouseDesignTag?: Prisma.HouseDesignTagListRelationFilter
+  companyId?: Prisma.StringNullableFilter<"HouseDesign"> | string | null
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyNullableScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput> | null
+  tags?: Prisma.HouseDesignTagListRelationFilter
+  detail?: Prisma.XOR<Prisma.DesignDetailNullableScalarRelationFilter, Prisma.DesignDetailWhereInput> | null
 }
 
 export type HouseDesignOrderByWithRelationInput = {
@@ -316,13 +348,16 @@ export type HouseDesignOrderByWithRelationInput = {
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isSaved?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
-  ArchitectureCompany?: Prisma.ArchitectureCompanyOrderByWithRelationInput
-  HouseDesignTag?: Prisma.HouseDesignTagOrderByRelationAggregateInput
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  company?: Prisma.ArchitectureCompanyOrderByWithRelationInput
+  tags?: Prisma.HouseDesignTagOrderByRelationAggregateInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type HouseDesignWhereUniqueInput = Prisma.AtLeast<{
@@ -339,13 +374,16 @@ export type HouseDesignWhereUniqueInput = Prisma.AtLeast<{
   bathrooms?: Prisma.IntFilter<"HouseDesign"> | number
   sqftArea?: Prisma.IntFilter<"HouseDesign"> | number
   locationLabel?: Prisma.StringFilter<"HouseDesign"> | string
+  views?: Prisma.IntFilter<"HouseDesign"> | number
+  likes?: Prisma.IntFilter<"HouseDesign"> | number
+  status?: Prisma.StringFilter<"HouseDesign"> | string
   isSaved?: Prisma.BoolFilter<"HouseDesign"> | boolean
   createdAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
-  companyId?: Prisma.StringFilter<"HouseDesign"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailNullableScalarRelationFilter, Prisma.DesignDetailWhereInput> | null
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
-  HouseDesignTag?: Prisma.HouseDesignTagListRelationFilter
+  companyId?: Prisma.StringNullableFilter<"HouseDesign"> | string | null
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyNullableScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput> | null
+  tags?: Prisma.HouseDesignTagListRelationFilter
+  detail?: Prisma.XOR<Prisma.DesignDetailNullableScalarRelationFilter, Prisma.DesignDetailWhereInput> | null
 }, "id">
 
 export type HouseDesignOrderByWithAggregationInput = {
@@ -359,10 +397,13 @@ export type HouseDesignOrderByWithAggregationInput = {
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isSaved?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.HouseDesignCountOrderByAggregateInput
   _avg?: Prisma.HouseDesignAvgOrderByAggregateInput
   _max?: Prisma.HouseDesignMaxOrderByAggregateInput
@@ -384,14 +425,17 @@ export type HouseDesignScalarWhereWithAggregatesInput = {
   bathrooms?: Prisma.IntWithAggregatesFilter<"HouseDesign"> | number
   sqftArea?: Prisma.IntWithAggregatesFilter<"HouseDesign"> | number
   locationLabel?: Prisma.StringWithAggregatesFilter<"HouseDesign"> | string
+  views?: Prisma.IntWithAggregatesFilter<"HouseDesign"> | number
+  likes?: Prisma.IntWithAggregatesFilter<"HouseDesign"> | number
+  status?: Prisma.StringWithAggregatesFilter<"HouseDesign"> | string
   isSaved?: Prisma.BoolWithAggregatesFilter<"HouseDesign"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"HouseDesign"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"HouseDesign"> | Date | string
-  companyId?: Prisma.StringWithAggregatesFilter<"HouseDesign"> | string
+  companyId?: Prisma.StringNullableWithAggregatesFilter<"HouseDesign"> | string | null
 }
 
 export type HouseDesignCreateInput = {
-  id: string
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -401,16 +445,19 @@ export type HouseDesignCreateInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  DesignDetail?: Prisma.DesignDetailCreateNestedOneWithoutHouseDesignInput
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignInput
-  HouseDesignTag?: Prisma.HouseDesignTagCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  company?: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignsInput
+  tags?: Prisma.HouseDesignTagCreateNestedManyWithoutDesignInput
+  detail?: Prisma.DesignDetailCreateNestedOneWithoutDesignInput
 }
 
 export type HouseDesignUncheckedCreateInput = {
-  id: string
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -420,12 +467,15 @@ export type HouseDesignUncheckedCreateInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  companyId: string
-  DesignDetail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutHouseDesignInput
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  companyId?: string | null
+  tags?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutDesignInput
+  detail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutDesignInput
 }
 
 export type HouseDesignUpdateInput = {
@@ -439,12 +489,15 @@ export type HouseDesignUpdateInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DesignDetail?: Prisma.DesignDetailUpdateOneWithoutHouseDesignNestedInput
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutHouseDesignNestedInput
-  HouseDesignTag?: Prisma.HouseDesignTagUpdateManyWithoutHouseDesignNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneWithoutHouseDesignsNestedInput
+  tags?: Prisma.HouseDesignTagUpdateManyWithoutDesignNestedInput
+  detail?: Prisma.DesignDetailUpdateOneWithoutDesignNestedInput
 }
 
 export type HouseDesignUncheckedUpdateInput = {
@@ -458,16 +511,19 @@ export type HouseDesignUncheckedUpdateInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  DesignDetail?: Prisma.DesignDetailUncheckedUpdateOneWithoutHouseDesignNestedInput
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutHouseDesignNestedInput
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutDesignNestedInput
+  detail?: Prisma.DesignDetailUncheckedUpdateOneWithoutDesignNestedInput
 }
 
 export type HouseDesignCreateManyInput = {
-  id: string
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -477,10 +533,13 @@ export type HouseDesignCreateManyInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  companyId: string
+  updatedAt?: Date | string
+  companyId?: string | null
 }
 
 export type HouseDesignUpdateManyMutationInput = {
@@ -494,6 +553,9 @@ export type HouseDesignUpdateManyMutationInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -510,10 +572,13 @@ export type HouseDesignUncheckedUpdateManyInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type HouseDesignListRelationFilter = {
@@ -524,11 +589,6 @@ export type HouseDesignListRelationFilter = {
 
 export type HouseDesignOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type HouseDesignScalarRelationFilter = {
-  is?: Prisma.HouseDesignWhereInput
-  isNot?: Prisma.HouseDesignWhereInput
 }
 
 export type HouseDesignCountOrderByAggregateInput = {
@@ -542,6 +602,9 @@ export type HouseDesignCountOrderByAggregateInput = {
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isSaved?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -553,6 +616,8 @@ export type HouseDesignAvgOrderByAggregateInput = {
   bedrooms?: Prisma.SortOrder
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
 }
 
 export type HouseDesignMaxOrderByAggregateInput = {
@@ -566,6 +631,9 @@ export type HouseDesignMaxOrderByAggregateInput = {
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isSaved?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -583,6 +651,9 @@ export type HouseDesignMinOrderByAggregateInput = {
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   isSaved?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -594,84 +665,91 @@ export type HouseDesignSumOrderByAggregateInput = {
   bedrooms?: Prisma.SortOrder
   bathrooms?: Prisma.SortOrder
   sqftArea?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  likes?: Prisma.SortOrder
 }
 
-export type HouseDesignCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.HouseDesignCreateWithoutArchitectureCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.HouseDesignCreateManyArchitectureCompanyInputEnvelope
+export type HouseDesignScalarRelationFilter = {
+  is?: Prisma.HouseDesignWhereInput
+  isNot?: Prisma.HouseDesignWhereInput
+}
+
+export type HouseDesignCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput> | Prisma.HouseDesignCreateWithoutCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.HouseDesignCreateManyCompanyInputEnvelope
   connect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
 }
 
-export type HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.HouseDesignCreateWithoutArchitectureCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.HouseDesignCreateManyArchitectureCompanyInputEnvelope
+export type HouseDesignUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput> | Prisma.HouseDesignCreateWithoutCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.HouseDesignCreateManyCompanyInputEnvelope
   connect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
 }
 
-export type HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.HouseDesignCreateWithoutArchitectureCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.HouseDesignUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.HouseDesignUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.HouseDesignCreateManyArchitectureCompanyInputEnvelope
+export type HouseDesignUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput> | Prisma.HouseDesignCreateWithoutCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.HouseDesignUpsertWithWhereUniqueWithoutCompanyInput | Prisma.HouseDesignUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.HouseDesignCreateManyCompanyInputEnvelope
   set?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   disconnect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   delete?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   connect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
-  update?: Prisma.HouseDesignUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.HouseDesignUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.HouseDesignUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.HouseDesignUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.HouseDesignUpdateWithWhereUniqueWithoutCompanyInput | Prisma.HouseDesignUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.HouseDesignUpdateManyWithWhereWithoutCompanyInput | Prisma.HouseDesignUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.HouseDesignScalarWhereInput | Prisma.HouseDesignScalarWhereInput[]
 }
 
-export type HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.HouseDesignCreateWithoutArchitectureCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.HouseDesignUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.HouseDesignUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.HouseDesignCreateManyArchitectureCompanyInputEnvelope
+export type HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput> | Prisma.HouseDesignCreateWithoutCompanyInput[] | Prisma.HouseDesignUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutCompanyInput | Prisma.HouseDesignCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.HouseDesignUpsertWithWhereUniqueWithoutCompanyInput | Prisma.HouseDesignUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.HouseDesignCreateManyCompanyInputEnvelope
   set?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   disconnect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   delete?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
   connect?: Prisma.HouseDesignWhereUniqueInput | Prisma.HouseDesignWhereUniqueInput[]
-  update?: Prisma.HouseDesignUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.HouseDesignUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.HouseDesignUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.HouseDesignUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.HouseDesignUpdateWithWhereUniqueWithoutCompanyInput | Prisma.HouseDesignUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.HouseDesignUpdateManyWithWhereWithoutCompanyInput | Prisma.HouseDesignUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.HouseDesignScalarWhereInput | Prisma.HouseDesignScalarWhereInput[]
-}
-
-export type HouseDesignCreateNestedOneWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutDesignDetailInput
-  connect?: Prisma.HouseDesignWhereUniqueInput
-}
-
-export type HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDesignDetailInput>
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutDesignDetailInput
-  upsert?: Prisma.HouseDesignUpsertWithoutDesignDetailInput
-  connect?: Prisma.HouseDesignWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.HouseDesignUpdateToOneWithWhereWithoutDesignDetailInput, Prisma.HouseDesignUpdateWithoutDesignDetailInput>, Prisma.HouseDesignUncheckedUpdateWithoutDesignDetailInput>
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type HouseDesignCreateNestedOneWithoutHouseDesignTagInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedCreateWithoutHouseDesignTagInput>
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutHouseDesignTagInput
+export type HouseDesignCreateNestedOneWithoutTagsInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutTagsInput, Prisma.HouseDesignUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutTagsInput
   connect?: Prisma.HouseDesignWhereUniqueInput
 }
 
-export type HouseDesignUpdateOneRequiredWithoutHouseDesignTagNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedCreateWithoutHouseDesignTagInput>
-  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutHouseDesignTagInput
-  upsert?: Prisma.HouseDesignUpsertWithoutHouseDesignTagInput
+export type HouseDesignUpdateOneRequiredWithoutTagsNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutTagsInput, Prisma.HouseDesignUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutTagsInput
+  upsert?: Prisma.HouseDesignUpsertWithoutTagsInput
   connect?: Prisma.HouseDesignWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.HouseDesignUpdateToOneWithWhereWithoutHouseDesignTagInput, Prisma.HouseDesignUpdateWithoutHouseDesignTagInput>, Prisma.HouseDesignUncheckedUpdateWithoutHouseDesignTagInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HouseDesignUpdateToOneWithWhereWithoutTagsInput, Prisma.HouseDesignUpdateWithoutTagsInput>, Prisma.HouseDesignUncheckedUpdateWithoutTagsInput>
 }
 
-export type HouseDesignCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type HouseDesignCreateNestedOneWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutDetailInput
+  connect?: Prisma.HouseDesignWhereUniqueInput
+}
+
+export type HouseDesignUpdateOneRequiredWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignCreateWithoutDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDetailInput>
+  connectOrCreate?: Prisma.HouseDesignCreateOrConnectWithoutDetailInput
+  upsert?: Prisma.HouseDesignUpsertWithoutDetailInput
+  connect?: Prisma.HouseDesignWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HouseDesignUpdateToOneWithWhereWithoutDetailInput, Prisma.HouseDesignUpdateWithoutDetailInput>, Prisma.HouseDesignUncheckedUpdateWithoutDetailInput>
+}
+
+export type HouseDesignCreateWithoutCompanyInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -681,15 +759,18 @@ export type HouseDesignCreateWithoutArchitectureCompanyInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  DesignDetail?: Prisma.DesignDetailCreateNestedOneWithoutHouseDesignInput
-  HouseDesignTag?: Prisma.HouseDesignTagCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  tags?: Prisma.HouseDesignTagCreateNestedManyWithoutDesignInput
+  detail?: Prisma.DesignDetailCreateNestedOneWithoutDesignInput
 }
 
-export type HouseDesignUncheckedCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type HouseDesignUncheckedCreateWithoutCompanyInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -699,37 +780,40 @@ export type HouseDesignUncheckedCreateWithoutArchitectureCompanyInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  DesignDetail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutHouseDesignInput
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  tags?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutDesignInput
+  detail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutDesignInput
 }
 
-export type HouseDesignCreateOrConnectWithoutArchitectureCompanyInput = {
+export type HouseDesignCreateOrConnectWithoutCompanyInput = {
   where: Prisma.HouseDesignWhereUniqueInput
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput>
 }
 
-export type HouseDesignCreateManyArchitectureCompanyInputEnvelope = {
-  data: Prisma.HouseDesignCreateManyArchitectureCompanyInput | Prisma.HouseDesignCreateManyArchitectureCompanyInput[]
+export type HouseDesignCreateManyCompanyInputEnvelope = {
+  data: Prisma.HouseDesignCreateManyCompanyInput | Prisma.HouseDesignCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type HouseDesignUpsertWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type HouseDesignUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.HouseDesignWhereUniqueInput
-  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedUpdateWithoutArchitectureCompanyInput>
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutArchitectureCompanyInput>
+  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutCompanyInput, Prisma.HouseDesignUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutCompanyInput, Prisma.HouseDesignUncheckedCreateWithoutCompanyInput>
 }
 
-export type HouseDesignUpdateWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type HouseDesignUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.HouseDesignWhereUniqueInput
-  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutArchitectureCompanyInput, Prisma.HouseDesignUncheckedUpdateWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutCompanyInput, Prisma.HouseDesignUncheckedUpdateWithoutCompanyInput>
 }
 
-export type HouseDesignUpdateManyWithWhereWithoutArchitectureCompanyInput = {
+export type HouseDesignUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.HouseDesignScalarWhereInput
-  data: Prisma.XOR<Prisma.HouseDesignUpdateManyMutationInput, Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.HouseDesignUpdateManyMutationInput, Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type HouseDesignScalarWhereInput = {
@@ -746,14 +830,17 @@ export type HouseDesignScalarWhereInput = {
   bathrooms?: Prisma.IntFilter<"HouseDesign"> | number
   sqftArea?: Prisma.IntFilter<"HouseDesign"> | number
   locationLabel?: Prisma.StringFilter<"HouseDesign"> | string
+  views?: Prisma.IntFilter<"HouseDesign"> | number
+  likes?: Prisma.IntFilter<"HouseDesign"> | number
+  status?: Prisma.StringFilter<"HouseDesign"> | string
   isSaved?: Prisma.BoolFilter<"HouseDesign"> | boolean
   createdAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"HouseDesign"> | Date | string
-  companyId?: Prisma.StringFilter<"HouseDesign"> | string
+  companyId?: Prisma.StringNullableFilter<"HouseDesign"> | string | null
 }
 
-export type HouseDesignCreateWithoutDesignDetailInput = {
-  id: string
+export type HouseDesignCreateWithoutTagsInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -763,15 +850,18 @@ export type HouseDesignCreateWithoutDesignDetailInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignInput
-  HouseDesignTag?: Prisma.HouseDesignTagCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  company?: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignsInput
+  detail?: Prisma.DesignDetailCreateNestedOneWithoutDesignInput
 }
 
-export type HouseDesignUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type HouseDesignUncheckedCreateWithoutTagsInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -781,30 +871,33 @@ export type HouseDesignUncheckedCreateWithoutDesignDetailInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  companyId: string
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutHouseDesignInput
+  updatedAt?: Date | string
+  companyId?: string | null
+  detail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutDesignInput
 }
 
-export type HouseDesignCreateOrConnectWithoutDesignDetailInput = {
+export type HouseDesignCreateOrConnectWithoutTagsInput = {
   where: Prisma.HouseDesignWhereUniqueInput
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutTagsInput, Prisma.HouseDesignUncheckedCreateWithoutTagsInput>
 }
 
-export type HouseDesignUpsertWithoutDesignDetailInput = {
-  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDesignDetailInput>
+export type HouseDesignUpsertWithoutTagsInput = {
+  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutTagsInput, Prisma.HouseDesignUncheckedUpdateWithoutTagsInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutTagsInput, Prisma.HouseDesignUncheckedCreateWithoutTagsInput>
   where?: Prisma.HouseDesignWhereInput
 }
 
-export type HouseDesignUpdateToOneWithWhereWithoutDesignDetailInput = {
+export type HouseDesignUpdateToOneWithWhereWithoutTagsInput = {
   where?: Prisma.HouseDesignWhereInput
-  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutDesignDetailInput, Prisma.HouseDesignUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutTagsInput, Prisma.HouseDesignUncheckedUpdateWithoutTagsInput>
 }
 
-export type HouseDesignUpdateWithoutDesignDetailInput = {
+export type HouseDesignUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -815,14 +908,17 @@ export type HouseDesignUpdateWithoutDesignDetailInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutHouseDesignNestedInput
-  HouseDesignTag?: Prisma.HouseDesignTagUpdateManyWithoutHouseDesignNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneWithoutHouseDesignsNestedInput
+  detail?: Prisma.DesignDetailUpdateOneWithoutDesignNestedInput
 }
 
-export type HouseDesignUncheckedUpdateWithoutDesignDetailInput = {
+export type HouseDesignUncheckedUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -833,15 +929,18 @@ export type HouseDesignUncheckedUpdateWithoutDesignDetailInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutHouseDesignNestedInput
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  detail?: Prisma.DesignDetailUncheckedUpdateOneWithoutDesignNestedInput
 }
 
-export type HouseDesignCreateWithoutHouseDesignTagInput = {
-  id: string
+export type HouseDesignCreateWithoutDetailInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -851,15 +950,18 @@ export type HouseDesignCreateWithoutHouseDesignTagInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  DesignDetail?: Prisma.DesignDetailCreateNestedOneWithoutHouseDesignInput
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignInput
+  updatedAt?: Date | string
+  company?: Prisma.ArchitectureCompanyCreateNestedOneWithoutHouseDesignsInput
+  tags?: Prisma.HouseDesignTagCreateNestedManyWithoutDesignInput
 }
 
-export type HouseDesignUncheckedCreateWithoutHouseDesignTagInput = {
-  id: string
+export type HouseDesignUncheckedCreateWithoutDetailInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -869,30 +971,33 @@ export type HouseDesignUncheckedCreateWithoutHouseDesignTagInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
-  companyId: string
-  DesignDetail?: Prisma.DesignDetailUncheckedCreateNestedOneWithoutHouseDesignInput
+  updatedAt?: Date | string
+  companyId?: string | null
+  tags?: Prisma.HouseDesignTagUncheckedCreateNestedManyWithoutDesignInput
 }
 
-export type HouseDesignCreateOrConnectWithoutHouseDesignTagInput = {
+export type HouseDesignCreateOrConnectWithoutDetailInput = {
   where: Prisma.HouseDesignWhereUniqueInput
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedCreateWithoutHouseDesignTagInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDetailInput>
 }
 
-export type HouseDesignUpsertWithoutHouseDesignTagInput = {
-  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedUpdateWithoutHouseDesignTagInput>
-  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedCreateWithoutHouseDesignTagInput>
+export type HouseDesignUpsertWithoutDetailInput = {
+  update: Prisma.XOR<Prisma.HouseDesignUpdateWithoutDetailInput, Prisma.HouseDesignUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.HouseDesignCreateWithoutDetailInput, Prisma.HouseDesignUncheckedCreateWithoutDetailInput>
   where?: Prisma.HouseDesignWhereInput
 }
 
-export type HouseDesignUpdateToOneWithWhereWithoutHouseDesignTagInput = {
+export type HouseDesignUpdateToOneWithWhereWithoutDetailInput = {
   where?: Prisma.HouseDesignWhereInput
-  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutHouseDesignTagInput, Prisma.HouseDesignUncheckedUpdateWithoutHouseDesignTagInput>
+  data: Prisma.XOR<Prisma.HouseDesignUpdateWithoutDetailInput, Prisma.HouseDesignUncheckedUpdateWithoutDetailInput>
 }
 
-export type HouseDesignUpdateWithoutHouseDesignTagInput = {
+export type HouseDesignUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -903,14 +1008,17 @@ export type HouseDesignUpdateWithoutHouseDesignTagInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DesignDetail?: Prisma.DesignDetailUpdateOneWithoutHouseDesignNestedInput
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutHouseDesignNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneWithoutHouseDesignsNestedInput
+  tags?: Prisma.HouseDesignTagUpdateManyWithoutDesignNestedInput
 }
 
-export type HouseDesignUncheckedUpdateWithoutHouseDesignTagInput = {
+export type HouseDesignUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -921,15 +1029,18 @@ export type HouseDesignUncheckedUpdateWithoutHouseDesignTagInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  DesignDetail?: Prisma.DesignDetailUncheckedUpdateOneWithoutHouseDesignNestedInput
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutDesignNestedInput
 }
 
-export type HouseDesignCreateManyArchitectureCompanyInput = {
-  id: string
+export type HouseDesignCreateManyCompanyInput = {
+  id?: string
   title: string
   style: string
   priceLkr: number
@@ -939,12 +1050,15 @@ export type HouseDesignCreateManyArchitectureCompanyInput = {
   bathrooms: number
   sqftArea: number
   locationLabel: string
+  views?: number
+  likes?: number
+  status?: string
   isSaved?: boolean
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
-export type HouseDesignUpdateWithoutArchitectureCompanyInput = {
+export type HouseDesignUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -955,14 +1069,17 @@ export type HouseDesignUpdateWithoutArchitectureCompanyInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DesignDetail?: Prisma.DesignDetailUpdateOneWithoutHouseDesignNestedInput
-  HouseDesignTag?: Prisma.HouseDesignTagUpdateManyWithoutHouseDesignNestedInput
+  tags?: Prisma.HouseDesignTagUpdateManyWithoutDesignNestedInput
+  detail?: Prisma.DesignDetailUpdateOneWithoutDesignNestedInput
 }
 
-export type HouseDesignUncheckedUpdateWithoutArchitectureCompanyInput = {
+export type HouseDesignUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -973,14 +1090,17 @@ export type HouseDesignUncheckedUpdateWithoutArchitectureCompanyInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DesignDetail?: Prisma.DesignDetailUncheckedUpdateOneWithoutHouseDesignNestedInput
-  HouseDesignTag?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutHouseDesignNestedInput
+  tags?: Prisma.HouseDesignTagUncheckedUpdateManyWithoutDesignNestedInput
+  detail?: Prisma.DesignDetailUncheckedUpdateOneWithoutDesignNestedInput
 }
 
-export type HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyInput = {
+export type HouseDesignUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   style?: Prisma.StringFieldUpdateOperationsInput | string
@@ -991,6 +1111,9 @@ export type HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyInput = {
   bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
   sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  likes?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   isSaved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1002,11 +1125,11 @@ export type HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyInput = {
  */
 
 export type HouseDesignCountOutputType = {
-  HouseDesignTag: number
+  tags: number
 }
 
 export type HouseDesignCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesignTag?: boolean | HouseDesignCountOutputTypeCountHouseDesignTagArgs
+  tags?: boolean | HouseDesignCountOutputTypeCountTagsArgs
 }
 
 /**
@@ -1022,7 +1145,7 @@ export type HouseDesignCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
 /**
  * HouseDesignCountOutputType without action
  */
-export type HouseDesignCountOutputTypeCountHouseDesignTagArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type HouseDesignCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.HouseDesignTagWhereInput
 }
 
@@ -1038,13 +1161,16 @@ export type HouseDesignSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   bathrooms?: boolean
   sqftArea?: boolean
   locationLabel?: boolean
+  views?: boolean
+  likes?: boolean
+  status?: boolean
   isSaved?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   companyId?: boolean
-  DesignDetail?: boolean | Prisma.HouseDesign$DesignDetailArgs<ExtArgs>
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
-  HouseDesignTag?: boolean | Prisma.HouseDesign$HouseDesignTagArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
+  tags?: boolean | Prisma.HouseDesign$tagsArgs<ExtArgs>
+  detail?: boolean | Prisma.HouseDesign$detailArgs<ExtArgs>
   _count?: boolean | Prisma.HouseDesignCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesign"]>
 
@@ -1059,11 +1185,14 @@ export type HouseDesignSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   bathrooms?: boolean
   sqftArea?: boolean
   locationLabel?: boolean
+  views?: boolean
+  likes?: boolean
+  status?: boolean
   isSaved?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesign"]>
 
 export type HouseDesignSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1077,11 +1206,14 @@ export type HouseDesignSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   bathrooms?: boolean
   sqftArea?: boolean
   locationLabel?: boolean
+  views?: boolean
+  likes?: boolean
+  status?: boolean
   isSaved?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesign"]>
 
 export type HouseDesignSelectScalar = {
@@ -1095,32 +1227,35 @@ export type HouseDesignSelectScalar = {
   bathrooms?: boolean
   sqftArea?: boolean
   locationLabel?: boolean
+  views?: boolean
+  likes?: boolean
+  status?: boolean
   isSaved?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   companyId?: boolean
 }
 
-export type HouseDesignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "style" | "priceLkr" | "architectName" | "imageUrl" | "bedrooms" | "bathrooms" | "sqftArea" | "locationLabel" | "isSaved" | "createdAt" | "updatedAt" | "companyId", ExtArgs["result"]["houseDesign"]>
+export type HouseDesignOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "style" | "priceLkr" | "architectName" | "imageUrl" | "bedrooms" | "bathrooms" | "sqftArea" | "locationLabel" | "views" | "likes" | "status" | "isSaved" | "createdAt" | "updatedAt" | "companyId", ExtArgs["result"]["houseDesign"]>
 export type HouseDesignInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.HouseDesign$DesignDetailArgs<ExtArgs>
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
-  HouseDesignTag?: boolean | Prisma.HouseDesign$HouseDesignTagArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
+  tags?: boolean | Prisma.HouseDesign$tagsArgs<ExtArgs>
+  detail?: boolean | Prisma.HouseDesign$detailArgs<ExtArgs>
   _count?: boolean | Prisma.HouseDesignCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type HouseDesignIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
 }
 export type HouseDesignIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.HouseDesign$companyArgs<ExtArgs>
 }
 
 export type $HouseDesignPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HouseDesign"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs> | null
-    ArchitectureCompany: Prisma.$ArchitectureCompanyPayload<ExtArgs>
-    HouseDesignTag: Prisma.$HouseDesignTagPayload<ExtArgs>[]
+    company: Prisma.$ArchitectureCompanyPayload<ExtArgs> | null
+    tags: Prisma.$HouseDesignTagPayload<ExtArgs>[]
+    detail: Prisma.$DesignDetailPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1133,10 +1268,13 @@ export type $HouseDesignPayload<ExtArgs extends runtime.Types.Extensions.Interna
     bathrooms: number
     sqftArea: number
     locationLabel: string
+    views: number
+    likes: number
+    status: string
     isSaved: boolean
     createdAt: Date
     updatedAt: Date
-    companyId: string
+    companyId: string | null
   }, ExtArgs["result"]["houseDesign"]>
   composites: {}
 }
@@ -1531,9 +1669,9 @@ readonly fields: HouseDesignFieldRefs;
  */
 export interface Prisma__HouseDesignClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.HouseDesign$DesignDetailArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesign$DesignDetailArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  ArchitectureCompany<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  HouseDesignTag<T extends Prisma.HouseDesign$HouseDesignTagArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesign$HouseDesignTagArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HouseDesignTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  company<T extends Prisma.HouseDesign$companyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesign$companyArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tags<T extends Prisma.HouseDesign$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesign$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HouseDesignTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  detail<T extends Prisma.HouseDesign$detailArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesign$detailArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1573,6 +1711,9 @@ export interface HouseDesignFieldRefs {
   readonly bathrooms: Prisma.FieldRef<"HouseDesign", 'Int'>
   readonly sqftArea: Prisma.FieldRef<"HouseDesign", 'Int'>
   readonly locationLabel: Prisma.FieldRef<"HouseDesign", 'String'>
+  readonly views: Prisma.FieldRef<"HouseDesign", 'Int'>
+  readonly likes: Prisma.FieldRef<"HouseDesign", 'Int'>
+  readonly status: Prisma.FieldRef<"HouseDesign", 'String'>
   readonly isSaved: Prisma.FieldRef<"HouseDesign", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"HouseDesign", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"HouseDesign", 'DateTime'>
@@ -1978,28 +2119,28 @@ export type HouseDesignDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * HouseDesign.DesignDetail
+ * HouseDesign.company
  */
-export type HouseDesign$DesignDetailArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type HouseDesign$companyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the DesignDetail
+   * Select specific fields to fetch from the ArchitectureCompany
    */
-  select?: Prisma.DesignDetailSelect<ExtArgs> | null
+  select?: Prisma.ArchitectureCompanySelect<ExtArgs> | null
   /**
-   * Omit specific fields from the DesignDetail
+   * Omit specific fields from the ArchitectureCompany
    */
-  omit?: Prisma.DesignDetailOmit<ExtArgs> | null
+  omit?: Prisma.ArchitectureCompanyOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DesignDetailInclude<ExtArgs> | null
-  where?: Prisma.DesignDetailWhereInput
+  include?: Prisma.ArchitectureCompanyInclude<ExtArgs> | null
+  where?: Prisma.ArchitectureCompanyWhereInput
 }
 
 /**
- * HouseDesign.HouseDesignTag
+ * HouseDesign.tags
  */
-export type HouseDesign$HouseDesignTagArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type HouseDesign$tagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the HouseDesignTag
    */
@@ -2018,6 +2159,25 @@ export type HouseDesign$HouseDesignTagArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.HouseDesignTagScalarFieldEnum | Prisma.HouseDesignTagScalarFieldEnum[]
+}
+
+/**
+ * HouseDesign.detail
+ */
+export type HouseDesign$detailArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DesignDetail
+   */
+  select?: Prisma.DesignDetailSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DesignDetail
+   */
+  omit?: Prisma.DesignDetailOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignDetailInclude<ExtArgs> | null
+  where?: Prisma.DesignDetailWhereInput
 }
 
 /**

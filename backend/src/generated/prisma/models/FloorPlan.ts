@@ -216,7 +216,7 @@ export type FloorPlanWhereInput = {
   imageUrl?: Prisma.StringFilter<"FloorPlan"> | string
   sortOrder?: Prisma.IntFilter<"FloorPlan"> | number
   detailId?: Prisma.StringFilter<"FloorPlan"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type FloorPlanOrderByWithRelationInput = {
@@ -225,7 +225,7 @@ export type FloorPlanOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   detailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type FloorPlanWhereUniqueInput = Prisma.AtLeast<{
@@ -237,7 +237,7 @@ export type FloorPlanWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringFilter<"FloorPlan"> | string
   sortOrder?: Prisma.IntFilter<"FloorPlan"> | number
   detailId?: Prisma.StringFilter<"FloorPlan"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id">
 
 export type FloorPlanOrderByWithAggregationInput = {
@@ -265,15 +265,15 @@ export type FloorPlanScalarWhereWithAggregatesInput = {
 }
 
 export type FloorPlanCreateInput = {
-  id: string
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutFloorPlanInput
+  detail: Prisma.DesignDetailCreateNestedOneWithoutFloorPlansInput
 }
 
 export type FloorPlanUncheckedCreateInput = {
-  id: string
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
@@ -285,7 +285,7 @@ export type FloorPlanUpdateInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutFloorPlanNestedInput
+  detail?: Prisma.DesignDetailUpdateOneRequiredWithoutFloorPlansNestedInput
 }
 
 export type FloorPlanUncheckedUpdateInput = {
@@ -297,7 +297,7 @@ export type FloorPlanUncheckedUpdateInput = {
 }
 
 export type FloorPlanCreateManyInput = {
-  id: string
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
@@ -361,86 +361,86 @@ export type FloorPlanSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type FloorPlanCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput> | Prisma.FloorPlanCreateWithoutDesignDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.FloorPlanCreateManyDesignDetailInputEnvelope
+export type FloorPlanCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput> | Prisma.FloorPlanCreateWithoutDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.FloorPlanCreateManyDetailInputEnvelope
   connect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
 }
 
-export type FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput> | Prisma.FloorPlanCreateWithoutDesignDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.FloorPlanCreateManyDesignDetailInputEnvelope
+export type FloorPlanUncheckedCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput> | Prisma.FloorPlanCreateWithoutDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.FloorPlanCreateManyDetailInputEnvelope
   connect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
 }
 
-export type FloorPlanUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput> | Prisma.FloorPlanCreateWithoutDesignDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.FloorPlanUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.FloorPlanUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.FloorPlanCreateManyDesignDetailInputEnvelope
+export type FloorPlanUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput> | Prisma.FloorPlanCreateWithoutDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.FloorPlanUpsertWithWhereUniqueWithoutDetailInput | Prisma.FloorPlanUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.FloorPlanCreateManyDetailInputEnvelope
   set?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   disconnect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   delete?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   connect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
-  update?: Prisma.FloorPlanUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.FloorPlanUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.FloorPlanUpdateManyWithWhereWithoutDesignDetailInput | Prisma.FloorPlanUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.FloorPlanUpdateWithWhereUniqueWithoutDetailInput | Prisma.FloorPlanUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.FloorPlanUpdateManyWithWhereWithoutDetailInput | Prisma.FloorPlanUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.FloorPlanScalarWhereInput | Prisma.FloorPlanScalarWhereInput[]
 }
 
-export type FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput> | Prisma.FloorPlanCreateWithoutDesignDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.FloorPlanUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.FloorPlanUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.FloorPlanCreateManyDesignDetailInputEnvelope
+export type FloorPlanUncheckedUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput> | Prisma.FloorPlanCreateWithoutDetailInput[] | Prisma.FloorPlanUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.FloorPlanCreateOrConnectWithoutDetailInput | Prisma.FloorPlanCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.FloorPlanUpsertWithWhereUniqueWithoutDetailInput | Prisma.FloorPlanUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.FloorPlanCreateManyDetailInputEnvelope
   set?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   disconnect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   delete?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
   connect?: Prisma.FloorPlanWhereUniqueInput | Prisma.FloorPlanWhereUniqueInput[]
-  update?: Prisma.FloorPlanUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.FloorPlanUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.FloorPlanUpdateManyWithWhereWithoutDesignDetailInput | Prisma.FloorPlanUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.FloorPlanUpdateWithWhereUniqueWithoutDetailInput | Prisma.FloorPlanUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.FloorPlanUpdateManyWithWhereWithoutDetailInput | Prisma.FloorPlanUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.FloorPlanScalarWhereInput | Prisma.FloorPlanScalarWhereInput[]
 }
 
-export type FloorPlanCreateWithoutDesignDetailInput = {
-  id: string
+export type FloorPlanCreateWithoutDetailInput = {
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
 }
 
-export type FloorPlanUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type FloorPlanUncheckedCreateWithoutDetailInput = {
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
 }
 
-export type FloorPlanCreateOrConnectWithoutDesignDetailInput = {
+export type FloorPlanCreateOrConnectWithoutDetailInput = {
   where: Prisma.FloorPlanWhereUniqueInput
-  create: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput>
 }
 
-export type FloorPlanCreateManyDesignDetailInputEnvelope = {
-  data: Prisma.FloorPlanCreateManyDesignDetailInput | Prisma.FloorPlanCreateManyDesignDetailInput[]
+export type FloorPlanCreateManyDetailInputEnvelope = {
+  data: Prisma.FloorPlanCreateManyDetailInput | Prisma.FloorPlanCreateManyDetailInput[]
   skipDuplicates?: boolean
 }
 
-export type FloorPlanUpsertWithWhereUniqueWithoutDesignDetailInput = {
+export type FloorPlanUpsertWithWhereUniqueWithoutDetailInput = {
   where: Prisma.FloorPlanWhereUniqueInput
-  update: Prisma.XOR<Prisma.FloorPlanUpdateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.FloorPlanCreateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDesignDetailInput>
+  update: Prisma.XOR<Prisma.FloorPlanUpdateWithoutDetailInput, Prisma.FloorPlanUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.FloorPlanCreateWithoutDetailInput, Prisma.FloorPlanUncheckedCreateWithoutDetailInput>
 }
 
-export type FloorPlanUpdateWithWhereUniqueWithoutDesignDetailInput = {
+export type FloorPlanUpdateWithWhereUniqueWithoutDetailInput = {
   where: Prisma.FloorPlanWhereUniqueInput
-  data: Prisma.XOR<Prisma.FloorPlanUpdateWithoutDesignDetailInput, Prisma.FloorPlanUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.FloorPlanUpdateWithoutDetailInput, Prisma.FloorPlanUncheckedUpdateWithoutDetailInput>
 }
 
-export type FloorPlanUpdateManyWithWhereWithoutDesignDetailInput = {
+export type FloorPlanUpdateManyWithWhereWithoutDetailInput = {
   where: Prisma.FloorPlanScalarWhereInput
-  data: Prisma.XOR<Prisma.FloorPlanUpdateManyMutationInput, Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.FloorPlanUpdateManyMutationInput, Prisma.FloorPlanUncheckedUpdateManyWithoutDetailInput>
 }
 
 export type FloorPlanScalarWhereInput = {
@@ -454,28 +454,28 @@ export type FloorPlanScalarWhereInput = {
   detailId?: Prisma.StringFilter<"FloorPlan"> | string
 }
 
-export type FloorPlanCreateManyDesignDetailInput = {
-  id: string
+export type FloorPlanCreateManyDetailInput = {
+  id?: string
   label: string
   imageUrl: string
   sortOrder?: number
 }
 
-export type FloorPlanUpdateWithoutDesignDetailInput = {
+export type FloorPlanUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FloorPlanUncheckedUpdateWithoutDesignDetailInput = {
+export type FloorPlanUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FloorPlanUncheckedUpdateManyWithoutDesignDetailInput = {
+export type FloorPlanUncheckedUpdateManyWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -490,7 +490,7 @@ export type FloorPlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   imageUrl?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["floorPlan"]>
 
 export type FloorPlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -499,7 +499,7 @@ export type FloorPlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   imageUrl?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["floorPlan"]>
 
 export type FloorPlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -508,7 +508,7 @@ export type FloorPlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   imageUrl?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["floorPlan"]>
 
 export type FloorPlanSelectScalar = {
@@ -521,19 +521,19 @@ export type FloorPlanSelectScalar = {
 
 export type FloorPlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "imageUrl" | "sortOrder" | "detailId", ExtArgs["result"]["floorPlan"]>
 export type FloorPlanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type FloorPlanIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type FloorPlanIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $FloorPlanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FloorPlan"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    detail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -935,7 +935,7 @@ readonly fields: FloorPlanFieldRefs;
  */
 export interface Prisma__FloorPlanClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  detail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

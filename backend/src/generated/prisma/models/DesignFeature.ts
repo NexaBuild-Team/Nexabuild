@@ -216,7 +216,7 @@ export type DesignFeatureWhereInput = {
   label?: Prisma.StringFilter<"DesignFeature"> | string
   sortOrder?: Prisma.IntFilter<"DesignFeature"> | number
   detailId?: Prisma.StringFilter<"DesignFeature"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type DesignFeatureOrderByWithRelationInput = {
@@ -225,7 +225,7 @@ export type DesignFeatureOrderByWithRelationInput = {
   label?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   detailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type DesignFeatureWhereUniqueInput = Prisma.AtLeast<{
@@ -237,7 +237,7 @@ export type DesignFeatureWhereUniqueInput = Prisma.AtLeast<{
   label?: Prisma.StringFilter<"DesignFeature"> | string
   sortOrder?: Prisma.IntFilter<"DesignFeature"> | number
   detailId?: Prisma.StringFilter<"DesignFeature"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id">
 
 export type DesignFeatureOrderByWithAggregationInput = {
@@ -265,15 +265,15 @@ export type DesignFeatureScalarWhereWithAggregatesInput = {
 }
 
 export type DesignFeatureCreateInput = {
-  id: string
+  id?: string
   icon: string
   label: string
   sortOrder?: number
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutDesignFeatureInput
+  detail: Prisma.DesignDetailCreateNestedOneWithoutFeaturesInput
 }
 
 export type DesignFeatureUncheckedCreateInput = {
-  id: string
+  id?: string
   icon: string
   label: string
   sortOrder?: number
@@ -285,7 +285,7 @@ export type DesignFeatureUpdateInput = {
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutDesignFeatureNestedInput
+  detail?: Prisma.DesignDetailUpdateOneRequiredWithoutFeaturesNestedInput
 }
 
 export type DesignFeatureUncheckedUpdateInput = {
@@ -297,7 +297,7 @@ export type DesignFeatureUncheckedUpdateInput = {
 }
 
 export type DesignFeatureCreateManyInput = {
-  id: string
+  id?: string
   icon: string
   label: string
   sortOrder?: number
@@ -361,86 +361,86 @@ export type DesignFeatureSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type DesignFeatureCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignFeatureCreateWithoutDesignDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignFeatureCreateManyDesignDetailInputEnvelope
+export type DesignFeatureCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput> | Prisma.DesignFeatureCreateWithoutDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.DesignFeatureCreateManyDetailInputEnvelope
   connect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
 }
 
-export type DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignFeatureCreateWithoutDesignDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignFeatureCreateManyDesignDetailInputEnvelope
+export type DesignFeatureUncheckedCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput> | Prisma.DesignFeatureCreateWithoutDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.DesignFeatureCreateManyDetailInputEnvelope
   connect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
 }
 
-export type DesignFeatureUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignFeatureCreateWithoutDesignDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignFeatureCreateManyDesignDetailInputEnvelope
+export type DesignFeatureUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput> | Prisma.DesignFeatureCreateWithoutDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDetailInput | Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.DesignFeatureCreateManyDetailInputEnvelope
   set?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   disconnect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   delete?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   connect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
-  update?: Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.DesignFeatureUpdateManyWithWhereWithoutDesignDetailInput | Prisma.DesignFeatureUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDetailInput | Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.DesignFeatureUpdateManyWithWhereWithoutDetailInput | Prisma.DesignFeatureUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.DesignFeatureScalarWhereInput | Prisma.DesignFeatureScalarWhereInput[]
 }
 
-export type DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignFeatureCreateWithoutDesignDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignFeatureCreateManyDesignDetailInputEnvelope
+export type DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput> | Prisma.DesignFeatureCreateWithoutDetailInput[] | Prisma.DesignFeatureUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignFeatureCreateOrConnectWithoutDetailInput | Prisma.DesignFeatureCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDetailInput | Prisma.DesignFeatureUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.DesignFeatureCreateManyDetailInputEnvelope
   set?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   disconnect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   delete?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
   connect?: Prisma.DesignFeatureWhereUniqueInput | Prisma.DesignFeatureWhereUniqueInput[]
-  update?: Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.DesignFeatureUpdateManyWithWhereWithoutDesignDetailInput | Prisma.DesignFeatureUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDetailInput | Prisma.DesignFeatureUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.DesignFeatureUpdateManyWithWhereWithoutDetailInput | Prisma.DesignFeatureUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.DesignFeatureScalarWhereInput | Prisma.DesignFeatureScalarWhereInput[]
 }
 
-export type DesignFeatureCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignFeatureCreateWithoutDetailInput = {
+  id?: string
   icon: string
   label: string
   sortOrder?: number
 }
 
-export type DesignFeatureUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignFeatureUncheckedCreateWithoutDetailInput = {
+  id?: string
   icon: string
   label: string
   sortOrder?: number
 }
 
-export type DesignFeatureCreateOrConnectWithoutDesignDetailInput = {
+export type DesignFeatureCreateOrConnectWithoutDetailInput = {
   where: Prisma.DesignFeatureWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput>
 }
 
-export type DesignFeatureCreateManyDesignDetailInputEnvelope = {
-  data: Prisma.DesignFeatureCreateManyDesignDetailInput | Prisma.DesignFeatureCreateManyDesignDetailInput[]
+export type DesignFeatureCreateManyDetailInputEnvelope = {
+  data: Prisma.DesignFeatureCreateManyDetailInput | Prisma.DesignFeatureCreateManyDetailInput[]
   skipDuplicates?: boolean
 }
 
-export type DesignFeatureUpsertWithWhereUniqueWithoutDesignDetailInput = {
+export type DesignFeatureUpsertWithWhereUniqueWithoutDetailInput = {
   where: Prisma.DesignFeatureWhereUniqueInput
-  update: Prisma.XOR<Prisma.DesignFeatureUpdateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDesignDetailInput>
+  update: Prisma.XOR<Prisma.DesignFeatureUpdateWithoutDetailInput, Prisma.DesignFeatureUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.DesignFeatureCreateWithoutDetailInput, Prisma.DesignFeatureUncheckedCreateWithoutDetailInput>
 }
 
-export type DesignFeatureUpdateWithWhereUniqueWithoutDesignDetailInput = {
+export type DesignFeatureUpdateWithWhereUniqueWithoutDetailInput = {
   where: Prisma.DesignFeatureWhereUniqueInput
-  data: Prisma.XOR<Prisma.DesignFeatureUpdateWithoutDesignDetailInput, Prisma.DesignFeatureUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.DesignFeatureUpdateWithoutDetailInput, Prisma.DesignFeatureUncheckedUpdateWithoutDetailInput>
 }
 
-export type DesignFeatureUpdateManyWithWhereWithoutDesignDetailInput = {
+export type DesignFeatureUpdateManyWithWhereWithoutDetailInput = {
   where: Prisma.DesignFeatureScalarWhereInput
-  data: Prisma.XOR<Prisma.DesignFeatureUpdateManyMutationInput, Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.DesignFeatureUpdateManyMutationInput, Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailInput>
 }
 
 export type DesignFeatureScalarWhereInput = {
@@ -454,28 +454,28 @@ export type DesignFeatureScalarWhereInput = {
   detailId?: Prisma.StringFilter<"DesignFeature"> | string
 }
 
-export type DesignFeatureCreateManyDesignDetailInput = {
-  id: string
+export type DesignFeatureCreateManyDetailInput = {
+  id?: string
   icon: string
   label: string
   sortOrder?: number
 }
 
-export type DesignFeatureUpdateWithoutDesignDetailInput = {
+export type DesignFeatureUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type DesignFeatureUncheckedUpdateWithoutDesignDetailInput = {
+export type DesignFeatureUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type DesignFeatureUncheckedUpdateManyWithoutDesignDetailInput = {
+export type DesignFeatureUncheckedUpdateManyWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
@@ -490,7 +490,7 @@ export type DesignFeatureSelect<ExtArgs extends runtime.Types.Extensions.Interna
   label?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designFeature"]>
 
 export type DesignFeatureSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -499,7 +499,7 @@ export type DesignFeatureSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   label?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designFeature"]>
 
 export type DesignFeatureSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -508,7 +508,7 @@ export type DesignFeatureSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   label?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designFeature"]>
 
 export type DesignFeatureSelectScalar = {
@@ -521,19 +521,19 @@ export type DesignFeatureSelectScalar = {
 
 export type DesignFeatureOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "icon" | "label" | "sortOrder" | "detailId", ExtArgs["result"]["designFeature"]>
 export type DesignFeatureInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignFeatureIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignFeatureIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $DesignFeaturePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DesignFeature"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    detail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -935,7 +935,7 @@ readonly fields: DesignFeatureFieldRefs;
  */
 export interface Prisma__DesignFeatureClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  detail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

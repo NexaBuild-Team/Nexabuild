@@ -11,7 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ConstructionService } from './construction.service';
+import { ConstructionService, CreateConstructionProjectDto } from './construction.service';
 import { QueryConstructionCompanyDto } from './dto/query-construction-company.dto';
 import { CreateConstructionCompanyDto } from './dto/create-construction-company.dto';
 import { UpdateConstructionCompanyDto } from './dto/update-construction-company.dto';
@@ -19,6 +19,33 @@ import { UpdateConstructionCompanyDto } from './dto/update-construction-company.
 @Controller('construction')
 export class ConstructionController {
   constructor(private readonly svc: ConstructionService) {}
+
+  // ──────────────────────────────────────────────────────────
+  // CONTRACTOR DASHBOARD ENDPOINTS
+  // ──────────────────────────────────────────────────────────
+
+  @Get('dashboard')
+  getDashboardData() {
+    return this.svc.getDashboardData();
+  }
+
+  @Post('projects')
+  createProject(@Body() dto: CreateConstructionProjectDto) {
+    return this.svc.createProject(dto);
+  }
+
+  @Patch('projects/:id/status')
+  updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: string
+  ) {
+    return this.svc.updateStatus(id, status);
+  }
+
+  @Delete('projects/:id')
+  deleteProject(@Param('id') id: string) {
+    return this.svc.deleteProject(id);
+  }
 
   // ──────────────────────────────────────────────────────────
   // COMPANIES
@@ -192,3 +219,4 @@ export class ConstructionController {
     return this.svc.getAllCertifications();
   }
 }
+

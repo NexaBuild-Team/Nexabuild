@@ -224,7 +224,7 @@ export type ConstructionPhaseWhereInput = {
   status?: Prisma.EnumConstructionStatusFilter<"ConstructionPhase"> | $Enums.ConstructionStatus
   sortOrder?: Prisma.IntFilter<"ConstructionPhase"> | number
   designDetailId?: Prisma.StringFilter<"ConstructionPhase"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  designDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type ConstructionPhaseOrderByWithRelationInput = {
@@ -234,7 +234,7 @@ export type ConstructionPhaseOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   designDetailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  designDetail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type ConstructionPhaseWhereUniqueInput = Prisma.AtLeast<{
@@ -247,7 +247,7 @@ export type ConstructionPhaseWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumConstructionStatusFilter<"ConstructionPhase"> | $Enums.ConstructionStatus
   sortOrder?: Prisma.IntFilter<"ConstructionPhase"> | number
   designDetailId?: Prisma.StringFilter<"ConstructionPhase"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  designDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id">
 
 export type ConstructionPhaseOrderByWithAggregationInput = {
@@ -277,16 +277,16 @@ export type ConstructionPhaseScalarWhereWithAggregatesInput = {
 }
 
 export type ConstructionPhaseCreateInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
   sortOrder?: number
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutConstructionPhaseInput
+  designDetail: Prisma.DesignDetailCreateNestedOneWithoutConstructionProgressInput
 }
 
 export type ConstructionPhaseUncheckedCreateInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
@@ -300,7 +300,7 @@ export type ConstructionPhaseUpdateInput = {
   detail?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumConstructionStatusFieldUpdateOperationsInput | $Enums.ConstructionStatus
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutConstructionPhaseNestedInput
+  designDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutConstructionProgressNestedInput
 }
 
 export type ConstructionPhaseUncheckedUpdateInput = {
@@ -313,7 +313,7 @@ export type ConstructionPhaseUncheckedUpdateInput = {
 }
 
 export type ConstructionPhaseCreateManyInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
@@ -336,6 +336,16 @@ export type ConstructionPhaseUncheckedUpdateManyInput = {
   status?: Prisma.EnumConstructionStatusFieldUpdateOperationsInput | $Enums.ConstructionStatus
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   designDetailId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type ConstructionPhaseListRelationFilter = {
+  every?: Prisma.ConstructionPhaseWhereInput
+  some?: Prisma.ConstructionPhaseWhereInput
+  none?: Prisma.ConstructionPhaseWhereInput
+}
+
+export type ConstructionPhaseOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ConstructionPhaseCountOrderByAggregateInput = {
@@ -371,20 +381,6 @@ export type ConstructionPhaseMinOrderByAggregateInput = {
 
 export type ConstructionPhaseSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
-}
-
-export type ConstructionPhaseListRelationFilter = {
-  every?: Prisma.ConstructionPhaseWhereInput
-  some?: Prisma.ConstructionPhaseWhereInput
-  none?: Prisma.ConstructionPhaseWhereInput
-}
-
-export type ConstructionPhaseOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type EnumConstructionStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ConstructionStatus
 }
 
 export type ConstructionPhaseCreateNestedManyWithoutDesignDetailInput = {
@@ -429,8 +425,12 @@ export type ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput =
   deleteMany?: Prisma.ConstructionPhaseScalarWhereInput | Prisma.ConstructionPhaseScalarWhereInput[]
 }
 
+export type EnumConstructionStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ConstructionStatus
+}
+
 export type ConstructionPhaseCreateWithoutDesignDetailInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
@@ -438,7 +438,7 @@ export type ConstructionPhaseCreateWithoutDesignDetailInput = {
 }
 
 export type ConstructionPhaseUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
@@ -484,7 +484,7 @@ export type ConstructionPhaseScalarWhereInput = {
 }
 
 export type ConstructionPhaseCreateManyDesignDetailInput = {
-  id: string
+  id?: string
   phase: string
   detail: string
   status?: $Enums.ConstructionStatus
@@ -524,7 +524,7 @@ export type ConstructionPhaseSelect<ExtArgs extends runtime.Types.Extensions.Int
   status?: boolean
   sortOrder?: boolean
   designDetailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["constructionPhase"]>
 
 export type ConstructionPhaseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -534,7 +534,7 @@ export type ConstructionPhaseSelectCreateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   sortOrder?: boolean
   designDetailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["constructionPhase"]>
 
 export type ConstructionPhaseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -544,7 +544,7 @@ export type ConstructionPhaseSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   status?: boolean
   sortOrder?: boolean
   designDetailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["constructionPhase"]>
 
 export type ConstructionPhaseSelectScalar = {
@@ -558,19 +558,19 @@ export type ConstructionPhaseSelectScalar = {
 
 export type ConstructionPhaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phase" | "detail" | "status" | "sortOrder" | "designDetailId", ExtArgs["result"]["constructionPhase"]>
 export type ConstructionPhaseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type ConstructionPhaseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type ConstructionPhaseIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  designDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $ConstructionPhasePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ConstructionPhase"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    designDetail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -973,7 +973,7 @@ readonly fields: ConstructionPhaseFieldRefs;
  */
 export interface Prisma__ConstructionPhaseClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  designDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

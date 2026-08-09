@@ -360,13 +360,13 @@ export type DesignDetailWhereInput = {
   interiorFinish?: Prisma.StringNullableFilter<"DesignDetail"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DesignDetail"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignDetail"> | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseListRelationFilter
-  HouseDesign?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
-  DesignFeature?: Prisma.DesignFeatureListRelationFilter
-  DesignGalleryImage?: Prisma.DesignGalleryImageListRelationFilter
-  DesignReview?: Prisma.XOR<Prisma.DesignReviewNullableScalarRelationFilter, Prisma.DesignReviewWhereInput> | null
-  FloorPlan?: Prisma.FloorPlanListRelationFilter
-  RelatedProject?: Prisma.RelatedProjectListRelationFilter
+  design?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
+  gallery?: Prisma.DesignGalleryImageListRelationFilter
+  floorPlans?: Prisma.FloorPlanListRelationFilter
+  features?: Prisma.DesignFeatureListRelationFilter
+  constructionProgress?: Prisma.ConstructionPhaseListRelationFilter
+  review?: Prisma.XOR<Prisma.DesignReviewNullableScalarRelationFilter, Prisma.DesignReviewWhereInput> | null
+  relatedProjects?: Prisma.RelatedProjectListRelationFilter
 }
 
 export type DesignDetailOrderByWithRelationInput = {
@@ -391,13 +391,13 @@ export type DesignDetailOrderByWithRelationInput = {
   interiorFinish?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  ConstructionPhase?: Prisma.ConstructionPhaseOrderByRelationAggregateInput
-  HouseDesign?: Prisma.HouseDesignOrderByWithRelationInput
-  DesignFeature?: Prisma.DesignFeatureOrderByRelationAggregateInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageOrderByRelationAggregateInput
-  DesignReview?: Prisma.DesignReviewOrderByWithRelationInput
-  FloorPlan?: Prisma.FloorPlanOrderByRelationAggregateInput
-  RelatedProject?: Prisma.RelatedProjectOrderByRelationAggregateInput
+  design?: Prisma.HouseDesignOrderByWithRelationInput
+  gallery?: Prisma.DesignGalleryImageOrderByRelationAggregateInput
+  floorPlans?: Prisma.FloorPlanOrderByRelationAggregateInput
+  features?: Prisma.DesignFeatureOrderByRelationAggregateInput
+  constructionProgress?: Prisma.ConstructionPhaseOrderByRelationAggregateInput
+  review?: Prisma.DesignReviewOrderByWithRelationInput
+  relatedProjects?: Prisma.RelatedProjectOrderByRelationAggregateInput
 }
 
 export type DesignDetailWhereUniqueInput = Prisma.AtLeast<{
@@ -425,13 +425,13 @@ export type DesignDetailWhereUniqueInput = Prisma.AtLeast<{
   interiorFinish?: Prisma.StringNullableFilter<"DesignDetail"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DesignDetail"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DesignDetail"> | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseListRelationFilter
-  HouseDesign?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
-  DesignFeature?: Prisma.DesignFeatureListRelationFilter
-  DesignGalleryImage?: Prisma.DesignGalleryImageListRelationFilter
-  DesignReview?: Prisma.XOR<Prisma.DesignReviewNullableScalarRelationFilter, Prisma.DesignReviewWhereInput> | null
-  FloorPlan?: Prisma.FloorPlanListRelationFilter
-  RelatedProject?: Prisma.RelatedProjectListRelationFilter
+  design?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
+  gallery?: Prisma.DesignGalleryImageListRelationFilter
+  floorPlans?: Prisma.FloorPlanListRelationFilter
+  features?: Prisma.DesignFeatureListRelationFilter
+  constructionProgress?: Prisma.ConstructionPhaseListRelationFilter
+  review?: Prisma.XOR<Prisma.DesignReviewNullableScalarRelationFilter, Prisma.DesignReviewWhereInput> | null
+  relatedProjects?: Prisma.RelatedProjectListRelationFilter
 }, "id" | "designId">
 
 export type DesignDetailOrderByWithAggregationInput = {
@@ -491,7 +491,7 @@ export type DesignDetailScalarWhereWithAggregatesInput = {
 }
 
 export type DesignDetailCreateInput = {
-  id: string
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -510,18 +510,18 @@ export type DesignDetailCreateInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
 export type DesignDetailUncheckedCreateInput = {
-  id: string
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -541,13 +541,13 @@ export type DesignDetailUncheckedCreateInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
 export type DesignDetailUpdateInput = {
@@ -571,13 +571,13 @@ export type DesignDetailUpdateInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
 export type DesignDetailUncheckedUpdateInput = {
@@ -602,16 +602,16 @@ export type DesignDetailUncheckedUpdateInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
 export type DesignDetailCreateManyInput = {
-  id: string
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -631,7 +631,7 @@ export type DesignDetailCreateManyInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type DesignDetailUpdateManyMutationInput = {
@@ -681,9 +681,9 @@ export type DesignDetailUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type DesignDetailScalarRelationFilter = {
-  is?: Prisma.DesignDetailWhereInput
-  isNot?: Prisma.DesignDetailWhereInput
+export type DesignDetailNullableScalarRelationFilter = {
+  is?: Prisma.DesignDetailWhereInput | null
+  isNot?: Prisma.DesignDetailWhereInput | null
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -782,23 +782,41 @@ export type DesignDetailSumOrderByAggregateInput = {
   garageSpaces?: Prisma.SortOrder
 }
 
-export type DesignDetailNullableScalarRelationFilter = {
-  is?: Prisma.DesignDetailWhereInput | null
-  isNot?: Prisma.DesignDetailWhereInput | null
+export type DesignDetailScalarRelationFilter = {
+  is?: Prisma.DesignDetailWhereInput
+  isNot?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailCreateNestedOneWithoutConstructionPhaseInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionPhaseInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutConstructionPhaseInput
+export type DesignDetailCreateNestedOneWithoutDesignInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUpdateOneRequiredWithoutConstructionPhaseNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionPhaseInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutConstructionPhaseInput
-  upsert?: Prisma.DesignDetailUpsertWithoutConstructionPhaseInput
+export type DesignDetailUncheckedCreateNestedOneWithoutDesignInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignInput
   connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutConstructionPhaseInput, Prisma.DesignDetailUpdateWithoutConstructionPhaseInput>, Prisma.DesignDetailUncheckedUpdateWithoutConstructionPhaseInput>
+}
+
+export type DesignDetailUpdateOneWithoutDesignNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignInput
+  upsert?: Prisma.DesignDetailUpsertWithoutDesignInput
+  disconnect?: Prisma.DesignDetailWhereInput | boolean
+  delete?: Prisma.DesignDetailWhereInput | boolean
+  connect?: Prisma.DesignDetailWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutDesignInput, Prisma.DesignDetailUpdateWithoutDesignInput>, Prisma.DesignDetailUncheckedUpdateWithoutDesignInput>
+}
+
+export type DesignDetailUncheckedUpdateOneWithoutDesignNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignInput
+  upsert?: Prisma.DesignDetailUpsertWithoutDesignInput
+  disconnect?: Prisma.DesignDetailWhereInput | boolean
+  delete?: Prisma.DesignDetailWhereInput | boolean
+  connect?: Prisma.DesignDetailWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutDesignInput, Prisma.DesignDetailUpdateWithoutDesignInput>, Prisma.DesignDetailUncheckedUpdateWithoutDesignInput>
 }
 
 export type DesignDetailCreatebreadcrumbInput = {
@@ -814,114 +832,92 @@ export type EnumDesignStatusFieldUpdateOperationsInput = {
   set?: $Enums.DesignStatus
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type DesignDetailCreateNestedOneWithoutDesignFeatureInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedCreateWithoutDesignFeatureInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignFeatureInput
+export type DesignDetailCreateNestedOneWithoutGalleryInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutGalleryInput, Prisma.DesignDetailUncheckedCreateWithoutGalleryInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutGalleryInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUpdateOneRequiredWithoutDesignFeatureNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedCreateWithoutDesignFeatureInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignFeatureInput
-  upsert?: Prisma.DesignDetailUpsertWithoutDesignFeatureInput
+export type DesignDetailUpdateOneRequiredWithoutGalleryNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutGalleryInput, Prisma.DesignDetailUncheckedCreateWithoutGalleryInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutGalleryInput
+  upsert?: Prisma.DesignDetailUpsertWithoutGalleryInput
   connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutDesignFeatureInput, Prisma.DesignDetailUpdateWithoutDesignFeatureInput>, Prisma.DesignDetailUncheckedUpdateWithoutDesignFeatureInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutGalleryInput, Prisma.DesignDetailUpdateWithoutGalleryInput>, Prisma.DesignDetailUncheckedUpdateWithoutGalleryInput>
 }
 
-export type DesignDetailCreateNestedOneWithoutDesignGalleryImageInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedCreateWithoutDesignGalleryImageInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignGalleryImageInput
-  connect?: Prisma.DesignDetailWhereUniqueInput
-}
-
-export type DesignDetailUpdateOneRequiredWithoutDesignGalleryImageNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedCreateWithoutDesignGalleryImageInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignGalleryImageInput
-  upsert?: Prisma.DesignDetailUpsertWithoutDesignGalleryImageInput
-  connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutDesignGalleryImageInput, Prisma.DesignDetailUpdateWithoutDesignGalleryImageInput>, Prisma.DesignDetailUncheckedUpdateWithoutDesignGalleryImageInput>
-}
-
-export type DesignDetailCreateNestedOneWithoutDesignReviewInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedCreateWithoutDesignReviewInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignReviewInput
+export type DesignDetailCreateNestedOneWithoutFloorPlansInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlansInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFloorPlansInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUpdateOneRequiredWithoutDesignReviewNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedCreateWithoutDesignReviewInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutDesignReviewInput
-  upsert?: Prisma.DesignDetailUpsertWithoutDesignReviewInput
+export type DesignDetailUpdateOneRequiredWithoutFloorPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlansInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFloorPlansInput
+  upsert?: Prisma.DesignDetailUpsertWithoutFloorPlansInput
   connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutDesignReviewInput, Prisma.DesignDetailUpdateWithoutDesignReviewInput>, Prisma.DesignDetailUncheckedUpdateWithoutDesignReviewInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutFloorPlansInput, Prisma.DesignDetailUpdateWithoutFloorPlansInput>, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlansInput>
 }
 
-export type DesignDetailCreateNestedOneWithoutFloorPlanInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlanInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFloorPlanInput
-  connect?: Prisma.DesignDetailWhereUniqueInput
-}
-
-export type DesignDetailUpdateOneRequiredWithoutFloorPlanNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlanInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFloorPlanInput
-  upsert?: Prisma.DesignDetailUpsertWithoutFloorPlanInput
-  connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutFloorPlanInput, Prisma.DesignDetailUpdateWithoutFloorPlanInput>, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlanInput>
-}
-
-export type DesignDetailCreateNestedOneWithoutHouseDesignInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutHouseDesignInput
+export type DesignDetailCreateNestedOneWithoutFeaturesInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFeaturesInput, Prisma.DesignDetailUncheckedCreateWithoutFeaturesInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFeaturesInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUncheckedCreateNestedOneWithoutHouseDesignInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutHouseDesignInput
+export type DesignDetailUpdateOneRequiredWithoutFeaturesNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutFeaturesInput, Prisma.DesignDetailUncheckedCreateWithoutFeaturesInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutFeaturesInput
+  upsert?: Prisma.DesignDetailUpsertWithoutFeaturesInput
+  connect?: Prisma.DesignDetailWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutFeaturesInput, Prisma.DesignDetailUpdateWithoutFeaturesInput>, Prisma.DesignDetailUncheckedUpdateWithoutFeaturesInput>
+}
+
+export type DesignDetailCreateNestedOneWithoutConstructionProgressInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionProgressInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutConstructionProgressInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUpdateOneWithoutHouseDesignNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutHouseDesignInput
-  upsert?: Prisma.DesignDetailUpsertWithoutHouseDesignInput
-  disconnect?: Prisma.DesignDetailWhereInput | boolean
-  delete?: Prisma.DesignDetailWhereInput | boolean
+export type DesignDetailUpdateOneRequiredWithoutConstructionProgressNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionProgressInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutConstructionProgressInput
+  upsert?: Prisma.DesignDetailUpsertWithoutConstructionProgressInput
   connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutHouseDesignInput, Prisma.DesignDetailUpdateWithoutHouseDesignInput>, Prisma.DesignDetailUncheckedUpdateWithoutHouseDesignInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutConstructionProgressInput, Prisma.DesignDetailUpdateWithoutConstructionProgressInput>, Prisma.DesignDetailUncheckedUpdateWithoutConstructionProgressInput>
 }
 
-export type DesignDetailUncheckedUpdateOneWithoutHouseDesignNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutHouseDesignInput
-  upsert?: Prisma.DesignDetailUpsertWithoutHouseDesignInput
-  disconnect?: Prisma.DesignDetailWhereInput | boolean
-  delete?: Prisma.DesignDetailWhereInput | boolean
-  connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutHouseDesignInput, Prisma.DesignDetailUpdateWithoutHouseDesignInput>, Prisma.DesignDetailUncheckedUpdateWithoutHouseDesignInput>
-}
-
-export type DesignDetailCreateNestedOneWithoutRelatedProjectInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutRelatedProjectInput
+export type DesignDetailCreateNestedOneWithoutReviewInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutReviewInput, Prisma.DesignDetailUncheckedCreateWithoutReviewInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutReviewInput
   connect?: Prisma.DesignDetailWhereUniqueInput
 }
 
-export type DesignDetailUpdateOneRequiredWithoutRelatedProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectInput>
-  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutRelatedProjectInput
-  upsert?: Prisma.DesignDetailUpsertWithoutRelatedProjectInput
+export type DesignDetailUpdateOneRequiredWithoutReviewNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutReviewInput, Prisma.DesignDetailUncheckedCreateWithoutReviewInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutReviewInput
+  upsert?: Prisma.DesignDetailUpsertWithoutReviewInput
   connect?: Prisma.DesignDetailWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutRelatedProjectInput, Prisma.DesignDetailUpdateWithoutRelatedProjectInput>, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutReviewInput, Prisma.DesignDetailUpdateWithoutReviewInput>, Prisma.DesignDetailUncheckedUpdateWithoutReviewInput>
 }
 
-export type DesignDetailCreateWithoutConstructionPhaseInput = {
-  id: string
+export type DesignDetailCreateNestedOneWithoutRelatedProjectsInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectsInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutRelatedProjectsInput
+  connect?: Prisma.DesignDetailWhereUniqueInput
+}
+
+export type DesignDetailUpdateOneRequiredWithoutRelatedProjectsNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectsInput>
+  connectOrCreate?: Prisma.DesignDetailCreateOrConnectWithoutRelatedProjectsInput
+  upsert?: Prisma.DesignDetailUpsertWithoutRelatedProjectsInput
+  connect?: Prisma.DesignDetailWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DesignDetailUpdateToOneWithWhereWithoutRelatedProjectsInput, Prisma.DesignDetailUpdateWithoutRelatedProjectsInput>, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectsInput>
+}
+
+export type DesignDetailCreateWithoutDesignInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -940,18 +936,17 @@ export type DesignDetailCreateWithoutConstructionPhaseInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutConstructionPhaseInput = {
-  id: string
-  designId: string
+export type DesignDetailUncheckedCreateWithoutDesignInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -970,31 +965,32 @@ export type DesignDetailUncheckedCreateWithoutConstructionPhaseInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutConstructionPhaseInput = {
+export type DesignDetailCreateOrConnectWithoutDesignInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionPhaseInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
 }
 
-export type DesignDetailUpsertWithoutConstructionPhaseInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedUpdateWithoutConstructionPhaseInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionPhaseInput>
+export type DesignDetailUpsertWithoutDesignInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignInput, Prisma.DesignDetailUncheckedCreateWithoutDesignInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutConstructionPhaseInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutDesignInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutConstructionPhaseInput, Prisma.DesignDetailUncheckedUpdateWithoutConstructionPhaseInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignInput>
 }
 
-export type DesignDetailUpdateWithoutConstructionPhaseInput = {
+export type DesignDetailUpdateWithoutDesignInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1015,15 +1011,147 @@ export type DesignDetailUpdateWithoutConstructionPhaseInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutConstructionPhaseInput = {
+export type DesignDetailUncheckedUpdateWithoutDesignInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
+  architectName?: Prisma.StringFieldUpdateOperationsInput | string
+  architectFirm?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  completionYear?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
+  heroImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  threeDVisualizationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priceLkr?: Prisma.IntFieldUpdateOperationsInput | number
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
+  garageSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  overview?: Prisma.StringFieldUpdateOperationsInput | string
+  designStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  structureType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
+}
+
+export type DesignDetailCreateWithoutGalleryInput = {
+  id?: string
+  breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
+  architectName: string
+  architectFirm: string
+  locationLabel: string
+  completionYear: number
+  status?: $Enums.DesignStatus
+  heroImageUrl: string
+  threeDVisualizationUrl?: string | null
+  priceLkr: number
+  bedrooms: number
+  bathrooms: number
+  sqftArea: number
+  garageSpaces?: number
+  overview: string
+  designStyle?: string | null
+  structureType?: string | null
+  interiorFinish?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
+}
+
+export type DesignDetailUncheckedCreateWithoutGalleryInput = {
+  id?: string
+  designId: string
+  breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
+  architectName: string
+  architectFirm: string
+  locationLabel: string
+  completionYear: number
+  status?: $Enums.DesignStatus
+  heroImageUrl: string
+  threeDVisualizationUrl?: string | null
+  priceLkr: number
+  bedrooms: number
+  bathrooms: number
+  sqftArea: number
+  garageSpaces?: number
+  overview: string
+  designStyle?: string | null
+  structureType?: string | null
+  interiorFinish?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
+}
+
+export type DesignDetailCreateOrConnectWithoutGalleryInput = {
+  where: Prisma.DesignDetailWhereUniqueInput
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutGalleryInput, Prisma.DesignDetailUncheckedCreateWithoutGalleryInput>
+}
+
+export type DesignDetailUpsertWithoutGalleryInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutGalleryInput, Prisma.DesignDetailUncheckedUpdateWithoutGalleryInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutGalleryInput, Prisma.DesignDetailUncheckedCreateWithoutGalleryInput>
+  where?: Prisma.DesignDetailWhereInput
+}
+
+export type DesignDetailUpdateToOneWithWhereWithoutGalleryInput = {
+  where?: Prisma.DesignDetailWhereInput
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutGalleryInput, Prisma.DesignDetailUncheckedUpdateWithoutGalleryInput>
+}
+
+export type DesignDetailUpdateWithoutGalleryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
+  architectName?: Prisma.StringFieldUpdateOperationsInput | string
+  architectFirm?: Prisma.StringFieldUpdateOperationsInput | string
+  locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  completionYear?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
+  heroImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  threeDVisualizationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priceLkr?: Prisma.IntFieldUpdateOperationsInput | number
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
+  garageSpaces?: Prisma.IntFieldUpdateOperationsInput | number
+  overview?: Prisma.StringFieldUpdateOperationsInput | string
+  designStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  structureType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
+}
+
+export type DesignDetailUncheckedUpdateWithoutGalleryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1045,15 +1173,15 @@ export type DesignDetailUncheckedUpdateWithoutConstructionPhaseInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailCreateWithoutDesignFeatureInput = {
-  id: string
+export type DesignDetailCreateWithoutFloorPlansInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -1072,17 +1200,17 @@ export type DesignDetailCreateWithoutDesignFeatureInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutDesignFeatureInput = {
-  id: string
+export type DesignDetailUncheckedCreateWithoutFloorPlansInput = {
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -1102,31 +1230,31 @@ export type DesignDetailUncheckedCreateWithoutDesignFeatureInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutDesignFeatureInput = {
+export type DesignDetailCreateOrConnectWithoutFloorPlansInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedCreateWithoutDesignFeatureInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlansInput>
 }
 
-export type DesignDetailUpsertWithoutDesignFeatureInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignFeatureInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedCreateWithoutDesignFeatureInput>
+export type DesignDetailUpsertWithoutFloorPlansInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlansInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlansInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutDesignFeatureInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutFloorPlansInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignFeatureInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignFeatureInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFloorPlansInput, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlansInput>
 }
 
-export type DesignDetailUpdateWithoutDesignFeatureInput = {
+export type DesignDetailUpdateWithoutFloorPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1147,15 +1275,15 @@ export type DesignDetailUpdateWithoutDesignFeatureInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutDesignFeatureInput = {
+export type DesignDetailUncheckedUpdateWithoutFloorPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1177,15 +1305,15 @@ export type DesignDetailUncheckedUpdateWithoutDesignFeatureInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailCreateWithoutDesignGalleryImageInput = {
-  id: string
+export type DesignDetailCreateWithoutFeaturesInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -1204,17 +1332,17 @@ export type DesignDetailCreateWithoutDesignGalleryImageInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutDesignGalleryImageInput = {
-  id: string
+export type DesignDetailUncheckedCreateWithoutFeaturesInput = {
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -1234,31 +1362,31 @@ export type DesignDetailUncheckedCreateWithoutDesignGalleryImageInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutDesignGalleryImageInput = {
+export type DesignDetailCreateOrConnectWithoutFeaturesInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedCreateWithoutDesignGalleryImageInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFeaturesInput, Prisma.DesignDetailUncheckedCreateWithoutFeaturesInput>
 }
 
-export type DesignDetailUpsertWithoutDesignGalleryImageInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignGalleryImageInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedCreateWithoutDesignGalleryImageInput>
+export type DesignDetailUpsertWithoutFeaturesInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFeaturesInput, Prisma.DesignDetailUncheckedUpdateWithoutFeaturesInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFeaturesInput, Prisma.DesignDetailUncheckedCreateWithoutFeaturesInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutDesignGalleryImageInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutFeaturesInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignGalleryImageInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignGalleryImageInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFeaturesInput, Prisma.DesignDetailUncheckedUpdateWithoutFeaturesInput>
 }
 
-export type DesignDetailUpdateWithoutDesignGalleryImageInput = {
+export type DesignDetailUpdateWithoutFeaturesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1279,15 +1407,15 @@ export type DesignDetailUpdateWithoutDesignGalleryImageInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutDesignGalleryImageInput = {
+export type DesignDetailUncheckedUpdateWithoutFeaturesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1309,15 +1437,15 @@ export type DesignDetailUncheckedUpdateWithoutDesignGalleryImageInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailCreateWithoutDesignReviewInput = {
-  id: string
+export type DesignDetailCreateWithoutConstructionProgressInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -1336,17 +1464,17 @@ export type DesignDetailCreateWithoutDesignReviewInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutDesignReviewInput = {
-  id: string
+export type DesignDetailUncheckedCreateWithoutConstructionProgressInput = {
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -1366,31 +1494,31 @@ export type DesignDetailUncheckedCreateWithoutDesignReviewInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutDesignReviewInput = {
+export type DesignDetailCreateOrConnectWithoutConstructionProgressInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedCreateWithoutDesignReviewInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionProgressInput>
 }
 
-export type DesignDetailUpsertWithoutDesignReviewInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignReviewInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedCreateWithoutDesignReviewInput>
+export type DesignDetailUpsertWithoutConstructionProgressInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedUpdateWithoutConstructionProgressInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedCreateWithoutConstructionProgressInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutDesignReviewInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutConstructionProgressInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutDesignReviewInput, Prisma.DesignDetailUncheckedUpdateWithoutDesignReviewInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutConstructionProgressInput, Prisma.DesignDetailUncheckedUpdateWithoutConstructionProgressInput>
 }
 
-export type DesignDetailUpdateWithoutDesignReviewInput = {
+export type DesignDetailUpdateWithoutConstructionProgressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1411,15 +1539,15 @@ export type DesignDetailUpdateWithoutDesignReviewInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutDesignReviewInput = {
+export type DesignDetailUncheckedUpdateWithoutConstructionProgressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1441,15 +1569,15 @@ export type DesignDetailUncheckedUpdateWithoutDesignReviewInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailCreateWithoutFloorPlanInput = {
-  id: string
+export type DesignDetailCreateWithoutReviewInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -1468,17 +1596,17 @@ export type DesignDetailCreateWithoutFloorPlanInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  relatedProjects?: Prisma.RelatedProjectCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutFloorPlanInput = {
-  id: string
+export type DesignDetailUncheckedCreateWithoutReviewInput = {
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -1498,31 +1626,31 @@ export type DesignDetailUncheckedCreateWithoutFloorPlanInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutFloorPlanInput = {
+export type DesignDetailCreateOrConnectWithoutReviewInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlanInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutReviewInput, Prisma.DesignDetailUncheckedCreateWithoutReviewInput>
 }
 
-export type DesignDetailUpsertWithoutFloorPlanInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlanInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedCreateWithoutFloorPlanInput>
+export type DesignDetailUpsertWithoutReviewInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutReviewInput, Prisma.DesignDetailUncheckedUpdateWithoutReviewInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutReviewInput, Prisma.DesignDetailUncheckedCreateWithoutReviewInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutFloorPlanInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutReviewInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutFloorPlanInput, Prisma.DesignDetailUncheckedUpdateWithoutFloorPlanInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutReviewInput, Prisma.DesignDetailUncheckedUpdateWithoutReviewInput>
 }
 
-export type DesignDetailUpdateWithoutFloorPlanInput = {
+export type DesignDetailUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1543,15 +1671,15 @@ export type DesignDetailUpdateWithoutFloorPlanInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutFloorPlanInput = {
+export type DesignDetailUncheckedUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1573,15 +1701,15 @@ export type DesignDetailUncheckedUpdateWithoutFloorPlanInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  relatedProjects?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDetailNestedInput
 }
 
-export type DesignDetailCreateWithoutHouseDesignInput = {
-  id: string
+export type DesignDetailCreateWithoutRelatedProjectsInput = {
+  id?: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
   architectFirm: string
@@ -1600,149 +1728,17 @@ export type DesignDetailCreateWithoutHouseDesignInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  design: Prisma.HouseDesignCreateNestedOneWithoutDetailInput
+  gallery?: Prisma.DesignGalleryImageCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewCreateNestedOneWithoutDetailInput
 }
 
-export type DesignDetailUncheckedCreateWithoutHouseDesignInput = {
-  id: string
-  breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
-  architectName: string
-  architectFirm: string
-  locationLabel: string
-  completionYear: number
-  status?: $Enums.DesignStatus
-  heroImageUrl: string
-  threeDVisualizationUrl?: string | null
-  priceLkr: number
-  bedrooms: number
-  bathrooms: number
-  sqftArea: number
-  garageSpaces?: number
-  overview: string
-  designStyle?: string | null
-  structureType?: string | null
-  interiorFinish?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedCreateNestedManyWithoutDesignDetailInput
-}
-
-export type DesignDetailCreateOrConnectWithoutHouseDesignInput = {
-  where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-}
-
-export type DesignDetailUpsertWithoutHouseDesignInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedUpdateWithoutHouseDesignInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedCreateWithoutHouseDesignInput>
-  where?: Prisma.DesignDetailWhereInput
-}
-
-export type DesignDetailUpdateToOneWithWhereWithoutHouseDesignInput = {
-  where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutHouseDesignInput, Prisma.DesignDetailUncheckedUpdateWithoutHouseDesignInput>
-}
-
-export type DesignDetailUpdateWithoutHouseDesignInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
-  architectName?: Prisma.StringFieldUpdateOperationsInput | string
-  architectFirm?: Prisma.StringFieldUpdateOperationsInput | string
-  locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  completionYear?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-  heroImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  threeDVisualizationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  priceLkr?: Prisma.IntFieldUpdateOperationsInput | number
-  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
-  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
-  sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
-  garageSpaces?: Prisma.IntFieldUpdateOperationsInput | number
-  overview?: Prisma.StringFieldUpdateOperationsInput | string
-  designStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  structureType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUpdateManyWithoutDesignDetailNestedInput
-}
-
-export type DesignDetailUncheckedUpdateWithoutHouseDesignInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
-  architectName?: Prisma.StringFieldUpdateOperationsInput | string
-  architectFirm?: Prisma.StringFieldUpdateOperationsInput | string
-  locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  completionYear?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumDesignStatusFieldUpdateOperationsInput | $Enums.DesignStatus
-  heroImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  threeDVisualizationUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  priceLkr?: Prisma.IntFieldUpdateOperationsInput | number
-  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
-  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
-  sqftArea?: Prisma.IntFieldUpdateOperationsInput | number
-  garageSpaces?: Prisma.IntFieldUpdateOperationsInput | number
-  overview?: Prisma.StringFieldUpdateOperationsInput | string
-  designStyle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  structureType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
-  RelatedProject?: Prisma.RelatedProjectUncheckedUpdateManyWithoutDesignDetailNestedInput
-}
-
-export type DesignDetailCreateWithoutRelatedProjectInput = {
-  id: string
-  breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
-  architectName: string
-  architectFirm: string
-  locationLabel: string
-  completionYear: number
-  status?: $Enums.DesignStatus
-  heroImageUrl: string
-  threeDVisualizationUrl?: string | null
-  priceLkr: number
-  bedrooms: number
-  bathrooms: number
-  sqftArea: number
-  garageSpaces?: number
-  overview: string
-  designStyle?: string | null
-  structureType?: string | null
-  interiorFinish?: string | null
-  createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseCreateNestedManyWithoutDesignDetailInput
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanCreateNestedManyWithoutDesignDetailInput
-}
-
-export type DesignDetailUncheckedCreateWithoutRelatedProjectInput = {
-  id: string
+export type DesignDetailUncheckedCreateWithoutRelatedProjectsInput = {
+  id?: string
   designId: string
   breadcrumb?: Prisma.DesignDetailCreatebreadcrumbInput | string[]
   architectName: string
@@ -1762,31 +1758,31 @@ export type DesignDetailUncheckedCreateWithoutRelatedProjectInput = {
   structureType?: string | null
   interiorFinish?: string | null
   createdAt?: Date | string
-  updatedAt: Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput
-  DesignReview?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDesignDetailInput
-  FloorPlan?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDesignDetailInput
+  updatedAt?: Date | string
+  gallery?: Prisma.DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutDetailInput
+  features?: Prisma.DesignFeatureUncheckedCreateNestedManyWithoutDetailInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedCreateNestedManyWithoutDesignDetailInput
+  review?: Prisma.DesignReviewUncheckedCreateNestedOneWithoutDetailInput
 }
 
-export type DesignDetailCreateOrConnectWithoutRelatedProjectInput = {
+export type DesignDetailCreateOrConnectWithoutRelatedProjectsInput = {
   where: Prisma.DesignDetailWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectsInput>
 }
 
-export type DesignDetailUpsertWithoutRelatedProjectInput = {
-  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectInput>
-  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectInput>
+export type DesignDetailUpsertWithoutRelatedProjectsInput = {
+  update: Prisma.XOR<Prisma.DesignDetailUpdateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectsInput>
+  create: Prisma.XOR<Prisma.DesignDetailCreateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedCreateWithoutRelatedProjectsInput>
   where?: Prisma.DesignDetailWhereInput
 }
 
-export type DesignDetailUpdateToOneWithWhereWithoutRelatedProjectInput = {
+export type DesignDetailUpdateToOneWithWhereWithoutRelatedProjectsInput = {
   where?: Prisma.DesignDetailWhereInput
-  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutRelatedProjectInput, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectInput>
+  data: Prisma.XOR<Prisma.DesignDetailUpdateWithoutRelatedProjectsInput, Prisma.DesignDetailUncheckedUpdateWithoutRelatedProjectsInput>
 }
 
-export type DesignDetailUpdateWithoutRelatedProjectInput = {
+export type DesignDetailUpdateWithoutRelatedProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
   architectName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1807,15 +1803,15 @@ export type DesignDetailUpdateWithoutRelatedProjectInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUpdateManyWithoutDesignDetailNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUpdateOneWithoutDetailNestedInput
 }
 
-export type DesignDetailUncheckedUpdateWithoutRelatedProjectInput = {
+export type DesignDetailUncheckedUpdateWithoutRelatedProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   designId?: Prisma.StringFieldUpdateOperationsInput | string
   breadcrumb?: Prisma.DesignDetailUpdatebreadcrumbInput | string[]
@@ -1837,11 +1833,11 @@ export type DesignDetailUncheckedUpdateWithoutRelatedProjectInput = {
   interiorFinish?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ConstructionPhase?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignFeature?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignGalleryImage?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput
-  DesignReview?: Prisma.DesignReviewUncheckedUpdateOneWithoutDesignDetailNestedInput
-  FloorPlan?: Prisma.FloorPlanUncheckedUpdateManyWithoutDesignDetailNestedInput
+  gallery?: Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutDetailNestedInput
+  features?: Prisma.DesignFeatureUncheckedUpdateManyWithoutDetailNestedInput
+  constructionProgress?: Prisma.ConstructionPhaseUncheckedUpdateManyWithoutDesignDetailNestedInput
+  review?: Prisma.DesignReviewUncheckedUpdateOneWithoutDetailNestedInput
 }
 
 
@@ -1850,19 +1846,19 @@ export type DesignDetailUncheckedUpdateWithoutRelatedProjectInput = {
  */
 
 export type DesignDetailCountOutputType = {
-  ConstructionPhase: number
-  DesignFeature: number
-  DesignGalleryImage: number
-  FloorPlan: number
-  RelatedProject: number
+  gallery: number
+  floorPlans: number
+  features: number
+  constructionProgress: number
+  relatedProjects: number
 }
 
 export type DesignDetailCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ConstructionPhase?: boolean | DesignDetailCountOutputTypeCountConstructionPhaseArgs
-  DesignFeature?: boolean | DesignDetailCountOutputTypeCountDesignFeatureArgs
-  DesignGalleryImage?: boolean | DesignDetailCountOutputTypeCountDesignGalleryImageArgs
-  FloorPlan?: boolean | DesignDetailCountOutputTypeCountFloorPlanArgs
-  RelatedProject?: boolean | DesignDetailCountOutputTypeCountRelatedProjectArgs
+  gallery?: boolean | DesignDetailCountOutputTypeCountGalleryArgs
+  floorPlans?: boolean | DesignDetailCountOutputTypeCountFloorPlansArgs
+  features?: boolean | DesignDetailCountOutputTypeCountFeaturesArgs
+  constructionProgress?: boolean | DesignDetailCountOutputTypeCountConstructionProgressArgs
+  relatedProjects?: boolean | DesignDetailCountOutputTypeCountRelatedProjectsArgs
 }
 
 /**
@@ -1878,35 +1874,35 @@ export type DesignDetailCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
 /**
  * DesignDetailCountOutputType without action
  */
-export type DesignDetailCountOutputTypeCountConstructionPhaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ConstructionPhaseWhereInput
-}
-
-/**
- * DesignDetailCountOutputType without action
- */
-export type DesignDetailCountOutputTypeCountDesignFeatureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DesignFeatureWhereInput
-}
-
-/**
- * DesignDetailCountOutputType without action
- */
-export type DesignDetailCountOutputTypeCountDesignGalleryImageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetailCountOutputTypeCountGalleryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DesignGalleryImageWhereInput
 }
 
 /**
  * DesignDetailCountOutputType without action
  */
-export type DesignDetailCountOutputTypeCountFloorPlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetailCountOutputTypeCountFloorPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FloorPlanWhereInput
 }
 
 /**
  * DesignDetailCountOutputType without action
  */
-export type DesignDetailCountOutputTypeCountRelatedProjectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetailCountOutputTypeCountFeaturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DesignFeatureWhereInput
+}
+
+/**
+ * DesignDetailCountOutputType without action
+ */
+export type DesignDetailCountOutputTypeCountConstructionProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConstructionPhaseWhereInput
+}
+
+/**
+ * DesignDetailCountOutputType without action
+ */
+export type DesignDetailCountOutputTypeCountRelatedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RelatedProjectWhereInput
 }
 
@@ -1933,13 +1929,13 @@ export type DesignDetailSelect<ExtArgs extends runtime.Types.Extensions.Internal
   interiorFinish?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  ConstructionPhase?: boolean | Prisma.DesignDetail$ConstructionPhaseArgs<ExtArgs>
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
-  DesignFeature?: boolean | Prisma.DesignDetail$DesignFeatureArgs<ExtArgs>
-  DesignGalleryImage?: boolean | Prisma.DesignDetail$DesignGalleryImageArgs<ExtArgs>
-  DesignReview?: boolean | Prisma.DesignDetail$DesignReviewArgs<ExtArgs>
-  FloorPlan?: boolean | Prisma.DesignDetail$FloorPlanArgs<ExtArgs>
-  RelatedProject?: boolean | Prisma.DesignDetail$RelatedProjectArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  gallery?: boolean | Prisma.DesignDetail$galleryArgs<ExtArgs>
+  floorPlans?: boolean | Prisma.DesignDetail$floorPlansArgs<ExtArgs>
+  features?: boolean | Prisma.DesignDetail$featuresArgs<ExtArgs>
+  constructionProgress?: boolean | Prisma.DesignDetail$constructionProgressArgs<ExtArgs>
+  review?: boolean | Prisma.DesignDetail$reviewArgs<ExtArgs>
+  relatedProjects?: boolean | Prisma.DesignDetail$relatedProjectsArgs<ExtArgs>
   _count?: boolean | Prisma.DesignDetailCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designDetail"]>
 
@@ -1965,7 +1961,7 @@ export type DesignDetailSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   interiorFinish?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designDetail"]>
 
 export type DesignDetailSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1990,7 +1986,7 @@ export type DesignDetailSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   interiorFinish?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designDetail"]>
 
 export type DesignDetailSelectScalar = {
@@ -2019,32 +2015,32 @@ export type DesignDetailSelectScalar = {
 
 export type DesignDetailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "designId" | "breadcrumb" | "architectName" | "architectFirm" | "locationLabel" | "completionYear" | "status" | "heroImageUrl" | "threeDVisualizationUrl" | "priceLkr" | "bedrooms" | "bathrooms" | "sqftArea" | "garageSpaces" | "overview" | "designStyle" | "structureType" | "interiorFinish" | "createdAt" | "updatedAt", ExtArgs["result"]["designDetail"]>
 export type DesignDetailInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ConstructionPhase?: boolean | Prisma.DesignDetail$ConstructionPhaseArgs<ExtArgs>
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
-  DesignFeature?: boolean | Prisma.DesignDetail$DesignFeatureArgs<ExtArgs>
-  DesignGalleryImage?: boolean | Prisma.DesignDetail$DesignGalleryImageArgs<ExtArgs>
-  DesignReview?: boolean | Prisma.DesignDetail$DesignReviewArgs<ExtArgs>
-  FloorPlan?: boolean | Prisma.DesignDetail$FloorPlanArgs<ExtArgs>
-  RelatedProject?: boolean | Prisma.DesignDetail$RelatedProjectArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  gallery?: boolean | Prisma.DesignDetail$galleryArgs<ExtArgs>
+  floorPlans?: boolean | Prisma.DesignDetail$floorPlansArgs<ExtArgs>
+  features?: boolean | Prisma.DesignDetail$featuresArgs<ExtArgs>
+  constructionProgress?: boolean | Prisma.DesignDetail$constructionProgressArgs<ExtArgs>
+  review?: boolean | Prisma.DesignDetail$reviewArgs<ExtArgs>
+  relatedProjects?: boolean | Prisma.DesignDetail$relatedProjectsArgs<ExtArgs>
   _count?: boolean | Prisma.DesignDetailCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DesignDetailIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }
 export type DesignDetailIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }
 
 export type $DesignDetailPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DesignDetail"
   objects: {
-    ConstructionPhase: Prisma.$ConstructionPhasePayload<ExtArgs>[]
-    HouseDesign: Prisma.$HouseDesignPayload<ExtArgs>
-    DesignFeature: Prisma.$DesignFeaturePayload<ExtArgs>[]
-    DesignGalleryImage: Prisma.$DesignGalleryImagePayload<ExtArgs>[]
-    DesignReview: Prisma.$DesignReviewPayload<ExtArgs> | null
-    FloorPlan: Prisma.$FloorPlanPayload<ExtArgs>[]
-    RelatedProject: Prisma.$RelatedProjectPayload<ExtArgs>[]
+    design: Prisma.$HouseDesignPayload<ExtArgs>
+    gallery: Prisma.$DesignGalleryImagePayload<ExtArgs>[]
+    floorPlans: Prisma.$FloorPlanPayload<ExtArgs>[]
+    features: Prisma.$DesignFeaturePayload<ExtArgs>[]
+    constructionProgress: Prisma.$ConstructionPhasePayload<ExtArgs>[]
+    review: Prisma.$DesignReviewPayload<ExtArgs> | null
+    relatedProjects: Prisma.$RelatedProjectPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2462,13 +2458,13 @@ readonly fields: DesignDetailFieldRefs;
  */
 export interface Prisma__DesignDetailClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ConstructionPhase<T extends Prisma.DesignDetail$ConstructionPhaseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$ConstructionPhaseArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConstructionPhasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  HouseDesign<T extends Prisma.HouseDesignDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesignDefaultArgs<ExtArgs>>): Prisma.Prisma__HouseDesignClient<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  DesignFeature<T extends Prisma.DesignDetail$DesignFeatureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$DesignFeatureArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignFeaturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  DesignGalleryImage<T extends Prisma.DesignDetail$DesignGalleryImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$DesignGalleryImageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignGalleryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  DesignReview<T extends Prisma.DesignDetail$DesignReviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$DesignReviewArgs<ExtArgs>>): Prisma.Prisma__DesignReviewClient<runtime.Types.Result.GetResult<Prisma.$DesignReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  FloorPlan<T extends Prisma.DesignDetail$FloorPlanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$FloorPlanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FloorPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  RelatedProject<T extends Prisma.DesignDetail$RelatedProjectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$RelatedProjectArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RelatedProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  design<T extends Prisma.HouseDesignDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesignDefaultArgs<ExtArgs>>): Prisma.Prisma__HouseDesignClient<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  gallery<T extends Prisma.DesignDetail$galleryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$galleryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignGalleryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  floorPlans<T extends Prisma.DesignDetail$floorPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$floorPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FloorPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  features<T extends Prisma.DesignDetail$featuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$featuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DesignFeaturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  constructionProgress<T extends Prisma.DesignDetail$constructionProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$constructionProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConstructionPhasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  review<T extends Prisma.DesignDetail$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$reviewArgs<ExtArgs>>): Prisma.Prisma__DesignReviewClient<runtime.Types.Result.GetResult<Prisma.$DesignReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  relatedProjects<T extends Prisma.DesignDetail$relatedProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetail$relatedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RelatedProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2920,57 +2916,9 @@ export type DesignDetailDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * DesignDetail.ConstructionPhase
+ * DesignDetail.gallery
  */
-export type DesignDetail$ConstructionPhaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ConstructionPhase
-   */
-  select?: Prisma.ConstructionPhaseSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ConstructionPhase
-   */
-  omit?: Prisma.ConstructionPhaseOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ConstructionPhaseInclude<ExtArgs> | null
-  where?: Prisma.ConstructionPhaseWhereInput
-  orderBy?: Prisma.ConstructionPhaseOrderByWithRelationInput | Prisma.ConstructionPhaseOrderByWithRelationInput[]
-  cursor?: Prisma.ConstructionPhaseWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConstructionPhaseScalarFieldEnum | Prisma.ConstructionPhaseScalarFieldEnum[]
-}
-
-/**
- * DesignDetail.DesignFeature
- */
-export type DesignDetail$DesignFeatureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DesignFeature
-   */
-  select?: Prisma.DesignFeatureSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DesignFeature
-   */
-  omit?: Prisma.DesignFeatureOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DesignFeatureInclude<ExtArgs> | null
-  where?: Prisma.DesignFeatureWhereInput
-  orderBy?: Prisma.DesignFeatureOrderByWithRelationInput | Prisma.DesignFeatureOrderByWithRelationInput[]
-  cursor?: Prisma.DesignFeatureWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.DesignFeatureScalarFieldEnum | Prisma.DesignFeatureScalarFieldEnum[]
-}
-
-/**
- * DesignDetail.DesignGalleryImage
- */
-export type DesignDetail$DesignGalleryImageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetail$galleryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the DesignGalleryImage
    */
@@ -2992,28 +2940,9 @@ export type DesignDetail$DesignGalleryImageArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
- * DesignDetail.DesignReview
+ * DesignDetail.floorPlans
  */
-export type DesignDetail$DesignReviewArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DesignReview
-   */
-  select?: Prisma.DesignReviewSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DesignReview
-   */
-  omit?: Prisma.DesignReviewOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DesignReviewInclude<ExtArgs> | null
-  where?: Prisma.DesignReviewWhereInput
-}
-
-/**
- * DesignDetail.FloorPlan
- */
-export type DesignDetail$FloorPlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetail$floorPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the FloorPlan
    */
@@ -3035,9 +2964,76 @@ export type DesignDetail$FloorPlanArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * DesignDetail.RelatedProject
+ * DesignDetail.features
  */
-export type DesignDetail$RelatedProjectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DesignDetail$featuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DesignFeature
+   */
+  select?: Prisma.DesignFeatureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DesignFeature
+   */
+  omit?: Prisma.DesignFeatureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignFeatureInclude<ExtArgs> | null
+  where?: Prisma.DesignFeatureWhereInput
+  orderBy?: Prisma.DesignFeatureOrderByWithRelationInput | Prisma.DesignFeatureOrderByWithRelationInput[]
+  cursor?: Prisma.DesignFeatureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DesignFeatureScalarFieldEnum | Prisma.DesignFeatureScalarFieldEnum[]
+}
+
+/**
+ * DesignDetail.constructionProgress
+ */
+export type DesignDetail$constructionProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConstructionPhase
+   */
+  select?: Prisma.ConstructionPhaseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConstructionPhase
+   */
+  omit?: Prisma.ConstructionPhaseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConstructionPhaseInclude<ExtArgs> | null
+  where?: Prisma.ConstructionPhaseWhereInput
+  orderBy?: Prisma.ConstructionPhaseOrderByWithRelationInput | Prisma.ConstructionPhaseOrderByWithRelationInput[]
+  cursor?: Prisma.ConstructionPhaseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConstructionPhaseScalarFieldEnum | Prisma.ConstructionPhaseScalarFieldEnum[]
+}
+
+/**
+ * DesignDetail.review
+ */
+export type DesignDetail$reviewArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DesignReview
+   */
+  select?: Prisma.DesignReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DesignReview
+   */
+  omit?: Prisma.DesignReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DesignReviewInclude<ExtArgs> | null
+  where?: Prisma.DesignReviewWhereInput
+}
+
+/**
+ * DesignDetail.relatedProjects
+ */
+export type DesignDetail$relatedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the RelatedProject
    */

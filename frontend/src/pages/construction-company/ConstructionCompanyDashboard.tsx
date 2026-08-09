@@ -1,148 +1,85 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
-
-export interface ConstructionProjectItem {
-  id: string | number;
-  name: string;
-  category: 'Residential' | 'Commercial' | 'Renovation' | 'Industrial';
-  status: 'Active' | 'Completed' | 'Planning' | 'On Hold';
-  views: string | number;
-  date: string;
-  icon?: string;
-}
-
-export interface ConstructionActivityItem {
-  id: string | number;
-  title: string;
-  description: string;
-  timeAgo: string;
-  icon: string;
-}
-
-export interface ConstructionGalleryItem {
-  id: string | number;
-  title: string;
-  category: string;
-  views: string;
-  imageUrl: string;
-}
-
-export interface ConstructionServiceMetric {
-  name: string;
-  projectsCount: number;
-  percentage: number;
-  icon: string;
-  color: string;
-}
-
-export interface ConstructionSummaryMetrics {
-  totalProjectsCount?: number;
-  projectsGrowthPercent?: string;
-  totalViewsCount?: string | number;
-  viewsGrowthPercent?: string;
-  completedProjectsCount?: number;
-  completedGrowthPercent?: string;
-  clientReviewsRating?: number;
-  ratingGrowth?: string;
-  onSchedulePercent?: number;
-  activeNowCount?: number;
-}
-
-export interface ConstructionCompanyDashboardPageData {
-  metrics?: ConstructionSummaryMetrics;
-  latestProjects?: ConstructionProjectItem[];
-  recentActivities?: ConstructionActivityItem[];
-  galleryItems?: ConstructionGalleryItem[];
-  services?: ConstructionServiceMetric[];
-}
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import { constructionApi } from '../../services/constructionApi';
+import type { ConstructionDashboardData } from '../../services/constructionApi';
 
 export interface ConstructionCompanyDashboardProps {
-  data?: ConstructionCompanyDashboardPageData | null;
+  data?: ConstructionDashboardData | null;
   isLoading?: boolean;
   error?: string | null;
-  onAddProject?: () => void;
-  onUploadGallery?: () => void;
-  onEditProject?: (id: string | number) => void;
-  onDeleteProject?: (id: string | number) => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultProjects: ConstructionProjectItem[] = [
-  { id: 1, name: 'Skyline Residences', category: 'Residential', status: 'Active', views: '2,340', date: 'Jan 12, 2025' },
-  { id: 2, name: 'Metro Commerce Hub', category: 'Commercial', status: 'Completed', views: '5,812', date: 'Dec 3, 2024' },
-  { id: 3, name: 'Green Valley Villas', category: 'Residential', status: 'Planning', views: '1,095', date: 'Jan 20, 2025' },
-  { id: 4, name: 'Riverfront Office Park', category: 'Commercial', status: 'On Hold', views: '3,422', date: 'Nov 18, 2024' },
-  { id: 5, name: 'Coastal Retreat Resort', category: 'Renovation', status: 'Active', views: '4,210', date: 'Jan 5, 2025' }
-];
-
-const defaultActivities: ConstructionActivityItem[] = [
-  { id: 1, title: 'Gallery Updated', description: 'Skyline Tower — 6 new photos uploaded', timeAgo: '2h ago', icon: '/svg/sparks-icon.svg' },
-  { id: 2, title: 'Project Completed', description: 'Metro Commerce Hub marked as complete', timeAgo: '5h ago', icon: '/svg/checkMark.svg' },
-  { id: 3, title: 'New Review Received', description: '5.0 review from Ahmad Al-Farsi on Villa Serena', timeAgo: '1d ago', icon: '/svg/star.svg' },
-  { id: 4, title: 'New Project Added', description: 'Coastal Retreat Resort added to pipeline', timeAgo: '2d ago', icon: '/svg/construction.svg' }
-];
-
-const defaultGallery: ConstructionGalleryItem[] = [
-  { id: 1, title: 'Skyline Tower', category: 'Commercial', views: '4.2k', imageUrl: '/property_card_1.png' },
-  { id: 2, title: 'Villa Serena', category: 'Residential', views: '3.8k', imageUrl: '/property_card_2.png' },
-  { id: 3, title: 'Metro Hub', category: 'Commercial', views: '2.9k', imageUrl: '/hero_property.png' }
-];
-
-const defaultServices: ConstructionServiceMetric[] = [
-  { name: 'Residential', projectsCount: 38, percentage: 72, icon: '/svg/home.svg', color: 'bg-[#345b79]' },
-  { name: 'Commercial', projectsCount: 29, percentage: 58, icon: '/svg/construction.svg', color: 'bg-[#9c4327]' },
-  { name: 'Renovation', projectsCount: 21, percentage: 42, icon: '/svg/architect.svg', color: 'bg-[#645f3a]' },
-  { name: 'Interior Design', projectsCount: 17, percentage: 34, icon: '/svg/agent.svg', color: 'bg-[#194360]' }
-];
-
-// ─── Component Implementation ───────────────────────────────────────────────
-
 export default function ConstructionCompanyDashboard({
-  data = null,
-  isLoading = false,
-  error = null,
-  onAddProject,
-  onUploadGallery,
-  onEditProject,
-  onDeleteProject
+  data: propsData = null,
+  isLoading: propsLoading = false,
+  error: propsError = null,
 }: ConstructionCompanyDashboardProps) {
-  const { user } = useAuth();
-  const userName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Contractor Team';
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [projectsState, setProjectsState] = useState<ConstructionProjectItem[]>([]);
+  const [dashboardData, setDashboardData] = useState<ConstructionDashboardData | null>(propsData);
+  const [loading, setLoading] = useState<boolean>(!propsData && propsLoading);
+  const [error, setError] = useState<string | null>(propsError);
+  const [selectedProjId, setSelectedProjId] = useState<string | number | null>(null);
 
-  const projects = data?.latestProjects !== undefined 
-    ? data.latestProjects 
-    : (projectsState.length > 0 ? projectsState : defaultProjects);
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await constructionApi.getDashboardData();
+      setDashboardData(res);
+    } catch (err: any) {
+      console.error('Failed to fetch construction dashboard data:', err);
+      setError('Failed to load construction dashboard data from backend server.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const activities = data?.recentActivities || defaultActivities;
-  const galleryItems = data?.galleryItems || defaultGallery;
-  const services = data?.services || defaultServices;
-  const metrics = data?.metrics;
+  useEffect(() => {
+    if (!propsData) {
+      fetchDashboard();
+    }
+  }, [propsData]);
 
-  const handleDelete = (id: string | number) => {
-    if (onDeleteProject) {
-      onDeleteProject(id);
-    } else {
-      if (window.confirm('Are you sure you want to delete this project?')) {
-        setProjectsState(prev => {
-          const source = prev.length > 0 ? prev : defaultProjects;
-          return source.filter(p => p.id !== id);
-        });
+  const metrics = dashboardData?.metrics;
+  const projects = dashboardData?.latestProjects || [];
+  const activities = dashboardData?.recentActivities || [];
+  const galleryItems = dashboardData?.galleryItems || [];
+  const services = dashboardData?.services || [];
+
+  const handleToggleStatus = async (id: string | number, currentStatus: string) => {
+    const statuses: Array<'Active' | 'Completed' | 'Planning' | 'On Hold'> = ['Active', 'Completed', 'Planning', 'On Hold'];
+    const nextIndex = (statuses.indexOf(currentStatus as any) + 1) % statuses.length;
+    const nextStatus = statuses[nextIndex];
+
+    try {
+      await constructionApi.updateStatus(id, nextStatus);
+      fetchDashboard();
+    } catch (err) {
+      console.error('Failed to update project status:', err);
+      alert('Failed to update project status.');
+    }
+  };
+
+  const handleDelete = async (id: string | number) => {
+    if (window.confirm('Are you sure you want to delete this construction project?')) {
+      try {
+        await constructionApi.deleteProject(id);
+        fetchDashboard();
+      } catch (err) {
+        console.error('Failed to delete construction project:', err);
+        alert('Failed to delete project.');
       }
     }
   };
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  // Skeleton Loading State
+  if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
         <div className="h-16 bg-gray-200 rounded-2xl w-full" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
           ))}
         </div>
@@ -152,317 +89,321 @@ export default function ConstructionCompanyDashboard({
   }
 
   return (
-    <div className="min-h-screen w-full relative flex flex-row items-start font-normal text-[#1b1b1b] bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
+    <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8 text-[#111827] bg-[#f8fafc] min-h-screen">
       
-      {/* Sidebar Navigation */}
-      <aside 
-        className={`fixed top-0 bottom-0 left-0 z-50 w-[280px] bg-[#345b79] flex flex-col justify-between pt-[76px] pb-[24px] px-[16px] transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="absolute top-[11px] left-0 right-0 px-[24px] flex items-center gap-[12px] h-[52px]">
-          <div className="bg-[#9c4327] flex items-center justify-center rounded-[8px] size-[40px] shrink-0">
-            <img alt="NexaBuild Logo" className="size-[20px] object-contain" src="/src/assets/logo.png" />
-          </div>
-          <div>
-            <h1 className="text-[20px] font-extrabold text-white leading-[25px]">NexaBuild</h1>
-            <p className="text-[10px] text-white/60 tracking-[1px] uppercase leading-[15px]">Construction Co.</p>
-          </div>
+      {/* Top Search & User Header Bar */}
+      <BuyerHeaderBar searchPlaceholder="Search projects, services..." />
+
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+            Dashboard Overview
+          </h1>
+          <p className="text-xs font-semibold text-gray-500 mt-0.5">Welcome back, BuildCo Team</p>
         </div>
 
-        <div className="flex-grow flex flex-col justify-between overflow-y-auto mt-[20px]">
-          <nav className="flex flex-col gap-[4px] w-full">
-            <a href="/construction-dashboard" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-r-[8px] bg-[#194360] border-l-4 border-[#ff906e] text-white font-semibold text-[14px]">
-              <img alt="Dashboard" className="size-[18px]" src="/svg/home.svg" />
-              <span>Dashboard</span>
-            </a>
-            <a href="/view-all-land" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Projects" className="size-[18px] filter brightness-200" src="/svg/construction.svg" />
-              <span>Projects</span>
-            </a>
-            <a href="/view-all-properties" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Services" className="size-[18px] filter brightness-200" src="/svg/architect.svg" />
-              <span>Services</span>
-            </a>
-            <a href="#" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Gallery" className="size-[18px] filter brightness-200" src="/svg/sparks-icon.svg" />
-              <span>Gallery</span>
-            </a>
-            <a href="#" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Testimonials" className="size-[18px] filter brightness-200" src="/svg/agent.svg" />
-              <span>Testimonials</span>
-            </a>
-          </nav>
-
-          <div className="flex flex-col gap-[4px] border-t border-white/10 pt-4">
-            <a href="#" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Settings" className="size-[18px] filter brightness-200" src="/svg/sparks-settings-icon.svg" />
-              <span>Settings</span>
-            </a>
-            <a href="/auth/login" className="flex items-center gap-[16px] px-[24px] py-[16px] rounded-[8px] text-white/70 hover:bg-white/5 hover:text-white transition-all text-[14px]">
-              <img alt="Logout" className="size-[18px] filter brightness-200" src="/svg/sign-in.svg" />
-              <span>Logout</span>
-            </a>
-          </div>
+        <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+          <Link 
+            to="/dashboard/construction/add-project"
+            className="bg-[#194360] hover:bg-[#123249] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Add Project</span>
+          </Link>
+          
+          <Link 
+            to="/dashboard/construction/add-project"
+            className="bg-[#be5d3f] hover:bg-[#a64e33] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Upload Gallery</span>
+          </Link>
         </div>
-      </aside>
+      </div>
 
-      {/* Backdrop */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/45 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <span className="font-semibold">{error}</span>
+          </div>
+          <button onClick={fetchDashboard} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
+            Retry
+          </button>
+        </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="flex-grow lg:pl-[280px] min-w-0 flex flex-col pt-6 pb-12 px-6 lg:px-8 gap-6 max-w-[1400px] w-full mx-auto">
+      {/* Top 4 KPI Metric Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        {[
+          { label: 'Total Projects', val: metrics?.totalProjectsCount ?? 0, growth: metrics?.projectsGrowthPercent ?? '0%', icon: '/svg/home.svg', bg: 'bg-blue-50 text-[#194360]' },
+          { label: 'Total Views', val: metrics?.totalViewsCount ?? '0', growth: metrics?.viewsGrowthPercent ?? '0%', icon: '/svg/eye.svg', bg: 'bg-orange-50 text-[#be5d3f]' },
+          { label: 'Completed Projects', val: metrics?.completedProjectsCount ?? 0, growth: metrics?.completedGrowthPercent ?? '0%', icon: '/svg/checkMark.svg', bg: 'bg-emerald-50 text-emerald-600' },
+          { label: 'Client Reviews', val: metrics?.clientReviewsRating ?? 0, growth: metrics?.ratingGrowth ?? '0', icon: '/svg/star.svg', bg: 'bg-amber-50 text-amber-600' }
+        ].map((card, idx) => (
+          <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-gray-500">{card.label}</span>
+              <div className={`size-9 rounded-xl ${card.bg} flex items-center justify-center shrink-0`}>
+                <img alt="" className="size-4.5 opacity-80" src={card.icon} />
+              </div>
+            </div>
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-2xl lg:text-3xl font-extrabold text-[#111827] leading-none">{card.val}</h3>
+              <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                {card.growth}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Row 2: Latest Projects & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
-        {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4 border-b border-gray-200/60 pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                <svg className="size-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <h1 className="text-2xl font-bold text-[#194360] tracking-tight">Dashboard Overview</h1>
-            </div>
-            <p className="text-xs text-[#42474d] mt-1 font-semibold">Welcome back, {userName}</p>
+        {/* Latest Projects Table */}
+        <div className="lg:col-span-8 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-extrabold text-[#111827]">Latest Projects</h3>
+            <span className="text-xs font-bold text-[#194360] cursor-pointer hover:underline uppercase tracking-wider">
+              View All →
+            </span>
           </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-            <button 
-              onClick={() => onAddProject ? onAddProject() : alert('Add Project Dialog')}
-              className="bg-[#194360] hover:bg-[#194360]/90 text-white text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm"
-            >
-              <img alt="" className="size-3 filter invert" src="/svg/sparks-icon.svg" />
-              <span>Add Project</span>
-            </button>
-            <button 
-              onClick={() => onUploadGallery ? onUploadGallery() : alert('Upload Gallery Dialog')}
-              className="bg-[#9c4327] hover:bg-[#9c4327]/90 text-white text-xs font-bold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm"
-            >
-              <img alt="" className="size-3 filter invert" src="/svg/arrow-send.svg" />
-              <span>Upload Gallery</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Global Error Banner */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-              <span className="font-semibold">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-          {[
-            { label: 'Total Projects', val: metrics?.totalProjectsCount ?? 124, growth: metrics?.projectsGrowthPercent ?? '+12%', icon: '/svg/construction.svg', bg: 'bg-[#345b79]/10', color: 'text-[#194360]' },
-            { label: 'Total Views', val: metrics?.totalViewsCount ?? '48.3k', growth: metrics?.viewsGrowthPercent ?? '+8.5%', icon: '/svg/clock.svg', bg: 'bg-[#9c4327]/10', color: 'text-[#9c4327]' },
-            { label: 'Completed Projects', val: metrics?.completedProjectsCount ?? 89, growth: metrics?.completedGrowthPercent ?? '+6%', icon: '/svg/checkMark.svg', bg: 'bg-[#645f3a]/10', color: 'text-[#645f3a]' },
-            { label: 'Client Reviews', val: metrics?.clientReviewsRating ?? 4.8, growth: metrics?.ratingGrowth ?? '+0.2', icon: '/svg/eye.svg', bg: 'bg-[#bea37e]/10', color: 'text-[#bea37e]' }
-          ].map((card, idx) => (
-            <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm flex flex-col justify-between h-40 border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between">
-                <span className="text-xs font-semibold text-[#42474d]">{card.label}</span>
-                <div className={`flex items-center justify-center rounded-lg size-10 ${card.bg}`}>
-                  <img alt="" className="size-4.5" src={card.icon} />
-                </div>
-              </div>
-              <div className="flex items-end justify-between">
-                <p className="text-3xl font-extrabold text-[#1b1b1b]">{card.val}</p>
-                <span className={`bg-gray-100 rounded px-2 py-1 text-xs font-bold ${card.color}`}>{card.growth}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Middle Row: Latest Projects Table & Recent Activity */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full">
-          
-          {/* Latest Projects Table */}
-          <div className="xl:col-span-8 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col gap-6">
-            <div className="flex justify-between items-center w-full">
-              <h3 className="text-lg font-bold text-[#1b1b1b]">Latest Projects</h3>
-              <a href="/view-all-land" className="text-xs font-bold text-[#194360] hover:underline uppercase">View All</a>
-            </div>
-
-            <div className="w-full overflow-x-auto">
-              <table className="w-full text-xs text-left border-collapse min-w-[600px]">
+          {projects.length > 0 ? (
+            <div className="overflow-x-auto flex-1">
+              <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-                    <th className="pb-3 pl-2">PROJECT</th>
-                    <th className="pb-3 pl-2">STATUS</th>
-                    <th className="pb-3 pl-2">VIEWS</th>
-                    <th className="pb-3 pl-2">DATE</th>
-                    <th className="pb-3 pl-2 text-right">ACTIONS</th>
+                  <tr className="border-b border-gray-100 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">
+                    <th className="pb-3 px-3">PROJECT</th>
+                    <th className="pb-3 px-3">STATUS</th>
+                    <th className="pb-3 px-3 text-center">VIEWS</th>
+                    <th className="pb-3 px-3 text-right">DATE</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {projects.map(proj => {
-                    let badgeStyle = 'bg-emerald-100 text-emerald-700';
-                    if (proj.status === 'Completed') badgeStyle = 'bg-blue-100 text-blue-700';
-                    if (proj.status === 'Planning') badgeStyle = 'bg-amber-100 text-amber-700';
-                    if (proj.status === 'On Hold') badgeStyle = 'bg-red-100 text-red-700';
-
-                    return (
-                      <tr key={proj.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="py-4 pl-2 font-bold text-gray-800 flex items-center gap-3">
-                          <div className="bg-[#345b79]/10 p-2 rounded-lg shrink-0">
-                            <img src={proj.icon || '/svg/eye.svg'} alt="" className="size-4" />
-                          </div>
-                          <div>
-                            <p>{proj.name}</p>
-                            <span className="text-[10px] text-gray-400 font-medium">{proj.category}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 pl-2">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${badgeStyle}`}>
-                            {proj.status}
-                          </span>
-                        </td>
-                        <td className="py-4 pl-2 font-semibold text-gray-600">{proj.views}</td>
-                        <td className="py-4 pl-2 text-gray-400">{proj.date}</td>
-                        <td className="py-4 pl-2 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button onClick={() => onEditProject && onEditProject(proj.id)} className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100">
-                              <img src="/svg/sparks-settings-icon.svg" alt="Edit" className="size-3.5" />
-                            </button>
-                            <button onClick={() => handleDelete(proj.id)} className="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600">
-                              <img src="/svg/clock.svg" alt="Delete" className="size-3.5 filter hue-rotate-320" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                <tbody className="divide-y divide-gray-50 text-xs">
+                  {projects.map((proj) => (
+                    <tr 
+                      key={proj.id} 
+                      onClick={() => setSelectedProjId(proj.id)}
+                      className={`hover:bg-gray-50/80 transition-colors cursor-pointer ${selectedProjId === proj.id ? 'bg-blue-50/40' : ''}`}
+                    >
+                      <td className="py-3.5 px-3 font-bold text-[#111827] flex items-center gap-3">
+                        <div className="size-8 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
+                          <img alt="" className="size-4 opacity-70" src="/svg/home.svg" />
+                        </div>
+                        <div>
+                          <span className="block font-extrabold text-[#111827]">{proj.name}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">{proj.category}</span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <span
+                          onClick={(e) => { e.stopPropagation(); handleToggleStatus(proj.id, proj.status); }}
+                          className={`text-[10px] font-extrabold px-3 py-1 rounded-full cursor-pointer select-none ${
+                            proj.status === 'Active'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : proj.status === 'Completed'
+                              ? 'bg-blue-100 text-[#194360]'
+                              : proj.status === 'Planning'
+                              ? 'bg-amber-100 text-amber-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}
+                        >
+                          {proj.status}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-3 text-center font-bold text-gray-600">{proj.views}</td>
+                      <td className="py-3.5 px-3 text-right font-semibold text-gray-400">{proj.date}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-          </div>
+          ) : (
+            <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-xs font-bold text-gray-400">No construction projects found in database.</p>
+              <Link to="/dashboard/construction/add-project" className="text-xs font-extrabold text-[#194360] hover:underline mt-2 inline-block">
+                + Add your first construction project
+              </Link>
+            </div>
+          )}
 
-          {/* Recent Activity Side Panel */}
-          <div className="xl:col-span-4 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col gap-6">
-            <h3 className="text-lg font-bold text-[#1b1b1b]">Recent Activity</h3>
-            <div className="flex flex-col gap-5">
-              {activities.map(act => (
-                <div key={act.id} className="flex items-start gap-4 text-xs">
-                  <div className="bg-gray-100 p-2.5 rounded-full shrink-0">
-                    <img src={act.icon} alt="" className="size-4" />
+          {projects.length > 0 && (
+            <div className="flex items-center gap-3 pt-2">
+              <button 
+                onClick={() => selectedProjId && alert(`Editing project ${selectedProjId}`)}
+                className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-xs font-extrabold hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Edit Project
+              </button>
+              <button 
+                onClick={() => selectedProjId && handleDelete(selectedProjId)}
+                className="px-4 py-2 rounded-xl border border-red-200 text-red-600 text-xs font-extrabold hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                Delete Project
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Activity */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+          <h3 className="text-base font-extrabold text-[#111827]">Recent Activity</h3>
+
+          {activities.length > 0 ? (
+            <div className="space-y-4 flex-1">
+              {activities.map((act) => (
+                <div key={act.id} className="flex items-start gap-3.5 p-3 rounded-2xl hover:bg-gray-50/80 transition-colors">
+                  <div className={`size-9 rounded-xl flex items-center justify-center shrink-0 ${
+                    act.type === 'gallery' ? 'bg-blue-50 text-[#194360]' :
+                    act.type === 'complete' ? 'bg-emerald-50 text-emerald-600' :
+                    act.type === 'review' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+                  }`}>
+                    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {act.type === 'gallery' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />}
+                      {act.type === 'complete' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />}
+                      {act.type === 'review' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />}
+                      {act.type === 'project' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />}
+                    </svg>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center">
-                      <p className="font-bold text-gray-800">{act.title}</p>
-                      <span className="text-[10px] text-gray-400">{act.timeAgo}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-extrabold text-[#111827]">{act.title}</h4>
+                      <span className="text-[10px] font-bold text-gray-400">{act.timeAgo}</span>
                     </div>
-                    <p className="text-[#42474d] mt-1 leading-snug">{act.description}</p>
+                    <p className="text-[11px] font-semibold text-gray-500 mt-0.5 leading-tight">{act.description}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
+          ) : (
+            <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-xs font-bold text-gray-400">No recent construction activity.</p>
+            </div>
+          )}
         </div>
 
-        {/* Bottom Row: Gallery, Performance & Popular Services */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-6 w-full">
-          
-          {/* Project Gallery Card */}
-          <div className="xl:col-span-4 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col gap-5">
-            <div className="flex justify-between items-center w-full">
-              <h3 className="text-base font-bold text-[#1b1b1b]">Project Gallery</h3>
-              <a href="#" className="text-xs font-bold text-[#194360] uppercase hover:underline">View All</a>
-            </div>
-            <div className="flex flex-col gap-3">
-              {galleryItems.map(item => (
-                <div key={item.id} className="relative rounded-xl overflow-hidden h-28 bg-gray-100 group border border-gray-100">
-                  <img src={item.imageUrl} alt={item.title} className="size-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end justify-between p-3 text-white">
+      </div>
+
+      {/* Row 3: Project Gallery, Project Performance, & Popular Services */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        {/* Project Gallery */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-extrabold text-[#111827]">Project Gallery</h3>
+            <span className="text-xs font-bold text-[#194360] cursor-pointer hover:underline uppercase tracking-wider">
+              View All
+            </span>
+          </div>
+
+          {galleryItems.length > 0 ? (
+            <div className="space-y-3 flex-1">
+              {galleryItems.map((item) => (
+                <div key={item.id} className="relative rounded-2xl overflow-hidden h-24 group shadow-sm border border-gray-100">
+                  <img alt={item.title} className="size-full object-cover group-hover:scale-105 transition-transform duration-300" src={item.imageUrl} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between p-3">
                     <div>
-                      <p className="text-xs font-bold">{item.title}</p>
-                      <p className="text-[9px] text-white/70">{item.category}</p>
+                      <h4 className="text-xs font-extrabold text-white">{item.title}</h4>
+                      <span className="text-[9px] font-bold text-white/70">{item.category}</span>
                     </div>
-                    <span className="text-[10px] text-white/80 font-semibold">{item.views}</span>
+                    <span className="text-[10px] font-extrabold text-white/90 flex items-center gap-1">
+                      <img src="/svg/eye.svg" alt="" className="size-3 filter invert opacity-80" /> {item.views}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Project Performance Metrics Card */}
-          <div className="xl:col-span-4 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col justify-between gap-5">
-            <div>
-              <h3 className="text-base font-bold text-[#1b1b1b]">Project Performance</h3>
-              <div className="flex gap-4 items-center mt-3 text-xs font-medium">
-                <span className="flex items-center gap-1.5"><div className="size-2.5 rounded-full bg-[#345b79]" /> Views</span>
-                <span className="flex items-center gap-1.5"><div className="size-2.5 rounded-full bg-[#9c4327]" /> Projects</span>
-              </div>
+          ) : (
+            <div className="p-8 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-xs font-bold text-gray-400">No project gallery images.</p>
             </div>
-
-            {/* Custom Bar Graph */}
-            <div className="flex items-end justify-between h-36 px-2 border-b border-gray-100">
-              {[40, 65, 55, 80, 70, 95, 85].map((h, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 w-5">
-                  <div className="bg-[#345b79] opacity-80 w-full rounded-t hover:opacity-100 transition-opacity" style={{ height: `${h}%` }} />
-                  <span className="text-[9px] text-gray-400 font-bold uppercase">{['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'][i]}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 text-center pt-2 border-t border-gray-50">
-              <div>
-                <p className="text-lg font-bold text-[#1b1b1b]">{metrics?.onSchedulePercent ?? 91}%</p>
-                <p className="text-[9px] text-gray-400">On Schedule</p>
-              </div>
-              <div className="border-x border-gray-100">
-                <p className="text-lg font-bold text-[#1b1b1b]">{metrics?.activeNowCount ?? 14}</p>
-                <p className="text-[9px] text-gray-400">Active Now</p>
-              </div>
-              <div>
-                <p className="text-lg font-bold text-[#1b1b1b]">+23%</p>
-                <p className="text-[9px] text-gray-400">Growth</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Popular Services Progress Card */}
-          <div className="xl:col-span-4 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col gap-5">
-            <h3 className="text-base font-bold text-[#1b1b1b]">Popular Services</h3>
-            <div className="flex flex-col gap-4">
-              {services.map((srv, i) => (
-                <div key={i} className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center text-xs">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded bg-gray-100 shrink-0">
-                        <img src={srv.icon} alt="" className="size-3.5" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-800">{srv.name}</p>
-                        <span className="text-[9px] text-gray-400">{srv.projectsCount} Projects</span>
-                      </div>
-                    </div>
-                    <span className="font-bold text-gray-800">{srv.percentage}%</span>
-                  </div>
-                  <div className="bg-gray-100 h-2 rounded-full overflow-hidden w-full">
-                    <div className={`${srv.color} h-full rounded-full`} style={{ width: `${srv.percentage}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          )}
         </div>
 
-      </main>
+        {/* Project Performance (Recharts BarChart) */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+          <h3 className="text-base font-extrabold text-[#111827]">Project Performance</h3>
+
+          <div className="flex items-center gap-4 text-[10px] font-bold text-gray-500">
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#194360]" /> Views</span>
+            <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-[#be5d3f]" /> Projects</span>
+          </div>
+
+          <div className="h-[140px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={[
+                { month: 'Jul', views: 0, projects: 0 },
+                { month: 'Aug', views: 0, projects: 0 },
+                { month: 'Sep', views: 0, projects: 0 },
+                { month: 'Oct', views: 0, projects: 0 },
+                { month: 'Nov', views: 0, projects: 0 },
+                { month: 'Dec', views: 0, projects: 0 },
+                { month: 'Jan', views: projects.length, projects: metrics?.activeNowCount || 0 },
+              ]}>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                <Tooltip cursor={{ fill: '#e2e8f0' }} contentStyle={{ borderRadius: 8, fontSize: 10 }} />
+                <Bar dataKey="views" fill="#194360" radius={[4, 4, 0, 0]} barSize={10} />
+                <Bar dataKey="projects" fill="#be5d3f" radius={[4, 4, 0, 0]} barSize={10} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100 text-center">
+            <div>
+              <span className="text-base font-extrabold text-[#111827] block leading-tight">{metrics?.onSchedulePercent ?? 0}%</span>
+              <span className="text-[9px] font-bold text-gray-400">On Schedule</span>
+            </div>
+            <div>
+              <span className="text-base font-extrabold text-[#111827] block leading-tight">{metrics?.activeNowCount ?? 0}</span>
+              <span className="text-[9px] font-bold text-gray-400">Active Now</span>
+            </div>
+            <div>
+              <span className="text-base font-extrabold text-[#111827] block leading-tight">{metrics?.projectsGrowthPercent ?? '0%'}</span>
+              <span className="text-[9px] font-bold text-gray-400">Growth</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Popular Services */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
+          <h3 className="text-base font-extrabold text-[#111827]">Popular Services</h3>
+
+          <div className="space-y-4 flex-1">
+            {services.map((srv, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <div className="flex items-center gap-2">
+                    <div className="size-7 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <img alt="" className="size-3.5 opacity-70" src="/svg/home.svg" />
+                    </div>
+                    <div>
+                      <span className="text-[#111827] block font-extrabold">{srv.name}</span>
+                      <span className="text-[9px] text-gray-400 font-semibold">{srv.projectsCount} Projects</span>
+                    </div>
+                  </div>
+                  <span className="font-extrabold text-gray-700">{srv.percentage}%</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-[#194360]" 
+                    style={{ width: `${srv.percentage}%` }} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
     </div>
   );
 }

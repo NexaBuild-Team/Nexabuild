@@ -216,7 +216,7 @@ export type DesignGalleryImageWhereInput = {
   altText?: Prisma.StringNullableFilter<"DesignGalleryImage"> | string | null
   sortOrder?: Prisma.IntFilter<"DesignGalleryImage"> | number
   detailId?: Prisma.StringFilter<"DesignGalleryImage"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }
 
 export type DesignGalleryImageOrderByWithRelationInput = {
@@ -225,7 +225,7 @@ export type DesignGalleryImageOrderByWithRelationInput = {
   altText?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   detailId?: Prisma.SortOrder
-  DesignDetail?: Prisma.DesignDetailOrderByWithRelationInput
+  detail?: Prisma.DesignDetailOrderByWithRelationInput
 }
 
 export type DesignGalleryImageWhereUniqueInput = Prisma.AtLeast<{
@@ -237,7 +237,7 @@ export type DesignGalleryImageWhereUniqueInput = Prisma.AtLeast<{
   altText?: Prisma.StringNullableFilter<"DesignGalleryImage"> | string | null
   sortOrder?: Prisma.IntFilter<"DesignGalleryImage"> | number
   detailId?: Prisma.StringFilter<"DesignGalleryImage"> | string
-  DesignDetail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
+  detail?: Prisma.XOR<Prisma.DesignDetailScalarRelationFilter, Prisma.DesignDetailWhereInput>
 }, "id">
 
 export type DesignGalleryImageOrderByWithAggregationInput = {
@@ -265,15 +265,15 @@ export type DesignGalleryImageScalarWhereWithAggregatesInput = {
 }
 
 export type DesignGalleryImageCreateInput = {
-  id: string
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
-  DesignDetail: Prisma.DesignDetailCreateNestedOneWithoutDesignGalleryImageInput
+  detail: Prisma.DesignDetailCreateNestedOneWithoutGalleryInput
 }
 
 export type DesignGalleryImageUncheckedCreateInput = {
-  id: string
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
@@ -285,7 +285,7 @@ export type DesignGalleryImageUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  DesignDetail?: Prisma.DesignDetailUpdateOneRequiredWithoutDesignGalleryImageNestedInput
+  detail?: Prisma.DesignDetailUpdateOneRequiredWithoutGalleryNestedInput
 }
 
 export type DesignGalleryImageUncheckedUpdateInput = {
@@ -297,7 +297,7 @@ export type DesignGalleryImageUncheckedUpdateInput = {
 }
 
 export type DesignGalleryImageCreateManyInput = {
-  id: string
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
@@ -361,86 +361,86 @@ export type DesignGalleryImageSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type DesignGalleryImageCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignGalleryImageCreateWithoutDesignDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignGalleryImageCreateManyDesignDetailInputEnvelope
+export type DesignGalleryImageCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput> | Prisma.DesignGalleryImageCreateWithoutDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.DesignGalleryImageCreateManyDetailInputEnvelope
   connect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
 }
 
-export type DesignGalleryImageUncheckedCreateNestedManyWithoutDesignDetailInput = {
-  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignGalleryImageCreateWithoutDesignDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignGalleryImageCreateManyDesignDetailInputEnvelope
+export type DesignGalleryImageUncheckedCreateNestedManyWithoutDetailInput = {
+  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput> | Prisma.DesignGalleryImageCreateWithoutDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput[]
+  createMany?: Prisma.DesignGalleryImageCreateManyDetailInputEnvelope
   connect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
 }
 
-export type DesignGalleryImageUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignGalleryImageCreateWithoutDesignDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignGalleryImageCreateManyDesignDetailInputEnvelope
+export type DesignGalleryImageUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput> | Prisma.DesignGalleryImageCreateWithoutDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDetailInput | Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.DesignGalleryImageCreateManyDetailInputEnvelope
   set?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   disconnect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   delete?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   connect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
-  update?: Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDesignDetailInput | Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDetailInput | Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDetailInput | Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.DesignGalleryImageScalarWhereInput | Prisma.DesignGalleryImageScalarWhereInput[]
 }
 
-export type DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailNestedInput = {
-  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput> | Prisma.DesignGalleryImageCreateWithoutDesignDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput[]
-  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDesignDetailInput[]
-  upsert?: Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDesignDetailInput[]
-  createMany?: Prisma.DesignGalleryImageCreateManyDesignDetailInputEnvelope
+export type DesignGalleryImageUncheckedUpdateManyWithoutDetailNestedInput = {
+  create?: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput> | Prisma.DesignGalleryImageCreateWithoutDetailInput[] | Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput[]
+  connectOrCreate?: Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput | Prisma.DesignGalleryImageCreateOrConnectWithoutDetailInput[]
+  upsert?: Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDetailInput | Prisma.DesignGalleryImageUpsertWithWhereUniqueWithoutDetailInput[]
+  createMany?: Prisma.DesignGalleryImageCreateManyDetailInputEnvelope
   set?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   disconnect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   delete?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
   connect?: Prisma.DesignGalleryImageWhereUniqueInput | Prisma.DesignGalleryImageWhereUniqueInput[]
-  update?: Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDesignDetailInput | Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDesignDetailInput[]
-  updateMany?: Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDesignDetailInput | Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDesignDetailInput[]
+  update?: Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDetailInput | Prisma.DesignGalleryImageUpdateWithWhereUniqueWithoutDetailInput[]
+  updateMany?: Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDetailInput | Prisma.DesignGalleryImageUpdateManyWithWhereWithoutDetailInput[]
   deleteMany?: Prisma.DesignGalleryImageScalarWhereInput | Prisma.DesignGalleryImageScalarWhereInput[]
 }
 
-export type DesignGalleryImageCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignGalleryImageCreateWithoutDetailInput = {
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
 }
 
-export type DesignGalleryImageUncheckedCreateWithoutDesignDetailInput = {
-  id: string
+export type DesignGalleryImageUncheckedCreateWithoutDetailInput = {
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
 }
 
-export type DesignGalleryImageCreateOrConnectWithoutDesignDetailInput = {
+export type DesignGalleryImageCreateOrConnectWithoutDetailInput = {
   where: Prisma.DesignGalleryImageWhereUniqueInput
-  create: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput>
+  create: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput>
 }
 
-export type DesignGalleryImageCreateManyDesignDetailInputEnvelope = {
-  data: Prisma.DesignGalleryImageCreateManyDesignDetailInput | Prisma.DesignGalleryImageCreateManyDesignDetailInput[]
+export type DesignGalleryImageCreateManyDetailInputEnvelope = {
+  data: Prisma.DesignGalleryImageCreateManyDetailInput | Prisma.DesignGalleryImageCreateManyDetailInput[]
   skipDuplicates?: boolean
 }
 
-export type DesignGalleryImageUpsertWithWhereUniqueWithoutDesignDetailInput = {
+export type DesignGalleryImageUpsertWithWhereUniqueWithoutDetailInput = {
   where: Prisma.DesignGalleryImageWhereUniqueInput
-  update: Prisma.XOR<Prisma.DesignGalleryImageUpdateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedUpdateWithoutDesignDetailInput>
-  create: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDesignDetailInput>
+  update: Prisma.XOR<Prisma.DesignGalleryImageUpdateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedUpdateWithoutDetailInput>
+  create: Prisma.XOR<Prisma.DesignGalleryImageCreateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedCreateWithoutDetailInput>
 }
 
-export type DesignGalleryImageUpdateWithWhereUniqueWithoutDesignDetailInput = {
+export type DesignGalleryImageUpdateWithWhereUniqueWithoutDetailInput = {
   where: Prisma.DesignGalleryImageWhereUniqueInput
-  data: Prisma.XOR<Prisma.DesignGalleryImageUpdateWithoutDesignDetailInput, Prisma.DesignGalleryImageUncheckedUpdateWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.DesignGalleryImageUpdateWithoutDetailInput, Prisma.DesignGalleryImageUncheckedUpdateWithoutDetailInput>
 }
 
-export type DesignGalleryImageUpdateManyWithWhereWithoutDesignDetailInput = {
+export type DesignGalleryImageUpdateManyWithWhereWithoutDetailInput = {
   where: Prisma.DesignGalleryImageScalarWhereInput
-  data: Prisma.XOR<Prisma.DesignGalleryImageUpdateManyMutationInput, Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailInput>
+  data: Prisma.XOR<Prisma.DesignGalleryImageUpdateManyMutationInput, Prisma.DesignGalleryImageUncheckedUpdateManyWithoutDetailInput>
 }
 
 export type DesignGalleryImageScalarWhereInput = {
@@ -454,28 +454,28 @@ export type DesignGalleryImageScalarWhereInput = {
   detailId?: Prisma.StringFilter<"DesignGalleryImage"> | string
 }
 
-export type DesignGalleryImageCreateManyDesignDetailInput = {
-  id: string
+export type DesignGalleryImageCreateManyDetailInput = {
+  id?: string
   url: string
   altText?: string | null
   sortOrder?: number
 }
 
-export type DesignGalleryImageUpdateWithoutDesignDetailInput = {
+export type DesignGalleryImageUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type DesignGalleryImageUncheckedUpdateWithoutDesignDetailInput = {
+export type DesignGalleryImageUncheckedUpdateWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type DesignGalleryImageUncheckedUpdateManyWithoutDesignDetailInput = {
+export type DesignGalleryImageUncheckedUpdateManyWithoutDetailInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -490,7 +490,7 @@ export type DesignGalleryImageSelect<ExtArgs extends runtime.Types.Extensions.In
   altText?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designGalleryImage"]>
 
 export type DesignGalleryImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -499,7 +499,7 @@ export type DesignGalleryImageSelectCreateManyAndReturn<ExtArgs extends runtime.
   altText?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designGalleryImage"]>
 
 export type DesignGalleryImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -508,7 +508,7 @@ export type DesignGalleryImageSelectUpdateManyAndReturn<ExtArgs extends runtime.
   altText?: boolean
   sortOrder?: boolean
   detailId?: boolean
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["designGalleryImage"]>
 
 export type DesignGalleryImageSelectScalar = {
@@ -521,19 +521,19 @@ export type DesignGalleryImageSelectScalar = {
 
 export type DesignGalleryImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "altText" | "sortOrder" | "detailId", ExtArgs["result"]["designGalleryImage"]>
 export type DesignGalleryImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignGalleryImageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 export type DesignGalleryImageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  DesignDetail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
+  detail?: boolean | Prisma.DesignDetailDefaultArgs<ExtArgs>
 }
 
 export type $DesignGalleryImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DesignGalleryImage"
   objects: {
-    DesignDetail: Prisma.$DesignDetailPayload<ExtArgs>
+    detail: Prisma.$DesignDetailPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -935,7 +935,7 @@ readonly fields: DesignGalleryImageFieldRefs;
  */
 export interface Prisma__DesignGalleryImageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  DesignDetail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  detail<T extends Prisma.DesignDetailDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DesignDetailDefaultArgs<ExtArgs>>): Prisma.Prisma__DesignDetailClient<runtime.Types.Result.GetResult<Prisma.$DesignDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

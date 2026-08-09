@@ -166,14 +166,14 @@ export type HouseDesignTagWhereInput = {
   id?: Prisma.StringFilter<"HouseDesignTag"> | string
   label?: Prisma.StringFilter<"HouseDesignTag"> | string
   designId?: Prisma.StringFilter<"HouseDesignTag"> | string
-  HouseDesign?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
+  design?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
 }
 
 export type HouseDesignTagOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   label?: Prisma.SortOrder
   designId?: Prisma.SortOrder
-  HouseDesign?: Prisma.HouseDesignOrderByWithRelationInput
+  design?: Prisma.HouseDesignOrderByWithRelationInput
 }
 
 export type HouseDesignTagWhereUniqueInput = Prisma.AtLeast<{
@@ -183,7 +183,7 @@ export type HouseDesignTagWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.HouseDesignTagWhereInput | Prisma.HouseDesignTagWhereInput[]
   label?: Prisma.StringFilter<"HouseDesignTag"> | string
   designId?: Prisma.StringFilter<"HouseDesignTag"> | string
-  HouseDesign?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
+  design?: Prisma.XOR<Prisma.HouseDesignScalarRelationFilter, Prisma.HouseDesignWhereInput>
 }, "id">
 
 export type HouseDesignTagOrderByWithAggregationInput = {
@@ -205,13 +205,13 @@ export type HouseDesignTagScalarWhereWithAggregatesInput = {
 }
 
 export type HouseDesignTagCreateInput = {
-  id: string
+  id?: string
   label: string
-  HouseDesign: Prisma.HouseDesignCreateNestedOneWithoutHouseDesignTagInput
+  design: Prisma.HouseDesignCreateNestedOneWithoutTagsInput
 }
 
 export type HouseDesignTagUncheckedCreateInput = {
-  id: string
+  id?: string
   label: string
   designId: string
 }
@@ -219,7 +219,7 @@ export type HouseDesignTagUncheckedCreateInput = {
 export type HouseDesignTagUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  HouseDesign?: Prisma.HouseDesignUpdateOneRequiredWithoutHouseDesignTagNestedInput
+  design?: Prisma.HouseDesignUpdateOneRequiredWithoutTagsNestedInput
 }
 
 export type HouseDesignTagUncheckedUpdateInput = {
@@ -229,7 +229,7 @@ export type HouseDesignTagUncheckedUpdateInput = {
 }
 
 export type HouseDesignTagCreateManyInput = {
-  id: string
+  id?: string
   label: string
   designId: string
 }
@@ -273,82 +273,82 @@ export type HouseDesignTagMinOrderByAggregateInput = {
   designId?: Prisma.SortOrder
 }
 
-export type HouseDesignTagCreateNestedManyWithoutHouseDesignInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput> | Prisma.HouseDesignTagCreateWithoutHouseDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput[]
-  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput[]
-  createMany?: Prisma.HouseDesignTagCreateManyHouseDesignInputEnvelope
+export type HouseDesignTagCreateNestedManyWithoutDesignInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput> | Prisma.HouseDesignTagCreateWithoutDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput[]
+  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput[]
+  createMany?: Prisma.HouseDesignTagCreateManyDesignInputEnvelope
   connect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
 }
 
-export type HouseDesignTagUncheckedCreateNestedManyWithoutHouseDesignInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput> | Prisma.HouseDesignTagCreateWithoutHouseDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput[]
-  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput[]
-  createMany?: Prisma.HouseDesignTagCreateManyHouseDesignInputEnvelope
+export type HouseDesignTagUncheckedCreateNestedManyWithoutDesignInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput> | Prisma.HouseDesignTagCreateWithoutDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput[]
+  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput[]
+  createMany?: Prisma.HouseDesignTagCreateManyDesignInputEnvelope
   connect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
 }
 
-export type HouseDesignTagUpdateManyWithoutHouseDesignNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput> | Prisma.HouseDesignTagCreateWithoutHouseDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput[]
-  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput[]
-  upsert?: Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutHouseDesignInput | Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutHouseDesignInput[]
-  createMany?: Prisma.HouseDesignTagCreateManyHouseDesignInputEnvelope
+export type HouseDesignTagUpdateManyWithoutDesignNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput> | Prisma.HouseDesignTagCreateWithoutDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput[]
+  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput[]
+  upsert?: Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutDesignInput | Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutDesignInput[]
+  createMany?: Prisma.HouseDesignTagCreateManyDesignInputEnvelope
   set?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   disconnect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   delete?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   connect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
-  update?: Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutHouseDesignInput | Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutHouseDesignInput[]
-  updateMany?: Prisma.HouseDesignTagUpdateManyWithWhereWithoutHouseDesignInput | Prisma.HouseDesignTagUpdateManyWithWhereWithoutHouseDesignInput[]
+  update?: Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutDesignInput | Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutDesignInput[]
+  updateMany?: Prisma.HouseDesignTagUpdateManyWithWhereWithoutDesignInput | Prisma.HouseDesignTagUpdateManyWithWhereWithoutDesignInput[]
   deleteMany?: Prisma.HouseDesignTagScalarWhereInput | Prisma.HouseDesignTagScalarWhereInput[]
 }
 
-export type HouseDesignTagUncheckedUpdateManyWithoutHouseDesignNestedInput = {
-  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput> | Prisma.HouseDesignTagCreateWithoutHouseDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput[]
-  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutHouseDesignInput[]
-  upsert?: Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutHouseDesignInput | Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutHouseDesignInput[]
-  createMany?: Prisma.HouseDesignTagCreateManyHouseDesignInputEnvelope
+export type HouseDesignTagUncheckedUpdateManyWithoutDesignNestedInput = {
+  create?: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput> | Prisma.HouseDesignTagCreateWithoutDesignInput[] | Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput[]
+  connectOrCreate?: Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput | Prisma.HouseDesignTagCreateOrConnectWithoutDesignInput[]
+  upsert?: Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutDesignInput | Prisma.HouseDesignTagUpsertWithWhereUniqueWithoutDesignInput[]
+  createMany?: Prisma.HouseDesignTagCreateManyDesignInputEnvelope
   set?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   disconnect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   delete?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
   connect?: Prisma.HouseDesignTagWhereUniqueInput | Prisma.HouseDesignTagWhereUniqueInput[]
-  update?: Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutHouseDesignInput | Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutHouseDesignInput[]
-  updateMany?: Prisma.HouseDesignTagUpdateManyWithWhereWithoutHouseDesignInput | Prisma.HouseDesignTagUpdateManyWithWhereWithoutHouseDesignInput[]
+  update?: Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutDesignInput | Prisma.HouseDesignTagUpdateWithWhereUniqueWithoutDesignInput[]
+  updateMany?: Prisma.HouseDesignTagUpdateManyWithWhereWithoutDesignInput | Prisma.HouseDesignTagUpdateManyWithWhereWithoutDesignInput[]
   deleteMany?: Prisma.HouseDesignTagScalarWhereInput | Prisma.HouseDesignTagScalarWhereInput[]
 }
 
-export type HouseDesignTagCreateWithoutHouseDesignInput = {
-  id: string
+export type HouseDesignTagCreateWithoutDesignInput = {
+  id?: string
   label: string
 }
 
-export type HouseDesignTagUncheckedCreateWithoutHouseDesignInput = {
-  id: string
+export type HouseDesignTagUncheckedCreateWithoutDesignInput = {
+  id?: string
   label: string
 }
 
-export type HouseDesignTagCreateOrConnectWithoutHouseDesignInput = {
+export type HouseDesignTagCreateOrConnectWithoutDesignInput = {
   where: Prisma.HouseDesignTagWhereUniqueInput
-  create: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput>
+  create: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput>
 }
 
-export type HouseDesignTagCreateManyHouseDesignInputEnvelope = {
-  data: Prisma.HouseDesignTagCreateManyHouseDesignInput | Prisma.HouseDesignTagCreateManyHouseDesignInput[]
+export type HouseDesignTagCreateManyDesignInputEnvelope = {
+  data: Prisma.HouseDesignTagCreateManyDesignInput | Prisma.HouseDesignTagCreateManyDesignInput[]
   skipDuplicates?: boolean
 }
 
-export type HouseDesignTagUpsertWithWhereUniqueWithoutHouseDesignInput = {
+export type HouseDesignTagUpsertWithWhereUniqueWithoutDesignInput = {
   where: Prisma.HouseDesignTagWhereUniqueInput
-  update: Prisma.XOR<Prisma.HouseDesignTagUpdateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedUpdateWithoutHouseDesignInput>
-  create: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutHouseDesignInput>
+  update: Prisma.XOR<Prisma.HouseDesignTagUpdateWithoutDesignInput, Prisma.HouseDesignTagUncheckedUpdateWithoutDesignInput>
+  create: Prisma.XOR<Prisma.HouseDesignTagCreateWithoutDesignInput, Prisma.HouseDesignTagUncheckedCreateWithoutDesignInput>
 }
 
-export type HouseDesignTagUpdateWithWhereUniqueWithoutHouseDesignInput = {
+export type HouseDesignTagUpdateWithWhereUniqueWithoutDesignInput = {
   where: Prisma.HouseDesignTagWhereUniqueInput
-  data: Prisma.XOR<Prisma.HouseDesignTagUpdateWithoutHouseDesignInput, Prisma.HouseDesignTagUncheckedUpdateWithoutHouseDesignInput>
+  data: Prisma.XOR<Prisma.HouseDesignTagUpdateWithoutDesignInput, Prisma.HouseDesignTagUncheckedUpdateWithoutDesignInput>
 }
 
-export type HouseDesignTagUpdateManyWithWhereWithoutHouseDesignInput = {
+export type HouseDesignTagUpdateManyWithWhereWithoutDesignInput = {
   where: Prisma.HouseDesignTagScalarWhereInput
-  data: Prisma.XOR<Prisma.HouseDesignTagUpdateManyMutationInput, Prisma.HouseDesignTagUncheckedUpdateManyWithoutHouseDesignInput>
+  data: Prisma.XOR<Prisma.HouseDesignTagUpdateManyMutationInput, Prisma.HouseDesignTagUncheckedUpdateManyWithoutDesignInput>
 }
 
 export type HouseDesignTagScalarWhereInput = {
@@ -360,22 +360,22 @@ export type HouseDesignTagScalarWhereInput = {
   designId?: Prisma.StringFilter<"HouseDesignTag"> | string
 }
 
-export type HouseDesignTagCreateManyHouseDesignInput = {
-  id: string
+export type HouseDesignTagCreateManyDesignInput = {
+  id?: string
   label: string
 }
 
-export type HouseDesignTagUpdateWithoutHouseDesignInput = {
+export type HouseDesignTagUpdateWithoutDesignInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type HouseDesignTagUncheckedUpdateWithoutHouseDesignInput = {
+export type HouseDesignTagUncheckedUpdateWithoutDesignInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type HouseDesignTagUncheckedUpdateManyWithoutHouseDesignInput = {
+export type HouseDesignTagUncheckedUpdateManyWithoutDesignInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -386,21 +386,21 @@ export type HouseDesignTagSelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   label?: boolean
   designId?: boolean
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesignTag"]>
 
 export type HouseDesignTagSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   label?: boolean
   designId?: boolean
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesignTag"]>
 
 export type HouseDesignTagSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   label?: boolean
   designId?: boolean
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["houseDesignTag"]>
 
 export type HouseDesignTagSelectScalar = {
@@ -411,19 +411,19 @@ export type HouseDesignTagSelectScalar = {
 
 export type HouseDesignTagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "designId", ExtArgs["result"]["houseDesignTag"]>
 export type HouseDesignTagInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }
 export type HouseDesignTagIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }
 export type HouseDesignTagIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  HouseDesign?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
+  design?: boolean | Prisma.HouseDesignDefaultArgs<ExtArgs>
 }
 
 export type $HouseDesignTagPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HouseDesignTag"
   objects: {
-    HouseDesign: Prisma.$HouseDesignPayload<ExtArgs>
+    design: Prisma.$HouseDesignPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -823,7 +823,7 @@ readonly fields: HouseDesignTagFieldRefs;
  */
 export interface Prisma__HouseDesignTagClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  HouseDesign<T extends Prisma.HouseDesignDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesignDefaultArgs<ExtArgs>>): Prisma.Prisma__HouseDesignClient<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  design<T extends Prisma.HouseDesignDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.HouseDesignDefaultArgs<ExtArgs>>): Prisma.Prisma__HouseDesignClient<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

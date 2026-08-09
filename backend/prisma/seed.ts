@@ -494,7 +494,7 @@ async function main() {
   // Map project titles to their created records
   const projectMap: Record<string, string> = {};
   for (const p of projects) {
-    projectMap[p.title] = p.id;
+    if (p.title) projectMap[p.title] = p.id;
   }
 
   await prisma.constructionProjectImage.deleteMany({

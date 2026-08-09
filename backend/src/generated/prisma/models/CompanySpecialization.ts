@@ -166,14 +166,14 @@ export type CompanySpecializationWhereInput = {
   id?: Prisma.StringFilter<"CompanySpecialization"> | string
   label?: Prisma.StringFilter<"CompanySpecialization"> | string
   companyId?: Prisma.StringFilter<"CompanySpecialization"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }
 
 export type CompanySpecializationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   label?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
-  ArchitectureCompany?: Prisma.ArchitectureCompanyOrderByWithRelationInput
+  company?: Prisma.ArchitectureCompanyOrderByWithRelationInput
 }
 
 export type CompanySpecializationWhereUniqueInput = Prisma.AtLeast<{
@@ -183,7 +183,7 @@ export type CompanySpecializationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CompanySpecializationWhereInput | Prisma.CompanySpecializationWhereInput[]
   label?: Prisma.StringFilter<"CompanySpecialization"> | string
   companyId?: Prisma.StringFilter<"CompanySpecialization"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }, "id">
 
 export type CompanySpecializationOrderByWithAggregationInput = {
@@ -205,13 +205,13 @@ export type CompanySpecializationScalarWhereWithAggregatesInput = {
 }
 
 export type CompanySpecializationCreateInput = {
-  id: string
+  id?: string
   label: string
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutCompanySpecializationInput
+  company: Prisma.ArchitectureCompanyCreateNestedOneWithoutSpecializationsInput
 }
 
 export type CompanySpecializationUncheckedCreateInput = {
-  id: string
+  id?: string
   label: string
   companyId: string
 }
@@ -219,7 +219,7 @@ export type CompanySpecializationUncheckedCreateInput = {
 export type CompanySpecializationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutCompanySpecializationNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutSpecializationsNestedInput
 }
 
 export type CompanySpecializationUncheckedUpdateInput = {
@@ -229,7 +229,7 @@ export type CompanySpecializationUncheckedUpdateInput = {
 }
 
 export type CompanySpecializationCreateManyInput = {
-  id: string
+  id?: string
   label: string
   companyId: string
 }
@@ -273,82 +273,82 @@ export type CompanySpecializationMinOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
 }
 
-export type CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.CompanySpecializationCreateManyArchitectureCompanyInputEnvelope
+export type CompanySpecializationCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput> | Prisma.CompanySpecializationCreateWithoutCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.CompanySpecializationCreateManyCompanyInputEnvelope
   connect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
 }
 
-export type CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.CompanySpecializationCreateManyArchitectureCompanyInputEnvelope
+export type CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput> | Prisma.CompanySpecializationCreateWithoutCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.CompanySpecializationCreateManyCompanyInputEnvelope
   connect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
 }
 
-export type CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.CompanySpecializationCreateManyArchitectureCompanyInputEnvelope
+export type CompanySpecializationUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput> | Prisma.CompanySpecializationCreateWithoutCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutCompanyInput | Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.CompanySpecializationCreateManyCompanyInputEnvelope
   set?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   disconnect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   delete?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   connect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
-  update?: Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.CompanySpecializationUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutCompanyInput | Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.CompanySpecializationUpdateManyWithWhereWithoutCompanyInput | Prisma.CompanySpecializationUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.CompanySpecializationScalarWhereInput | Prisma.CompanySpecializationScalarWhereInput[]
 }
 
-export type CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.CompanySpecializationCreateManyArchitectureCompanyInputEnvelope
+export type CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput> | Prisma.CompanySpecializationCreateWithoutCompanyInput[] | Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput | Prisma.CompanySpecializationCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutCompanyInput | Prisma.CompanySpecializationUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.CompanySpecializationCreateManyCompanyInputEnvelope
   set?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   disconnect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   delete?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
   connect?: Prisma.CompanySpecializationWhereUniqueInput | Prisma.CompanySpecializationWhereUniqueInput[]
-  update?: Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.CompanySpecializationUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.CompanySpecializationUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutCompanyInput | Prisma.CompanySpecializationUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.CompanySpecializationUpdateManyWithWhereWithoutCompanyInput | Prisma.CompanySpecializationUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.CompanySpecializationScalarWhereInput | Prisma.CompanySpecializationScalarWhereInput[]
 }
 
-export type CompanySpecializationCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type CompanySpecializationCreateWithoutCompanyInput = {
+  id?: string
   label: string
 }
 
-export type CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type CompanySpecializationUncheckedCreateWithoutCompanyInput = {
+  id?: string
   label: string
 }
 
-export type CompanySpecializationCreateOrConnectWithoutArchitectureCompanyInput = {
+export type CompanySpecializationCreateOrConnectWithoutCompanyInput = {
   where: Prisma.CompanySpecializationWhereUniqueInput
-  create: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput>
+  create: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput>
 }
 
-export type CompanySpecializationCreateManyArchitectureCompanyInputEnvelope = {
-  data: Prisma.CompanySpecializationCreateManyArchitectureCompanyInput | Prisma.CompanySpecializationCreateManyArchitectureCompanyInput[]
+export type CompanySpecializationCreateManyCompanyInputEnvelope = {
+  data: Prisma.CompanySpecializationCreateManyCompanyInput | Prisma.CompanySpecializationCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type CompanySpecializationUpsertWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.CompanySpecializationWhereUniqueInput
-  update: Prisma.XOR<Prisma.CompanySpecializationUpdateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedUpdateWithoutArchitectureCompanyInput>
-  create: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutArchitectureCompanyInput>
+  update: Prisma.XOR<Prisma.CompanySpecializationUpdateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.CompanySpecializationCreateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedCreateWithoutCompanyInput>
 }
 
-export type CompanySpecializationUpdateWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.CompanySpecializationWhereUniqueInput
-  data: Prisma.XOR<Prisma.CompanySpecializationUpdateWithoutArchitectureCompanyInput, Prisma.CompanySpecializationUncheckedUpdateWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.CompanySpecializationUpdateWithoutCompanyInput, Prisma.CompanySpecializationUncheckedUpdateWithoutCompanyInput>
 }
 
-export type CompanySpecializationUpdateManyWithWhereWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.CompanySpecializationScalarWhereInput
-  data: Prisma.XOR<Prisma.CompanySpecializationUpdateManyMutationInput, Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.CompanySpecializationUpdateManyMutationInput, Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type CompanySpecializationScalarWhereInput = {
@@ -360,22 +360,22 @@ export type CompanySpecializationScalarWhereInput = {
   companyId?: Prisma.StringFilter<"CompanySpecialization"> | string
 }
 
-export type CompanySpecializationCreateManyArchitectureCompanyInput = {
-  id: string
+export type CompanySpecializationCreateManyCompanyInput = {
+  id?: string
   label: string
 }
 
-export type CompanySpecializationUpdateWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type CompanySpecializationUncheckedUpdateWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyInput = {
+export type CompanySpecializationUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -386,21 +386,21 @@ export type CompanySpecializationSelect<ExtArgs extends runtime.Types.Extensions
   id?: boolean
   label?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["companySpecialization"]>
 
 export type CompanySpecializationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   label?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["companySpecialization"]>
 
 export type CompanySpecializationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   label?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["companySpecialization"]>
 
 export type CompanySpecializationSelectScalar = {
@@ -411,19 +411,19 @@ export type CompanySpecializationSelectScalar = {
 
 export type CompanySpecializationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "companyId", ExtArgs["result"]["companySpecialization"]>
 export type CompanySpecializationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type CompanySpecializationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type CompanySpecializationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 
 export type $CompanySpecializationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CompanySpecialization"
   objects: {
-    ArchitectureCompany: Prisma.$ArchitectureCompanyPayload<ExtArgs>
+    company: Prisma.$ArchitectureCompanyPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -823,7 +823,7 @@ readonly fields: CompanySpecializationFieldRefs;
  */
 export interface Prisma__CompanySpecializationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ArchitectureCompany<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

@@ -27,12 +27,14 @@ export type AggregateConstructionProject = {
 }
 
 export type ConstructionProjectAvgAggregateOutputType = {
+  views: number | null
   completedYear: number | null
   cost: runtime.Decimal | null
   displayOrder: number | null
 }
 
 export type ConstructionProjectSumAggregateOutputType = {
+  views: number | null
   completedYear: number | null
   cost: runtime.Decimal | null
   displayOrder: number | null
@@ -41,48 +43,89 @@ export type ConstructionProjectSumAggregateOutputType = {
 export type ConstructionProjectMinAggregateOutputType = {
   id: string | null
   companyId: string | null
+  name: string | null
   title: string | null
+  category: string | null
+  status: string | null
+  description: string | null
+  views: number | null
+  clientName: string | null
+  siteLocation: string | null
   location: string | null
+  totalBudget: string | null
+  estimatedCompletion: string | null
   completedYear: number | null
   cost: runtime.Decimal | null
+  teamSize: string | null
+  blueprintFileName: string | null
   thumbnailUrl: string | null
-  description: string | null
+  visibility: string | null
   displayOrder: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ConstructionProjectMaxAggregateOutputType = {
   id: string | null
   companyId: string | null
+  name: string | null
   title: string | null
+  category: string | null
+  status: string | null
+  description: string | null
+  views: number | null
+  clientName: string | null
+  siteLocation: string | null
   location: string | null
+  totalBudget: string | null
+  estimatedCompletion: string | null
   completedYear: number | null
   cost: runtime.Decimal | null
+  teamSize: string | null
+  blueprintFileName: string | null
   thumbnailUrl: string | null
-  description: string | null
+  visibility: string | null
   displayOrder: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ConstructionProjectCountAggregateOutputType = {
   id: number
   companyId: number
+  name: number
   title: number
+  category: number
+  status: number
+  description: number
+  views: number
+  clientName: number
+  siteLocation: number
   location: number
+  totalBudget: number
+  estimatedCompletion: number
   completedYear: number
   cost: number
+  teamSize: number
+  blueprintFileName: number
   thumbnailUrl: number
-  description: number
+  visibility: number
   displayOrder: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type ConstructionProjectAvgAggregateInputType = {
+  views?: true
   completedYear?: true
   cost?: true
   displayOrder?: true
 }
 
 export type ConstructionProjectSumAggregateInputType = {
+  views?: true
   completedYear?: true
   cost?: true
   displayOrder?: true
@@ -91,37 +134,76 @@ export type ConstructionProjectSumAggregateInputType = {
 export type ConstructionProjectMinAggregateInputType = {
   id?: true
   companyId?: true
+  name?: true
   title?: true
+  category?: true
+  status?: true
+  description?: true
+  views?: true
+  clientName?: true
+  siteLocation?: true
   location?: true
+  totalBudget?: true
+  estimatedCompletion?: true
   completedYear?: true
   cost?: true
+  teamSize?: true
+  blueprintFileName?: true
   thumbnailUrl?: true
-  description?: true
+  visibility?: true
   displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ConstructionProjectMaxAggregateInputType = {
   id?: true
   companyId?: true
+  name?: true
   title?: true
+  category?: true
+  status?: true
+  description?: true
+  views?: true
+  clientName?: true
+  siteLocation?: true
   location?: true
+  totalBudget?: true
+  estimatedCompletion?: true
   completedYear?: true
   cost?: true
+  teamSize?: true
+  blueprintFileName?: true
   thumbnailUrl?: true
-  description?: true
+  visibility?: true
   displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ConstructionProjectCountAggregateInputType = {
   id?: true
   companyId?: true
+  name?: true
   title?: true
+  category?: true
+  status?: true
+  description?: true
+  views?: true
+  clientName?: true
+  siteLocation?: true
   location?: true
+  totalBudget?: true
+  estimatedCompletion?: true
   completedYear?: true
   cost?: true
+  teamSize?: true
+  blueprintFileName?: true
   thumbnailUrl?: true
-  description?: true
+  visibility?: true
   displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -213,14 +295,27 @@ export type ConstructionProjectGroupByArgs<ExtArgs extends runtime.Types.Extensi
 
 export type ConstructionProjectGroupByOutputType = {
   id: string
-  companyId: string
-  title: string
+  companyId: string | null
+  name: string | null
+  title: string | null
+  category: string
+  status: string
+  description: string | null
+  views: number
+  clientName: string | null
+  siteLocation: string | null
   location: string | null
+  totalBudget: string | null
+  estimatedCompletion: string | null
   completedYear: number | null
   cost: runtime.Decimal | null
+  teamSize: string | null
+  blueprintFileName: string | null
   thumbnailUrl: string | null
-  description: string | null
+  visibility: string
   displayOrder: number
+  createdAt: Date
+  updatedAt: Date
   _count: ConstructionProjectCountAggregateOutputType | null
   _avg: ConstructionProjectAvgAggregateOutputType | null
   _sum: ConstructionProjectSumAggregateOutputType | null
@@ -248,28 +343,54 @@ export type ConstructionProjectWhereInput = {
   OR?: Prisma.ConstructionProjectWhereInput[]
   NOT?: Prisma.ConstructionProjectWhereInput | Prisma.ConstructionProjectWhereInput[]
   id?: Prisma.StringFilter<"ConstructionProject"> | string
-  companyId?: Prisma.StringFilter<"ConstructionProject"> | string
-  title?: Prisma.StringFilter<"ConstructionProject"> | string
+  companyId?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  name?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  title?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  category?: Prisma.StringFilter<"ConstructionProject"> | string
+  status?: Prisma.StringFilter<"ConstructionProject"> | string
+  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  views?: Prisma.IntFilter<"ConstructionProject"> | number
+  clientName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  siteLocation?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   location?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  totalBudget?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  estimatedCompletion?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   completedYear?: Prisma.IntNullableFilter<"ConstructionProject"> | number | null
   cost?: Prisma.DecimalNullableFilter<"ConstructionProject"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  blueprintFileName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   thumbnailUrl?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
-  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  visibility?: Prisma.StringFilter<"ConstructionProject"> | string
   displayOrder?: Prisma.IntFilter<"ConstructionProject"> | number
+  createdAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
   images?: Prisma.ConstructionProjectImageListRelationFilter
-  company?: Prisma.XOR<Prisma.ConstructionCompanyScalarRelationFilter, Prisma.ConstructionCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ConstructionCompanyNullableScalarRelationFilter, Prisma.ConstructionCompanyWhereInput> | null
 }
 
 export type ConstructionProjectOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  clientName?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLocation?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalBudget?: Prisma.SortOrderInput | Prisma.SortOrder
+  estimatedCompletion?: Prisma.SortOrderInput | Prisma.SortOrder
   completedYear?: Prisma.SortOrderInput | Prisma.SortOrder
   cost?: Prisma.SortOrderInput | Prisma.SortOrder
+  teamSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  blueprintFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   images?: Prisma.ConstructionProjectImageOrderByRelationAggregateInput
   company?: Prisma.ConstructionCompanyOrderByWithRelationInput
 }
@@ -279,28 +400,54 @@ export type ConstructionProjectWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ConstructionProjectWhereInput | Prisma.ConstructionProjectWhereInput[]
   OR?: Prisma.ConstructionProjectWhereInput[]
   NOT?: Prisma.ConstructionProjectWhereInput | Prisma.ConstructionProjectWhereInput[]
-  companyId?: Prisma.StringFilter<"ConstructionProject"> | string
-  title?: Prisma.StringFilter<"ConstructionProject"> | string
+  companyId?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  name?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  title?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  category?: Prisma.StringFilter<"ConstructionProject"> | string
+  status?: Prisma.StringFilter<"ConstructionProject"> | string
+  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  views?: Prisma.IntFilter<"ConstructionProject"> | number
+  clientName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  siteLocation?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   location?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  totalBudget?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  estimatedCompletion?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   completedYear?: Prisma.IntNullableFilter<"ConstructionProject"> | number | null
   cost?: Prisma.DecimalNullableFilter<"ConstructionProject"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  blueprintFileName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   thumbnailUrl?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
-  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  visibility?: Prisma.StringFilter<"ConstructionProject"> | string
   displayOrder?: Prisma.IntFilter<"ConstructionProject"> | number
+  createdAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
   images?: Prisma.ConstructionProjectImageListRelationFilter
-  company?: Prisma.XOR<Prisma.ConstructionCompanyScalarRelationFilter, Prisma.ConstructionCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ConstructionCompanyNullableScalarRelationFilter, Prisma.ConstructionCompanyWhereInput> | null
 }, "id">
 
 export type ConstructionProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
-  title?: Prisma.SortOrder
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  views?: Prisma.SortOrder
+  clientName?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteLocation?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalBudget?: Prisma.SortOrderInput | Prisma.SortOrder
+  estimatedCompletion?: Prisma.SortOrderInput | Prisma.SortOrder
   completedYear?: Prisma.SortOrderInput | Prisma.SortOrder
   cost?: Prisma.SortOrderInput | Prisma.SortOrder
+  teamSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  blueprintFileName?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ConstructionProjectCountOrderByAggregateInput
   _avg?: Prisma.ConstructionProjectAvgOrderByAggregateInput
   _max?: Prisma.ConstructionProjectMaxOrderByAggregateInput
@@ -313,101 +460,205 @@ export type ConstructionProjectScalarWhereWithAggregatesInput = {
   OR?: Prisma.ConstructionProjectScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ConstructionProjectScalarWhereWithAggregatesInput | Prisma.ConstructionProjectScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
-  companyId?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
-  title?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
+  companyId?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  name?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  title?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  category?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
+  status?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  views?: Prisma.IntWithAggregatesFilter<"ConstructionProject"> | number
+  clientName?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  siteLocation?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  totalBudget?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  estimatedCompletion?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
   completedYear?: Prisma.IntNullableWithAggregatesFilter<"ConstructionProject"> | number | null
   cost?: Prisma.DecimalNullableWithAggregatesFilter<"ConstructionProject"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  blueprintFileName?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
   thumbnailUrl?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
-  description?: Prisma.StringNullableWithAggregatesFilter<"ConstructionProject"> | string | null
+  visibility?: Prisma.StringWithAggregatesFilter<"ConstructionProject"> | string
   displayOrder?: Prisma.IntWithAggregatesFilter<"ConstructionProject"> | number
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConstructionProject"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ConstructionProject"> | Date | string
 }
 
 export type ConstructionProjectCreateInput = {
   id?: string
-  title: string
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   images?: Prisma.ConstructionProjectImageCreateNestedManyWithoutProjectInput
-  company: Prisma.ConstructionCompanyCreateNestedOneWithoutProjectsInput
+  company?: Prisma.ConstructionCompanyCreateNestedOneWithoutProjectsInput
 }
 
 export type ConstructionProjectUncheckedCreateInput = {
   id?: string
-  companyId: string
-  title: string
+  companyId?: string | null
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   images?: Prisma.ConstructionProjectImageUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ConstructionProjectUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ConstructionProjectImageUpdateManyWithoutProjectNestedInput
-  company?: Prisma.ConstructionCompanyUpdateOneRequiredWithoutProjectsNestedInput
+  company?: Prisma.ConstructionCompanyUpdateOneWithoutProjectsNestedInput
 }
 
 export type ConstructionProjectUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ConstructionProjectImageUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ConstructionProjectCreateManyInput = {
   id?: string
-  companyId: string
-  title: string
+  companyId?: string | null
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ConstructionProjectUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ConstructionProjectUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ConstructionProjectListRelationFilter = {
@@ -423,16 +674,30 @@ export type ConstructionProjectOrderByRelationAggregateInput = {
 export type ConstructionProjectCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  clientName?: Prisma.SortOrder
+  siteLocation?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  totalBudget?: Prisma.SortOrder
+  estimatedCompletion?: Prisma.SortOrder
   completedYear?: Prisma.SortOrder
   cost?: Prisma.SortOrder
+  teamSize?: Prisma.SortOrder
+  blueprintFileName?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConstructionProjectAvgOrderByAggregateInput = {
+  views?: Prisma.SortOrder
   completedYear?: Prisma.SortOrder
   cost?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
@@ -441,28 +706,55 @@ export type ConstructionProjectAvgOrderByAggregateInput = {
 export type ConstructionProjectMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  clientName?: Prisma.SortOrder
+  siteLocation?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  totalBudget?: Prisma.SortOrder
+  estimatedCompletion?: Prisma.SortOrder
   completedYear?: Prisma.SortOrder
   cost?: Prisma.SortOrder
+  teamSize?: Prisma.SortOrder
+  blueprintFileName?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConstructionProjectMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  views?: Prisma.SortOrder
+  clientName?: Prisma.SortOrder
+  siteLocation?: Prisma.SortOrder
   location?: Prisma.SortOrder
+  totalBudget?: Prisma.SortOrder
+  estimatedCompletion?: Prisma.SortOrder
   completedYear?: Prisma.SortOrder
   cost?: Prisma.SortOrder
+  teamSize?: Prisma.SortOrder
+  blueprintFileName?: Prisma.SortOrder
   thumbnailUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ConstructionProjectSumOrderByAggregateInput = {
+  views?: Prisma.SortOrder
   completedYear?: Prisma.SortOrder
   cost?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
@@ -531,25 +823,51 @@ export type ConstructionProjectUpdateOneRequiredWithoutImagesNestedInput = {
 
 export type ConstructionProjectCreateWithoutCompanyInput = {
   id?: string
-  title: string
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   images?: Prisma.ConstructionProjectImageCreateNestedManyWithoutProjectInput
 }
 
 export type ConstructionProjectUncheckedCreateWithoutCompanyInput = {
   id?: string
-  title: string
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
   images?: Prisma.ConstructionProjectImageUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -584,38 +902,77 @@ export type ConstructionProjectScalarWhereInput = {
   OR?: Prisma.ConstructionProjectScalarWhereInput[]
   NOT?: Prisma.ConstructionProjectScalarWhereInput | Prisma.ConstructionProjectScalarWhereInput[]
   id?: Prisma.StringFilter<"ConstructionProject"> | string
-  companyId?: Prisma.StringFilter<"ConstructionProject"> | string
-  title?: Prisma.StringFilter<"ConstructionProject"> | string
+  companyId?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  name?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  title?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  category?: Prisma.StringFilter<"ConstructionProject"> | string
+  status?: Prisma.StringFilter<"ConstructionProject"> | string
+  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  views?: Prisma.IntFilter<"ConstructionProject"> | number
+  clientName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  siteLocation?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   location?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  totalBudget?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  estimatedCompletion?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   completedYear?: Prisma.IntNullableFilter<"ConstructionProject"> | number | null
   cost?: Prisma.DecimalNullableFilter<"ConstructionProject"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  blueprintFileName?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
   thumbnailUrl?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
-  description?: Prisma.StringNullableFilter<"ConstructionProject"> | string | null
+  visibility?: Prisma.StringFilter<"ConstructionProject"> | string
   displayOrder?: Prisma.IntFilter<"ConstructionProject"> | number
+  createdAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ConstructionProject"> | Date | string
 }
 
 export type ConstructionProjectCreateWithoutImagesInput = {
   id?: string
-  title: string
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
-  company: Prisma.ConstructionCompanyCreateNestedOneWithoutProjectsInput
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  company?: Prisma.ConstructionCompanyCreateNestedOneWithoutProjectsInput
 }
 
 export type ConstructionProjectUncheckedCreateWithoutImagesInput = {
   id?: string
-  companyId: string
-  title: string
+  companyId?: string | null
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ConstructionProjectCreateOrConnectWithoutImagesInput = {
@@ -636,72 +993,150 @@ export type ConstructionProjectUpdateToOneWithWhereWithoutImagesInput = {
 
 export type ConstructionProjectUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  company?: Prisma.ConstructionCompanyUpdateOneRequiredWithoutProjectsNestedInput
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.ConstructionCompanyUpdateOneWithoutProjectsNestedInput
 }
 
 export type ConstructionProjectUncheckedUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  companyId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ConstructionProjectCreateManyCompanyInput = {
   id?: string
-  title: string
+  name?: string | null
+  title?: string | null
+  category?: string
+  status?: string
+  description?: string | null
+  views?: number
+  clientName?: string | null
+  siteLocation?: string | null
   location?: string | null
+  totalBudget?: string | null
+  estimatedCompletion?: string | null
   completedYear?: number | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: string | null
+  blueprintFileName?: string | null
   thumbnailUrl?: string | null
-  description?: string | null
+  visibility?: string
   displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ConstructionProjectUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ConstructionProjectImageUpdateManyWithoutProjectNestedInput
 }
 
 export type ConstructionProjectUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ConstructionProjectImageUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ConstructionProjectUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  clientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteLocation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalBudget?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedCompletion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   completedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  teamSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blueprintFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnailUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -738,85 +1173,150 @@ export type ConstructionProjectCountOutputTypeCountImagesArgs<ExtArgs extends ru
 export type ConstructionProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   companyId?: boolean
+  name?: boolean
   title?: boolean
+  category?: boolean
+  status?: boolean
+  description?: boolean
+  views?: boolean
+  clientName?: boolean
+  siteLocation?: boolean
   location?: boolean
+  totalBudget?: boolean
+  estimatedCompletion?: boolean
   completedYear?: boolean
   cost?: boolean
+  teamSize?: boolean
+  blueprintFileName?: boolean
   thumbnailUrl?: boolean
-  description?: boolean
+  visibility?: boolean
   displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   images?: boolean | Prisma.ConstructionProject$imagesArgs<ExtArgs>
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
   _count?: boolean | Prisma.ConstructionProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["constructionProject"]>
 
 export type ConstructionProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   companyId?: boolean
+  name?: boolean
   title?: boolean
+  category?: boolean
+  status?: boolean
+  description?: boolean
+  views?: boolean
+  clientName?: boolean
+  siteLocation?: boolean
   location?: boolean
+  totalBudget?: boolean
+  estimatedCompletion?: boolean
   completedYear?: boolean
   cost?: boolean
+  teamSize?: boolean
+  blueprintFileName?: boolean
   thumbnailUrl?: boolean
-  description?: boolean
+  visibility?: boolean
   displayOrder?: boolean
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  createdAt?: boolean
+  updatedAt?: boolean
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
 }, ExtArgs["result"]["constructionProject"]>
 
 export type ConstructionProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   companyId?: boolean
+  name?: boolean
   title?: boolean
+  category?: boolean
+  status?: boolean
+  description?: boolean
+  views?: boolean
+  clientName?: boolean
+  siteLocation?: boolean
   location?: boolean
+  totalBudget?: boolean
+  estimatedCompletion?: boolean
   completedYear?: boolean
   cost?: boolean
+  teamSize?: boolean
+  blueprintFileName?: boolean
   thumbnailUrl?: boolean
-  description?: boolean
+  visibility?: boolean
   displayOrder?: boolean
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  createdAt?: boolean
+  updatedAt?: boolean
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
 }, ExtArgs["result"]["constructionProject"]>
 
 export type ConstructionProjectSelectScalar = {
   id?: boolean
   companyId?: boolean
+  name?: boolean
   title?: boolean
+  category?: boolean
+  status?: boolean
+  description?: boolean
+  views?: boolean
+  clientName?: boolean
+  siteLocation?: boolean
   location?: boolean
+  totalBudget?: boolean
+  estimatedCompletion?: boolean
   completedYear?: boolean
   cost?: boolean
+  teamSize?: boolean
+  blueprintFileName?: boolean
   thumbnailUrl?: boolean
-  description?: boolean
+  visibility?: boolean
   displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ConstructionProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "title" | "location" | "completedYear" | "cost" | "thumbnailUrl" | "description" | "displayOrder", ExtArgs["result"]["constructionProject"]>
+export type ConstructionProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "name" | "title" | "category" | "status" | "description" | "views" | "clientName" | "siteLocation" | "location" | "totalBudget" | "estimatedCompletion" | "completedYear" | "cost" | "teamSize" | "blueprintFileName" | "thumbnailUrl" | "visibility" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["constructionProject"]>
 export type ConstructionProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   images?: boolean | Prisma.ConstructionProject$imagesArgs<ExtArgs>
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
   _count?: boolean | Prisma.ConstructionProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ConstructionProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
 }
 export type ConstructionProjectIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  company?: boolean | Prisma.ConstructionCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ConstructionProject$companyArgs<ExtArgs>
 }
 
 export type $ConstructionProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ConstructionProject"
   objects: {
     images: Prisma.$ConstructionProjectImagePayload<ExtArgs>[]
-    company: Prisma.$ConstructionCompanyPayload<ExtArgs>
+    company: Prisma.$ConstructionCompanyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    companyId: string
-    title: string
+    companyId: string | null
+    name: string | null
+    title: string | null
+    category: string
+    status: string
+    description: string | null
+    views: number
+    clientName: string | null
+    siteLocation: string | null
     location: string | null
+    totalBudget: string | null
+    estimatedCompletion: string | null
     completedYear: number | null
     cost: runtime.Decimal | null
+    teamSize: string | null
+    blueprintFileName: string | null
     thumbnailUrl: string | null
-    description: string | null
+    visibility: string
     displayOrder: number
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["constructionProject"]>
   composites: {}
 }
@@ -1212,7 +1712,7 @@ readonly fields: ConstructionProjectFieldRefs;
 export interface Prisma__ConstructionProjectClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   images<T extends Prisma.ConstructionProject$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionProject$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConstructionProjectImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  company<T extends Prisma.ConstructionCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ConstructionCompanyClient<runtime.Types.Result.GetResult<Prisma.$ConstructionCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.ConstructionProject$companyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConstructionProject$companyArgs<ExtArgs>>): Prisma.Prisma__ConstructionCompanyClient<runtime.Types.Result.GetResult<Prisma.$ConstructionCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1244,13 +1744,26 @@ export interface Prisma__ConstructionProjectClient<T, Null = never, ExtArgs exte
 export interface ConstructionProjectFieldRefs {
   readonly id: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly companyId: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly name: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly title: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly category: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly status: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly description: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly views: Prisma.FieldRef<"ConstructionProject", 'Int'>
+  readonly clientName: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly siteLocation: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly location: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly totalBudget: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly estimatedCompletion: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly completedYear: Prisma.FieldRef<"ConstructionProject", 'Int'>
   readonly cost: Prisma.FieldRef<"ConstructionProject", 'Decimal'>
+  readonly teamSize: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly blueprintFileName: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly thumbnailUrl: Prisma.FieldRef<"ConstructionProject", 'String'>
-  readonly description: Prisma.FieldRef<"ConstructionProject", 'String'>
+  readonly visibility: Prisma.FieldRef<"ConstructionProject", 'String'>
   readonly displayOrder: Prisma.FieldRef<"ConstructionProject", 'Int'>
+  readonly createdAt: Prisma.FieldRef<"ConstructionProject", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"ConstructionProject", 'DateTime'>
 }
     
 
@@ -1474,7 +1987,7 @@ export type ConstructionProjectCreateArgs<ExtArgs extends runtime.Types.Extensio
   /**
    * The data needed to create a ConstructionProject.
    */
-  data: Prisma.XOR<Prisma.ConstructionProjectCreateInput, Prisma.ConstructionProjectUncheckedCreateInput>
+  data?: Prisma.XOR<Prisma.ConstructionProjectCreateInput, Prisma.ConstructionProjectUncheckedCreateInput>
 }
 
 /**
@@ -1673,6 +2186,25 @@ export type ConstructionProject$imagesArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.ConstructionProjectImageScalarFieldEnum | Prisma.ConstructionProjectImageScalarFieldEnum[]
+}
+
+/**
+ * ConstructionProject.company
+ */
+export type ConstructionProject$companyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConstructionCompany
+   */
+  select?: Prisma.ConstructionCompanySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConstructionCompany
+   */
+  omit?: Prisma.ConstructionCompanyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConstructionCompanyInclude<ExtArgs> | null
+  where?: Prisma.ConstructionCompanyWhereInput
 }
 
 /**

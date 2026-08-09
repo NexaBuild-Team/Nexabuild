@@ -27,21 +27,21 @@ export type AggregateArchitectureCompany = {
 }
 
 export type ArchitectureCompanyAvgAggregateOutputType = {
+  yearsExperience: number | null
+  projectCount: number | null
   awardsWon: number | null
   clientSatisfactionPct: number | null
-  projectCount: number | null
   rating: number | null
   reviewCount: number | null
-  yearsExperience: number | null
 }
 
 export type ArchitectureCompanySumAggregateOutputType = {
+  yearsExperience: number | null
+  projectCount: number | null
   awardsWon: number | null
   clientSatisfactionPct: number | null
-  projectCount: number | null
   rating: number | null
   reviewCount: number | null
-  yearsExperience: number | null
 }
 
 export type ArchitectureCompanyMinAggregateOutputType = {
@@ -49,20 +49,20 @@ export type ArchitectureCompanyMinAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   avatarUrl: string | null
-  awardsWon: number | null
-  budgetRangeLabel: string | null
-  city: string | null
-  clientSatisfactionPct: number | null
-  country: string | null
   coverImageUrl: string | null
-  description: string | null
   email: string | null
   locationLabel: string | null
+  city: string | null
+  country: string | null
+  yearsExperience: number | null
   projectCount: number | null
+  awardsWon: number | null
+  clientSatisfactionPct: number | null
   rating: number | null
   reviewCount: number | null
+  description: string | null
+  budgetRangeLabel: string | null
   updatedAt: Date | null
-  yearsExperience: number | null
 }
 
 export type ArchitectureCompanyMaxAggregateOutputType = {
@@ -70,20 +70,20 @@ export type ArchitectureCompanyMaxAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   avatarUrl: string | null
-  awardsWon: number | null
-  budgetRangeLabel: string | null
-  city: string | null
-  clientSatisfactionPct: number | null
-  country: string | null
   coverImageUrl: string | null
-  description: string | null
   email: string | null
   locationLabel: string | null
+  city: string | null
+  country: string | null
+  yearsExperience: number | null
   projectCount: number | null
+  awardsWon: number | null
+  clientSatisfactionPct: number | null
   rating: number | null
   reviewCount: number | null
+  description: string | null
+  budgetRangeLabel: string | null
   updatedAt: Date | null
-  yearsExperience: number | null
 }
 
 export type ArchitectureCompanyCountAggregateOutputType = {
@@ -91,40 +91,40 @@ export type ArchitectureCompanyCountAggregateOutputType = {
   name: number
   createdAt: number
   avatarUrl: number
-  awardsWon: number
-  budgetRangeLabel: number
-  city: number
-  clientSatisfactionPct: number
-  country: number
   coverImageUrl: number
-  description: number
   email: number
   locationLabel: number
+  city: number
+  country: number
+  yearsExperience: number
   projectCount: number
+  awardsWon: number
+  clientSatisfactionPct: number
   rating: number
   reviewCount: number
+  description: number
+  budgetRangeLabel: number
   updatedAt: number
-  yearsExperience: number
   _all: number
 }
 
 
 export type ArchitectureCompanyAvgAggregateInputType = {
+  yearsExperience?: true
+  projectCount?: true
   awardsWon?: true
   clientSatisfactionPct?: true
-  projectCount?: true
   rating?: true
   reviewCount?: true
-  yearsExperience?: true
 }
 
 export type ArchitectureCompanySumAggregateInputType = {
+  yearsExperience?: true
+  projectCount?: true
   awardsWon?: true
   clientSatisfactionPct?: true
-  projectCount?: true
   rating?: true
   reviewCount?: true
-  yearsExperience?: true
 }
 
 export type ArchitectureCompanyMinAggregateInputType = {
@@ -132,20 +132,20 @@ export type ArchitectureCompanyMinAggregateInputType = {
   name?: true
   createdAt?: true
   avatarUrl?: true
-  awardsWon?: true
-  budgetRangeLabel?: true
-  city?: true
-  clientSatisfactionPct?: true
-  country?: true
   coverImageUrl?: true
-  description?: true
   email?: true
   locationLabel?: true
+  city?: true
+  country?: true
+  yearsExperience?: true
   projectCount?: true
+  awardsWon?: true
+  clientSatisfactionPct?: true
   rating?: true
   reviewCount?: true
+  description?: true
+  budgetRangeLabel?: true
   updatedAt?: true
-  yearsExperience?: true
 }
 
 export type ArchitectureCompanyMaxAggregateInputType = {
@@ -153,20 +153,20 @@ export type ArchitectureCompanyMaxAggregateInputType = {
   name?: true
   createdAt?: true
   avatarUrl?: true
-  awardsWon?: true
-  budgetRangeLabel?: true
-  city?: true
-  clientSatisfactionPct?: true
-  country?: true
   coverImageUrl?: true
-  description?: true
   email?: true
   locationLabel?: true
+  city?: true
+  country?: true
+  yearsExperience?: true
   projectCount?: true
+  awardsWon?: true
+  clientSatisfactionPct?: true
   rating?: true
   reviewCount?: true
+  description?: true
+  budgetRangeLabel?: true
   updatedAt?: true
-  yearsExperience?: true
 }
 
 export type ArchitectureCompanyCountAggregateInputType = {
@@ -174,20 +174,20 @@ export type ArchitectureCompanyCountAggregateInputType = {
   name?: true
   createdAt?: true
   avatarUrl?: true
-  awardsWon?: true
-  budgetRangeLabel?: true
-  city?: true
-  clientSatisfactionPct?: true
-  country?: true
   coverImageUrl?: true
-  description?: true
   email?: true
   locationLabel?: true
+  city?: true
+  country?: true
+  yearsExperience?: true
   projectCount?: true
+  awardsWon?: true
+  clientSatisfactionPct?: true
   rating?: true
   reviewCount?: true
+  description?: true
+  budgetRangeLabel?: true
   updatedAt?: true
-  yearsExperience?: true
   _all?: true
 }
 
@@ -282,20 +282,20 @@ export type ArchitectureCompanyGroupByOutputType = {
   name: string
   createdAt: Date
   avatarUrl: string
-  awardsWon: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct: number | null
-  country: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country: string
+  yearsExperience: number
   projectCount: number
+  awardsWon: number | null
+  clientSatisfactionPct: number | null
   rating: number
   reviewCount: number
+  description: string
+  budgetRangeLabel: string
   updatedAt: Date
-  yearsExperience: number
   _count: ArchitectureCompanyCountAggregateOutputType | null
   _avg: ArchitectureCompanyAvgAggregateOutputType | null
   _sum: ArchitectureCompanySumAggregateOutputType | null
@@ -326,25 +326,25 @@ export type ArchitectureCompanyWhereInput = {
   name?: Prisma.StringFilter<"ArchitectureCompany"> | string
   createdAt?: Prisma.DateTimeFilter<"ArchitectureCompany"> | Date | string
   avatarUrl?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  awardsWon?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
-  budgetRangeLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  city?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  clientSatisfactionPct?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
-  country?: Prisma.StringFilter<"ArchitectureCompany"> | string
   coverImageUrl?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  description?: Prisma.StringFilter<"ArchitectureCompany"> | string
   email?: Prisma.StringFilter<"ArchitectureCompany"> | string
   locationLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  city?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  country?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  yearsExperience?: Prisma.IntFilter<"ArchitectureCompany"> | number
   projectCount?: Prisma.IntFilter<"ArchitectureCompany"> | number
+  awardsWon?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
+  clientSatisfactionPct?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
   rating?: Prisma.FloatFilter<"ArchitectureCompany"> | number
   reviewCount?: Prisma.IntFilter<"ArchitectureCompany"> | number
+  description?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  budgetRangeLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
   updatedAt?: Prisma.DateTimeFilter<"ArchitectureCompany"> | Date | string
-  yearsExperience?: Prisma.IntFilter<"ArchitectureCompany"> | number
-  CompanySpecialization?: Prisma.CompanySpecializationListRelationFilter
-  FirmService?: Prisma.FirmServiceListRelationFilter
-  FirmTeamMember?: Prisma.FirmTeamMemberListRelationFilter
-  FirmTestimonial?: Prisma.FirmTestimonialListRelationFilter
-  HouseDesign?: Prisma.HouseDesignListRelationFilter
+  specializations?: Prisma.CompanySpecializationListRelationFilter
+  houseDesigns?: Prisma.HouseDesignListRelationFilter
+  services?: Prisma.FirmServiceListRelationFilter
+  teamMembers?: Prisma.FirmTeamMemberListRelationFilter
+  testimonials?: Prisma.FirmTestimonialListRelationFilter
 }
 
 export type ArchitectureCompanyOrderByWithRelationInput = {
@@ -352,25 +352,25 @@ export type ArchitectureCompanyOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
-  awardsWon?: Prisma.SortOrderInput | Prisma.SortOrder
-  budgetRangeLabel?: Prisma.SortOrder
-  city?: Prisma.SortOrder
-  clientSatisfactionPct?: Prisma.SortOrderInput | Prisma.SortOrder
-  country?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
   email?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  yearsExperience?: Prisma.SortOrder
   projectCount?: Prisma.SortOrder
+  awardsWon?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientSatisfactionPct?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  budgetRangeLabel?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
-  CompanySpecialization?: Prisma.CompanySpecializationOrderByRelationAggregateInput
-  FirmService?: Prisma.FirmServiceOrderByRelationAggregateInput
-  FirmTeamMember?: Prisma.FirmTeamMemberOrderByRelationAggregateInput
-  FirmTestimonial?: Prisma.FirmTestimonialOrderByRelationAggregateInput
-  HouseDesign?: Prisma.HouseDesignOrderByRelationAggregateInput
+  specializations?: Prisma.CompanySpecializationOrderByRelationAggregateInput
+  houseDesigns?: Prisma.HouseDesignOrderByRelationAggregateInput
+  services?: Prisma.FirmServiceOrderByRelationAggregateInput
+  teamMembers?: Prisma.FirmTeamMemberOrderByRelationAggregateInput
+  testimonials?: Prisma.FirmTestimonialOrderByRelationAggregateInput
 }
 
 export type ArchitectureCompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -382,24 +382,24 @@ export type ArchitectureCompanyWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"ArchitectureCompany"> | string
   createdAt?: Prisma.DateTimeFilter<"ArchitectureCompany"> | Date | string
   avatarUrl?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  awardsWon?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
-  budgetRangeLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  city?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  clientSatisfactionPct?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
-  country?: Prisma.StringFilter<"ArchitectureCompany"> | string
   coverImageUrl?: Prisma.StringFilter<"ArchitectureCompany"> | string
-  description?: Prisma.StringFilter<"ArchitectureCompany"> | string
   locationLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  city?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  country?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  yearsExperience?: Prisma.IntFilter<"ArchitectureCompany"> | number
   projectCount?: Prisma.IntFilter<"ArchitectureCompany"> | number
+  awardsWon?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
+  clientSatisfactionPct?: Prisma.IntNullableFilter<"ArchitectureCompany"> | number | null
   rating?: Prisma.FloatFilter<"ArchitectureCompany"> | number
   reviewCount?: Prisma.IntFilter<"ArchitectureCompany"> | number
+  description?: Prisma.StringFilter<"ArchitectureCompany"> | string
+  budgetRangeLabel?: Prisma.StringFilter<"ArchitectureCompany"> | string
   updatedAt?: Prisma.DateTimeFilter<"ArchitectureCompany"> | Date | string
-  yearsExperience?: Prisma.IntFilter<"ArchitectureCompany"> | number
-  CompanySpecialization?: Prisma.CompanySpecializationListRelationFilter
-  FirmService?: Prisma.FirmServiceListRelationFilter
-  FirmTeamMember?: Prisma.FirmTeamMemberListRelationFilter
-  FirmTestimonial?: Prisma.FirmTestimonialListRelationFilter
-  HouseDesign?: Prisma.HouseDesignListRelationFilter
+  specializations?: Prisma.CompanySpecializationListRelationFilter
+  houseDesigns?: Prisma.HouseDesignListRelationFilter
+  services?: Prisma.FirmServiceListRelationFilter
+  teamMembers?: Prisma.FirmTeamMemberListRelationFilter
+  testimonials?: Prisma.FirmTestimonialListRelationFilter
 }, "id" | "email">
 
 export type ArchitectureCompanyOrderByWithAggregationInput = {
@@ -407,20 +407,20 @@ export type ArchitectureCompanyOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
-  awardsWon?: Prisma.SortOrderInput | Prisma.SortOrder
-  budgetRangeLabel?: Prisma.SortOrder
-  city?: Prisma.SortOrder
-  clientSatisfactionPct?: Prisma.SortOrderInput | Prisma.SortOrder
-  country?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
   email?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  yearsExperience?: Prisma.SortOrder
   projectCount?: Prisma.SortOrder
+  awardsWon?: Prisma.SortOrderInput | Prisma.SortOrder
+  clientSatisfactionPct?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  budgetRangeLabel?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
   _count?: Prisma.ArchitectureCompanyCountOrderByAggregateInput
   _avg?: Prisma.ArchitectureCompanyAvgOrderByAggregateInput
   _max?: Prisma.ArchitectureCompanyMaxOrderByAggregateInput
@@ -436,20 +436,20 @@ export type ArchitectureCompanyScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ArchitectureCompany"> | Date | string
   avatarUrl?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
-  awardsWon?: Prisma.IntNullableWithAggregatesFilter<"ArchitectureCompany"> | number | null
-  budgetRangeLabel?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
-  city?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
-  clientSatisfactionPct?: Prisma.IntNullableWithAggregatesFilter<"ArchitectureCompany"> | number | null
-  country?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
   coverImageUrl?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
-  description?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
   email?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
   locationLabel?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
+  city?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
+  country?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
+  yearsExperience?: Prisma.IntWithAggregatesFilter<"ArchitectureCompany"> | number
   projectCount?: Prisma.IntWithAggregatesFilter<"ArchitectureCompany"> | number
+  awardsWon?: Prisma.IntNullableWithAggregatesFilter<"ArchitectureCompany"> | number | null
+  clientSatisfactionPct?: Prisma.IntNullableWithAggregatesFilter<"ArchitectureCompany"> | number | null
   rating?: Prisma.FloatWithAggregatesFilter<"ArchitectureCompany"> | number
   reviewCount?: Prisma.IntWithAggregatesFilter<"ArchitectureCompany"> | number
+  description?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
+  budgetRangeLabel?: Prisma.StringWithAggregatesFilter<"ArchitectureCompany"> | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ArchitectureCompany"> | Date | string
-  yearsExperience?: Prisma.IntWithAggregatesFilter<"ArchitectureCompany"> | number
 }
 
 export type ArchitectureCompanyCreateInput = {
@@ -457,25 +457,25 @@ export type ArchitectureCompanyCreateInput = {
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialCreateNestedManyWithoutCompanyInput
 }
 
 export type ArchitectureCompanyUncheckedCreateInput = {
@@ -483,25 +483,25 @@ export type ArchitectureCompanyUncheckedCreateInput = {
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type ArchitectureCompanyUpdateInput = {
@@ -509,25 +509,25 @@ export type ArchitectureCompanyUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUpdateManyWithoutCompanyNestedInput
 }
 
 export type ArchitectureCompanyUncheckedUpdateInput = {
@@ -535,25 +535,25 @@ export type ArchitectureCompanyUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type ArchitectureCompanyCreateManyInput = {
@@ -561,20 +561,20 @@ export type ArchitectureCompanyCreateManyInput = {
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
 }
 
 export type ArchitectureCompanyUpdateManyMutationInput = {
@@ -582,20 +582,20 @@ export type ArchitectureCompanyUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ArchitectureCompanyUncheckedUpdateManyInput = {
@@ -603,20 +603,20 @@ export type ArchitectureCompanyUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ArchitectureCompanyCountOrderByAggregateInput = {
@@ -624,29 +624,29 @@ export type ArchitectureCompanyCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
-  awardsWon?: Prisma.SortOrder
-  budgetRangeLabel?: Prisma.SortOrder
-  city?: Prisma.SortOrder
-  clientSatisfactionPct?: Prisma.SortOrder
-  country?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
   email?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  yearsExperience?: Prisma.SortOrder
   projectCount?: Prisma.SortOrder
+  awardsWon?: Prisma.SortOrder
+  clientSatisfactionPct?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  budgetRangeLabel?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
 }
 
 export type ArchitectureCompanyAvgOrderByAggregateInput = {
+  yearsExperience?: Prisma.SortOrder
+  projectCount?: Prisma.SortOrder
   awardsWon?: Prisma.SortOrder
   clientSatisfactionPct?: Prisma.SortOrder
-  projectCount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
 }
 
 export type ArchitectureCompanyMaxOrderByAggregateInput = {
@@ -654,20 +654,20 @@ export type ArchitectureCompanyMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
-  awardsWon?: Prisma.SortOrder
-  budgetRangeLabel?: Prisma.SortOrder
-  city?: Prisma.SortOrder
-  clientSatisfactionPct?: Prisma.SortOrder
-  country?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
   email?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  yearsExperience?: Prisma.SortOrder
   projectCount?: Prisma.SortOrder
+  awardsWon?: Prisma.SortOrder
+  clientSatisfactionPct?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  budgetRangeLabel?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
 }
 
 export type ArchitectureCompanyMinOrderByAggregateInput = {
@@ -675,29 +675,29 @@ export type ArchitectureCompanyMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
-  awardsWon?: Prisma.SortOrder
-  budgetRangeLabel?: Prisma.SortOrder
-  city?: Prisma.SortOrder
-  clientSatisfactionPct?: Prisma.SortOrder
-  country?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
-  description?: Prisma.SortOrder
   email?: Prisma.SortOrder
   locationLabel?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  country?: Prisma.SortOrder
+  yearsExperience?: Prisma.SortOrder
   projectCount?: Prisma.SortOrder
+  awardsWon?: Prisma.SortOrder
+  clientSatisfactionPct?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  budgetRangeLabel?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
 }
 
 export type ArchitectureCompanySumOrderByAggregateInput = {
+  yearsExperience?: Prisma.SortOrder
+  projectCount?: Prisma.SortOrder
   awardsWon?: Prisma.SortOrder
   clientSatisfactionPct?: Prisma.SortOrder
-  projectCount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   reviewCount?: Prisma.SortOrder
-  yearsExperience?: Prisma.SortOrder
 }
 
 export type ArchitectureCompanyScalarRelationFilter = {
@@ -705,24 +705,21 @@ export type ArchitectureCompanyScalarRelationFilter = {
   isNot?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type ArchitectureCompanyNullableScalarRelationFilter = {
+  is?: Prisma.ArchitectureCompanyWhereInput | null
+  isNot?: Prisma.ArchitectureCompanyWhereInput | null
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
+export type IntFieldUpdateOperationsInput = {
+  set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
   increment?: number
   decrement?: number
   multiply?: number
@@ -737,654 +734,656 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type ArchitectureCompanyCreateNestedOneWithoutCompanySpecializationInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutCompanySpecializationInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutCompanySpecializationInput
+export type ArchitectureCompanyCreateNestedOneWithoutSpecializationsInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutSpecializationsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutSpecializationsInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
 }
 
-export type ArchitectureCompanyUpdateOneRequiredWithoutCompanySpecializationNestedInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutCompanySpecializationInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutCompanySpecializationInput
-  upsert?: Prisma.ArchitectureCompanyUpsertWithoutCompanySpecializationInput
+export type ArchitectureCompanyUpdateOneRequiredWithoutSpecializationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutSpecializationsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutSpecializationsInput
+  upsert?: Prisma.ArchitectureCompanyUpsertWithoutSpecializationsInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUpdateWithoutCompanySpecializationInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutCompanySpecializationInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutSpecializationsInput, Prisma.ArchitectureCompanyUpdateWithoutSpecializationsInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutSpecializationsInput>
 }
 
-export type ArchitectureCompanyCreateNestedOneWithoutFirmServiceInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmServiceInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmServiceInput
-  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-}
-
-export type ArchitectureCompanyUpdateOneRequiredWithoutFirmServiceNestedInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmServiceInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmServiceInput
-  upsert?: Prisma.ArchitectureCompanyUpsertWithoutFirmServiceInput
-  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutFirmServiceInput, Prisma.ArchitectureCompanyUpdateWithoutFirmServiceInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmServiceInput>
-}
-
-export type ArchitectureCompanyCreateNestedOneWithoutFirmTeamMemberInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTeamMemberInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmTeamMemberInput
+export type ArchitectureCompanyCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutServicesInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
 }
 
-export type ArchitectureCompanyUpdateOneRequiredWithoutFirmTeamMemberNestedInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTeamMemberInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmTeamMemberInput
-  upsert?: Prisma.ArchitectureCompanyUpsertWithoutFirmTeamMemberInput
+export type ArchitectureCompanyUpdateOneRequiredWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.ArchitectureCompanyUpsertWithoutServicesInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUpdateWithoutFirmTeamMemberInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTeamMemberInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutServicesInput, Prisma.ArchitectureCompanyUpdateWithoutServicesInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutServicesInput>
 }
 
-export type ArchitectureCompanyCreateNestedOneWithoutFirmTestimonialInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTestimonialInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmTestimonialInput
-  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-}
-
-export type ArchitectureCompanyUpdateOneRequiredWithoutFirmTestimonialNestedInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTestimonialInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutFirmTestimonialInput
-  upsert?: Prisma.ArchitectureCompanyUpsertWithoutFirmTestimonialInput
-  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUpdateWithoutFirmTestimonialInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTestimonialInput>
-}
-
-export type ArchitectureCompanyCreateNestedOneWithoutHouseDesignInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutHouseDesignInput
+export type ArchitectureCompanyCreateNestedOneWithoutTeamMembersInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTeamMembersInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutTeamMembersInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
 }
 
-export type ArchitectureCompanyUpdateOneRequiredWithoutHouseDesignNestedInput = {
-  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignInput>
-  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutHouseDesignInput
-  upsert?: Prisma.ArchitectureCompanyUpsertWithoutHouseDesignInput
+export type ArchitectureCompanyUpdateOneRequiredWithoutTeamMembersNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTeamMembersInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutTeamMembersInput
+  upsert?: Prisma.ArchitectureCompanyUpsertWithoutTeamMembersInput
   connect?: Prisma.ArchitectureCompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutHouseDesignInput, Prisma.ArchitectureCompanyUpdateWithoutHouseDesignInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutTeamMembersInput, Prisma.ArchitectureCompanyUpdateWithoutTeamMembersInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTeamMembersInput>
 }
 
-export type ArchitectureCompanyCreateWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyCreateNestedOneWithoutTestimonialsInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTestimonialsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutTestimonialsInput
+  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
+}
+
+export type ArchitectureCompanyUpdateOneRequiredWithoutTestimonialsNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTestimonialsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutTestimonialsInput
+  upsert?: Prisma.ArchitectureCompanyUpsertWithoutTestimonialsInput
+  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutTestimonialsInput, Prisma.ArchitectureCompanyUpdateWithoutTestimonialsInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTestimonialsInput>
+}
+
+export type ArchitectureCompanyCreateNestedOneWithoutHouseDesignsInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutHouseDesignsInput
+  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
+}
+
+export type ArchitectureCompanyUpdateOneWithoutHouseDesignsNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignsInput>
+  connectOrCreate?: Prisma.ArchitectureCompanyCreateOrConnectWithoutHouseDesignsInput
+  upsert?: Prisma.ArchitectureCompanyUpsertWithoutHouseDesignsInput
+  disconnect?: Prisma.ArchitectureCompanyWhereInput | boolean
+  delete?: Prisma.ArchitectureCompanyWhereInput | boolean
+  connect?: Prisma.ArchitectureCompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchitectureCompanyUpdateToOneWithWhereWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUpdateWithoutHouseDesignsInput>, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignsInput>
+}
+
+export type ArchitectureCompanyCreateWithoutSpecializationsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  FirmService?: Prisma.FirmServiceCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  houseDesigns?: Prisma.HouseDesignCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyUncheckedCreateWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyUncheckedCreateWithoutSpecializationsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  FirmService?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  houseDesigns?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyCreateOrConnectWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyCreateOrConnectWithoutSpecializationsInput = {
   where: Prisma.ArchitectureCompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutCompanySpecializationInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutSpecializationsInput>
 }
 
-export type ArchitectureCompanyUpsertWithoutCompanySpecializationInput = {
-  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutCompanySpecializationInput>
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutCompanySpecializationInput>
+export type ArchitectureCompanyUpsertWithoutSpecializationsInput = {
+  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutSpecializationsInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutSpecializationsInput>
   where?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type ArchitectureCompanyUpdateToOneWithWhereWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyUpdateToOneWithWhereWithoutSpecializationsInput = {
   where?: Prisma.ArchitectureCompanyWhereInput
-  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutCompanySpecializationInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutCompanySpecializationInput>
+  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutSpecializationsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutSpecializationsInput>
 }
 
-export type ArchitectureCompanyUpdateWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyUpdateWithoutSpecializationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  FirmService?: Prisma.FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyUncheckedUpdateWithoutCompanySpecializationInput = {
+export type ArchitectureCompanyUncheckedUpdateWithoutSpecializationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  FirmService?: Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyCreateWithoutFirmServiceInput = {
+export type ArchitectureCompanyCreateWithoutServicesInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyUncheckedCreateWithoutFirmServiceInput = {
+export type ArchitectureCompanyUncheckedCreateWithoutServicesInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyCreateOrConnectWithoutFirmServiceInput = {
+export type ArchitectureCompanyCreateOrConnectWithoutServicesInput = {
   where: Prisma.ArchitectureCompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmServiceInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutServicesInput>
 }
 
-export type ArchitectureCompanyUpsertWithoutFirmServiceInput = {
-  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmServiceInput>
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmServiceInput>
+export type ArchitectureCompanyUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutServicesInput>
   where?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type ArchitectureCompanyUpdateToOneWithWhereWithoutFirmServiceInput = {
+export type ArchitectureCompanyUpdateToOneWithWhereWithoutServicesInput = {
   where?: Prisma.ArchitectureCompanyWhereInput
-  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmServiceInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmServiceInput>
+  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutServicesInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutServicesInput>
 }
 
-export type ArchitectureCompanyUpdateWithoutFirmServiceInput = {
+export type ArchitectureCompanyUpdateWithoutServicesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyUncheckedUpdateWithoutFirmServiceInput = {
+export type ArchitectureCompanyUncheckedUpdateWithoutServicesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyCreateWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyCreateWithoutTeamMembersInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyUncheckedCreateWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyUncheckedCreateWithoutTeamMembersInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyCreateOrConnectWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyCreateOrConnectWithoutTeamMembersInput = {
   where: Prisma.ArchitectureCompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTeamMemberInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTeamMembersInput>
 }
 
-export type ArchitectureCompanyUpsertWithoutFirmTeamMemberInput = {
-  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTeamMemberInput>
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTeamMemberInput>
+export type ArchitectureCompanyUpsertWithoutTeamMembersInput = {
+  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTeamMembersInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTeamMembersInput>
   where?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type ArchitectureCompanyUpdateToOneWithWhereWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyUpdateToOneWithWhereWithoutTeamMembersInput = {
   where?: Prisma.ArchitectureCompanyWhereInput
-  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmTeamMemberInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTeamMemberInput>
+  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutTeamMembersInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTeamMembersInput>
 }
 
-export type ArchitectureCompanyUpdateWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyUpdateWithoutTeamMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyUncheckedUpdateWithoutFirmTeamMemberInput = {
+export type ArchitectureCompanyUncheckedUpdateWithoutTeamMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyCreateWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyCreateWithoutTestimonialsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyUncheckedCreateWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyUncheckedCreateWithoutTestimonialsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  HouseDesign?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput
+  houseDesigns?: Prisma.HouseDesignUncheckedCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyCreateOrConnectWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyCreateOrConnectWithoutTestimonialsInput = {
   where: Prisma.ArchitectureCompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTestimonialInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTestimonialsInput>
 }
 
-export type ArchitectureCompanyUpsertWithoutFirmTestimonialInput = {
-  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTestimonialInput>
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutFirmTestimonialInput>
+export type ArchitectureCompanyUpsertWithoutTestimonialsInput = {
+  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTestimonialsInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutTestimonialsInput>
   where?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type ArchitectureCompanyUpdateToOneWithWhereWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyUpdateToOneWithWhereWithoutTestimonialsInput = {
   where?: Prisma.ArchitectureCompanyWhereInput
-  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutFirmTestimonialInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutFirmTestimonialInput>
+  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutTestimonialsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutTestimonialsInput>
 }
 
-export type ArchitectureCompanyUpdateWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyUpdateWithoutTestimonialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyUncheckedUpdateWithoutFirmTestimonialInput = {
+export type ArchitectureCompanyUncheckedUpdateWithoutTestimonialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  HouseDesign?: Prisma.HouseDesignUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput
+  houseDesigns?: Prisma.HouseDesignUncheckedUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyCreateWithoutHouseDesignInput = {
+export type ArchitectureCompanyCreateWithoutHouseDesignsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyUncheckedCreateWithoutHouseDesignInput = {
+export type ArchitectureCompanyUncheckedCreateWithoutHouseDesignsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   avatarUrl: string
-  awardsWon?: number | null
-  budgetRangeLabel: string
-  city: string
-  clientSatisfactionPct?: number | null
-  country?: string
   coverImageUrl: string
-  description: string
   email: string
   locationLabel: string
+  city: string
+  country?: string
+  yearsExperience: number
   projectCount: number
+  awardsWon?: number | null
+  clientSatisfactionPct?: number | null
   rating: number
   reviewCount: number
-  updatedAt: Date | string
-  yearsExperience: number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmService?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutArchitectureCompanyInput
+  description: string
+  budgetRangeLabel: string
+  updatedAt?: Date | string
+  specializations?: Prisma.CompanySpecializationUncheckedCreateNestedManyWithoutCompanyInput
+  services?: Prisma.FirmServiceUncheckedCreateNestedManyWithoutCompanyInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput
+  testimonials?: Prisma.FirmTestimonialUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type ArchitectureCompanyCreateOrConnectWithoutHouseDesignInput = {
+export type ArchitectureCompanyCreateOrConnectWithoutHouseDesignsInput = {
   where: Prisma.ArchitectureCompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignsInput>
 }
 
-export type ArchitectureCompanyUpsertWithoutHouseDesignInput = {
-  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignInput>
-  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignInput>
+export type ArchitectureCompanyUpsertWithoutHouseDesignsInput = {
+  update: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignsInput>
+  create: Prisma.XOR<Prisma.ArchitectureCompanyCreateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedCreateWithoutHouseDesignsInput>
   where?: Prisma.ArchitectureCompanyWhereInput
 }
 
-export type ArchitectureCompanyUpdateToOneWithWhereWithoutHouseDesignInput = {
+export type ArchitectureCompanyUpdateToOneWithWhereWithoutHouseDesignsInput = {
   where?: Prisma.ArchitectureCompanyWhereInput
-  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutHouseDesignInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignInput>
+  data: Prisma.XOR<Prisma.ArchitectureCompanyUpdateWithoutHouseDesignsInput, Prisma.ArchitectureCompanyUncheckedUpdateWithoutHouseDesignsInput>
 }
 
-export type ArchitectureCompanyUpdateWithoutHouseDesignInput = {
+export type ArchitectureCompanyUpdateWithoutHouseDesignsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUpdateManyWithoutCompanyNestedInput
 }
 
-export type ArchitectureCompanyUncheckedUpdateWithoutHouseDesignInput = {
+export type ArchitectureCompanyUncheckedUpdateWithoutHouseDesignsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   avatarUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  country?: Prisma.StringFieldUpdateOperationsInput | string
   coverImageUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   locationLabel?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
   projectCount?: Prisma.IntFieldUpdateOperationsInput | number
+  awardsWon?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clientSatisfactionPct?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   reviewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  budgetRangeLabel?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  yearsExperience?: Prisma.IntFieldUpdateOperationsInput | number
-  CompanySpecialization?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmService?: Prisma.FirmServiceUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTeamMember?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
-  FirmTestimonial?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutArchitectureCompanyNestedInput
+  specializations?: Prisma.CompanySpecializationUncheckedUpdateManyWithoutCompanyNestedInput
+  services?: Prisma.FirmServiceUncheckedUpdateManyWithoutCompanyNestedInput
+  teamMembers?: Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput
+  testimonials?: Prisma.FirmTestimonialUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 
@@ -1393,19 +1392,19 @@ export type ArchitectureCompanyUncheckedUpdateWithoutHouseDesignInput = {
  */
 
 export type ArchitectureCompanyCountOutputType = {
-  CompanySpecialization: number
-  FirmService: number
-  FirmTeamMember: number
-  FirmTestimonial: number
-  HouseDesign: number
+  specializations: number
+  houseDesigns: number
+  services: number
+  teamMembers: number
+  testimonials: number
 }
 
 export type ArchitectureCompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  CompanySpecialization?: boolean | ArchitectureCompanyCountOutputTypeCountCompanySpecializationArgs
-  FirmService?: boolean | ArchitectureCompanyCountOutputTypeCountFirmServiceArgs
-  FirmTeamMember?: boolean | ArchitectureCompanyCountOutputTypeCountFirmTeamMemberArgs
-  FirmTestimonial?: boolean | ArchitectureCompanyCountOutputTypeCountFirmTestimonialArgs
-  HouseDesign?: boolean | ArchitectureCompanyCountOutputTypeCountHouseDesignArgs
+  specializations?: boolean | ArchitectureCompanyCountOutputTypeCountSpecializationsArgs
+  houseDesigns?: boolean | ArchitectureCompanyCountOutputTypeCountHouseDesignsArgs
+  services?: boolean | ArchitectureCompanyCountOutputTypeCountServicesArgs
+  teamMembers?: boolean | ArchitectureCompanyCountOutputTypeCountTeamMembersArgs
+  testimonials?: boolean | ArchitectureCompanyCountOutputTypeCountTestimonialsArgs
 }
 
 /**
@@ -1421,36 +1420,36 @@ export type ArchitectureCompanyCountOutputTypeDefaultArgs<ExtArgs extends runtim
 /**
  * ArchitectureCompanyCountOutputType without action
  */
-export type ArchitectureCompanyCountOutputTypeCountCompanySpecializationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompanyCountOutputTypeCountSpecializationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CompanySpecializationWhereInput
 }
 
 /**
  * ArchitectureCompanyCountOutputType without action
  */
-export type ArchitectureCompanyCountOutputTypeCountFirmServiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompanyCountOutputTypeCountHouseDesignsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HouseDesignWhereInput
+}
+
+/**
+ * ArchitectureCompanyCountOutputType without action
+ */
+export type ArchitectureCompanyCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FirmServiceWhereInput
 }
 
 /**
  * ArchitectureCompanyCountOutputType without action
  */
-export type ArchitectureCompanyCountOutputTypeCountFirmTeamMemberArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompanyCountOutputTypeCountTeamMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FirmTeamMemberWhereInput
 }
 
 /**
  * ArchitectureCompanyCountOutputType without action
  */
-export type ArchitectureCompanyCountOutputTypeCountFirmTestimonialArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompanyCountOutputTypeCountTestimonialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FirmTestimonialWhereInput
-}
-
-/**
- * ArchitectureCompanyCountOutputType without action
- */
-export type ArchitectureCompanyCountOutputTypeCountHouseDesignArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.HouseDesignWhereInput
 }
 
 
@@ -1459,25 +1458,25 @@ export type ArchitectureCompanySelect<ExtArgs extends runtime.Types.Extensions.I
   name?: boolean
   createdAt?: boolean
   avatarUrl?: boolean
-  awardsWon?: boolean
-  budgetRangeLabel?: boolean
-  city?: boolean
-  clientSatisfactionPct?: boolean
-  country?: boolean
   coverImageUrl?: boolean
-  description?: boolean
   email?: boolean
   locationLabel?: boolean
+  city?: boolean
+  country?: boolean
+  yearsExperience?: boolean
   projectCount?: boolean
+  awardsWon?: boolean
+  clientSatisfactionPct?: boolean
   rating?: boolean
   reviewCount?: boolean
+  description?: boolean
+  budgetRangeLabel?: boolean
   updatedAt?: boolean
-  yearsExperience?: boolean
-  CompanySpecialization?: boolean | Prisma.ArchitectureCompany$CompanySpecializationArgs<ExtArgs>
-  FirmService?: boolean | Prisma.ArchitectureCompany$FirmServiceArgs<ExtArgs>
-  FirmTeamMember?: boolean | Prisma.ArchitectureCompany$FirmTeamMemberArgs<ExtArgs>
-  FirmTestimonial?: boolean | Prisma.ArchitectureCompany$FirmTestimonialArgs<ExtArgs>
-  HouseDesign?: boolean | Prisma.ArchitectureCompany$HouseDesignArgs<ExtArgs>
+  specializations?: boolean | Prisma.ArchitectureCompany$specializationsArgs<ExtArgs>
+  houseDesigns?: boolean | Prisma.ArchitectureCompany$houseDesignsArgs<ExtArgs>
+  services?: boolean | Prisma.ArchitectureCompany$servicesArgs<ExtArgs>
+  teamMembers?: boolean | Prisma.ArchitectureCompany$teamMembersArgs<ExtArgs>
+  testimonials?: boolean | Prisma.ArchitectureCompany$testimonialsArgs<ExtArgs>
   _count?: boolean | Prisma.ArchitectureCompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["architectureCompany"]>
 
@@ -1486,20 +1485,20 @@ export type ArchitectureCompanySelectCreateManyAndReturn<ExtArgs extends runtime
   name?: boolean
   createdAt?: boolean
   avatarUrl?: boolean
-  awardsWon?: boolean
-  budgetRangeLabel?: boolean
-  city?: boolean
-  clientSatisfactionPct?: boolean
-  country?: boolean
   coverImageUrl?: boolean
-  description?: boolean
   email?: boolean
   locationLabel?: boolean
+  city?: boolean
+  country?: boolean
+  yearsExperience?: boolean
   projectCount?: boolean
+  awardsWon?: boolean
+  clientSatisfactionPct?: boolean
   rating?: boolean
   reviewCount?: boolean
+  description?: boolean
+  budgetRangeLabel?: boolean
   updatedAt?: boolean
-  yearsExperience?: boolean
 }, ExtArgs["result"]["architectureCompany"]>
 
 export type ArchitectureCompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1507,20 +1506,20 @@ export type ArchitectureCompanySelectUpdateManyAndReturn<ExtArgs extends runtime
   name?: boolean
   createdAt?: boolean
   avatarUrl?: boolean
-  awardsWon?: boolean
-  budgetRangeLabel?: boolean
-  city?: boolean
-  clientSatisfactionPct?: boolean
-  country?: boolean
   coverImageUrl?: boolean
-  description?: boolean
   email?: boolean
   locationLabel?: boolean
+  city?: boolean
+  country?: boolean
+  yearsExperience?: boolean
   projectCount?: boolean
+  awardsWon?: boolean
+  clientSatisfactionPct?: boolean
   rating?: boolean
   reviewCount?: boolean
+  description?: boolean
+  budgetRangeLabel?: boolean
   updatedAt?: boolean
-  yearsExperience?: boolean
 }, ExtArgs["result"]["architectureCompany"]>
 
 export type ArchitectureCompanySelectScalar = {
@@ -1528,29 +1527,29 @@ export type ArchitectureCompanySelectScalar = {
   name?: boolean
   createdAt?: boolean
   avatarUrl?: boolean
-  awardsWon?: boolean
-  budgetRangeLabel?: boolean
-  city?: boolean
-  clientSatisfactionPct?: boolean
-  country?: boolean
   coverImageUrl?: boolean
-  description?: boolean
   email?: boolean
   locationLabel?: boolean
+  city?: boolean
+  country?: boolean
+  yearsExperience?: boolean
   projectCount?: boolean
+  awardsWon?: boolean
+  clientSatisfactionPct?: boolean
   rating?: boolean
   reviewCount?: boolean
+  description?: boolean
+  budgetRangeLabel?: boolean
   updatedAt?: boolean
-  yearsExperience?: boolean
 }
 
-export type ArchitectureCompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "avatarUrl" | "awardsWon" | "budgetRangeLabel" | "city" | "clientSatisfactionPct" | "country" | "coverImageUrl" | "description" | "email" | "locationLabel" | "projectCount" | "rating" | "reviewCount" | "updatedAt" | "yearsExperience", ExtArgs["result"]["architectureCompany"]>
+export type ArchitectureCompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "avatarUrl" | "coverImageUrl" | "email" | "locationLabel" | "city" | "country" | "yearsExperience" | "projectCount" | "awardsWon" | "clientSatisfactionPct" | "rating" | "reviewCount" | "description" | "budgetRangeLabel" | "updatedAt", ExtArgs["result"]["architectureCompany"]>
 export type ArchitectureCompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  CompanySpecialization?: boolean | Prisma.ArchitectureCompany$CompanySpecializationArgs<ExtArgs>
-  FirmService?: boolean | Prisma.ArchitectureCompany$FirmServiceArgs<ExtArgs>
-  FirmTeamMember?: boolean | Prisma.ArchitectureCompany$FirmTeamMemberArgs<ExtArgs>
-  FirmTestimonial?: boolean | Prisma.ArchitectureCompany$FirmTestimonialArgs<ExtArgs>
-  HouseDesign?: boolean | Prisma.ArchitectureCompany$HouseDesignArgs<ExtArgs>
+  specializations?: boolean | Prisma.ArchitectureCompany$specializationsArgs<ExtArgs>
+  houseDesigns?: boolean | Prisma.ArchitectureCompany$houseDesignsArgs<ExtArgs>
+  services?: boolean | Prisma.ArchitectureCompany$servicesArgs<ExtArgs>
+  teamMembers?: boolean | Prisma.ArchitectureCompany$teamMembersArgs<ExtArgs>
+  testimonials?: boolean | Prisma.ArchitectureCompany$testimonialsArgs<ExtArgs>
   _count?: boolean | Prisma.ArchitectureCompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ArchitectureCompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1559,31 +1558,31 @@ export type ArchitectureCompanyIncludeUpdateManyAndReturn<ExtArgs extends runtim
 export type $ArchitectureCompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ArchitectureCompany"
   objects: {
-    CompanySpecialization: Prisma.$CompanySpecializationPayload<ExtArgs>[]
-    FirmService: Prisma.$FirmServicePayload<ExtArgs>[]
-    FirmTeamMember: Prisma.$FirmTeamMemberPayload<ExtArgs>[]
-    FirmTestimonial: Prisma.$FirmTestimonialPayload<ExtArgs>[]
-    HouseDesign: Prisma.$HouseDesignPayload<ExtArgs>[]
+    specializations: Prisma.$CompanySpecializationPayload<ExtArgs>[]
+    houseDesigns: Prisma.$HouseDesignPayload<ExtArgs>[]
+    services: Prisma.$FirmServicePayload<ExtArgs>[]
+    teamMembers: Prisma.$FirmTeamMemberPayload<ExtArgs>[]
+    testimonials: Prisma.$FirmTestimonialPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     createdAt: Date
     avatarUrl: string
-    awardsWon: number | null
-    budgetRangeLabel: string
-    city: string
-    clientSatisfactionPct: number | null
-    country: string
     coverImageUrl: string
-    description: string
     email: string
     locationLabel: string
+    city: string
+    country: string
+    yearsExperience: number
     projectCount: number
+    awardsWon: number | null
+    clientSatisfactionPct: number | null
     rating: number
     reviewCount: number
+    description: string
+    budgetRangeLabel: string
     updatedAt: Date
-    yearsExperience: number
   }, ExtArgs["result"]["architectureCompany"]>
   composites: {}
 }
@@ -1978,11 +1977,11 @@ readonly fields: ArchitectureCompanyFieldRefs;
  */
 export interface Prisma__ArchitectureCompanyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  CompanySpecialization<T extends Prisma.ArchitectureCompany$CompanySpecializationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$CompanySpecializationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanySpecializationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  FirmService<T extends Prisma.ArchitectureCompany$FirmServiceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$FirmServiceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  FirmTeamMember<T extends Prisma.ArchitectureCompany$FirmTeamMemberArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$FirmTeamMemberArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmTeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  FirmTestimonial<T extends Prisma.ArchitectureCompany$FirmTestimonialArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$FirmTestimonialArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmTestimonialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  HouseDesign<T extends Prisma.ArchitectureCompany$HouseDesignArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$HouseDesignArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  specializations<T extends Prisma.ArchitectureCompany$specializationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$specializationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanySpecializationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  houseDesigns<T extends Prisma.ArchitectureCompany$houseDesignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$houseDesignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HouseDesignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  services<T extends Prisma.ArchitectureCompany$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teamMembers<T extends Prisma.ArchitectureCompany$teamMembersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$teamMembersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmTeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  testimonials<T extends Prisma.ArchitectureCompany$testimonialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompany$testimonialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FirmTestimonialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2016,20 +2015,20 @@ export interface ArchitectureCompanyFieldRefs {
   readonly name: Prisma.FieldRef<"ArchitectureCompany", 'String'>
   readonly createdAt: Prisma.FieldRef<"ArchitectureCompany", 'DateTime'>
   readonly avatarUrl: Prisma.FieldRef<"ArchitectureCompany", 'String'>
-  readonly awardsWon: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
-  readonly budgetRangeLabel: Prisma.FieldRef<"ArchitectureCompany", 'String'>
-  readonly city: Prisma.FieldRef<"ArchitectureCompany", 'String'>
-  readonly clientSatisfactionPct: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
-  readonly country: Prisma.FieldRef<"ArchitectureCompany", 'String'>
   readonly coverImageUrl: Prisma.FieldRef<"ArchitectureCompany", 'String'>
-  readonly description: Prisma.FieldRef<"ArchitectureCompany", 'String'>
   readonly email: Prisma.FieldRef<"ArchitectureCompany", 'String'>
   readonly locationLabel: Prisma.FieldRef<"ArchitectureCompany", 'String'>
+  readonly city: Prisma.FieldRef<"ArchitectureCompany", 'String'>
+  readonly country: Prisma.FieldRef<"ArchitectureCompany", 'String'>
+  readonly yearsExperience: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
   readonly projectCount: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
+  readonly awardsWon: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
+  readonly clientSatisfactionPct: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
   readonly rating: Prisma.FieldRef<"ArchitectureCompany", 'Float'>
   readonly reviewCount: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
+  readonly description: Prisma.FieldRef<"ArchitectureCompany", 'String'>
+  readonly budgetRangeLabel: Prisma.FieldRef<"ArchitectureCompany", 'String'>
   readonly updatedAt: Prisma.FieldRef<"ArchitectureCompany", 'DateTime'>
-  readonly yearsExperience: Prisma.FieldRef<"ArchitectureCompany", 'Int'>
 }
     
 
@@ -2423,9 +2422,9 @@ export type ArchitectureCompanyDeleteManyArgs<ExtArgs extends runtime.Types.Exte
 }
 
 /**
- * ArchitectureCompany.CompanySpecialization
+ * ArchitectureCompany.specializations
  */
-export type ArchitectureCompany$CompanySpecializationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompany$specializationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the CompanySpecialization
    */
@@ -2447,9 +2446,33 @@ export type ArchitectureCompany$CompanySpecializationArgs<ExtArgs extends runtim
 }
 
 /**
- * ArchitectureCompany.FirmService
+ * ArchitectureCompany.houseDesigns
  */
-export type ArchitectureCompany$FirmServiceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompany$houseDesignsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HouseDesign
+   */
+  select?: Prisma.HouseDesignSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HouseDesign
+   */
+  omit?: Prisma.HouseDesignOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HouseDesignInclude<ExtArgs> | null
+  where?: Prisma.HouseDesignWhereInput
+  orderBy?: Prisma.HouseDesignOrderByWithRelationInput | Prisma.HouseDesignOrderByWithRelationInput[]
+  cursor?: Prisma.HouseDesignWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HouseDesignScalarFieldEnum | Prisma.HouseDesignScalarFieldEnum[]
+}
+
+/**
+ * ArchitectureCompany.services
+ */
+export type ArchitectureCompany$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the FirmService
    */
@@ -2471,9 +2494,9 @@ export type ArchitectureCompany$FirmServiceArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
- * ArchitectureCompany.FirmTeamMember
+ * ArchitectureCompany.teamMembers
  */
-export type ArchitectureCompany$FirmTeamMemberArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompany$teamMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the FirmTeamMember
    */
@@ -2495,9 +2518,9 @@ export type ArchitectureCompany$FirmTeamMemberArgs<ExtArgs extends runtime.Types
 }
 
 /**
- * ArchitectureCompany.FirmTestimonial
+ * ArchitectureCompany.testimonials
  */
-export type ArchitectureCompany$FirmTestimonialArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ArchitectureCompany$testimonialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the FirmTestimonial
    */
@@ -2516,30 +2539,6 @@ export type ArchitectureCompany$FirmTestimonialArgs<ExtArgs extends runtime.Type
   take?: number
   skip?: number
   distinct?: Prisma.FirmTestimonialScalarFieldEnum | Prisma.FirmTestimonialScalarFieldEnum[]
-}
-
-/**
- * ArchitectureCompany.HouseDesign
- */
-export type ArchitectureCompany$HouseDesignArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the HouseDesign
-   */
-  select?: Prisma.HouseDesignSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the HouseDesign
-   */
-  omit?: Prisma.HouseDesignOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.HouseDesignInclude<ExtArgs> | null
-  where?: Prisma.HouseDesignWhereInput
-  orderBy?: Prisma.HouseDesignOrderByWithRelationInput | Prisma.HouseDesignOrderByWithRelationInput[]
-  cursor?: Prisma.HouseDesignWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.HouseDesignScalarFieldEnum | Prisma.HouseDesignScalarFieldEnum[]
 }
 
 /**

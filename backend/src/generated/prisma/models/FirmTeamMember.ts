@@ -224,7 +224,7 @@ export type FirmTeamMemberWhereInput = {
   photoUrl?: Prisma.StringFilter<"FirmTeamMember"> | string
   sortOrder?: Prisma.IntFilter<"FirmTeamMember"> | number
   companyId?: Prisma.StringFilter<"FirmTeamMember"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }
 
 export type FirmTeamMemberOrderByWithRelationInput = {
@@ -234,7 +234,7 @@ export type FirmTeamMemberOrderByWithRelationInput = {
   photoUrl?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
-  ArchitectureCompany?: Prisma.ArchitectureCompanyOrderByWithRelationInput
+  company?: Prisma.ArchitectureCompanyOrderByWithRelationInput
 }
 
 export type FirmTeamMemberWhereUniqueInput = Prisma.AtLeast<{
@@ -247,7 +247,7 @@ export type FirmTeamMemberWhereUniqueInput = Prisma.AtLeast<{
   photoUrl?: Prisma.StringFilter<"FirmTeamMember"> | string
   sortOrder?: Prisma.IntFilter<"FirmTeamMember"> | number
   companyId?: Prisma.StringFilter<"FirmTeamMember"> | string
-  ArchitectureCompany?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
+  company?: Prisma.XOR<Prisma.ArchitectureCompanyScalarRelationFilter, Prisma.ArchitectureCompanyWhereInput>
 }, "id">
 
 export type FirmTeamMemberOrderByWithAggregationInput = {
@@ -277,16 +277,16 @@ export type FirmTeamMemberScalarWhereWithAggregatesInput = {
 }
 
 export type FirmTeamMemberCreateInput = {
-  id: string
+  id?: string
   name: string
   title: string
   photoUrl: string
   sortOrder?: number
-  ArchitectureCompany: Prisma.ArchitectureCompanyCreateNestedOneWithoutFirmTeamMemberInput
+  company: Prisma.ArchitectureCompanyCreateNestedOneWithoutTeamMembersInput
 }
 
 export type FirmTeamMemberUncheckedCreateInput = {
-  id: string
+  id?: string
   name: string
   title: string
   photoUrl: string
@@ -300,7 +300,7 @@ export type FirmTeamMemberUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   photoUrl?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  ArchitectureCompany?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutFirmTeamMemberNestedInput
+  company?: Prisma.ArchitectureCompanyUpdateOneRequiredWithoutTeamMembersNestedInput
 }
 
 export type FirmTeamMemberUncheckedUpdateInput = {
@@ -313,7 +313,7 @@ export type FirmTeamMemberUncheckedUpdateInput = {
 }
 
 export type FirmTeamMemberCreateManyInput = {
-  id: string
+  id?: string
   name: string
   title: string
   photoUrl: string
@@ -383,88 +383,88 @@ export type FirmTeamMemberSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type FirmTeamMemberCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTeamMemberCreateManyArchitectureCompanyInputEnvelope
+export type FirmTeamMemberCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput> | Prisma.FirmTeamMemberCreateWithoutCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmTeamMemberCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
 }
 
-export type FirmTeamMemberUncheckedCreateNestedManyWithoutArchitectureCompanyInput = {
-  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTeamMemberCreateManyArchitectureCompanyInputEnvelope
+export type FirmTeamMemberUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput> | Prisma.FirmTeamMemberCreateWithoutCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.FirmTeamMemberCreateManyCompanyInputEnvelope
   connect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
 }
 
-export type FirmTeamMemberUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTeamMemberCreateManyArchitectureCompanyInputEnvelope
+export type FirmTeamMemberUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput> | Prisma.FirmTeamMemberCreateWithoutCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmTeamMemberCreateManyCompanyInputEnvelope
   set?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   disconnect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   delete?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   connect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
-  update?: Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmTeamMemberUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmTeamMemberUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmTeamMemberUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmTeamMemberScalarWhereInput | Prisma.FirmTeamMemberScalarWhereInput[]
 }
 
-export type FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput> | Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput[]
-  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput[]
-  upsert?: Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutArchitectureCompanyInput[]
-  createMany?: Prisma.FirmTeamMemberCreateManyArchitectureCompanyInputEnvelope
+export type FirmTeamMemberUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput> | Prisma.FirmTeamMemberCreateWithoutCompanyInput[] | Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput | Prisma.FirmTeamMemberCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutCompanyInput | Prisma.FirmTeamMemberUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.FirmTeamMemberCreateManyCompanyInputEnvelope
   set?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   disconnect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   delete?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
   connect?: Prisma.FirmTeamMemberWhereUniqueInput | Prisma.FirmTeamMemberWhereUniqueInput[]
-  update?: Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutArchitectureCompanyInput[]
-  updateMany?: Prisma.FirmTeamMemberUpdateManyWithWhereWithoutArchitectureCompanyInput | Prisma.FirmTeamMemberUpdateManyWithWhereWithoutArchitectureCompanyInput[]
+  update?: Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutCompanyInput | Prisma.FirmTeamMemberUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.FirmTeamMemberUpdateManyWithWhereWithoutCompanyInput | Prisma.FirmTeamMemberUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.FirmTeamMemberScalarWhereInput | Prisma.FirmTeamMemberScalarWhereInput[]
 }
 
-export type FirmTeamMemberCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmTeamMemberCreateWithoutCompanyInput = {
+  id?: string
   name: string
   title: string
   photoUrl: string
   sortOrder?: number
 }
 
-export type FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput = {
-  id: string
+export type FirmTeamMemberUncheckedCreateWithoutCompanyInput = {
+  id?: string
   name: string
   title: string
   photoUrl: string
   sortOrder?: number
 }
 
-export type FirmTeamMemberCreateOrConnectWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberCreateOrConnectWithoutCompanyInput = {
   where: Prisma.FirmTeamMemberWhereUniqueInput
-  create: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput>
+  create: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmTeamMemberCreateManyArchitectureCompanyInputEnvelope = {
-  data: Prisma.FirmTeamMemberCreateManyArchitectureCompanyInput | Prisma.FirmTeamMemberCreateManyArchitectureCompanyInput[]
+export type FirmTeamMemberCreateManyCompanyInputEnvelope = {
+  data: Prisma.FirmTeamMemberCreateManyCompanyInput | Prisma.FirmTeamMemberCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type FirmTeamMemberUpsertWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmTeamMemberWhereUniqueInput
-  update: Prisma.XOR<Prisma.FirmTeamMemberUpdateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedUpdateWithoutArchitectureCompanyInput>
-  create: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutArchitectureCompanyInput>
+  update: Prisma.XOR<Prisma.FirmTeamMemberUpdateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.FirmTeamMemberCreateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedCreateWithoutCompanyInput>
 }
 
-export type FirmTeamMemberUpdateWithWhereUniqueWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.FirmTeamMemberWhereUniqueInput
-  data: Prisma.XOR<Prisma.FirmTeamMemberUpdateWithoutArchitectureCompanyInput, Prisma.FirmTeamMemberUncheckedUpdateWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmTeamMemberUpdateWithoutCompanyInput, Prisma.FirmTeamMemberUncheckedUpdateWithoutCompanyInput>
 }
 
-export type FirmTeamMemberUpdateManyWithWhereWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.FirmTeamMemberScalarWhereInput
-  data: Prisma.XOR<Prisma.FirmTeamMemberUpdateManyMutationInput, Prisma.FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyInput>
+  data: Prisma.XOR<Prisma.FirmTeamMemberUpdateManyMutationInput, Prisma.FirmTeamMemberUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type FirmTeamMemberScalarWhereInput = {
@@ -479,15 +479,15 @@ export type FirmTeamMemberScalarWhereInput = {
   companyId?: Prisma.StringFilter<"FirmTeamMember"> | string
 }
 
-export type FirmTeamMemberCreateManyArchitectureCompanyInput = {
-  id: string
+export type FirmTeamMemberCreateManyCompanyInput = {
+  id?: string
   name: string
   title: string
   photoUrl: string
   sortOrder?: number
 }
 
-export type FirmTeamMemberUpdateWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -495,7 +495,7 @@ export type FirmTeamMemberUpdateWithoutArchitectureCompanyInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FirmTeamMemberUncheckedUpdateWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -503,7 +503,7 @@ export type FirmTeamMemberUncheckedUpdateWithoutArchitectureCompanyInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type FirmTeamMemberUncheckedUpdateManyWithoutArchitectureCompanyInput = {
+export type FirmTeamMemberUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -520,7 +520,7 @@ export type FirmTeamMemberSelect<ExtArgs extends runtime.Types.Extensions.Intern
   photoUrl?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTeamMember"]>
 
 export type FirmTeamMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -530,7 +530,7 @@ export type FirmTeamMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   photoUrl?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTeamMember"]>
 
 export type FirmTeamMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -540,7 +540,7 @@ export type FirmTeamMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   photoUrl?: boolean
   sortOrder?: boolean
   companyId?: boolean
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["firmTeamMember"]>
 
 export type FirmTeamMemberSelectScalar = {
@@ -554,19 +554,19 @@ export type FirmTeamMemberSelectScalar = {
 
 export type FirmTeamMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "title" | "photoUrl" | "sortOrder" | "companyId", ExtArgs["result"]["firmTeamMember"]>
 export type FirmTeamMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmTeamMemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 export type FirmTeamMemberIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ArchitectureCompany?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>
 }
 
 export type $FirmTeamMemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FirmTeamMember"
   objects: {
-    ArchitectureCompany: Prisma.$ArchitectureCompanyPayload<ExtArgs>
+    company: Prisma.$ArchitectureCompanyPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -969,7 +969,7 @@ readonly fields: FirmTeamMemberFieldRefs;
  */
 export interface Prisma__FirmTeamMemberClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ArchitectureCompany<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.ArchitectureCompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchitectureCompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchitectureCompanyClient<runtime.Types.Result.GetResult<Prisma.$ArchitectureCompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
