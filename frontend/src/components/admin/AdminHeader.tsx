@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminHeaderProps {
   onToggleSidebar?: () => void;
@@ -9,9 +10,11 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
-  const [currentDateString, setCurrentDateString] = useState('Whatsday , xxx xx, 2026');
+  const [currentDateString, setCurrentDateString] = useState('');
 
   // Format date nicely
   useEffect(() => {
@@ -25,7 +28,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
       const formatted = new Date().toLocaleDateString('en-US', options);
       setCurrentDateString(formatted);
     } catch (e) {
-      // fallback
+      setCurrentDateString('Wednesday, Dec 12, 2024');
     }
   }, []);
 
@@ -39,6 +42,17 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Dynamic user data
+  const displayName = user?.firstName 
+    ? `${user.firstName} ${user.lastName || ''}`.trim() 
+    : (user?.email ? user.email.split('@')[0] : 'Super Admin');
+
+  const displayEmail = user?.email || 'admin@nexabuild.com';
+
+  const avatarInitials = user?.firstName
+    ? `${user.firstName[0]}${user.lastName ? user.lastName[0] : ''}`.toUpperCase()
+    : 'SA';
 
   // Determine Title based on current subroute
   const getHeaderTitle = () => {
@@ -70,7 +84,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
               {getHeaderTitle()}
             </h2>
             <span className="hidden sm:inline text-[11px] md:text-[12px] text-[#1d1d1d]/60 mt-[2px] font-medium">
-              Welcome back, Super Admin — {currentDateString}
+              Welcome back, {displayName} — {currentDateString}
             </span>
           </div>
         </div>
@@ -118,18 +132,18 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
           </button>
         )}
 
-        {/* Profile Avatar Dropdown (order-2 on mobile, md:order-2 on desktop) */}
+        {/* Profile Avatar Dropdown */}
         <div className="relative order-2 md:order-2" ref={dropdownRef}>
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             className="flex items-center gap-[5px] rounded-full lg:rounded-[8px] bg-[#ccb7a3]/30 p-[4px] lg:p-[5px] lg:pr-[12px] border border-[#ccb7a3]/10 hover:bg-[#ccb7a3]/50 transition-all text-left"
           >
             <div className="flex size-[32px] lg:size-[36px] shrink-0 items-center justify-center rounded-full lg:rounded-[8px] bg-[#345b79] text-white font-bold text-[13px] lg:text-[14px]">
-              SA
+              {avatarInitials}
             </div>
             <div className="hidden lg:flex flex-col pl-[8px] leading-tight">
-              <span className="text-[13px] font-bold text-[#1d1d1d]">Super Admin</span>
-              <span className="text-[9px] text-[#1d1d1d]/60">admin@nexabuild.com</span>
+              <span className="text-[13px] font-bold text-[#1d1d1d]">{displayName}</span>
+              <span className="text-[9px] text-[#1d1d1d]/60">{displayEmail}</span>
             </div>
             <svg className="hidden lg:block size-[14px] text-[#1d1d1d]/40 ml-[4px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -140,8 +154,8 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
           {profileDropdownOpen && (
             <div className="absolute right-0 mt-[8px] w-[200px] rounded-[8px] bg-white p-[8px] shadow-lg border border-[#ccb7a3]/30 ring-1 ring-black/5 z-50">
               <div className="lg:hidden px-[12px] py-[8px] border-b border-gray-100 mb-[4px]">
-                <p className="text-[13px] font-bold text-[#1d1d1d]">Super Admin</p>
-                <p className="text-[9px] text-[#1d1d1d]/50 truncate">admin@nexabuild.com</p>
+                <p className="text-[13px] font-bold text-[#1d1d1d]">{displayName}</p>
+                <p className="text-[9px] text-[#1d1d1d]/50 truncate">{displayEmail}</p>
               </div>
               <button
                 onClick={() => {
@@ -175,7 +189,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
           )}
         </div>
 
-        {/* Notifications Trigger (order-3 on mobile to be at the end, md:order-1 on desktop to be on left of avatar) */}
+        {/* Notifications Trigger */}
         <div className="relative order-3 md:order-1">
           <button className="flex size-[38px] items-center justify-center rounded-[8px] bg-[#ccb7a3]/30 text-[#1d1d1d]/80 hover:bg-[#ccb7a3]/50 transition-colors">
             <svg className="size-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

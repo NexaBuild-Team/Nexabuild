@@ -17,7 +17,7 @@ export default function AdminPage() {
         <AdminHeader onToggleSidebar={() => setSidebarOpen(true)} />
 
         {/* Subview display area */}
-        <main className="flex-1 overflow-hidden focus:outline-none flex flex-col">
+        <main className="flex-1 overflow-y-auto focus:outline-none flex flex-col">
           <Outlet />
         </main>
       </div>

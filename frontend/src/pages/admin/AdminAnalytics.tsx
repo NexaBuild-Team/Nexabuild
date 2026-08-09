@@ -1,165 +1,131 @@
-import { useState } from 'react';
-
-// ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
-
-export interface KPIMetricItem {
-  name: string;
-  value: string;
-  change: string;
-  isPositive: boolean;
-  sub: string;
-  color: string;
-}
-
-export interface SparklineMetricItem {
-  name: string;
-  value: string;
-  change: string;
-  isPositive: boolean;
-  points?: string;
-  bars?: number[];
-}
-
-export interface TopDistrictRecord {
-  rank: number;
-  name: string;
-  views: string;
-  listings: number;
-  growth: string;
-}
-
-export interface SearchedLocationItem {
-  name: string;
-  count: string;
-  percentage: number;
-}
-
-export interface DistributionPieSegment {
-  name: string;
-  value: string;
-  color: string;
-  strokeDash: string;
-  strokeOffset: string;
-}
-
-export interface AIRecommendationMetrics {
-  accuracyPercent?: string;
-  precisionPercent?: string;
-  recallPercent?: string;
-  f1ScorePercent?: string;
-}
-
-export interface AdminAnalyticsPageData {
-  dateRange?: string;
-  mainMetrics?: KPIMetricItem[];
-  sparklines?: SparklineMetricItem[];
-  months?: string[];
-  propertyGrowthData?: number[];
-  landGrowthData?: number[];
-  topDistricts?: TopDistrictRecord[];
-  searchedLocations?: SearchedLocationItem[];
-  aiAccuracy?: AIRecommendationMetrics;
-  propertyTypesDistribution?: DistributionPieSegment[];
-  landCategoriesDistribution?: DistributionPieSegment[];
-  userBreakdownDistribution?: DistributionPieSegment[];
-}
+import { useState, useEffect } from 'react';
+import {
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import { adminApi } from '../../services/adminApi';
+import type { AdminAnalyticsData } from '../../services/adminApi';
 
 export interface AdminAnalyticsProps {
-  data?: AdminAnalyticsPageData | null;
+  data?: AdminAnalyticsData | null;
   isLoading?: boolean;
   error?: string | null;
-  onExportReport?: () => void;
-  onViewAllSearched?: () => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const defaultMainMetrics: KPIMetricItem[] = [
-  { name: 'Monthly Active Users', value: '24,810', change: '+14.2%', isPositive: true, sub: 'vs last month', color: 'bg-emerald-50 text-emerald-700' },
-  { name: 'Active Listings', value: '3,482', change: '+9.7%', isPositive: true, sub: 'properties & land', color: 'bg-emerald-50 text-emerald-700' },
-  { name: 'Saved Listings', value: '18,640', change: '+31.4%', isPositive: true, sub: 'total saves this month', color: 'bg-emerald-50 text-emerald-700' },
-  { name: 'Total Views', value: '412K', change: '-2.1%', isPositive: false, sub: 'page impressions', color: 'bg-red-50 text-red-700' }
+const defaultPropertyLandGrowth = months.map((m) => ({
+  month: m,
+  properties: 0,
+  land: 0,
+}));
+
+const defaultUserRegistrations = months.map((m) => ({
+  month: m,
+  users: 0,
+}));
+
+const sparklineData = [
+  { val: 10 }, { val: 15 }, { val: 13 }, { val: 20 }, { val: 18 }, { val: 25 }, { val: 30 }
 ];
 
-const defaultSparklines: SparklineMetricItem[] = [
-  { name: 'Avg. Property Price', value: 'LKR 1.24M', change: '+8.3%', isPositive: true, points: '10,45 35,30 60,40 85,20 110,35 135,15 160,25' },
-  { name: 'Avg. Land Price/sqft', value: 'LKR 420', change: '+5.1%', isPositive: true, points: '10,40 35,45 60,30 85,35 110,20 135,25 160,15' },
-  { name: 'Days on Market', value: '34 days', change: '-12.0%', isPositive: false, bars: [19, 28, 21, 38, 26, 14] },
-  { name: 'Saved Listings', value: '18,640', change: '+31%', isPositive: true, points: '10,45 35,35 60,42 85,25 110,30 135,15 160,20' }
+const sparkbarData = [
+  { val: 20 }, { val: 35 }, { val: 25 }, { val: 40 }, { val: 30 }, { val: 50 }
 ];
 
-const defaultMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const defaultPropertyGrowth = [64, 96, 85, 117, 128, 139, 149, 160, 171, 181, 192, 203];
-const defaultLandGrowth = [42, 74, 107, 85, 96, 117, 128, 139, 149, 160, 171, 181];
-
-const defaultTopDistricts: TopDistrictRecord[] = [
-  { rank: 1, name: 'Colombo 03', views: '48.2K views', listings: 342, growth: '+18%' },
-  { rank: 2, name: 'Colombo 07', views: '39.7K views', listings: 278, growth: '+12%' },
-  { rank: 3, name: 'East Legon', views: '31.4K views', listings: 215, growth: '+9%' },
-  { rank: 4, name: 'Kandy Central', views: '24.1K views', listings: 189, growth: '-3%' },
-  { rank: 5, name: 'Galle Fort', views: '19.8K views', listings: 164, growth: '+7%' },
-  { rank: 6, name: 'Negombo Coastal', views: '11.2K views', listings: 98, growth: '-1%' }
-];
-
-const defaultSearchedLocations: SearchedLocationItem[] = [
-  { name: 'Colombo 03', count: '14.8K', percentage: 85 },
-  { name: 'Colombo 07', count: '12.3K', percentage: 72 },
-  { name: 'Galle Beachfront', count: '9.9K', percentage: 58 },
-  { name: 'Kandy Hills', count: '7.6K', percentage: 45 },
-  { name: 'Negombo', count: '5.2K', percentage: 30 },
-  { name: 'Ja-Ela', count: '3.9K', percentage: 22 }
-];
-
-const defaultPropertyTypesDist: DistributionPieSegment[] = [
-  { name: 'Residential', value: '48%', color: '#345b79', strokeDash: '48 100', strokeOffset: '0' },
-  { name: 'Commercial', value: '27%', color: '#be5d3f', strokeDash: '27 100', strokeOffset: '-48' },
-  { name: 'Industrial', value: '13%', color: '#928d64', strokeDash: '13 100', strokeOffset: '-75' },
-  { name: 'Land', value: '12%', color: '#6b879c', strokeDash: '12 100', strokeOffset: '-88' }
-];
-
-const defaultLandCategoriesDist: DistributionPieSegment[] = [
-  { name: 'Agricultural', value: '35%', color: '#928d64', strokeDash: '35 100', strokeOffset: '0' },
-  { name: 'Residential Plot', value: '30%', color: '#345b79', strokeDash: '30 100', strokeOffset: '-35' },
-  { name: 'Commercial Plot', value: '22%', color: '#be5d3f', strokeDash: '22 100', strokeOffset: '-65' },
-  { name: 'Mixed-Use', value: '13%', color: '#6b879c', strokeDash: '13 100', strokeOffset: '-87' }
-];
-
-const defaultUserBreakdownDist: DistributionPieSegment[] = [
-  { name: 'Buyers', value: '52%', color: '#345b79', strokeDash: '52 100', strokeOffset: '0' },
-  { name: 'Contractors', value: '21%', color: '#be5d3f', strokeDash: '21 100', strokeOffset: '-52' },
-  { name: 'Architects', value: '18%', color: '#928d64', strokeDash: '18 100', strokeOffset: '-73' },
-  { name: 'Agents', value: '9%', color: '#6b879c', strokeDash: '9 100', strokeOffset: '-91' }
-];
-
-// ─── Component Implementation ───────────────────────────────────────────────
+// Colors for Donut Charts
+const PROPERTY_TYPE_COLORS = ['#194360', '#be5d3f', '#928d64', '#345b79'];
+const LAND_CATEGORY_COLORS = ['#495d38', '#194360', '#be5d3f', '#928d64'];
+const USER_ROLE_COLORS = ['#194360', '#be5d3f', '#928d64', '#345b79'];
 
 export default function AdminAnalytics({
-  data = null,
-  isLoading = false,
-  error = null,
-  onExportReport,
-  onViewAllSearched
+  data: propsData = null,
+  isLoading: propsLoading = false,
+  error: propsError = null,
 }: AdminAnalyticsProps) {
-  const dateRange = data?.dateRange || 'Dec 1 - Dec 31, 2026';
-  const mainMetrics = data?.mainMetrics || defaultMainMetrics;
-  const sparklines = data?.sparklines || defaultSparklines;
-  const months = data?.months || defaultMonths;
-  const propertyGrowthData = data?.propertyGrowthData || defaultPropertyGrowth;
-  const landGrowthData = data?.landGrowthData || defaultLandGrowth;
-  const topDistricts = data?.topDistricts || defaultTopDistricts;
-  const searchedLocations = data?.searchedLocations || defaultSearchedLocations;
-  const aiAccuracy = data?.aiAccuracy;
-  const propertyTypesDistribution = data?.propertyTypesDistribution || defaultPropertyTypesDist;
-  const landCategoriesDistribution = data?.landCategoriesDistribution || defaultLandCategoriesDist;
-  const userBreakdownDistribution = data?.userBreakdownDistribution || defaultUserBreakdownDist;
+  const [analyticsData, setAnalyticsData] = useState<AdminAnalyticsData | null>(propsData);
+  const [loading, setLoading] = useState<boolean>(!propsData && propsLoading);
+  const [error, setError] = useState<string | null>(propsError);
 
-  // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await adminApi.getAnalyticsData();
+      setAnalyticsData(res);
+    } catch (err: any) {
+      console.error('Failed to fetch analytics data:', err);
+      setError('Failed to load system analytics data from backend server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!propsData) {
+      fetchAnalytics();
+    }
+  }, [propsData]);
+
+  const overview = analyticsData?.overviewMetrics || {
+    totalTrafficCount: 0,
+    avgSessionDuration: '0m 0s',
+    conversionRatePercent: '0%',
+    aiMatchesCount: 0,
+  };
+
+  const propertyBreakdown = analyticsData?.propertyTypeBreakdown || [
+    { type: 'Residential', count: 0, percentage: 0 },
+    { type: 'Commercial', count: 0, percentage: 0 },
+    { type: 'Industrial', count: 0, percentage: 0 },
+    { type: 'Land', count: 0, percentage: 0 },
+  ];
+
+  const landCategories = [
+    { name: 'Agricultural', percentage: 0 },
+    { name: 'Residential Plot', percentage: 0 },
+    { name: 'Commercial Plot', percentage: 0 },
+    { name: 'Mixed-Use', percentage: 0 },
+  ];
+
+  const userBreakdown = [
+    { name: 'Buyers', percentage: 0 },
+    { name: 'Architects', percentage: 0 },
+    { name: 'Contractors', percentage: 0 },
+    { name: 'Agents', percentage: 0 },
+  ];
+
+  const topDistricts = [
+    { rank: 1, name: 'Colombo Central', views: '0 views', listings: 0, growth: '0%' },
+    { rank: 2, name: 'Kandy City', views: '0 views', listings: 0, growth: '0%' },
+    { rank: 3, name: 'Galle Fort', views: '0 views', listings: 0, growth: '0%' },
+    { rank: 4, name: 'Negombo Coastal', views: '0 views', listings: 0, growth: '0%' },
+    { rank: 5, name: 'Nuwara Eliya', views: '0 views', listings: 0, growth: '0%' },
+  ];
+
+  const searchedLocations = [
+    { name: 'Colombo 03', count: '0' },
+    { name: 'Kandy Town', count: '0' },
+    { name: 'Galle Coastal', count: '0' },
+    { name: 'Mount Lavinia', count: '0' },
+    { name: 'Battaramulla', count: '0' },
+  ];
+
+  // Skeleton Loading State
+  if (loading) {
     return (
-      <div className="w-full min-h-screen bg-gray-50 flex flex-col gap-6 p-6 lg:p-8 animate-pulse max-w-[1400px] mx-auto">
+      <div className="w-full min-h-screen bg-[#e6e0d4]/40 p-6 lg:p-8 animate-pulse space-y-6 max-w-[1400px] mx-auto">
         <div className="h-16 bg-gray-200 rounded-2xl w-full" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
           ))}
         </div>
@@ -169,453 +135,460 @@ export default function AdminAnalytics({
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start p-6 lg:p-8 space-y-8 bg-gradient-to-r from-[#e6e0d4] to-[#fcf9f8]">
-      <div className="w-full max-w-[1400px] mx-auto space-y-8">
+    <div className="w-full min-h-screen bg-[#e6e0d4]/40 p-4 sm:p-6 lg:p-8 space-y-6 text-[#1d1d1d]">
+      
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+        <div>
+          <div className="flex items-center gap-2 text-xs text-gray-500 font-bold mb-1">
+            <span>Admin</span>
+            <span>›</span>
+            <span className="text-[#345b79]">Analytics</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1d1d1d]">Analytics Dashboard</h1>
+          <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">
+            Platform-wide insights, market trends & AI performance
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <select className="bg-white border border-gray-200/80 rounded-xl px-4 py-2.5 text-xs font-bold text-gray-700 focus:outline-none cursor-pointer shadow-sm">
+            <option>Dec 1 - Dec 31, 2024</option>
+            <option>Last 30 Days</option>
+            <option>Last 90 Days</option>
+            <option>Year to Date</option>
+          </select>
+
+          <button
+            type="button"
+            onClick={() => {
+              alert('Exporting analytics report...');
+            }}
+            className="bg-[#194360] hover:bg-[#123249] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+          >
+            <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Export Report</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Global Error Banner */}
+      {error && (
+        <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <svg className="size-5 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="font-semibold">{error}</span>
+          </div>
+          <button onClick={fetchAnalytics} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold cursor-pointer">
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* ROW 1: 4 PRIMARY METRIC CARDS */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        {[
+          { label: 'Monthly Active Users', val: overview.totalTrafficCount, sub: 'vs last month', change: '0%', isPositive: true, icon: 'users' },
+          { label: 'Active Listings', val: overview.aiMatchesCount, sub: 'properties & land', change: '0%', isPositive: true, icon: 'folder' },
+          { label: 'Saved Listings', val: '0', sub: 'total saves this month', change: '0%', isPositive: true, icon: 'bookmark' },
+          { label: 'Total Views', val: overview.totalTrafficCount, sub: 'page impressions', change: '0%', isPositive: false, icon: 'eye' }
+        ].map((card, idx) => (
+          <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-200/60 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <div className="size-9 rounded-xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {card.icon === 'users' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />}
+                  {card.icon === 'folder' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />}
+                  {card.icon === 'bookmark' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />}
+                  {card.icon === 'eye' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />}
+                </svg>
+              </div>
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${card.isPositive ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'}`}>
+                {card.change}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-black text-[#1d1d1d] tracking-tight">{card.val}</h3>
+              <span className="text-[11px] font-bold text-gray-700 block mt-0.5">{card.label}</span>
+              <span className="text-[9px] text-gray-400 font-semibold">{card.sub}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ROW 2: 4 TREND MINI-CHART CARDS */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
         
-        {/* Global Error Banner */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
-              <span className="font-semibold">{error}</span>
-            </div>
-            <button onClick={() => window.location.reload()} className="text-xs bg-red-100 px-3 py-1.5 rounded-lg hover:bg-red-200 font-bold">
-              Retry
-            </button>
+        {/* Avg Property Price */}
+        <div className="bg-white rounded-[20px] p-4 border border-gray-200/60 shadow-sm flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-gray-500 uppercase">Avg. Property Price</span>
+            <span className="text-[10px] font-extrabold text-emerald-600">+0%</span>
           </div>
-        )}
+          <div className="flex items-end justify-between">
+            <h4 className="text-lg font-black text-[#1d1d1d]">LKR 0</h4>
+            <div className="h-8 w-20">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparklineData}>
+                  <Area type="monotone" dataKey="val" stroke="#345b79" fill="#345b79" fillOpacity={0.15} strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
 
-        {/* Page Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+        {/* Avg Land Price */}
+        <div className="bg-white rounded-[20px] p-4 border border-gray-200/60 shadow-sm flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-gray-500 uppercase">Avg. Land Price/Perch</span>
+            <span className="text-[10px] font-extrabold text-emerald-600">+0%</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <h4 className="text-lg font-black text-[#1d1d1d]">LKR 0</h4>
+            <div className="h-8 w-20">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparklineData}>
+                  <Area type="monotone" dataKey="val" stroke="#be5d3f" fill="#be5d3f" fillOpacity={0.15} strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Days on Market */}
+        <div className="bg-white rounded-[20px] p-4 border border-gray-200/60 shadow-sm flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-gray-500 uppercase">Days on Market</span>
+            <span className="text-[10px] font-extrabold text-emerald-600">0%</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <h4 className="text-lg font-black text-[#1d1d1d]">0 days</h4>
+            <div className="h-8 w-20">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={sparkbarData}>
+                  <Bar dataKey="val" fill="#d1d5db" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Saved Listings */}
+        <div className="bg-white rounded-[20px] p-4 border border-gray-200/60 shadow-sm flex flex-col justify-between h-28">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-gray-500 uppercase">Saved Listings</span>
+            <span className="text-[10px] font-extrabold text-emerald-600">+0%</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <h4 className="text-lg font-black text-[#1d1d1d]">0</h4>
+            <div className="h-8 w-20">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparklineData}>
+                  <Area type="monotone" dataKey="val" stroke="#495d38" fill="#495d38" fillOpacity={0.15} strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ROW 3: 2 MAIN GROWTH CHARTS */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        {/* Property & Land Growth BarChart */}
+        <div className="lg:col-span-8 bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-extrabold text-[#1d1d1d]">Property & Land Growth</h3>
+              <p className="text-xs text-gray-400 font-medium">Monthly listings added — 2024</p>
+            </div>
+            <div className="flex items-center gap-4 text-xs font-bold">
+              <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-[#194360]" /> Properties</span>
+              <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-[#ff906e]" /> Land</span>
+            </div>
+          </div>
+
+          <div className="h-64 w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={defaultPropertyLandGrowth}>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
+                <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 8, fontSize: 11 }} />
+                <Bar dataKey="properties" fill="#194360" radius={[4, 4, 0, 0]} barSize={12} />
+                <Bar dataKey="land" fill="#ff906e" radius={[4, 4, 0, 0]} barSize={12} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* User Registrations AreaChart */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-extrabold text-[#1d1d1d]">User Registrations</h3>
+              <p className="text-xs text-gray-400 font-medium">New sign-ups per month — 2024</p>
+            </div>
+            <div className="text-right">
+              <span className="text-lg font-black text-[#1d1d1d] block">0</span>
+              <span className="text-[10px] font-extrabold text-emerald-600">+0%</span>
+            </div>
+          </div>
+
+          <div className="h-64 w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={defaultUserRegistrations}>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
+                <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 8, fontSize: 11 }} />
+                <Area type="monotone" dataKey="users" stroke="#194360" fill="#194360" fillOpacity={0.2} strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ROW 4: TOP DISTRICTS, MOST SEARCHED LOCATIONS & AI ACCURACY */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        {/* Top Districts Table */}
+        <div className="lg:col-span-5 bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm flex flex-col justify-between space-y-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#194360] tracking-tight">Analytics Dashboard</h1>
-            <p className="text-xs text-gray-500 font-medium mt-1">Platform-wide insights, market trends & AI performance.</p>
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">Top Districts</h3>
+            <p className="text-xs text-gray-400 font-medium">By listing activity & views</p>
           </div>
-          
-          {/* Date Filter & Export CTAs */}
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-bold text-gray-700 flex items-center gap-2 shadow-sm">
-              <img src="/svg/clock.svg" alt="" className="size-4" />
-              <span>{dateRange}</span>
-            </div>
 
-            <button 
-              onClick={() => onExportReport ? onExportReport() : alert('Exporting Analytics Report...')}
-              className="flex items-center gap-2 rounded-xl bg-[#194360] hover:bg-[#194360]/90 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-colors cursor-pointer"
-            >
-              <img src="/svg/bookmark.svg" alt="" className="size-4 filter invert" />
-              <span>Export Report</span>
-            </button>
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                  <th className="pb-2">#</th>
+                  <th className="pb-2">DISTRICT</th>
+                  <th className="pb-2 text-center">LISTINGS</th>
+                  <th className="pb-2 text-right">GROWTH</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {topDistricts.map((d) => (
+                  <tr key={d.rank} className="hover:bg-gray-50/50">
+                    <td className="py-3 font-bold text-gray-400">{d.rank}</td>
+                    <td className="py-3">
+                      <span className="font-extrabold text-[#1d1d1d] block">{d.name}</span>
+                      <span className="text-[9px] text-gray-400 font-semibold">{d.views}</span>
+                    </td>
+                    <td className="py-3 text-center font-bold text-gray-700">{d.listings}</td>
+                    <td className="py-3 text-right font-extrabold text-emerald-600">{d.growth}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Metric Row 1: KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-          {mainMetrics.map((m) => (
-            <div key={m.name} className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-40">
-              <div className="flex items-start justify-between">
-                <span className="text-xs font-bold text-[#6b879c] tracking-wider uppercase leading-tight w-3/4">{m.name}</span>
-                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.color}`}>
-                  {m.change}
-                </span>
-              </div>
-              <div className="mt-auto leading-tight">
-                <h4 className="text-3xl font-extrabold text-[#1d1d1d]">{m.value}</h4>
-                <span className="text-[11px] text-gray-400 font-bold">{m.sub}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Most Searched Locations */}
+        <div className="lg:col-span-3 bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm flex flex-col justify-between space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-extrabold text-[#1d1d1d]">Most Searched Locations</h3>
+            <span className="text-xs font-bold text-[#194360] cursor-pointer hover:underline">View All →</span>
+          </div>
 
-        {/* Metric Row 2: Sparkline Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-          {sparklines.map((s) => (
-            <div key={s.name} className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-44">
-              <div>
-                <div className="flex justify-between items-start">
-                  <span className="text-xs font-bold text-[#6b879c] uppercase tracking-wider">{s.name}</span>
-                  <span className={`text-xs font-bold ${s.isPositive ? 'text-emerald-700' : 'text-red-600'}`}>
-                    {s.change}
-                  </span>
+          <div className="space-y-3 flex-1">
+            {searchedLocations.map((loc, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-[#1d1d1d]">{loc.name}</span>
+                  <span className="text-gray-400">{loc.count}</span>
                 </div>
-                <h4 className="text-2xl font-extrabold text-[#1d1d1d] mt-1">{s.value}</h4>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-[#194360] h-full rounded-full" style={{ width: '0%' }} />
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Sparkline Graph Visualizer */}
-              <div className="h-12 w-full mt-3">
-                {s.bars ? (
-                  <div className="flex items-end justify-between size-full px-1">
-                    {s.bars.map((barVal, barIdx) => (
-                      <div
-                        key={barIdx}
-                        className="w-[12%] bg-[#345b79]/20 rounded-t transition-all hover:bg-[#345b79]"
-                        style={{ height: `${barVal * 2.2}%` }}
-                      />
+        {/* AI Recommendation Accuracy Donut Gauge */}
+        <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm flex flex-col justify-between space-y-4 text-center">
+          <div>
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">AI Recommendation Accuracy</h3>
+            <p className="text-xs text-gray-400 font-medium">Based on user engagement & conversions</p>
+          </div>
+
+          <div className="relative size-44 mx-auto flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[{ name: 'Accuracy', value: 100 }]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={75}
+                  startAngle={180}
+                  endAngle={0}
+                  dataKey="value"
+                >
+                  <Cell fill="#194360" />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pt-6">
+              <span className="text-2xl font-black text-[#1d1d1d]">0%</span>
+              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">ACCURACY</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 border-t border-gray-100 pt-3">
+            <div>
+              <span className="text-sm font-extrabold text-[#1d1d1d] block">0%</span>
+              <span className="text-[9px] font-bold text-gray-400">Precision</span>
+            </div>
+            <div>
+              <span className="text-sm font-extrabold text-[#1d1d1d] block">0%</span>
+              <span className="text-[9px] font-bold text-gray-400">Recall</span>
+            </div>
+            <div>
+              <span className="text-sm font-extrabold text-[#1d1d1d] block">0%</span>
+              <span className="text-[9px] font-bold text-gray-400">F1 Score</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ROW 5: 3 CATEGORY DISTRIBUTION DONUT CHARTS */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
+        
+        {/* Property Types Donut Chart */}
+        <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+          <div>
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">Property Types</h3>
+            <p className="text-xs text-gray-400 font-medium">Distribution across all listings</p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="size-28 shrink-0 relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={propertyBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={45}
+                    dataKey="count"
+                  >
+                    {propertyBreakdown.map((_, idx) => (
+                      <Cell key={idx} fill={PROPERTY_TYPE_COLORS[idx % PROPERTY_TYPE_COLORS.length]} />
                     ))}
-                  </div>
-                ) : (
-                  <svg className="w-full h-full" viewBox="0 0 160 50" preserveAspectRatio="none">
-                    <polyline
-                      fill="none"
-                      stroke={s.isPositive ? '#345b79' : '#be5d3f'}
-                      strokeWidth="2.5"
-                      points={s.points}
-                    />
-                  </svg>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Row 3: Growth Charts and Line Graph widgets */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
-          
-          {/* Property & Land Growth Bar Chart */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 lg:p-8 shadow-sm lg:col-span-8 flex flex-col justify-between min-h-[380px]">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-              <div>
-                <h3 className="text-base font-extrabold text-[#1d1d1d]">Property & Land Growth</h3>
-                <p className="text-xs text-gray-500 font-semibold">Monthly listings added — 2026</p>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-bold">
-                <div className="flex items-center gap-1.5">
-                  <span className="size-2.5 rounded-full bg-[#345b79]" />
-                  <span className="text-gray-700">Properties</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="size-2.5 rounded-full bg-[#ffdbd1]" />
-                  <span className="text-gray-700">Land</span>
-                </div>
-              </div>
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <span className="absolute text-xs font-black text-[#1d1d1d]">0</span>
             </div>
 
-            {/* SVG Bar Chart columns */}
-            <div className="flex-1 flex items-end justify-between h-48 border-b border-gray-100 pb-2 px-2">
-              {months.map((mName, mIdx) => (
-                <div key={mName} className="flex flex-col items-center gap-2 flex-1">
-                  <div className="flex gap-1 items-end justify-center h-40 w-full">
-                    <div
-                      className="w-3 bg-[#345b79] rounded-t transition-all hover:opacity-90"
-                      style={{ height: `${((propertyGrowthData[mIdx] || 0) / 240) * 100}%` }}
-                      title={`Properties: ${propertyGrowthData[mIdx] || 0}`}
-                    />
-                    <div
-                      className="w-3 bg-[#ffdbd1] rounded-t transition-all hover:opacity-90"
-                      style={{ height: `${((landGrowthData[mIdx] || 0) / 240) * 100}%` }}
-                      title={`Land: ${landGrowthData[mIdx] || 0}`}
-                    />
-                  </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">{mName}</span>
+            <div className="space-y-1.5 text-xs font-bold flex-1">
+              {propertyBreakdown.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-gray-600">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: PROPERTY_TYPE_COLORS[idx % PROPERTY_TYPE_COLORS.length] }} />
+                    {item.type}
+                  </span>
+                  <span className="text-[#1d1d1d] font-extrabold">{item.percentage}%</span>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* User Registrations Sparkline Area Chart */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 lg:p-8 shadow-sm lg:col-span-4 flex flex-col justify-between min-h-[380px]">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-base font-extrabold text-[#1d1d1d]">User Registrations</h3>
-                <p className="text-xs text-gray-500 font-semibold">New sign-ups per month — 2026</p>
-              </div>
-              <div className="text-right">
-                <h4 className="text-base font-bold text-[#1d1d1d]">1,340</h4>
-                <span className="text-xs font-bold text-[#345b79]">+23%</span>
-              </div>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-end mt-5 h-44">
-              <svg className="w-full h-36" viewBox="0 0 200 100" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="gradient-signups" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#345b79" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#345b79" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M0,80 Q30,65 60,75 T120,40 T180,30 T200,20 L200,100 L0,100 Z"
-                  fill="url(#gradient-signups)"
-                />
-                <path
-                  d="M0,80 Q30,65 60,75 T120,40 T180,30 T200,20"
-                  fill="none"
-                  stroke="#345b79"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="flex justify-between mt-3 border-t border-gray-100 pt-2 text-[9px] font-bold text-gray-400 uppercase">
-                <span>Jan</span>
-                <span>Jun</span>
-                <span>Dec</span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
-        {/* Row 4: Tables, Locations, and Gauges */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
-          
-          {/* Top Districts Table */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm lg:col-span-5 flex flex-col justify-between">
-            <div>
-              <h3 className="text-base font-extrabold text-[#1d1d1d] mb-1">Top Districts</h3>
-              <p className="text-xs text-gray-400 font-semibold mb-5">By listing activity & views</p>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="border-b border-gray-100 text-[10px] font-bold text-[#6b879c] uppercase tracking-wider">
-                      <th className="pb-3">#</th>
-                      <th className="pb-3">DISTRICT</th>
-                      <th className="pb-3 text-right">LISTINGS</th>
-                      <th className="pb-3 text-right">GROWTH</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {topDistricts.map((item) => (
-                      <tr key={item.rank} className="hover:bg-gray-50/50">
-                        <td className="py-3 text-gray-400 font-semibold">{item.rank}</td>
-                        <td className="py-3">
-                          <div className="font-bold text-[#1d1d1d]">{item.name}</div>
-                          <div className="text-[10px] text-gray-400 font-normal">{item.views}</div>
-                        </td>
-                        <td className="py-3 text-right font-semibold text-gray-700">{item.listings}</td>
-                        <td className={`py-3 text-right font-bold ${
-                          item.growth.startsWith('+') ? 'text-emerald-700' : 'text-red-600'
-                        }`}>
-                          {item.growth}
-                        </td>
-                      </tr>
+        {/* Land Categories Donut Chart */}
+        <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+          <div>
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">Land Categories</h3>
+            <p className="text-xs text-gray-400 font-medium">Classification of land listings</p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="size-28 shrink-0 relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={landCategories}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={45}
+                    dataKey="percentage"
+                  >
+                    {landCategories.map((_, idx) => (
+                      <Cell key={idx} fill={LAND_CATEGORY_COLORS[idx % LAND_CATEGORY_COLORS.length]} />
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <span className="absolute text-xs font-black text-[#1d1d1d]">0</span>
+            </div>
+
+            <div className="space-y-1.5 text-xs font-bold flex-1">
+              {landCategories.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-gray-600">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: LAND_CATEGORY_COLORS[idx % LAND_CATEGORY_COLORS.length] }} />
+                    {item.name}
+                  </span>
+                  <span className="text-[#1d1d1d] font-extrabold">{item.percentage}%</span>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Most Searched Locations Progress bars */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm lg:col-span-3 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-extrabold text-[#1d1d1d]">Most Searched</h3>
-                <button onClick={onViewAllSearched} className="text-xs font-bold text-[#345b79] hover:underline cursor-pointer">View All</button>
-              </div>
-              
-              <div className="space-y-4">
-                {searchedLocations.map((loc) => (
-                  <div key={loc.name} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold text-[#1d1d1d]">
-                      <span>{loc.name}</span>
-                      <span className="text-gray-400 font-normal">{loc.count}</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[#345b79] transition-all duration-500"
-                        style={{ width: `${loc.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* AI Recommendation Accuracy semi-circle gauge */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm lg:col-span-4 flex flex-col justify-between">
-            <div>
-              <h3 className="text-base font-extrabold text-[#1d1d1d] mb-1">AI Recommendation Accuracy</h3>
-              <p className="text-xs text-gray-400 font-semibold mb-5">Based on user engagement & conversions</p>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-4 relative">
-              <div className="relative size-40">
-                <svg className="size-full" viewBox="0 0 100 50">
-                  <path
-                    d="M 10 50 A 40 40 0 0 1 90 50"
-                    fill="none"
-                    stroke="#f0eded"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M 10 50 A 40 40 0 0 1 90 50"
-                    fill="none"
-                    stroke="#345b79"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeDasharray="125"
-                    strokeDashoffset="6" 
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-end pb-4 leading-none">
-                  <span className="text-2xl font-extrabold text-[#1d1d1d]">{aiAccuracy?.accuracyPercent ?? '94.7%'}</span>
-                  <span className="text-[9px] text-gray-400 font-bold uppercase mt-1 tracking-wider">ACCURACY</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 w-full text-center mt-6 pt-4 border-t border-gray-50">
-                <div>
-                  <span className="block text-xs font-bold text-[#1d1d1d]">{aiAccuracy?.precisionPercent ?? '96.1%'}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">Precision</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-bold text-amber-700">{aiAccuracy?.recallPercent ?? '93.4%'}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">Recall</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-bold text-emerald-700">{aiAccuracy?.f1ScorePercent ?? '94.7%'}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">F1 Score</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
-        {/* Row 5: Distribution Breakdowns (Pie/Donut Panels) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-          
-          {/* Property Types Donut Card */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
-            <div>
-              <h3 className="text-base font-extrabold text-[#1d1d1d] mb-1">Property Types</h3>
-              <p className="text-xs text-gray-500 font-semibold mb-5">Distribution across all listings</p>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <div className="relative size-24 shrink-0">
-                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f0eded" strokeWidth="6" />
-                  {propertyTypesDistribution.map((item, idx) => (
-                    <circle
-                      key={idx}
-                      cx="18"
-                      cy="18"
-                      r="15.915"
-                      fill="none"
-                      stroke={item.color}
-                      strokeWidth="6"
-                      strokeDasharray={item.strokeDash}
-                      strokeDashoffset={item.strokeOffset}
-                    />
-                  ))}
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-                  <span className="text-base font-extrabold text-[#1d1d1d]">100</span>
-                  <span className="text-[8px] text-gray-400 font-bold uppercase mt-1">TOTAL</span>
-                </div>
-              </div>
-
-              <div className="flex-1 space-y-2">
-                {propertyTypesDistribution.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 font-semibold text-gray-700">
-                      <span className="size-2 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span>{item.name}</span>
-                    </div>
-                    <span className="font-bold text-[#1d1d1d]">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* User Breakdown Donut Chart */}
+        <div className="bg-white rounded-[24px] p-6 border border-gray-200/60 shadow-sm space-y-4">
+          <div>
+            <h3 className="text-base font-extrabold text-[#1d1d1d]">User Breakdown</h3>
+            <p className="text-xs text-gray-400 font-medium">By platform role</p>
           </div>
 
-          {/* Land Categories Donut Card */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
-            <div>
-              <h3 className="text-base font-extrabold text-[#1d1d1d] mb-1">Land Categories</h3>
-              <p className="text-xs text-gray-500 font-semibold mb-5">Classification of land listings</p>
+          <div className="flex items-center gap-4">
+            <div className="size-28 shrink-0 relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={userBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={45}
+                    dataKey="percentage"
+                  >
+                    {userBreakdown.map((_, idx) => (
+                      <Cell key={idx} fill={USER_ROLE_COLORS[idx % USER_ROLE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <span className="absolute text-xs font-black text-[#1d1d1d]">0</span>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="relative size-24 shrink-0">
-                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f0eded" strokeWidth="6" />
-                  {landCategoriesDistribution.map((item, idx) => (
-                    <circle
-                      key={idx}
-                      cx="18"
-                      cy="18"
-                      r="15.915"
-                      fill="none"
-                      stroke={item.color}
-                      strokeWidth="6"
-                      strokeDasharray={item.strokeDash}
-                      strokeDashoffset={item.strokeOffset}
-                    />
-                  ))}
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-                  <span className="text-base font-extrabold text-[#1d1d1d]">100</span>
-                  <span className="text-[8px] text-gray-400 font-bold uppercase mt-1">TOTAL</span>
+            <div className="space-y-1.5 text-xs font-bold flex-1">
+              {userBreakdown.map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-gray-600">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: USER_ROLE_COLORS[idx % USER_ROLE_COLORS.length] }} />
+                    {item.name}
+                  </span>
+                  <span className="text-[#1d1d1d] font-extrabold">{item.percentage}%</span>
                 </div>
-              </div>
-
-              <div className="flex-1 space-y-2">
-                {landCategoriesDistribution.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 font-semibold text-gray-700">
-                      <span className="size-2 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span>{item.name}</span>
-                    </div>
-                    <span className="font-bold text-[#1d1d1d]">{item.value}</span>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
-
-          {/* User Breakdown Donut Card */}
-          <div className="bg-white border border-[#ccb7a3]/20 rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
-            <div>
-              <h3 className="text-base font-extrabold text-[#1d1d1d] mb-1">User Breakdown</h3>
-              <p className="text-xs text-gray-500 font-semibold mb-5">By platform role</p>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <div className="relative size-24 shrink-0">
-                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f0eded" strokeWidth="6" />
-                  {userBreakdownDistribution.map((item, idx) => (
-                    <circle
-                      key={idx}
-                      cx="18"
-                      cy="18"
-                      r="15.915"
-                      fill="none"
-                      stroke={item.color}
-                      strokeWidth="6"
-                      strokeDasharray={item.strokeDash}
-                      strokeDashoffset={item.strokeOffset}
-                    />
-                  ))}
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-                  <span className="text-base font-extrabold text-[#1d1d1d]">100</span>
-                  <span className="text-[8px] text-gray-400 font-bold uppercase mt-1">TOTAL</span>
-                </div>
-              </div>
-
-              <div className="flex-1 space-y-2">
-                {userBreakdownDistribution.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 font-semibold text-gray-700">
-                      <span className="size-2 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span>{item.name}</span>
-                    </div>
-                    <span className="font-bold text-[#1d1d1d]">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </div>
+
     </div>
   );
 }
