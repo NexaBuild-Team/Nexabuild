@@ -1,3 +1,4 @@
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,16 +14,19 @@ import { ConstructionModule } from './construction/construction.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [
-    PrismaModule,
-    PropertyModule, UserModule, AuthModule,
-    ArchitectureModule,
-    LandModule,
-    BuyerModule,
-    AgentModule,
-    ConstructionModule,
-    AdminModule,
-  ],
+imports: [
+  PrismaModule,
+  PropertyModule,
+  UserModule,
+  AuthModule,
+  ArchitectureModule,
+  LandModule,
+  BuyerModule,
+  AgentModule,
+  ConstructionModule,
+  AdminModule,
+  CloudinaryModule,
+],
   controllers: [AppController],
   providers: [AppService],
 })

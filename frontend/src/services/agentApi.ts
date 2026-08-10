@@ -85,3 +85,23 @@ export const createPropertyApi = async (payload: any): Promise<any> => {
   const response = await api.post('/agent/properties', payload, { headers });
   return response.data;
 };
+
+
+export const uploadPropertyImageApi = async (file: File): Promise<{
+  message: string;
+  url: string;
+  public_id: string;
+}> => {
+  const token = localStorage.getItem('accessToken');
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await api.post('/cloudinary/upload', formData, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  return response.data;
+};

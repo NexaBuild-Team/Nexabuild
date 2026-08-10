@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
-import { createPropertyApi } from '../../services/agentApi';
-
+import {
+  createPropertyApi,
+  uploadPropertyImageApi,
+} from '../../services/agentApi';
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
 export interface AddNewPropertyFormFields {
@@ -94,9 +96,15 @@ export default function AddNewProperty({
       'Air Conditioning': false
     }
   );
+const [coverImage, setCoverImage] = useState<string | null>(
+  data?.initialFields?.coverImage ?? null
+);
 
-  const [coverImage] = useState<string | null>(data?.initialFields?.coverImage ?? null);
-  const [galleryImages] = useState<string[]>(data?.initialFields?.galleryImages || []);
+const [galleryImages, setGalleryImages] = useState<string[]>(
+  data?.initialFields?.galleryImages || []
+);
+
+const [uploadingImage, setUploadingImage] = useState(false);
 
   // Sidebar widget states
   const [status, setStatus] = useState<'Draft' | 'Active' | 'Pending Review' | 'Sold'>(data?.initialFields?.status || 'Draft');
@@ -142,6 +150,39 @@ export default function AddNewProperty({
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     setAiTags(shuffled.slice(0, 5));
   };
+
+  const handleImageUpload = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    return;
+  }
+
+  setUploadingImage(true);
+
+  try {
+    const result = await uploadPropertyImageApi(file);
+
+    setGalleryImages((prev) => [...prev, result.url]);
+
+    if (!coverImage) {
+      setCoverImage(result.url);
+    }
+
+    alert('Image uploaded successfully!');
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    alert('Failed to upload image.');
+  } finally {
+    setUploadingImage(false);
+    event.target.value = '';
+  }
+};
 
   const constructPayload = (): AddNewPropertyFormFields & { images?: string[] } => ({
     title,
@@ -558,44 +599,100 @@ export default function AddNewProperty({
             </div>
           </section>
 
-          {/* Section 5: Gallery Upload (Coming Soon) */}
-          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 relative overflow-hidden">
-            {/* Coming Soon Overlay */}
-            <div className="absolute inset-0 bg-white/75 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center space-y-3">
-              <div className="size-12 rounded-2xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shadow-inner">
-                <svg className="size-6 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <span className="text-xs font-black tracking-widest uppercase bg-[#345b79] text-white px-3 py-1 rounded-full shadow-sm">
-                Coming Soon
-              </span>
-              <p className="text-xs font-extrabold text-gray-700 max-w-sm">
-                Image upload & Cloud storage integration is coming soon. You can publish your listing now with default property visuals!
-              </p>
-            </div>
+          {/* Section 5: Gallery Upload */}
+<section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+  <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+    <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+      <svg
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+        />
+      </svg>
+    </div>
 
-            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100 opacity-40">
-              <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-base font-extrabold text-[#111827]">Property Photos</h3>
-                <p className="text-xs text-gray-500 font-medium">Upload high-resolution images</p>
-              </div>
-            </div>
+    <div>
+      <h3 className="text-base font-extrabold text-[#111827]">
+        Property Photos
+      </h3>
+      <p className="text-xs text-gray-500 font-medium">
+        Upload high-resolution images
+      </p>
+    </div>
+  </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-40">
-              <div className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50">
-                <svg className="size-6 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                <span className="text-[10px] font-bold text-gray-500">Add Photo</span>
-              </div>
-            </div>
-          </section>
+  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    {galleryImages.map((image, index) => (
+      <div
+        key={image}
+        className="relative size-32 rounded-2xl overflow-hidden border border-gray-200"
+      >
+        <img
+          src={image}
+          alt={`Property ${index + 1}`}
+          className="w-full h-full object-cover"
+        />
+
+        {index === 0 && (
+          <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] px-2 py-1 rounded-lg">
+            Cover
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            setGalleryImages((prev) =>
+              prev.filter((_, i) => i !== index)
+            );
+
+            if (image === coverImage) {
+              setCoverImage(null);
+            }
+          }}
+          className="absolute top-1 right-1 size-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+        >
+          ×
+        </button>
+      </div>
+    ))}
+
+    <label className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50 hover:bg-gray-100 cursor-pointer transition-colors">
+      <svg
+        className="size-6 text-gray-400 mb-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+
+      <span className="text-[10px] font-bold text-gray-500">
+        {uploadingImage ? 'Uploading...' : 'Add Photo'}
+      </span>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        disabled={uploadingImage}
+        className="hidden"
+      />
+    </label>
+  </div>
+</section>
 
         </div>
 
