@@ -212,8 +212,21 @@ function ArchitecturePage() {
     scrollToFirms()
   }
 
-  // Apply sidebar filters to live data
+  // Reset to page 1 whenever the hero search terms change
+  useEffect(() => { setCurrentPage(1) }, [searchName, searchCompany, searchCity])
+
+  // Apply hero search bar + sidebar filters to live data
+  const nameTerm     = (searchName + ' ' + searchCompany).trim().toLowerCase()
+  const locationTerm = searchCity.trim().toLowerCase()
+
   const filtered = firms.filter((firm) => {
+    // ── Hero search bar ────────────────────────────────────────────────
+    if (nameTerm && !firm.name?.toLowerCase().includes(nameTerm)) return false
+    if (locationTerm &&
+      !firm.city?.toLowerCase().includes(locationTerm) &&
+      !(firm.locationLabel ?? '').toLowerCase().includes(locationTerm)
+    ) return false
+    // ── Sidebar filters ───────────────────────────────────────────────
     if (selectedLocations.length > 0 && !selectedLocations.includes(firm.city)) return false
     if (selectedSpecs.length > 0 && !selectedSpecs.some((s) =>
       (firm.specializations ?? []).map((sp: any) => (typeof sp === 'string' ? sp : sp.label)).includes(s)
@@ -534,14 +547,14 @@ function ArchitecturePage() {
                 style={{ background: '#fff', border: '1px solid #e6e0d4' }}
               >
                 <p className="text-4xl mb-3">🔍</p>
-                <p className="font-semibold" style={{ color: '#1d1d1d' }}>No firms match your filters</p>
-                <p className="text-sm mt-1" style={{ color: '#6b879c' }}>Try adjusting your criteria</p>
+                <p className="font-semibold" style={{ color: '#1d1d1d' }}>No firms match your search</p>
+                <p className="text-sm mt-1" style={{ color: '#6b879c' }}>Try different keywords or adjust your filters</p>
                 <button
-                  onClick={clearAll}
+                  onClick={() => { clearAll(); setSearchName(''); setSearchCompany(''); setSearchCity(''); setActiveFilter(null) }}
                   className="mt-4 px-6 py-2 rounded-xl text-sm font-semibold text-white"
                   style={{ background: '#345b79' }}
                 >
-                  Clear Filters
+                  Clear All
                 </button>
               </div>
             ) : (
