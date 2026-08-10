@@ -1,31 +1,26 @@
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  createdAt  DateTime @default(now())
+  avatar     String?
+  firstName  String?
+  isVerified Boolean  @default(false)
+  lastName   String?
+  password   String
+  phone      String?
+  role       Role     @default(USER)
+  updatedAt  DateTime @updatedAt
+
+  savedProperties SavedProperty[]
+  savedLands      SavedLand[]
+  searchHistory   SearchHistory[]
+  notifications   Notification[]
+}
+
 enum Role {
   USER
   ADMIN
   AGENT
   ARCHITECT
   CONTRACTOR
-}
-
-model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  firstName   String?
-  lastName    String?
-  phone       String?
-  avatar      String?
-  role        Role     @default(USER)
-  isVerified  Boolean  @default(false)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  savedProperties SavedProperty[]
-  savedLands      SavedLand[]
-  searchHistories SearchHistory[]
-  notifications   Notification[]
-  properties      Property[]
-  lands           Land[]
-  enquiries       Enquiry[]
-  agentActivities AgentActivity[]
 }

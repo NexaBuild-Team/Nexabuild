@@ -23,13 +23,10 @@ model SavedLand {
 }
 
 model SearchHistory {
-  id          String   @id @default(uuid())
-  userId      String
-  query       String
-  category    String   @default("ALL") // "PROPERTY", "LAND", "ALL"
-  location    String?
-  resultCount Int      @default(0)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  query     String?
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -39,9 +36,7 @@ model Notification {
   userId    String
   title     String
   message   String
-  type      String   @default("INFO") // "AI_MATCH", "PRICE_DROP", "INFO"
-  isRead    Boolean  @default(false)
-  linkUrl   String?
+  type      String
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

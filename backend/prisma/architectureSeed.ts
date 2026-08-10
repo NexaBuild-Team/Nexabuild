@@ -23,7 +23,7 @@
 
 import 'dotenv/config'
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../src/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
