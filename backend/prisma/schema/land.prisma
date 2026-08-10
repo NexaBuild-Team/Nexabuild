@@ -17,5 +17,6 @@ model Land {
   developmentPlan String?
   environment     String?
   purpose         String?
+  views           Int      @default(0)
   savedLands SavedLand[]
 }

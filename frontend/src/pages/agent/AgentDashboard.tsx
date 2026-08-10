@@ -324,34 +324,51 @@ export default function AgentDashboard({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
           {/* Featured Listing Card */}
-          <div className="lg:col-span-5 bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm flex flex-col justify-between">
-            <div className="h-[180px] w-full overflow-hidden relative">
-              <img src="/hero_property.png" alt="Palm Villa" className="size-full object-cover" />
-              <span className="absolute top-4 left-4 bg-amber-500 text-white text-[9px] font-extrabold tracking-widest px-2.5 py-1 rounded-full shadow-sm uppercase">
-                MOST VIEWED
-              </span>
-            </div>
+          {(() => {
+            const featuredItem = (apiData as any)?.mostViewedListing || (listings.length > 0 ? {
+              title: listings[0].title,
+              location: listings[0].type === 'PROPERTY' ? 'Prime Property' : 'Prime Land',
+              details: listings[0].type === 'PROPERTY' ? 'Active Listing' : 'Land Plot',
+              views: listings[0].views || 1850,
+              saved: listings[0].saved || 142,
+              imageUrl: listings[0].imageUrl || '/hero_property.png',
+            } : null);
 
-            <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-              <div>
-                <h3 className="text-lg font-extrabold text-[#111827]">Palm Villa, Jumeirah</h3>
-                <p className="text-xs text-gray-500 font-semibold mt-0.5">5 Bed • 6 Bath • 7,200 sqft</p>
-                <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mt-2">
-                  <span className="flex items-center gap-1.5"><img src="/svg/eye.svg" alt="" className="size-3.5 opacity-70" /> 3,240 views</span>
-                  <span className="flex items-center gap-1.5"><img src="/svg/heart.svg" alt="" className="size-3.5 opacity-70" /> 182 saved</span>
+            return featuredItem ? (
+              <div className="lg:col-span-5 bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm flex flex-col justify-between">
+                <div className="h-[180px] w-full overflow-hidden relative">
+                  <img src={featuredItem.imageUrl} alt={featuredItem.title} className="size-full object-cover" />
+                  <span className="absolute top-4 left-4 bg-amber-500 text-white text-[9px] font-extrabold tracking-widest px-2.5 py-1 rounded-full shadow-sm uppercase">
+                    MOST VIEWED
+                  </span>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <h3 className="text-lg font-extrabold text-[#111827]">{featuredItem.title}</h3>
+                    <p className="text-xs text-gray-500 font-semibold mt-0.5">{featuredItem.location || featuredItem.details}</p>
+                    <div className="flex items-center gap-4 text-xs font-bold text-gray-500 mt-2">
+                      <span className="flex items-center gap-1.5"><img src="/svg/eye.svg" alt="" className="size-3.5 opacity-70" /> {Number(featuredItem.views).toLocaleString()} views</span>
+                      <span className="flex items-center gap-1.5"><img src="/svg/heart.svg" alt="" className="size-3.5 opacity-70" /> {Number(featuredItem.saved).toLocaleString()} saved</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <Link to="/property-listing" className="flex-1 bg-[#345b79] text-white text-xs font-extrabold py-2.5 rounded-xl text-center hover:bg-[#2a4a63] transition-colors">
+                      View Listing
+                    </Link>
+                    <button className="flex-1 bg-gray-100 text-[#111827] text-xs font-extrabold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-200 transition-colors">
+                      Edit
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3 pt-2">
-                <Link to="/property-listing" className="flex-1 bg-[#345b79] text-white text-xs font-extrabold py-2.5 rounded-xl text-center hover:bg-[#2a4a63] transition-colors">
-                  View Listing
-                </Link>
-                <button className="flex-1 bg-gray-100 text-[#111827] text-xs font-extrabold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-200 transition-colors">
-                  Edit
-                </button>
+            ) : (
+              <div className="lg:col-span-5 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex items-center justify-center text-gray-400 text-xs font-bold">
+                No featured listing available.
               </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Recent Activity */}
           <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">

@@ -23,39 +23,7 @@ export class AgentController {
   constructor(private readonly agentService: AgentService) {}
 
   // ============================================================
-  // AGENT CRUD
-  // ============================================================
-
-  @Get()
-  async getAllAgents() {
-    return this.agentService.getAllAgents();
-  }
-
-  @Get(':id')
-  async getAgentById(@Param('id') id: string) {
-    return this.agentService.getAgentById(id);
-  }
-
-  @Post()
-  async createAgent(@Body() dto: CreateAgentDto) {
-    return this.agentService.createAgent(dto);
-  }
-
-  @Patch(':id')
-  async updateAgent(
-    @Param('id') id: string,
-    @Body() dto: UpdateAgentDto,
-  ) {
-    return this.agentService.updateAgent(id, dto);
-  }
-
-  @Delete(':id')
-  async deleteAgent(@Param('id') id: string) {
-    return this.agentService.deleteAgent(id);
-  }
-
-  // ============================================================
-  // EXISTING AGENT DASHBOARD
+  // DASHBOARD & SPECIFIC ENDPOINTS (Must be defined before :id)
   // ============================================================
 
   @UseGuards(JwtAuthGuard)
@@ -99,5 +67,37 @@ export class AgentController {
   ) {
     const userId = req.user?.id || req.user?.userId;
     return this.agentService.createProperty(userId, dto);
+  }
+
+  // ============================================================
+  // AGENT CRUD
+  // ============================================================
+
+  @Get()
+  async getAllAgents() {
+    return this.agentService.getAllAgents();
+  }
+
+  @Get(':id')
+  async getAgentById(@Param('id') id: string) {
+    return this.agentService.getAgentById(id);
+  }
+
+  @Post()
+  async createAgent(@Body() dto: CreateAgentDto) {
+    return this.agentService.createAgent(dto);
+  }
+
+  @Patch(':id')
+  async updateAgent(
+    @Param('id') id: string,
+    @Body() dto: UpdateAgentDto,
+  ) {
+    return this.agentService.updateAgent(id, dto);
+  }
+
+  @Delete(':id')
+  async deleteAgent(@Param('id') id: string) {
+    return this.agentService.deleteAgent(id);
   }
 }
