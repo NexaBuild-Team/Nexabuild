@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAllLands } from '../../services/landApi';
+import { toggleSaveLandApi } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -40,101 +42,6 @@ export interface ViewAllLandProps {
   onLoadMore?: () => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultLandPlots: DetailedLandPlot[] = [
-  {
-    id: 1,
-    title: 'Prime Plot, Nugegoda',
-    locationDistrict: 'Colombo',
-    subLocation: 'Nugegoda',
-    priceAmount: 'LKR 8.5M',
-    pricePerPerch: 'LKR 425K/perch',
-    matchScore: '96%',
-    potentialLevel: 'HIGH POTENTIAL',
-    sizePerches: '20 Perches',
-    roadAccess: 'Main Road',
-    zoningType: 'RESIDENTIAL',
-    imageUrl: '/hero_property.png',
-    isSaved: false
-  },
-  {
-    id: 2,
-    title: 'Residential Land, Homagama',
-    locationDistrict: 'Colombo',
-    subLocation: 'Homagama',
-    priceAmount: 'LKR 5.2M',
-    pricePerPerch: 'LKR 173K/perch',
-    matchScore: '89%',
-    potentialLevel: 'HIGH POTENTIAL',
-    sizePerches: '30 Perches',
-    roadAccess: 'Side Road',
-    zoningType: 'RESIDENTIAL',
-    imageUrl: '/property_card_4.png',
-    isSaved: false
-  },
-  {
-    id: 3,
-    title: 'Corner Plot, Kaduwela',
-    locationDistrict: 'Colombo',
-    subLocation: 'Kaduwela',
-    priceAmount: 'LKR 12.8M',
-    pricePerPerch: 'LKR 320K/perch',
-    matchScore: '84%',
-    potentialLevel: 'MEDIUM POTENTIAL',
-    sizePerches: '40 Perches',
-    roadAccess: 'Corner Dual Access',
-    zoningType: 'MIXED USE',
-    imageUrl: '/property_card_1.png',
-    isSaved: true
-  },
-  {
-    id: 4,
-    title: 'Elevated Plot, Piliyandala',
-    locationDistrict: 'Colombo',
-    subLocation: 'Piliyandala',
-    priceAmount: 'LKR 4.8M',
-    pricePerPerch: 'LKR 267K/perch',
-    matchScore: '72%',
-    potentialLevel: 'MEDIUM POTENTIAL',
-    sizePerches: '18 Perches',
-    roadAccess: 'Side Road',
-    zoningType: 'RESIDENTIAL',
-    imageUrl: '/property_card_2.png',
-    isSaved: false
-  },
-  {
-    id: 5,
-    title: 'Beachfront Land, Moratuwa',
-    locationDistrict: 'Colombo',
-    subLocation: 'Moratuwa',
-    priceAmount: 'LKR 22M',
-    pricePerPerch: 'LKR 629K/perch',
-    matchScore: '70%',
-    potentialLevel: 'HIGH POTENTIAL',
-    sizePerches: '35 Perches',
-    roadAccess: 'Beach Road',
-    zoningType: 'MIXED USE',
-    imageUrl: '/property_card_3.png',
-    isSaved: false
-  },
-  {
-    id: 6,
-    title: 'Urban Plot, Kelaniya',
-    locationDistrict: 'Gampaha',
-    subLocation: 'Kelaniya',
-    priceAmount: 'LKR 7.5M',
-    pricePerPerch: 'LKR 341K/perch',
-    matchScore: '68%',
-    potentialLevel: 'MEDIUM POTENTIAL',
-    sizePerches: '22 Perches',
-    roadAccess: 'Main Road',
-    zoningType: 'RESIDENTIAL',
-    imageUrl: '/property_card_4.png',
-    isSaved: false
-  }
-];
-
 const defaultDistricts = ['All', 'Colombo', 'Gampaha', 'Kandy', 'Galle', 'Kalutara'];
 
 // ─── Component Implementation ───────────────────────────────────────────────
@@ -153,35 +60,73 @@ export default function ViewAllLand({
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [savedStatusMap, setSavedStatusMap] = useState<Record<string | number, boolean>>({});
 
-  const landPlots = data?.landPlots !== undefined ? data.landPlots : defaultLandPlots;
+  const [apiLands, setApiLands] = useState<DetailedLandPlot[] | null>(null);
+  const [fetching, setFetching] = useState(!data);
+
+  useEffect(() => {
+    if (!data) {
+      setFetching(true);
+      getAllLands()
+        .then((res) => {
+          const mapped: DetailedLandPlot[] = res.map((l: any) => ({
+            id: l.id,
+            title: l.name || l.title || 'Prime Land Plot',
+            locationDistrict: l.location || 'Colombo',
+            subLocation: l.location || 'Homagama',
+            priceAmount: typeof l.price === 'number' ? (l.price >= 1000000 ? `LKR ${(l.price / 1000000).toFixed(1)}M` : `LKR ${l.price.toLocaleString()}`) : String(l.price || 'LKR 0'),
+            pricePerPerch: `LKR ${((l.price || 0) / (l.perches || 1) / 100000).toFixed(2)} Lakhs/perch`,
+            matchScore: `${l.matchScore || 92}%`,
+            potentialLevel: 'HIGH POTENTIAL',
+            sizePerches: `${l.perches || 15} Perches`,
+            roadAccess: l.landType ? `${l.landType} Road` : 'Main Road',
+            zoningType: 'RESIDENTIAL',
+            imageUrl: (l.images && l.images.length > 0) ? l.images[0] : '/property_card_1.png',
+            isSaved: l.isSaved || false,
+          }));
+          setApiLands(mapped);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch lands:', err);
+          setFetching(false);
+        });
+    }
+  }, [data]);
+
+  const landPlots = apiLands !== null ? apiLands : (data?.landPlots !== undefined ? data.landPlots : []);
   const districts = data?.districts || defaultDistricts;
 
-  const totalMatches = data?.heroStats?.totalMatchesCount ?? 87;
-  const topMatch = data?.heroStats?.topMatchPercentage ?? '96%';
-  const newToday = data?.heroStats?.newTodayCount ?? 5;
+  const totalMatches = data?.heroStats?.totalMatchesCount ?? landPlots.length;
+  const topMatch = data?.heroStats?.topMatchPercentage ?? (landPlots.length > 0 ? '96%' : '0%');
+  const newToday = data?.heroStats?.newTodayCount ?? (landPlots.length > 0 ? 2 : 0);
 
   const handleDistrictSelect = (district: string) => {
     setSelectedDistrict(district);
     if (onFilterDistrictChange) onFilterDistrictChange(district);
   };
 
-  const handleToggleBookmark = (id: string | number) => {
+  const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveLand) {
       onToggleSaveLand(id);
     } else {
-      setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      try {
+        await toggleSaveLandApi(String(id));
+        setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      } catch {
+        setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      }
     }
   };
 
   // Filter plots by selected district
   const filteredPlots = landPlots.filter(plot => 
-    selectedDistrict === 'All' ? true : plot.locationDistrict.toLowerCase() === selectedDistrict.toLowerCase()
+    selectedDistrict === 'All' ? true : plot.locationDistrict.toLowerCase().includes(selectedDistrict.toLowerCase())
   );
 
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
-      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse">
+      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse font-normal text-[#1e293b]">
         <div className="h-32 bg-gray-200 rounded-2xl w-full" />
         <div className="h-10 bg-gray-200 rounded-xl w-1/3" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -269,7 +214,7 @@ export default function ViewAllLand({
             <button
               key={dist}
               onClick={() => handleDistrictSelect(dist)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap cursor-pointer ${
                 selectedDistrict === dist
                   ? 'bg-white text-[#1e293b] border-gray-300 shadow-sm'
                   : 'bg-white/40 text-[#475569] border-transparent hover:bg-white/80'
@@ -284,7 +229,7 @@ export default function ViewAllLand({
         <div className="relative self-end sm:self-auto">
           <button
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-            className="bg-white border border-[#e2e8f0] flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-[#334155] hover:bg-gray-50 shadow-sm transition-all"
+            className="bg-white border border-[#e2e8f0] flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-[#334155] hover:bg-gray-50 shadow-sm transition-all cursor-pointer"
           >
             <img alt="Filter" className="size-3.5" src="/svg/filter-icon.svg" />
             <span>Sort: {sortBy}</span>
@@ -292,7 +237,7 @@ export default function ViewAllLand({
           </button>
 
           {isSortDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1 text-xs">
+            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1 text-xs font-semibold">
               {['Best Match', 'Price: Low to High', 'Price: High to Low', 'Newest Added'].map((opt) => (
                 <button
                   key={opt}
@@ -300,7 +245,7 @@ export default function ViewAllLand({
                     setSortBy(opt);
                     setIsSortDropdownOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
                 >
                   {opt}
                 </button>
@@ -351,7 +296,7 @@ export default function ViewAllLand({
                   {/* Bookmark Button */}
                   <button 
                     onClick={() => handleToggleBookmark(plot.id)}
-                    className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-xl shadow-sm transition-colors"
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-xl shadow-sm transition-colors cursor-pointer"
                   >
                     <img 
                       src="/svg/bookmark.svg" 
@@ -397,7 +342,7 @@ export default function ViewAllLand({
                   {/* View Action Button */}
                   <button 
                     onClick={() => onLandClick && onLandClick(plot.id)}
-                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center"
+                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center cursor-pointer"
                   >
                     View Details
                   </button>
@@ -413,7 +358,7 @@ export default function ViewAllLand({
       <div className="flex items-center justify-center pt-4 pb-8">
         <button 
           onClick={() => onLoadMore && onLoadMore()}
-          className="bg-white border border-[#cbd5e1] hover:bg-gray-50 flex items-center gap-2 px-8 py-3 rounded-full text-xs font-bold text-[#334155] shadow-sm transition-all"
+          className="bg-white border border-[#cbd5e1] hover:bg-gray-50 flex items-center gap-2 px-8 py-3 rounded-full text-xs font-bold text-[#334155] shadow-sm transition-all cursor-pointer"
         >
           <span>Load More Land Plots</span>
           <img src="/svg/dropdown2.svg" alt="" className="size-3" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 import { fetchSavedProperties, toggleSavePropertyApi } from '../../services/buyerApi';
 
@@ -42,104 +42,6 @@ export interface SavedPropertiesProps {
   onFilterChange?: (filterPill: string) => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultSavedProperties: SavedPropertyItem[] = [
-  {
-    id: 1,
-    title: 'Modern Villa, Colombo 7',
-    locationDistrict: 'Colombo',
-    address: "Gregory's Road, Colombo 07",
-    neighborhood: 'Colombo 7',
-    priceAmount: 28.5,
-    matchScore: 98,
-    beds: 4,
-    baths: 3,
-    sqft: 3200,
-    imageUrl: '/property_card_1.png',
-    badgeTag: 'New Listing',
-    aiInsightText: 'Matches your preference for high-ceiling architectural layouts and proximity to prime commercial hubs.',
-    isSaved: true
-  },
-  {
-    id: 2,
-    title: 'Luxury Penthouse, Rajagiriya',
-    locationDistrict: 'Colombo',
-    address: 'Buthgamuwa Road, Rajagiriya',
-    neighborhood: 'Rajagiriya',
-    priceAmount: 35.0,
-    matchScore: 91,
-    beds: 3,
-    baths: 3,
-    sqft: 2850,
-    imageUrl: '/property_card_2.png',
-    badgeTag: 'For Sale',
-    aiInsightText: 'Optimal sunset alignment and high-value rental potential based on local market trends.',
-    isSaved: true
-  },
-  {
-    id: 3,
-    title: 'Apartment, Nugegoda',
-    locationDistrict: 'Colombo',
-    address: 'Nawala Road, Nugegoda',
-    neighborhood: 'Nugegoda',
-    priceAmount: 18.5,
-    matchScore: 85,
-    beds: 2,
-    baths: 2,
-    sqft: 1400,
-    imageUrl: '/property_card_3.png',
-    aiInsightText: 'Highly rated for school district proximity and recent infrastructural developments in the area.',
-    isSaved: true
-  },
-  {
-    id: 4,
-    title: 'Beachfront Villa, Mount Lavinia',
-    locationDistrict: 'Colombo',
-    address: 'Hotel Road, Mount Lavinia',
-    neighborhood: 'Mount Lavinia',
-    priceAmount: 42.0,
-    matchScore: 80,
-    beds: 5,
-    baths: 4,
-    sqft: 4500,
-    imageUrl: '/hero_property.png',
-    badgeTag: 'Premium Listing',
-    aiInsightText: 'Significant appreciation predicted due to upcoming coastal luxury developments.',
-    isSaved: true
-  },
-  {
-    id: 5,
-    title: 'Architect Villa, Battaramulla',
-    locationDistrict: 'Colombo',
-    address: 'Koswatta, Battaramulla',
-    neighborhood: 'Battaramulla',
-    priceAmount: 29.0,
-    matchScore: 78,
-    beds: 4,
-    baths: 3,
-    sqft: 3100,
-    imageUrl: '/property_card_4.png',
-    aiInsightText: 'Matches your preference for minimalist concrete aesthetics and eco-friendly design.',
-    isSaved: true
-  },
-  {
-    id: 6,
-    title: 'Garden Home, Kottawa',
-    locationDistrict: 'Colombo',
-    address: 'Pannipitiya Road, Kottawa',
-    neighborhood: 'Kottawa',
-    priceAmount: 24.5,
-    matchScore: 74,
-    beds: 4,
-    baths: 2,
-    sqft: 2200,
-    imageUrl: '/property_card_1.png',
-    aiInsightText: 'Strong focus on outdoor living space and family-oriented neighborhood scores.',
-    isSaved: true
-  }
-];
-
 // ─── Component Implementation ───────────────────────────────────────────────
 
 export default function SavedProperties({
@@ -157,10 +59,11 @@ export default function SavedProperties({
   const [savedStateMap, setSavedStateMap] = useState<Record<string | number, boolean>>({});
 
   const [apiProps, setApiProps] = useState<SavedPropertyItem[] | null>(null);
-  const [_fetching, setFetching] = useState(!data);
+  const [fetching, setFetching] = useState(!data);
 
   useEffect(() => {
     if (!data) {
+      setFetching(true);
       fetchSavedProperties()
         .then((res) => {
           const mapped = res.map((p: any) => ({
@@ -169,11 +72,11 @@ export default function SavedProperties({
             locationDistrict: p.location || 'Colombo',
             address: p.location || 'Colombo 7',
             neighborhood: p.location || 'Colombo 7',
-            priceAmount: p.price ? p.price / 1000000 : 28.5,
+            priceAmount: p.price ? Number((p.price / 1000000).toFixed(1)) : 0,
             matchScore: p.matchScore || 95,
-            beds: p.bedrooms || 4,
-            baths: p.bathrooms || 3,
-            sqft: p.area || 3200,
+            beds: p.bedrooms || 3,
+            baths: p.bathrooms || 2,
+            sqft: p.area || 2200,
             imageUrl: (p.images && p.images.length > 0) ? p.images[0] : '/hero_property.png',
             aiInsightText: 'Matches your preferred location and bedroom criteria.',
             isSaved: true,
@@ -188,7 +91,7 @@ export default function SavedProperties({
     }
   }, [data]);
 
-  const properties = apiProps !== null ? apiProps : (data?.properties !== undefined ? data.properties : defaultSavedProperties);
+  const properties = apiProps !== null ? apiProps : (data?.properties !== undefined ? data.properties : []);
 
   const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveProperty) {
@@ -215,11 +118,11 @@ export default function SavedProperties({
       if (isSavedCurrently === false) return false;
 
       if (activeFilter === 'All') return true;
-      if (activeFilter === 'Colombo') return prop.locationDistrict === 'Colombo' || prop.neighborhood === 'Colombo 7';
-      if (activeFilter === 'Nugegoda') return prop.neighborhood === 'Nugegoda';
-      if (activeFilter === 'Rajagiriya') return prop.neighborhood === 'Rajagiriya';
-      if (activeFilter === 'Battaramulla') return prop.neighborhood === 'Battaramulla';
-      if (activeFilter === 'Mount Lavinia') return prop.neighborhood === 'Mount Lavinia';
+      if (activeFilter === 'Colombo') return prop.locationDistrict.toLowerCase().includes('colombo') || prop.neighborhood.toLowerCase().includes('colombo');
+      if (activeFilter === 'Nugegoda') return prop.neighborhood.toLowerCase().includes('nugegoda');
+      if (activeFilter === 'Rajagiriya') return prop.neighborhood.toLowerCase().includes('rajagiriya');
+      if (activeFilter === 'Battaramulla') return prop.neighborhood.toLowerCase().includes('battaramulla');
+      if (activeFilter === 'Mount Lavinia') return prop.neighborhood.toLowerCase().includes('mount');
       return true;
     })
     .sort((a, b) => {
@@ -231,8 +134,8 @@ export default function SavedProperties({
 
   // Dynamic Metrics Calculation
   const activeSavedCount = data?.metrics?.totalSavedCount ?? properties.filter(p => (savedStateMap[p.id] !== undefined ? savedStateMap[p.id] : p.isSaved)).length;
-  const newAdditions = data?.metrics?.newAdditionsCount ?? 2;
-  const priceDrops = data?.metrics?.priceDropsCount ?? 3;
+  const newAdditions = data?.metrics?.newAdditionsCount ?? (activeSavedCount > 0 ? 1 : 0);
+  const priceDrops = data?.metrics?.priceDropsCount ?? 0;
   const avgValuation = data?.metrics?.avgValuationMillions ?? (
     activeSavedCount > 0 
       ? (properties.reduce((acc, curr) => acc + curr.priceAmount, 0) / activeSavedCount).toFixed(1)
@@ -240,9 +143,10 @@ export default function SavedProperties({
   );
 
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
-      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse">
+      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse font-normal text-[#194360]">
+        <BuyerHeaderBar />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="h-24 bg-gray-200 rounded-2xl" />
@@ -323,7 +227,7 @@ export default function SavedProperties({
             <button
               key={pill}
               onClick={() => handleFilterSelect(pill)}
-              className={`px-5 py-2 text-xs font-bold rounded-full transition-all border whitespace-nowrap ${
+              className={`px-5 py-2 text-xs font-bold rounded-full transition-all border whitespace-nowrap cursor-pointer ${
                 activeFilter === pill
                   ? 'bg-[#194360] text-white border-[#194360] shadow-sm'
                   : 'bg-white text-[#42474d] border-[#c2c7ce] hover:bg-gray-50'
@@ -340,7 +244,7 @@ export default function SavedProperties({
           <div className="relative">
             <button
               onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-              className="bg-white border border-[#c2c7ce] rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm text-xs font-bold text-[#1b1b1b] hover:bg-gray-50"
+              className="bg-white border border-[#c2c7ce] rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm text-xs font-bold text-[#1b1b1b] hover:bg-gray-50 cursor-pointer"
             >
               <img alt="Filter" className="size-3.5 opacity-75" src="/svg/filter-icon.svg" />
               <span>Sort: {sortBy}</span>
@@ -356,7 +260,7 @@ export default function SavedProperties({
                       setSortBy(option);
                       setSortDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${sortBy === option ? 'text-[#be5d3f] font-bold' : 'text-gray-700'}`}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer ${sortBy === option ? 'text-[#be5d3f] font-bold' : 'text-gray-700'}`}
                   >
                     {option}
                   </button>
@@ -369,14 +273,14 @@ export default function SavedProperties({
           <div className="bg-white border border-[#c2c7ce] rounded-xl p-1 shadow-sm flex items-center">
             <button
               onClick={() => setIsGridView(true)}
-              className={`p-1.5 rounded-lg transition-colors ${isGridView ? 'bg-[#345b79]/20 text-[#345b79]' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? 'bg-[#345b79]/20 text-[#345b79]' : 'text-gray-400 hover:bg-gray-100'}`}
               aria-label="Grid view"
             >
               <img alt="Grid" className="size-4" src="/svg/grid-view-icon.svg" />
             </button>
             <button
               onClick={() => setIsGridView(false)}
-              className={`p-1.5 rounded-lg transition-colors ${!isGridView ? 'bg-[#345b79]/20 text-[#345b79]' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? 'bg-[#345b79]/20 text-[#345b79]' : 'text-gray-400 hover:bg-gray-100'}`}
               aria-label="List view"
             >
               <img alt="List" className="size-4" src="/svg/list-view-icon.svg" />
@@ -389,7 +293,7 @@ export default function SavedProperties({
       {/* Property Items Grid / List */}
       {filteredProperties.length === 0 ? (
         <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center w-full shadow-sm text-gray-400 font-semibold text-sm">
-          No saved properties match the selected filter.
+          No saved properties match your selection.
         </div>
       ) : isGridView ? (
         /* Grid Layout */
@@ -423,7 +327,7 @@ export default function SavedProperties({
                   {/* Bookmark Button */}
                   <button 
                     onClick={() => handleToggleBookmark(prop.id)}
-                    className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-xl shadow-sm transition-colors"
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-xl shadow-sm transition-colors cursor-pointer"
                   >
                     <img 
                       alt="Bookmark" 
@@ -484,7 +388,7 @@ export default function SavedProperties({
                   {/* Details Button */}
                   <button 
                     onClick={() => onPropertyClick && onPropertyClick(prop.id)}
-                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center"
+                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center cursor-pointer"
                   >
                     View Details
                   </button>
@@ -547,13 +451,13 @@ export default function SavedProperties({
                     <div className="flex items-center gap-3">
                       <button 
                         onClick={() => handleToggleBookmark(prop.id)}
-                        className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                        className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         <img alt="Bookmark" className={`size-4 ${isBookmarked ? 'filter drop-shadow' : 'opacity-60'}`} src="/svg/bookmark.svg" />
                       </button>
                       <button 
                         onClick={() => onPropertyClick && onPropertyClick(prop.id)}
-                        className="bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-colors"
+                        className="bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-colors cursor-pointer"
                       >
                         View Details
                       </button>
