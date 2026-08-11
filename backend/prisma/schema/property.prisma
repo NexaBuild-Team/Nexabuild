@@ -37,5 +37,8 @@ model Property {
   parkingSpaces    Int      @default(0)
   views            Int      @default(0)
   status           String   @default("Active")
+  yearBuilt        Int?
+  landArea         Float?
+  nearbyFacilities Json?
   savedProperties SavedProperty[]
 }
