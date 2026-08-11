@@ -281,11 +281,7 @@ export class AgentService {
       0,
     );
 
-    const landViewsSubSummary = landsList.reduce(
-      (acc, land) => acc + (land.views || 0),
-      0,
-    );
-
+    const landViewsSubSummary = 0;
     const totalViewsCount = propertyViewsSubSummary + landViewsSubSummary;
     const savedByUsersCount = (savedPropsCount + savedLandsCount) || Math.round(totalPropertiesCount * 3.2 + totalLandsCount * 2.1);
     const totalEnquiriesCount = Math.round(totalViewsCount * 0.075) || 18;
@@ -309,8 +305,8 @@ export class AgentService {
         title: land.name,
         type: 'LAND' as const,
         status: land.status || 'Active',
-        views: land.views || 0,
-        saved: Math.max(1, Math.floor((land.views || 10) * 0.12)),
+        views: 0,
+        saved: 0,
         imageUrl:
           land.images && land.images.length > 0
             ? land.images[0]
