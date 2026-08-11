@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchAllProperties } from '../../services/propertyService';
+import { toggleSavePropertyApi } from '../../services/buyerApi';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -41,107 +43,6 @@ export interface ViewAllPropertiesProps {
   onLoadMore?: () => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultProperties: PropertyListingItem[] = [
-  {
-    id: 1,
-    title: 'Modern Villa, Colombo 7',
-    locationDistrict: 'Colombo',
-    subLocation: 'Colombo 7',
-    priceAmount: 'LKR 28.5M',
-    pricePerSqft: 'LKR 8.9K/sqft',
-    matchScore: '98%',
-    isAiPick: true,
-    beds: 4,
-    baths: 3,
-    sqft: '3,200',
-    propertyType: 'LUXURY VILLA',
-    imageUrl: '/property_card_1.png',
-    isSaved: true
-  },
-  {
-    id: 2,
-    title: 'Contemporary Residence, Nugegoda',
-    locationDistrict: 'Colombo',
-    subLocation: 'Nugegoda',
-    priceAmount: 'LKR 24.5M',
-    pricePerSqft: 'LKR 10.2K/sqft',
-    matchScore: '95%',
-    isAiPick: true,
-    beds: 3,
-    baths: 2,
-    sqft: '2,400',
-    propertyType: 'RESIDENTIAL',
-    imageUrl: '/property_card_2.png',
-    isSaved: false
-  },
-  {
-    id: 3,
-    title: 'Luxury Penthouse, Rajagiriya',
-    locationDistrict: 'Colombo',
-    subLocation: 'Rajagiriya',
-    priceAmount: 'LKR 35M',
-    pricePerSqft: 'LKR 8.5K/sqft',
-    matchScore: '91%',
-    isAiPick: true,
-    beds: 4,
-    baths: 4,
-    sqft: '4,100',
-    propertyType: 'PENTHOUSE',
-    imageUrl: '/property_card_3.png',
-    isSaved: false
-  },
-  {
-    id: 4,
-    title: 'Minimalist House, Kandy',
-    locationDistrict: 'Kandy',
-    subLocation: 'Kandy City',
-    priceAmount: 'LKR 18.2M',
-    pricePerSqft: 'LKR 6.5K/sqft',
-    matchScore: '86%',
-    isAiPick: false,
-    beds: 3,
-    baths: 2,
-    sqft: '2,800',
-    propertyType: 'RESIDENTIAL',
-    imageUrl: '/hero_property.png',
-    isSaved: false
-  },
-  {
-    id: 5,
-    title: 'Commercial Space, Galle Fort',
-    locationDistrict: 'Galle',
-    subLocation: 'Galle Fort',
-    priceAmount: 'LKR 42M',
-    pricePerSqft: 'LKR 12K/sqft',
-    matchScore: '82%',
-    isAiPick: true,
-    beds: 2,
-    baths: 2,
-    sqft: '3,500',
-    propertyType: 'COMMERCIAL',
-    imageUrl: '/property_card_4.png',
-    isSaved: true
-  },
-  {
-    id: 6,
-    title: 'Urban Apartment, Gampaha',
-    locationDistrict: 'Gampaha',
-    subLocation: 'Gampaha Town',
-    priceAmount: 'LKR 14.8M',
-    pricePerSqft: 'LKR 7.4K/sqft',
-    matchScore: '78%',
-    isAiPick: false,
-    beds: 2,
-    baths: 2,
-    sqft: '2,000',
-    propertyType: 'APARTMENT',
-    imageUrl: '/property_card_1.png',
-    isSaved: false
-  }
-];
-
 const defaultDistricts = ['All', 'Colombo', 'Gampaha', 'Kandy', 'Galle', 'Kalutara'];
 
 // ─── Component Implementation ───────────────────────────────────────────────
@@ -160,35 +61,74 @@ export default function ViewAllProperties({
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [savedStatusMap, setSavedStatusMap] = useState<Record<string | number, boolean>>({});
 
-  const properties = data?.properties !== undefined ? data.properties : defaultProperties;
+  const [apiProps, setApiProps] = useState<PropertyListingItem[] | null>(null);
+  const [fetching, setFetching] = useState(!data);
+
+  useEffect(() => {
+    if (!data) {
+      setFetching(true);
+      fetchAllProperties()
+        .then((res) => {
+          const mapped: PropertyListingItem[] = res.map((p) => ({
+            id: p.id,
+            title: p.title,
+            locationDistrict: p.district || 'Colombo',
+            subLocation: p.location,
+            priceAmount: p.price,
+            pricePerSqft: `${Math.round(p.priceNum / (parseInt(p.area) || 1000))} LKR/sqft`,
+            matchScore: `${p.matchScore || 95}%`,
+            isAiPick: true,
+            beds: p.beds,
+            baths: p.baths,
+            sqft: p.area,
+            propertyType: (p.type.toUpperCase() as any) || 'RESIDENTIAL',
+            imageUrl: p.image || '/hero_property.png',
+            isSaved: p.isFavorite || false,
+          }));
+          setApiProps(mapped);
+          setFetching(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch properties:', err);
+          setFetching(false);
+        });
+    }
+  }, [data]);
+
+  const properties = apiProps !== null ? apiProps : (data?.properties !== undefined ? data.properties : []);
   const districts = data?.districts || defaultDistricts;
 
-  const totalMatches = data?.heroStats?.totalMatchesCount ?? 124;
-  const topMatch = data?.heroStats?.topMatchPercentage ?? '96%';
-  const newToday = data?.heroStats?.newTodayCount ?? 5;
+  const totalMatches = data?.heroStats?.totalMatchesCount ?? properties.length;
+  const topMatch = data?.heroStats?.topMatchPercentage ?? (properties.length > 0 ? '98%' : '0%');
+  const newToday = data?.heroStats?.newTodayCount ?? (properties.length > 0 ? 3 : 0);
 
   const handleDistrictSelect = (district: string) => {
     setSelectedDistrict(district);
     if (onFilterDistrictChange) onFilterDistrictChange(district);
   };
 
-  const handleToggleBookmark = (id: string | number) => {
+  const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveProperty) {
       onToggleSaveProperty(id);
     } else {
-      setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      try {
+        await toggleSavePropertyApi(String(id));
+        setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      } catch {
+        setSavedStatusMap(prev => ({ ...prev, [id]: !prev[id] }));
+      }
     }
   };
 
   // Filter properties by selected district
   const filteredProperties = properties.filter(prop => 
-    selectedDistrict === 'All' ? true : prop.locationDistrict.toLowerCase() === selectedDistrict.toLowerCase()
+    selectedDistrict === 'All' ? true : prop.locationDistrict.toLowerCase().includes(selectedDistrict.toLowerCase())
   );
 
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
-      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse">
+      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse font-normal text-[#1e293b]">
         <div className="h-32 bg-gray-200 rounded-2xl w-full" />
         <div className="h-10 bg-gray-200 rounded-xl w-1/3" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -276,7 +216,7 @@ export default function ViewAllProperties({
             <button
               key={dist}
               onClick={() => handleDistrictSelect(dist)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all border whitespace-nowrap cursor-pointer ${
                 selectedDistrict === dist
                   ? 'bg-white text-[#1e293b] border-gray-300 shadow-sm'
                   : 'bg-white/40 text-[#475569] border-transparent hover:bg-white/80'
@@ -291,7 +231,7 @@ export default function ViewAllProperties({
         <div className="relative self-end sm:self-auto">
           <button
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-            className="bg-white border border-[#e2e8f0] flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-[#334155] hover:bg-gray-50 shadow-sm transition-all"
+            className="bg-white border border-[#e2e8f0] flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-[#334155] hover:bg-gray-50 shadow-sm transition-all cursor-pointer"
           >
             <img alt="Filter" className="size-3.5" src="/svg/filter-icon.svg" />
             <span>Sort: {sortBy}</span>
@@ -299,7 +239,7 @@ export default function ViewAllProperties({
           </button>
 
           {isSortDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1 text-xs">
+            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1 text-xs font-semibold">
               {['Best Match', 'Price: Low to High', 'Price: High to Low', 'Newest Added'].map((opt) => (
                 <button
                   key={opt}
@@ -307,7 +247,7 @@ export default function ViewAllProperties({
                     setSortBy(opt);
                     setIsSortDropdownOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
                 >
                   {opt}
                 </button>
@@ -357,7 +297,7 @@ export default function ViewAllProperties({
                   {/* Bookmark Button */}
                   <button 
                     onClick={() => handleToggleBookmark(prop.id)}
-                    className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-xl shadow-sm transition-colors"
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-sm p-2 rounded-xl shadow-sm transition-colors cursor-pointer"
                   >
                     <img 
                       src="/svg/bookmark.svg" 
@@ -404,7 +344,7 @@ export default function ViewAllProperties({
                   {/* View Action Button */}
                   <button 
                     onClick={() => onPropertyClick && onPropertyClick(prop.id)}
-                    className="w-full bg-[#345b79] hover:bg-[#345b79]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center"
+                    className="w-full bg-[#345b79] hover:bg-[#345b79]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center cursor-pointer"
                   >
                     View Details
                   </button>
@@ -420,7 +360,7 @@ export default function ViewAllProperties({
       <div className="flex items-center justify-center pt-4 pb-8">
         <button 
           onClick={() => onLoadMore && onLoadMore()}
-          className="bg-white border border-[#cbd5e1] hover:bg-gray-50 flex items-center gap-2 px-8 py-3 rounded-full text-xs font-bold text-[#334155] shadow-sm transition-all"
+          className="bg-white border border-[#cbd5e1] hover:bg-gray-50 flex items-center gap-2 px-8 py-3 rounded-full text-xs font-bold text-[#334155] shadow-sm transition-all cursor-pointer"
         >
           <span>Load More Properties</span>
           <img src="/svg/dropdown2.svg" alt="" className="size-3" />

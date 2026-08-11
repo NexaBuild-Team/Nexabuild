@@ -96,6 +96,9 @@ export class CreatePropertyDto {
   garage?: any;
 
   @IsOptional()
+  parkingSpaces?: any;
+
+  @IsOptional()
   area?: any;
 
   @IsOptional()
@@ -127,11 +130,20 @@ export class CreatePropertyDto {
   status?: string;
 
   @IsOptional()
+  nearbyFacilities?: any;
+
+  @IsOptional()
   @IsArray()
   aiTags?: string[];
 
   @IsOptional()
   visibility?: any;
+
+  @IsOptional()
+  latitude?: any;
+
+  @IsOptional()
+  longitude?: any;
 }
 
 @Injectable()
@@ -585,13 +597,59 @@ export class AgentService {
 
     const numBaths = Number(dto.bathrooms || dto.baths || 2);
 
+    const locParts = [dto.fullAddress, dto.locationName, dto.district, dto.province].filter(Boolean);
     const locStr =
       dto.location ||
-      dto.fullAddress ||
-      dto.locationName ||
-      `${dto.district || 'Colombo'}, ${dto.province || 'Western'}`;
+      (locParts.length > 0 ? locParts.join(', ') : 'Colombo, Western');
 
     const propTitle = dto.title || 'New Property Listing';
+
+    const numLat = dto.latitude != null ? parseFloat(String(dto.latitude)) : null;
+    const numLng = dto.longitude != null ? parseFloat(String(dto.longitude)) : null;
+
+    const rawYear = dto.yearBuilt;
+    const numYear =
+      typeof rawYear === 'string'
+        ? parseInt(rawYear.replace(/[^0-9]/g, '')) || null
+        : typeof rawYear === 'number'
+          ? rawYear
+          : null;
+
+    const rawLandArea = dto.landArea;
+    const numLandArea =
+      typeof rawLandArea === 'string'
+        ? parseFloat(rawLandArea.replace(/[^0-9.]/g, '')) || null
+        : typeof rawLandArea === 'number'
+          ? rawLandArea
+          : null;
+
+    const numParking = dto.garage != null ? Number(dto.garage) : dto.parkingSpaces != null ? Number(dto.parkingSpaces) : 0;
+
+    const amenities = dto.amenities || {};
+    const tags = Array.isArray(dto.aiTags) ? dto.aiTags : [];
+
+    const hasPool = amenities['Swimming Pool'] === true || tags.includes('Pool');
+    const hasGarden = amenities['Garden'] === true || tags.includes('Garden');
+    const hasSecurity = amenities['Security'] === true || tags.includes('Security');
+    const hasModernKitchen = amenities['Smart Home'] === true || tags.includes('Modern Kitchen') || tags.includes('Kitchen');
+    const hasSeaView = tags.includes('Sea View') || tags.includes('Waterfront');
+
+    const isInvestment = tags.includes('Investment') || tags.includes('High ROI');
+    const isOwnHome = tags.includes('Family') || tags.includes('Own Home');
+    const isVacationHome = tags.includes('Vacation') || tags.includes('Vacation Home');
+    const isRentalIncome = tags.includes('Rental Income');
+
+    const isCityCenter = tags.includes('City Center');
+    const isCoastal = tags.includes('Coastal') || tags.includes('Waterfront') || tags.includes('Sea View');
+    const isNearBeach = tags.includes('Near Beach') || tags.includes('Waterfront');
+    const isNearHighway = tags.includes('Near Highway') || tags.includes('Transport');
+    const isNearHospital = tags.includes('Near Hospital');
+    const isNearSchools = tags.includes('School Nearby') || tags.includes('Near Schools');
+    const isQuietArea = tags.includes('Quiet Area');
+
+    const isUrban = tags.includes('City Center') || tags.includes('Urban');
+    const isSuburban = tags.includes('Suburban');
+    const isRural = tags.includes('Rural');
 
     return this.prisma.property.create({
       data: {
@@ -608,9 +666,33 @@ export class AgentService {
           Array.isArray(dto.images) && dto.images.length > 0
             ? dto.images
             : ['/hero_property.png'],
-
+        latitude: numLat,
+        longitude: numLng,
+        yearBuilt: numYear,
+        landArea: numLandArea,
+        parkingSpaces: numParking,
+        hasPool,
+        hasGarden,
+        hasSecurity,
+        hasModernKitchen,
+        hasSeaView,
+        isInvestment,
+        isOwnHome,
+        isVacationHome,
+        isRentalIncome,
+        isCityCenter,
+        isCoastal,
+        isNearBeach,
+        isNearHighway,
+        isNearHospital,
+        isNearSchools,
+        isQuietArea,
+        isUrban,
+        isSuburban,
+        isRural,
         views: 1,
         status: dto.status === 'Draft' ? 'Pending' : dto.status || 'Active',
+        nearbyFacilities: dto.nearbyFacilities || undefined,
       },
     });
   }
@@ -636,11 +718,10 @@ export class AgentService {
           ? rawPerches
           : 15;
 
+    const locParts = [dto.fullAddress, dto.locationName, dto.district, dto.province].filter(Boolean);
     const locStr =
       dto.location ||
-      dto.fullAddress ||
-      dto.locationName ||
-      `${dto.district || 'Colombo'}, ${dto.province || 'Western'}`;
+      (locParts.length > 0 ? locParts.join(', ') : 'Colombo, Western');
 
     const landName = dto.name || dto.title || 'New Land Listing';
 

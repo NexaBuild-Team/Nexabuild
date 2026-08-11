@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 import { fetchSavedLands, toggleSaveLandApi } from '../../services/buyerApi';
 
@@ -51,95 +51,6 @@ const getRoadTagIcon = (tag: string) => {
   return '/svg/side-road-icon.svg';
 };
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultSavedLands: SavedLandPlotItem[] = [
-  {
-    id: 1,
-    title: 'Prime Plot, Nugegoda',
-    locationDistrict: 'Colombo',
-    subLocation: 'Nugegoda',
-    sizePerches: 20,
-    priceAmount: 8.5,
-    pricePerPerchText: 'LKR 425K/perch',
-    matchScore: 96,
-    potentialLevel: 'HIGH POTENTIAL',
-    tags: ['Main Road', 'Residential'],
-    imageUrl: '/hero_property.png',
-    isSaved: true
-  },
-  {
-    id: 2,
-    title: 'Residential Land, Homagama',
-    locationDistrict: 'Colombo',
-    subLocation: 'Homagama',
-    sizePerches: 30,
-    priceAmount: 5.2,
-    pricePerPerchText: 'LKR 173K/perch',
-    matchScore: 89,
-    potentialLevel: 'HIGH POTENTIAL',
-    tags: ['Side Road', 'Residential'],
-    imageUrl: '/property_card_4.png',
-    isSaved: true
-  },
-  {
-    id: 3,
-    title: 'Corner Plot, Kaduwela',
-    locationDistrict: 'Colombo',
-    subLocation: 'Kaduwela',
-    sizePerches: 40,
-    priceAmount: 12.8,
-    pricePerPerchText: 'LKR 320K/perch',
-    matchScore: 84,
-    potentialLevel: 'MEDIUM POTENTIAL',
-    tags: ['Corner Dual Access', 'Mixed Use'],
-    imageUrl: '/property_card_1.png',
-    isSaved: true
-  },
-  {
-    id: 4,
-    title: 'Beachfront Land, Moratuwa',
-    locationDistrict: 'Colombo',
-    subLocation: 'Moratuwa',
-    sizePerches: 35,
-    priceAmount: 22.0,
-    pricePerPerchText: 'LKR 629K/perch',
-    matchScore: 81,
-    potentialLevel: 'HIGH POTENTIAL',
-    tags: ['Beach Road', 'Mixed Use'],
-    imageUrl: '/property_card_2.png',
-    isSaved: true
-  },
-  {
-    id: 5,
-    title: 'Flat Land, Malabe',
-    locationDistrict: 'Colombo',
-    subLocation: 'Malabe',
-    sizePerches: 25,
-    priceAmount: 9.2,
-    pricePerPerchText: 'LKR 368K/perch',
-    matchScore: 75,
-    potentialLevel: 'HIGH POTENTIAL',
-    tags: ['Main Road', 'Residential'],
-    imageUrl: '/property_card_3.png',
-    isSaved: true
-  },
-  {
-    id: 6,
-    title: 'Urban Plot, Kelaniya',
-    locationDistrict: 'Gampaha',
-    subLocation: 'Kelaniya',
-    sizePerches: 22,
-    priceAmount: 7.5,
-    pricePerPerchText: 'LKR 341K/perch',
-    matchScore: 70,
-    potentialLevel: 'MEDIUM POTENTIAL',
-    tags: ['Main Road', 'Residential'],
-    imageUrl: '/property_card_4.png',
-    isSaved: true
-  }
-];
-
 // ─── Component Implementation ───────────────────────────────────────────────
 
 export default function SavedLand({
@@ -157,10 +68,11 @@ export default function SavedLand({
   const [savedStateMap, setSavedStateMap] = useState<Record<string | number, boolean>>({});
 
   const [apiLands, setApiLands] = useState<SavedLandPlotItem[] | null>(null);
-  const [_fetching, setFetching] = useState(!data);
+  const [fetching, setFetching] = useState(!data);
 
   useEffect(() => {
     if (!data) {
+      setFetching(true);
       fetchSavedLands()
         .then((res) => {
           const mapped: SavedLandPlotItem[] = res.map((l: any) => ({
@@ -169,8 +81,8 @@ export default function SavedLand({
             locationDistrict: l.location || 'Colombo',
             subLocation: l.location || 'Homagama',
             sizePerches: l.perches || 15,
-            priceAmount: l.price ? l.price / 1000000 : 8.5,
-            pricePerPerchText: 'LKR 4.25 Lakhs / perch',
+            priceAmount: l.price ? Number((l.price / 1000000).toFixed(1)) : 0,
+            pricePerPerchText: `LKR ${((l.price || 0) / (l.perches || 1) / 100000).toFixed(2)} Lakhs/perch`,
             matchScore: l.matchScore || 92,
             potentialLevel: 'HIGH POTENTIAL',
             tags: ['Residential', 'Direct Road Access'],
@@ -187,7 +99,7 @@ export default function SavedLand({
     }
   }, [data]);
 
-  const landPlots = apiLands !== null ? apiLands : (data?.landPlots !== undefined ? data.landPlots : defaultSavedLands);
+  const landPlots = apiLands !== null ? apiLands : (data?.landPlots !== undefined ? data.landPlots : []);
 
   const handleToggleBookmark = async (id: string | number) => {
     if (onToggleSaveLand) {
@@ -214,8 +126,8 @@ export default function SavedLand({
       if (isSavedCurrently === false) return false;
 
       if (activeFilter === 'All') return true;
-      if (activeFilter === 'Colombo') return land.locationDistrict === 'Colombo';
-      if (activeFilter === 'Gampaha') return land.locationDistrict === 'Gampaha';
+      if (activeFilter === 'Colombo') return land.locationDistrict.toLowerCase().includes('colombo') || (land.subLocation && land.subLocation.toLowerCase().includes('colombo'));
+      if (activeFilter === 'Gampaha') return land.locationDistrict.toLowerCase().includes('gampaha');
       if (activeFilter === 'High Potential') return land.potentialLevel === 'HIGH POTENTIAL';
       if (activeFilter === 'Medium Potential') return land.potentialLevel === 'MEDIUM POTENTIAL';
       if (activeFilter === 'Residential') return land.tags.includes('Residential');
@@ -230,7 +142,7 @@ export default function SavedLand({
 
   // Dynamic Metrics Calculation
   const activeSavedCount = data?.metrics?.savedCount ?? landPlots.filter(l => (savedStateMap[l.id] !== undefined ? savedStateMap[l.id] : l.isSaved)).length;
-  const addedThisWeek = data?.metrics?.addedThisWeekCount ?? 1;
+  const addedThisWeek = data?.metrics?.addedThisWeekCount ?? (activeSavedCount > 0 ? 1 : 0);
   const totalPerches = data?.metrics?.totalPerches ?? landPlots.reduce((acc, curr) => acc + curr.sizePerches, 0);
   const avgPrice = data?.metrics?.avgPriceMillions ?? (
     activeSavedCount > 0 
@@ -239,9 +151,10 @@ export default function SavedLand({
   );
 
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
-      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse">
+      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto animate-pulse font-normal text-[#111827]">
+        <BuyerHeaderBar />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="h-24 bg-gray-200 rounded-2xl" />
@@ -324,7 +237,7 @@ export default function SavedLand({
             <button
               key={pill}
               onClick={() => handleFilterSelect(pill)}
-              className={`px-4 py-2 text-xs font-bold rounded-full transition-all border whitespace-nowrap ${
+              className={`px-4 py-2 text-xs font-bold rounded-full transition-all border whitespace-nowrap cursor-pointer ${
                 activeFilter === pill
                   ? 'bg-[#345b79] text-white border-[#345b79] shadow-sm'
                   : 'bg-white text-[#1f2937] border-gray-200 hover:bg-gray-50'
@@ -341,7 +254,7 @@ export default function SavedLand({
           <div className="relative">
             <button
               onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-              className="bg-white border border-gray-200 rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm text-xs font-bold text-[#1f2937] hover:bg-gray-50"
+              className="bg-white border border-gray-200 rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm text-xs font-bold text-[#1f2937] hover:bg-gray-50 cursor-pointer"
             >
               <img alt="Filter" className="size-3.5 opacity-75" src="/svg/filter-icon.svg" />
               <span>Sort: {sortBy}</span>
@@ -357,7 +270,7 @@ export default function SavedLand({
                       setSortBy(option);
                       setSortDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${sortBy === option ? 'text-[#be5d3f] font-bold' : 'text-gray-700'}`}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer ${sortBy === option ? 'text-[#be5d3f] font-bold' : 'text-gray-700'}`}
                   >
                     {option}
                   </button>
@@ -370,14 +283,14 @@ export default function SavedLand({
           <div className="bg-white border border-gray-200 rounded-xl p-1 shadow-sm flex items-center">
             <button
               onClick={() => setIsGridView(true)}
-              className={`p-1.5 rounded-lg transition-colors ${isGridView ? 'bg-[#345b79] text-white' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${isGridView ? 'bg-[#345b79] text-white' : 'text-gray-400 hover:bg-gray-100'}`}
               aria-label="Grid view"
             >
               <img alt="Grid" className={`size-4 ${isGridView ? 'filter brightness-200' : ''}`} src="/svg/grid-view-icon.svg" />
             </button>
             <button
               onClick={() => setIsGridView(false)}
-              className={`p-1.5 rounded-lg transition-colors ${!isGridView ? 'bg-[#345b79] text-white' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${!isGridView ? 'bg-[#345b79] text-white' : 'text-gray-400 hover:bg-gray-100'}`}
               aria-label="List view"
             >
               <img alt="List" className={`size-4 ${!isGridView ? 'filter brightness-200' : ''}`} src="/svg/list-view-icon.svg" />
@@ -390,7 +303,7 @@ export default function SavedLand({
       {/* Land Plot Items Grid / List */}
       {filteredLands.length === 0 ? (
         <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center w-full shadow-sm text-gray-400 font-semibold text-sm">
-          No saved land plots match the selected filter.
+          No saved land plots match your selection.
         </div>
       ) : isGridView ? (
         /* Grid Layout */
@@ -427,7 +340,7 @@ export default function SavedLand({
                   {/* Bookmark Button */}
                   <button 
                     onClick={() => handleToggleBookmark(land.id)}
-                    className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-xl shadow-sm transition-colors"
+                    className="absolute top-4 right-4 bg-white/90 hover:bg-white p-2 rounded-xl shadow-sm transition-colors cursor-pointer"
                   >
                     <img 
                       alt="Bookmark" 
@@ -476,7 +389,7 @@ export default function SavedLand({
                   {/* Details Button */}
                   <button 
                     onClick={() => onLandClick && onLandClick(land.id)}
-                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center"
+                    className="w-full bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs py-3 rounded-xl shadow-sm transition-colors text-center cursor-pointer"
                   >
                     View Details
                   </button>
@@ -530,13 +443,13 @@ export default function SavedLand({
                     <div className="flex items-center gap-3">
                       <button 
                         onClick={() => handleToggleBookmark(land.id)}
-                        className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                        className="p-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         <img alt="Bookmark" className={`size-4 ${isBookmarked ? 'filter drop-shadow' : 'opacity-60'}`} src="/svg/bookmark.svg" />
                       </button>
                       <button 
                         onClick={() => onLandClick && onLandClick(land.id)}
-                        className="bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-colors"
+                        className="bg-[#be5d3f] hover:bg-[#be5d3f]/90 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-colors cursor-pointer"
                       >
                         View Details
                       </button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 import { fetchRecentlyViewed } from '../../services/buyerApi';
 
@@ -41,87 +41,6 @@ export interface RecentlyViewedProps {
   onFilterChange?: (filterType: string) => void;
 }
 
-// ─── Mock Fallback Data ─────────────────────────────────────────────────────
-
-const defaultHistoryItems: ViewedHistoryItem[] = [
-  {
-    id: 1,
-    title: 'Luxury Villa, Colombo 7',
-    location: 'Colombo 7, Western Province',
-    price: 'LKR 32M',
-    type: 'PROPERTY',
-    viewedTimeAgo: 'Viewed 2 hours ago',
-    imageUrl: '/property_card_1.png',
-    beds: 4,
-    baths: 3,
-    sqft: '4,200',
-    isSaved: true
-  },
-  {
-    id: 2,
-    title: 'Land Plot, Homagama',
-    location: 'Homagama, Western Province',
-    price: 'LKR 9.2M',
-    type: 'LAND',
-    viewedTimeAgo: 'Viewed 4 hours ago',
-    imageUrl: '/hero_property.png',
-    perches: '12.5 PERCHES',
-    roadAccessOrOrientation: 'NORTH FACING',
-    isSaved: false
-  },
-  {
-    id: 3,
-    title: 'Modern Apartment, Nugegoda',
-    location: 'Nugegoda, Colombo District',
-    price: 'LKR 18.5M',
-    type: 'PROPERTY',
-    viewedTimeAgo: 'Viewed Yesterday',
-    imageUrl: '/property_card_2.png',
-    beds: 3,
-    baths: 2,
-    sqft: '2,200',
-    isSaved: false
-  },
-  {
-    id: 4,
-    title: 'Penthouse, Rajagiriya',
-    location: 'Rajagiriya, Western Province',
-    price: 'LKR 35M',
-    type: 'PROPERTY',
-    viewedTimeAgo: 'Viewed Yesterday',
-    imageUrl: '/property_card_3.png',
-    beds: 4,
-    baths: 4,
-    sqft: '4,100',
-    isSaved: false
-  },
-  {
-    id: 5,
-    title: 'Corner Plot, Kaduwela',
-    location: 'Kaduwela, Western Province',
-    price: 'LKR 12.8M',
-    type: 'LAND',
-    viewedTimeAgo: 'Viewed 2 days ago',
-    imageUrl: '/property_card_4.png',
-    perches: '15 PERCHES',
-    roadAccessOrOrientation: 'CORNER LOT',
-    isSaved: true
-  },
-  {
-    id: 6,
-    title: 'Garden Home, Kottawa',
-    location: 'Kottawa, Colombo District',
-    price: 'LKR 24.5M',
-    type: 'PROPERTY',
-    viewedTimeAgo: 'Viewed 2 days ago',
-    imageUrl: '/property_card_1.png',
-    beds: 3,
-    baths: 3,
-    sqft: '2,900',
-    isSaved: false
-  }
-];
-
 // ─── Component Implementation ───────────────────────────────────────────────
 
 export default function RecentlyViewed({
@@ -138,27 +57,31 @@ export default function RecentlyViewed({
   const [savedStatusMap, setSavedStatusMap] = useState<Record<string | number, boolean>>({});
 
   const [apiItems, setApiItems] = useState<ViewedHistoryItem[] | null>(null);
+  const [fetching, setFetching] = useState(!data);
 
   useEffect(() => {
     if (!data) {
+      setFetching(true);
       fetchRecentlyViewed()
         .then((res) => {
-          if (res && Array.isArray(res) && res.length > 0) {
+          if (res && Array.isArray(res)) {
             setApiItems(res);
           }
+          setFetching(false);
         })
         .catch((err) => {
           console.error('Failed to fetch recently viewed items:', err);
+          setFetching(false);
         });
     }
   }, [data]);
 
-  const historyItems = apiItems !== null ? apiItems : (data?.historyItems !== undefined ? data.historyItems : defaultHistoryItems);
+  const historyItems = apiItems !== null ? apiItems : (data?.historyItems !== undefined ? data.historyItems : []);
 
   const totalViews = data?.metrics?.totalViewsCount ?? historyItems.length;
   const propertiesCount = data?.metrics?.propertiesViewedCount ?? historyItems.filter(i => i.type === 'PROPERTY').length;
   const landsCount = data?.metrics?.landPlotsViewedCount ?? historyItems.filter(i => i.type === 'LAND').length;
-  const activityPeriod = data?.metrics?.activityPeriodText ?? '5 days';
+  const activityPeriod = data?.metrics?.activityPeriodText ?? (historyItems.length > 0 ? 'Recent' : '0 days');
 
   const handleFilterSelect = (filterName: string) => {
     setActiveFilter(filterName);
@@ -181,9 +104,10 @@ export default function RecentlyViewed({
   });
 
   // ─── 2. Skeleton Loading State ─────────────────────────────────────────────
-  if (isLoading) {
+  if (isLoading || fetching) {
     return (
-      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-10 max-w-[1400px] mx-auto animate-pulse">
+      <div className="w-full flex flex-col gap-6 p-4 sm:p-6 lg:p-10 max-w-[1400px] mx-auto animate-pulse font-normal text-[#194360]">
+        <BuyerHeaderBar />
         <div className="h-16 bg-gray-200 rounded-2xl w-1/3" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
@@ -264,7 +188,7 @@ export default function RecentlyViewed({
             <button
               key={filterName}
               onClick={() => handleFilterSelect(filterName)}
-              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all border whitespace-nowrap ${
+              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all border whitespace-nowrap cursor-pointer ${
                 activeFilter === filterName
                   ? 'bg-[#194360] text-white border-[#194360] shadow-sm'
                   : 'bg-white text-[#42474d] border-gray-200 hover:bg-gray-100'
@@ -279,7 +203,7 @@ export default function RecentlyViewed({
         <div className="relative self-end sm:self-auto flex items-center gap-3">
           <button
             onClick={() => setIsSortOpen(!isSortOpen)}
-            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-semibold text-[#42474d] flex items-center gap-2 shadow-sm hover:bg-gray-50"
+            className="bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-semibold text-[#42474d] flex items-center gap-2 shadow-sm hover:bg-gray-50 cursor-pointer"
           >
             <img src="/svg/filter-icon.svg" alt="" className="size-3.5" />
             <span>{sortBy}</span>
@@ -295,7 +219,7 @@ export default function RecentlyViewed({
                     setSortBy(opt);
                     setIsSortOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer ${sortBy === opt ? 'font-bold text-[#be5d3f]' : 'text-gray-700'}`}
                 >
                   {opt}
                 </button>
@@ -308,7 +232,7 @@ export default function RecentlyViewed({
       {/* Recently Viewed History Grid */}
       {filteredItems.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center text-gray-400 font-semibold text-sm border border-gray-200">
-          No recently viewed items matching the selected filter.
+          No recently viewed items recorded.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -391,7 +315,7 @@ export default function RecentlyViewed({
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => onItemClick && onItemClick(item.id)}
-                      className={`flex-1 text-white text-xs font-bold py-3 rounded-xl transition-colors text-center shadow-sm ${
+                      className={`flex-1 text-white text-xs font-bold py-3 rounded-xl transition-colors text-center shadow-sm cursor-pointer ${
                         item.type === 'PROPERTY' ? 'bg-[#345b79] hover:bg-[#345b79]/90' : 'bg-[#be5d3f] hover:bg-[#be5d3f]/90'
                       }`}
                     >
@@ -399,7 +323,7 @@ export default function RecentlyViewed({
                     </button>
                     <button
                       onClick={() => handleBookmarkToggle(item.id)}
-                      className="p-3 border border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center transition-colors"
+                      className="p-3 border border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center transition-colors cursor-pointer"
                     >
                       <img src="/svg/bookmark.svg" alt="Bookmark" className={`size-4 ${isBookmarked ? 'filter drop-shadow' : 'opacity-60'}`} />
                     </button>
@@ -411,14 +335,6 @@ export default function RecentlyViewed({
           })}
         </div>
       )}
-
-      {/* Pagination / Load More */}
-      <div className="flex items-center justify-center pt-4 pb-12">
-        <button className="bg-white border border-gray-200 hover:bg-gray-50 flex items-center gap-2 px-8 py-3 rounded-full text-xs font-bold text-[#194360] shadow-sm transition-all">
-          <span>Load More History</span>
-          <img src="/svg/dropdown2.svg" alt="" className="size-3" />
-        </button>
-      </div>
 
     </div>
   );
