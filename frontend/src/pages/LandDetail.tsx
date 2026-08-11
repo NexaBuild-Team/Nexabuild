@@ -54,13 +54,13 @@ function MatchScoreRing({ score }: { score: number }) {
 function getRoadAccessWidth(land: Land): string {
   const desc = (land.description || '').toLowerCase()
   const name = land.name.toLowerCase()
-  
+
   if (desc.includes('40ft') || desc.includes('40-foot') || name.includes('malabe')) return '20+ Feet'
   if (desc.includes('30ft') || desc.includes('30-foot') || desc.includes('container') || name.includes('kaduwela') || name.includes('negombo')) return '20+ Feet'
   if (desc.includes('20ft') || desc.includes('20-foot') || name.includes('colombo') || name.includes('galle')) return '20+ Feet'
   if (desc.includes('15ft') || desc.includes('15-foot') || name.includes('battaramulla') || name.includes('kurunegala')) return '15–20 Feet'
   if (desc.includes('12ft') || desc.includes('12-foot') || name.includes('kandy')) return '12–15 Feet'
-  
+
   return '< 12 Feet'
 }
 
@@ -146,7 +146,7 @@ function SimilarLandCard({ land, navigate }: { land: Land; navigate: any }) {
   const [fav, setFav] = useState(false)
 
   return (
-    <div 
+    <div
       onClick={() => navigate(`/land/detail/${land.id}`)}
       className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
     >
@@ -221,7 +221,7 @@ export default function LandDetail() {
         const lastViewKey = `nexabuild_land_last_view_${id}`
         const now = Date.now()
         const lastViewTime = parseInt(sessionStorage.getItem(lastViewKey) || '0', 10)
-        
+
         if (now - lastViewTime > 3000) {
           sessionStorage.setItem(lastViewKey, String(now))
           const viewKey = `nexabuild_land_views_${id}`
@@ -278,10 +278,10 @@ export default function LandDetail() {
   const rawFacilities = land.nearbyFacilities as any;
   const facilities = (rawFacilities && typeof rawFacilities === 'object')
     ? {
-        schools: Array.isArray(rawFacilities.schools) ? rawFacilities.schools : [],
-        hospitals: Array.isArray(rawFacilities.hospitals) ? rawFacilities.hospitals : [],
-        supermarkets: Array.isArray(rawFacilities.supermarkets) ? rawFacilities.supermarkets : [],
-      }
+      schools: Array.isArray(rawFacilities.schools) ? rawFacilities.schools : [],
+      hospitals: Array.isArray(rawFacilities.hospitals) ? rawFacilities.hospitals : [],
+      supermarkets: Array.isArray(rawFacilities.supermarkets) ? rawFacilities.supermarkets : [],
+    }
     : getNearbyFacilities(land.location)
 
   return (
@@ -482,7 +482,7 @@ export default function LandDetail() {
                           <h3 className="text-sm font-bold text-[#1d1d1d]">{group.title}</h3>
                         </div>
                         <ul className="space-y-2">
-                          {group.items.map((item) => (
+                          {group.items.map((item: { name: string; distance?: string }) => (
                             <li key={item.name} className="flex items-center justify-between text-xs">
                               <span className="text-[#1d1d1d]">{item.name}</span>
                               <span className="text-[#928d64] font-medium">{item.distance}</span>
