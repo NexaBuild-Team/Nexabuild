@@ -614,4 +614,55 @@ export class AgentService {
       },
     });
   }
+
+  // ============================================================
+  // CREATE LAND
+  // ============================================================
+
+  async createLand(userId: string | undefined, dto: any) {
+    const rawPrice = dto.price;
+    const numPrice =
+      typeof rawPrice === 'string'
+        ? parseFloat(rawPrice.replace(/[^0-9.]/g, '')) || 5000000
+        : typeof rawPrice === 'number'
+          ? rawPrice
+          : 5000000;
+
+    const rawPerches = dto.perches;
+    const numPerches =
+      typeof rawPerches === 'string'
+        ? parseFloat(rawPerches.replace(/[^0-9.]/g, '')) || 15
+        : typeof rawPerches === 'number'
+          ? rawPerches
+          : 15;
+
+    const locStr =
+      dto.location ||
+      dto.fullAddress ||
+      dto.locationName ||
+      `${dto.district || 'Colombo'}, ${dto.province || 'Western'}`;
+
+    const landName = dto.name || dto.title || 'New Land Listing';
+
+    return this.prisma.land.create({
+      data: {
+        name: landName,
+        description: dto.description || '',
+        location: locStr,
+        price: numPrice,
+        perches: numPerches,
+        sqft: dto.sqft ? Number(dto.sqft) : numPerches * 272.25,
+        landType: dto.landType || 'Residential',
+        purpose: dto.purpose || 'Sale',
+        images:
+          Array.isArray(dto.images) && dto.images.length > 0
+            ? dto.images
+            : ['/property_card_1.png'],
+        latitude: dto.latitude ? Number(dto.latitude) : 6.9271,
+        longitude: dto.longitude ? Number(dto.longitude) : 79.8612,
+        views: 1,
+        status: dto.status === 'Draft' ? 'Pending' : dto.status || 'Active',
+      },
+    });
+  }
 }

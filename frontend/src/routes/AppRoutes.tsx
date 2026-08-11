@@ -51,6 +51,7 @@ import RecentlyViewed from '../pages/buyer/RecentlyViewed'
 import { AgentLayout } from '../pages/agent/AgentLayout'
 import AgentDashboard from '../pages/agent/AgentDashboard'
 import AddNewProperty from '../pages/agent/AddNewProperty'
+import AddNewLand from '../pages/agent/AddNewLand'
 
 import { ArchitectLayout } from '../pages/architecture/ArchitectLayout'
 import ArchitechtureDashboard from '../pages/architecture/ArchitechtureDashboard'
@@ -59,6 +60,7 @@ import AddArchitectureProject from '../pages/architecture/AddArchitectureProject
 import { ContractorLayout } from '../pages/construction-company/ContractorLayout'
 import ConstructionCompanyDashboard from '../pages/construction-company/ConstructionCompanyDashboard'
 import UploadConstruction from '../pages/construction-company/UploadConstruction'
+import UserProfilePage from '../pages/UserProfilePage'
 
 function AppRoutes() {
   const location = useLocation()
@@ -114,25 +116,32 @@ function AppRoutes() {
             <Route path="saved-properties" element={<SavedProperties />} />
             <Route path="saved-lands" element={<SavedLand />} />
             <Route path="recently-viewed" element={<RecentlyViewed />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
 
           {/* Agent Sub-routes */}
           <Route path="/dashboard/agent" element={<AgentLayout />}>
             <Route index element={<AgentDashboard />} />
             <Route path="add-property" element={<AddNewProperty />} />
+            <Route path="add-land" element={<AddNewLand />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
 
           {/* Architect Sub-routes */}
           <Route path="/dashboard/architecture" element={<ArchitectLayout />}>
             <Route index element={<ArchitechtureDashboard />} />
             <Route path="add-project" element={<AddArchitectureProject />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
 
           {/* Contractor Sub-routes */}
           <Route path="/dashboard/construction" element={<ContractorLayout />}>
             <Route index element={<ConstructionCompanyDashboard />} />
             <Route path="add-project" element={<UploadConstruction />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
+
+          <Route path="/dashboard/profile" element={<UserProfilePage />} />
         </Route>
 
         {/* Admin Routes (Protected - ADMIN role only) */}

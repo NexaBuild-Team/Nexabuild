@@ -69,6 +69,16 @@ export class AgentController {
     return this.agentService.createProperty(userId, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('lands')
+  async createLand(
+    @Request() req: any,
+    @Body() dto: any,
+  ) {
+    const userId = req.user?.id || req.user?.userId;
+    return this.agentService.createLand(userId, dto);
+  }
+
   // ============================================================
   // AGENT CRUD
   // ============================================================

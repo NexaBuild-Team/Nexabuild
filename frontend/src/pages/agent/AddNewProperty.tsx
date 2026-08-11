@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
+import LocationPickerMap from '../../components/LocationPickerMap';
 import {
   createPropertyApi,
   uploadPropertyImageApi,
@@ -16,6 +17,8 @@ export interface AddNewPropertyFormFields {
   district?: string;
   locationName?: string;
   fullAddress?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   beds?: number;
   baths?: number;
   garage?: number;
@@ -75,6 +78,9 @@ export default function AddNewProperty({
   const [district, setDistrict] = useState(data?.initialFields?.district || '');
   const [locationName, setLocationName] = useState(data?.initialFields?.locationName || '');
   const [fullAddress, setFullAddress] = useState(data?.initialFields?.fullAddress || '');
+
+  const [latitude, setLatitude] = useState<number | null>(data?.initialFields?.latitude ?? 6.9271);
+  const [longitude, setLongitude] = useState<number | null>(data?.initialFields?.longitude ?? 79.8612);
 
   const [beds, setBeds] = useState(data?.initialFields?.beds ?? 0);
   const [baths, setBaths] = useState(data?.initialFields?.baths ?? 0);
@@ -193,6 +199,8 @@ const [uploadingImage, setUploadingImage] = useState(false);
     district,
     locationName,
     fullAddress,
+    latitude,
+    longitude,
     beds,
     baths,
     garage,
@@ -420,62 +428,83 @@ const [uploadingImage, setUploadingImage] = useState(false);
           {/* Section 2: Location */}
           <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
             <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
-              <div className="size-10 rounded-xl bg-orange-50 text-[#be5d3f] flex items-center justify-center shrink-0">
+              <div className="size-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                 <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-extrabold text-[#111827]">Location Details</h3>
+                <h3 className="text-base font-extrabold text-[#111827]">Location</h3>
                 <p className="text-xs text-gray-500 font-medium">Where is the property located?</p>
               </div>
             </div>
 
             <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Province</label>
-                  <input 
-                    type="text"
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">PROVINCE / EMIRATE</label>
+                  <select 
                     value={province}
                     onChange={(e) => setProvince(e.target.value)}
-                    placeholder="e.g. Western"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                  />
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                  >
+                    <option value="">Select Province</option>
+                    <option value="Western Province">Western Province</option>
+                    <option value="Central Province">Central Province</option>
+                    <option value="Southern Province">Southern Province</option>
+                    <option value="North Western Province">North Western Province</option>
+                    <option value="Sabaragamuwa Province">Sabaragamuwa Province</option>
+                    <option value="North Central Province">North Central Province</option>
+                    <option value="Uva Province">Uva Province</option>
+                    <option value="Northern Province">Northern Province</option>
+                    <option value="Eastern Province">Eastern Province</option>
+                  </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">District</label>
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">DISTRICT / AREA</label>
                   <input 
                     type="text"
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="e.g. Colombo"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                    placeholder="e.g. Jumeirah, JVC"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">City / Neighborhood</label>
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">LOCATION</label>
                   <input 
                     type="text"
                     value={locationName}
                     onChange={(e) => setLocationName(e.target.value)}
-                    placeholder="e.g. Colombo 7"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                    placeholder="e.g. Palm Jumeirah"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Full Address</label>
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">FULL ADDRESS</label>
                 <input 
                   type="text"
                   value={fullAddress}
                   onChange={(e) => setFullAddress(e.target.value)}
-                  placeholder="Street address..."
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                  placeholder="Street address, building name, floor..."
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                />
+              </div>
+
+              {/* Interactive Location Map Picker */}
+              <div className="pt-2">
+                <LocationPickerMap 
+                  latitude={latitude}
+                  longitude={longitude}
+                  onLocationSelect={(lat, lng) => {
+                    setLatitude(lat);
+                    setLongitude(lng);
+                  }}
                 />
               </div>
             </div>

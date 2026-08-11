@@ -86,6 +86,13 @@ export const createPropertyApi = async (payload: any): Promise<any> => {
   return response.data;
 };
 
+export const createLandApi = async (payload: any): Promise<any> => {
+  const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await api.post('/agent/lands', payload, { headers });
+  return response.data;
+};
+
 
 export const uploadPropertyImageApi = async (file: File): Promise<{
   message: string;
