@@ -45,6 +45,9 @@ export interface ApiProperty {
   isNearHighway?: boolean
   isQuietArea?: boolean
   isNearBeach?: boolean
+  yearBuilt?: number | null
+  landArea?: number | null
+  nearbyFacilities?: any
 }
 
 // ─── Frontend-friendly type used by all property pages ───────────────────────
@@ -99,6 +102,8 @@ export interface MappedProperty {
   isNearHighway: boolean
   isQuietArea: boolean
   isNearBeach: boolean
+  yearBuilt?: number | null
+  landArea?: number | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -122,8 +127,8 @@ function extractDistrict(location: string): string {
 
 function getBadgeInfo(listingType: string): { badge: string; badgeColor: string } {
   if (listingType === 'Rent') return { badge: 'FOR RENT',  badgeColor: '#6b879c' }
-  if (listingType === 'Buy')  return { badge: 'FOR SALE',  badgeColor: '#be5d3f' }
-  return                             { badge: 'PREMIUM',   badgeColor: '#495d38' }
+  if (listingType === 'Buy' || listingType === 'Sale')  return { badge: 'FOR SALE',  badgeColor: '#be5d3f' }
+  return                             { badge: 'PREMIUM',   badgeColor: '#345b79' }
 }
 
 const districtCoords: Record<string, [number, number]> = {
@@ -139,7 +144,7 @@ export function mapApiProperty(p: ApiProperty): MappedProperty {
   const district  = extractDistrict(p.location)
   const mainImage = p.images[0] ??
     'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80'
-  const parking   = 2
+  const parking   = p.parkingSpaces || 2
 
   const gallery: MappedProperty['gallery'] =
     p.images.length > 0
@@ -190,32 +195,38 @@ export function mapApiProperty(p: ApiProperty): MappedProperty {
       `Covered Parking (${parking} Cars)`,
       '24/7 Security',
     ],
-    nearbyFacilities: {
-      schools: [
-        { name: 'Nearby International School', distance: '1.2 km' },
-        { name: 'Local College',               distance: '2.5 km' },
-        { name: 'Primary School',              distance: '0.8 km' },
-      ],
-      hospitals: [
-        { name: 'District Hospital',       distance: '2.0 km' },
-        { name: 'Private Medical Centre',  distance: '3.5 km' },
-        { name: 'Clinic',                  distance: '1.0 km' },
-      ],
-      supermarkets: [
-        { name: 'Food City',    distance: '0.5 km' },
-        { name: 'Keells Super', distance: '1.2 km' },
-        { name: 'Local Market', distance: '0.9 km' },
-      ],
-    },
+    nearbyFacilities: (p.nearbyFacilities && typeof p.nearbyFacilities === 'object')
+      ? {
+          schools: Array.isArray((p.nearbyFacilities as any).schools) ? (p.nearbyFacilities as any).schools : [],
+          hospitals: Array.isArray((p.nearbyFacilities as any).hospitals) ? (p.nearbyFacilities as any).hospitals : [],
+          supermarkets: Array.isArray((p.nearbyFacilities as any).supermarkets) ? (p.nearbyFacilities as any).supermarkets : [],
+        }
+      : {
+          schools: [
+            { name: 'Nearby International School', distance: '1.2 km' },
+            { name: 'Local College',               distance: '2.5 km' },
+            { name: 'Primary School',              distance: '0.8 km' },
+          ],
+          hospitals: [
+            { name: 'District Hospital',       distance: '2.0 km' },
+            { name: 'Private Medical Centre',  distance: '3.5 km' },
+            { name: 'Clinic',                  distance: '1.0 km' },
+          ],
+          supermarkets: [
+            { name: 'Food City',    distance: '0.5 km' },
+            { name: 'Keells Super', distance: '1.2 km' },
+            { name: 'Local Market', distance: '0.9 km' },
+          ],
+        },
     mapCenter:
       p.latitude != null && p.longitude != null
         ? [p.latitude, p.longitude]
         : districtCoords[district] ?? [7.8731, 80.7718],
     details: [
       { label: 'Property Type', value: p.propertyType },
-      { label: 'Status',        value: p.listingType === 'Rent' ? 'For Rent' : 'For Sale' },
-      { label: 'Year Built',    value: '2018' },
-      { label: 'Land Size',     value: '10 Perches' },
+      { label: 'Status',        value: p.listingType === 'Rent' ? 'For Rent' : p.listingType === 'Buy' || p.listingType === 'Sale' ? 'For Sale' : 'Premium' },
+      { label: 'Year Built',    value: p.yearBuilt ? String(p.yearBuilt) : '2018' },
+      { label: 'Land Size',     value: p.landArea ? `${p.landArea} Perches` : '10 Perches' },
       { label: 'Floor Area',    value: formatArea(p.area) },
       { label: 'Parking',       value: `${parking} Cars` },
       { label: 'Furnishing',    value: 'Semi-Furnished' },
@@ -242,6 +253,8 @@ export function mapApiProperty(p: ApiProperty): MappedProperty {
     isNearHighway: !!p.isNearHighway,
     isQuietArea: !!p.isQuietArea,
     isNearBeach: !!p.isNearBeach,
+    yearBuilt: p.yearBuilt,
+    landArea: p.landArea,
   }
 }
 
