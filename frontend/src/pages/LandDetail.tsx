@@ -217,6 +217,17 @@ export default function LandDetail() {
     getLandById(id)
       .then(data => {
         setLand(data)
+        // ── Track page views with a 3-second throttle to prevent Strict Mode double-counts ──
+        const lastViewKey = `nexabuild_land_last_view_${id}`
+        const now = Date.now()
+        const lastViewTime = parseInt(sessionStorage.getItem(lastViewKey) || '0', 10)
+        
+        if (now - lastViewTime > 3000) {
+          sessionStorage.setItem(lastViewKey, String(now))
+          const viewKey = `nexabuild_land_views_${id}`
+          const prev = parseInt(localStorage.getItem(viewKey) || '0', 10)
+          localStorage.setItem(viewKey, String(prev + 1))
+        }
         return getAllLands()
       })
       .then(all => {
@@ -264,7 +275,14 @@ export default function LandDetail() {
   const galleryMid = land.images[1] ?? land.images[0]
   const gallerySmall = land.images[2] ?? land.images[0]
   const galleryExtra = land.images[3]
-  const facilities = getNearbyFacilities(land.location)
+  const rawFacilities = land.nearbyFacilities as any;
+  const facilities = (rawFacilities && typeof rawFacilities === 'object')
+    ? {
+        schools: Array.isArray(rawFacilities.schools) ? rawFacilities.schools : [],
+        hospitals: Array.isArray(rawFacilities.hospitals) ? rawFacilities.hospitals : [],
+        supermarkets: Array.isArray(rawFacilities.supermarkets) ? rawFacilities.supermarkets : [],
+      }
+    : getNearbyFacilities(land.location)
 
   return (
     <>

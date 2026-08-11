@@ -16,6 +16,11 @@ export interface Land {
   rawScore?: number
   latitude: number | null
   longitude: number | null
+  nearbyFacilities?: {
+    schools:      { name: string; distance: string }[]
+    hospitals:    { name: string; distance: string }[]
+    supermarkets: { name: string; distance: string }[]
+  } | null
   createdAt: string
   updatedAt: string
 }

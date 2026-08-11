@@ -7,6 +7,48 @@ import {
   uploadPropertyImageApi,
 } from '../../services/agentApi';
 
+// ── Shared constants (must match LandListing.tsx & AIRecommendations.tsx filter values exactly) ──
+const SRI_LANKA_DISTRICTS = [
+  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo',
+  'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara',
+  'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar',
+  'Matale', 'Matara', 'Moneragala', 'Mullaitivu', 'Nuwara Eliya',
+  'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya',
+]
+
+// Land types — lowercase to match filter: l.landType.toLowerCase() === appliedType.toLowerCase()
+const LAND_TYPE_OPTIONS = [
+  { label: 'Residential', value: 'residential' },
+  { label: 'Commercial',  value: 'commercial' },
+  { label: 'Agricultural', value: 'agricultural' },
+  { label: 'Industrial',  value: 'industrial' },
+  { label: 'Tourism',     value: 'tourism' },
+  { label: 'Mixed-Use',   value: 'mixed-use' },
+]
+
+// Purpose options — match AIRecommendations center filter values exactly
+const PURPOSE_OPTIONS = [
+  'Build Home',
+  'Investment',
+  'Agriculture',
+  'Commercial Project',
+]
+
+// Environment options — match AIRecommendations center filter values exactly
+const ENVIRONMENT_OPTIONS = [
+  'City / Urban Area',
+  'Scenic / Hill Country',
+  'Coastal / Beachfront',
+  'Countryside / Rural',
+]
+
+// Development plan options — match AIRecommendations center filter values exactly
+const DEVELOPMENT_PLAN_OPTIONS = [
+  'Build / Develop Immediately',
+  'Hold for Appreciation',
+  'Agricultural Cultivation',
+]
+
 export interface AddNewLandFormFields {
   name?: string;
   description?: string;
@@ -39,16 +81,68 @@ export default function AddNewLand() {
   // Form State
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [landType, setLandType] = useState('Residential');
-  const [purpose, setPurpose] = useState('Sale');
+  // landType is stored lowercase to match filter: l.landType.toLowerCase() === appliedType
+  const [landType, setLandType] = useState('residential');
+  // purpose matches AIRecommendations center filter values
+  const [purpose, setPurpose] = useState('Build Home');
   const [price, setPrice] = useState('');
   const [perches, setPerches] = useState('');
   const [sqft, setSqft] = useState('');
 
   const [province, setProvince] = useState('');
+  // district is a dropdown of SRI_LANKA_DISTRICTS so location filter includes() check works
   const [district, setDistrict] = useState('');
   const [locationName, setLocationName] = useState('');
   const [fullAddress, setFullAddress] = useState('');
+
+  // environment & developmentPlan match AIRecommendations center filter values exactly
+  const [environment, setEnvironment] = useState('');
+  const [developmentPlan, setDevelopmentPlan] = useState('');
+
+  // Nearby facilities matching AddNewProperty layout & fields
+  const [nearbyFacilities, setNearbyFacilities] = useState<{
+    schools: { name: string; distance: string }[];
+    hospitals: { name: string; distance: string }[];
+    supermarkets: { name: string; distance: string }[];
+  }>({
+    schools: [
+      { name: 'Nearby International School', distance: '1.2 km' },
+      { name: 'Local College',               distance: '2.5 km' },
+      { name: 'Primary School',              distance: '0.8 km' },
+    ],
+    hospitals: [
+      { name: 'District Hospital',       distance: '2.0 km' },
+      { name: 'Private Medical Centre',  distance: '3.5 km' },
+      { name: 'Clinic',                  distance: '1.0 km' },
+    ],
+    supermarkets: [
+      { name: 'Food City',    distance: '0.5 km' },
+      { name: 'Keells Super', distance: '1.2 km' },
+      { name: 'Local Market', distance: '0.9 km' },
+    ],
+  });
+
+  const handleFacilityChange = (group: 'schools' | 'hospitals' | 'supermarkets', index: number, field: 'name' | 'distance', value: string) => {
+    setNearbyFacilities(prev => {
+      const nextGroup = [...prev[group]];
+      nextGroup[index] = { ...nextGroup[index], [field]: value };
+      return { ...prev, [group]: nextGroup };
+    });
+  };
+
+  const addFacility = (group: 'schools' | 'hospitals' | 'supermarkets') => {
+    setNearbyFacilities(prev => ({
+      ...prev,
+      [group]: [...prev[group], { name: '', distance: '' }]
+    }));
+  };
+
+  const removeFacility = (group: 'schools' | 'hospitals' | 'supermarkets', index: number) => {
+    setNearbyFacilities(prev => ({
+      ...prev,
+      [group]: prev[group].filter((_, i) => i !== index)
+    }));
+  };
 
   const [latitude, setLatitude] = useState<number | null>(6.9271);
   const [longitude, setLongitude] = useState<number | null>(79.8612);
@@ -153,8 +247,14 @@ export default function AddNewLand() {
     const payload = {
       name,
       description,
+      // landType stored lowercase — matches filter l.landType.toLowerCase() === appliedType
       landType,
+      // purpose matches AIRecommendations center filter: land.purpose === appliedPurpose
       purpose,
+      // environment matches AIRecommendations: land.environment === appliedEnvironment
+      environment: environment || undefined,
+      // developmentPlan matches AIRecommendations: land.developmentPlan === appliedPlan
+      developmentPlan: developmentPlan || undefined,
       price,
       perches,
       sqft: sqft || (Number(perches) * 272.25).toString(),
@@ -162,7 +262,9 @@ export default function AddNewLand() {
       district,
       locationName,
       fullAddress,
-      location: `${locationName || district || 'Colombo'}, ${province || 'Western'}`,
+      // location string includes district name so LandListing location filter works:
+      // l.location.toLowerCase().includes(appliedLocation.toLowerCase())
+      location: `${locationName || district || 'Colombo'}, ${district ? district + ', ' : ''}${province || 'Western'}`,
       latitude,
       longitude,
       features,
@@ -172,6 +274,7 @@ export default function AddNewLand() {
       status,
       aiTags,
       visibility,
+      nearbyFacilities,
     };
 
     try {
@@ -283,6 +386,7 @@ export default function AddNewLand() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Land Type — values are lowercase to match filter comparison */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Land Type</label>
                   <select
@@ -290,14 +394,13 @@ export default function AddNewLand() {
                     onChange={(e) => setLandType(e.target.value)}
                     className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#be5d3f]/20"
                   >
-                    <option value="Residential">Residential</option>
-                    <option value="Commercial">Commercial</option>
-                    <option value="Agricultural">Agricultural</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Mixed-Use">Mixed-Use</option>
+                    {LAND_TYPE_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                 </div>
 
+                {/* Purpose — matches AIRecommendations center filter values exactly */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Purpose</label>
                   <select
@@ -305,10 +408,9 @@ export default function AddNewLand() {
                     onChange={(e) => setPurpose(e.target.value)}
                     className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#be5d3f]/20"
                   >
-                    <option value="Sale">Sale</option>
-                    <option value="Lease">Lease</option>
-                    <option value="Joint Venture">Joint Venture</option>
-                    <option value="Investment">Investment</option>
+                    {PURPOSE_OPTIONS.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -344,7 +446,7 @@ export default function AddNewLand() {
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">PROVINCE / EMIRATE</label>
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">PROVINCE</label>
                   <select
                     value={province}
                     onChange={(e) => setProvince(e.target.value)}
@@ -363,15 +465,19 @@ export default function AddNewLand() {
                   </select>
                 </div>
 
+                {/* District — dropdown of SRI_LANKA_DISTRICTS to match location filter */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">DISTRICT / AREA</label>
-                  <input
-                    type="text"
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">DISTRICT</label>
+                  <select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="e.g. Jumeirah, JVC"
                     className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#be5d3f]/20"
-                  />
+                  >
+                    <option value="">Select District</option>
+                    {SRI_LANKA_DISTRICTS.map(dist => (
+                      <option key={dist} value={dist}>{dist}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-1.5">
@@ -455,6 +561,59 @@ export default function AddNewLand() {
             </div>
           </section>
 
+          {/* Section 3b: Environment & Development Plan */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Environment & Development Plan</h3>
+                <p className="text-xs text-gray-500 font-medium">Match AI preference filters for better recommendations</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Environment — matches AIRecommendations center filter options */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">
+                  🌿 Environment
+                </label>
+                <select
+                  value={environment}
+                  onChange={(e) => setEnvironment(e.target.value)}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#be5d3f]/20"
+                >
+                  <option value="">Select Environment</option>
+                  {ENVIRONMENT_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-gray-400">Used by AI to match buyers seeking specific surroundings</p>
+              </div>
+
+              {/* Development Plan — matches AIRecommendations center filter options */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">
+                  📅 Development Plan
+                </label>
+                <select
+                  value={developmentPlan}
+                  onChange={(e) => setDevelopmentPlan(e.target.value)}
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#be5d3f]/20"
+                >
+                  <option value="">Select Plan</option>
+                  {DEVELOPMENT_PLAN_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-gray-400">Helps AI match buyers with matching investment timelines</p>
+              </div>
+            </div>
+          </section>
+
           {/* Section 4: Infrastructure & Features */}
           <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
             <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
@@ -488,6 +647,80 @@ export default function AddNewLand() {
                       {checked ? '✓' : ''}
                     </span>
                   </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Section 4b: Nearby Facilities */}
+          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+              <div className="size-10 rounded-xl bg-blue-50 text-[#345b79] flex items-center justify-center shrink-0">
+                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Nearby Facilities</h3>
+                <p className="text-xs text-gray-500 font-medium">Add nearby schools, hospitals, and supermarkets with distances</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {(['schools', 'hospitals', 'supermarkets'] as const).map(group => {
+                const titleMap = { schools: 'Schools', hospitals: 'Hospitals', supermarkets: 'Supermarkets' };
+                const bgColors = { schools: 'bg-[#345b79]', hospitals: 'bg-[#be5d3f]', supermarkets: 'bg-[#495d38]' };
+                const label = titleMap[group];
+                const list = nearbyFacilities[group];
+
+                return (
+                  <div key={group} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold ${bgColors[group]}`}>
+                          {label[0]}
+                        </div>
+                        <h4 className="text-xs font-extrabold text-gray-700 uppercase tracking-wider">{label}</h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addFacility(group)}
+                        className="text-[10px] font-extrabold text-[#345b79] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        + Add {label.slice(0, -1)}
+                      </button>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {list.map((item, idx) => (
+                        <div key={idx} className="flex gap-2.5 items-center">
+                          <input
+                            type="text"
+                            placeholder="Facility Name (e.g. Food City)"
+                            value={item.name}
+                            onChange={(e) => handleFacilityChange(group, idx, 'name', e.target.value)}
+                            className="flex-1 bg-gray-50/80 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Distance (e.g. 1.2 km)"
+                            value={item.distance}
+                            onChange={(e) => handleFacilityChange(group, idx, 'distance', e.target.value)}
+                            className="w-28 bg-gray-50/80 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                          />
+                          {list.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeFacility(group, idx)}
+                              className="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 cursor-pointer"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 );
               })}
             </div>

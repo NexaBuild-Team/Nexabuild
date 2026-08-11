@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 import { fetchAgentDashboard, updateListingStatusApi, deleteListingApi } from '../../services/agentApi';
 import type { AgentDashboardData as ApiAgentData } from '../../services/agentApi';
+import { getAllLands, deleteLand } from '../../services/landApi';
+import { fetchAllProperties } from '../../services/propertyService';
 
 // ─── 1. Comprehensive Interfaces ───────────────────────────────────────────
 
@@ -109,8 +111,17 @@ export default function AgentDashboard({
   onToggleStatus,
   onDeleteListing,
 }: AgentDashboardProps) {
+  const navigate = useNavigate();
   const [apiData, setApiData] = useState<ApiAgentData | null>(null);
   const [fetching, setFetching] = useState(!data);
+
+  // Fetched land listings from the land API
+  const [fetchedLands, setFetchedLands] = useState<AgentDashboardListingItem[]>([]);
+  // Fetched property listings from the property API
+  const [fetchedProperties, setFetchedProperties] = useState<AgentDashboardListingItem[]>([]);
+
+  // Tab filter: 'all' | 'property' | 'land'
+  const [activeTab, setActiveTab] = useState<'all' | 'property' | 'land'>('all');
 
   useEffect(() => {
     if (!data) {
@@ -126,13 +137,60 @@ export default function AgentDashboard({
     }
   }, [data]);
 
+  // Fetch all lands and map to listing items
+  useEffect(() => {
+    getAllLands()
+      .then((lands) => {
+        const mapped: AgentDashboardListingItem[] = lands.map((l) => ({
+          id: l.id,
+          title: l.name,
+          type: 'LAND',
+          status: (l.status === 'active' || l.status === 'Active' ? 'Active' : l.status === 'Pending Review' || l.status === 'Pending' ? 'Pending' : 'Inactive') as 'Active' | 'Pending' | 'Inactive',
+          // Read view count tracked by LandDetail on each page visit
+          views: parseInt(localStorage.getItem(`nexabuild_land_views_${l.id}`) || '0', 10),
+          saved: 0,
+          imageUrl: l.images?.[0] || '/property_card_1.png',
+        }));
+        setFetchedLands(mapped);
+      })
+      .catch((err) => console.error('Failed to load lands for dashboard:', err));
+  }, []);
+
+  // Fetch all properties and map to listing items
+  useEffect(() => {
+    fetchAllProperties()
+      .then((props) => {
+        const mapped: AgentDashboardListingItem[] = props.map((p) => ({
+          id: p.id,
+          title: p.title,
+          type: 'PROPERTY',
+          status: 'Active' as const,
+          // Read view count tracked by PropertyDetail on each page visit
+          views: parseInt(localStorage.getItem(`nexabuild_property_views_${p.id}`) || '0', 10),
+          saved: 0,
+          imageUrl: p.image || '/property_card_1.png',
+        }));
+        setFetchedProperties(mapped);
+      })
+      .catch((err) => console.error('Failed to load properties for dashboard:', err));
+  }, []);
+
   const [localListings, setLocalListings] = useState<AgentDashboardListingItem[]>([]);
 
-  const listings: AgentDashboardListingItem[] = apiData?.listings
-    ? (apiData.listings as AgentDashboardListingItem[])
-    : data?.listings !== undefined
-    ? data.listings
-    : localListings;
+  // Merge: all fetched properties + all fetched lands
+  // fetchedProperties covers all real DB properties
+  // fetchedLands covers all real DB lands
+  const allListings: AgentDashboardListingItem[] = [
+    ...fetchedProperties,
+    ...fetchedLands,
+  ];
+
+  const listings: AgentDashboardListingItem[] =
+    activeTab === 'property'
+      ? allListings.filter((l) => l.type === 'PROPERTY')
+      : activeTab === 'land'
+      ? allListings.filter((l) => l.type === 'LAND')
+      : allListings;
 
   const notifications = apiData?.notifications ?? (data?.notifications !== undefined ? data.notifications : []);
   const activities = apiData?.activities ?? (data?.activities !== undefined ? data.activities : []);
@@ -143,16 +201,24 @@ export default function AgentDashboard({
     if (onDeleteListing) {
       onDeleteListing(id);
     } else {
+      const item = allListings.find((l) => l.id === id);
+      if (!window.confirm(`Delete "${item?.title}"? This cannot be undone.`)) return;
       try {
-        const item = listings.find(l => l.id === id);
-        await deleteListingApi(String(id), item?.type || 'PROPERTY');
-        if (apiData) {
-          setApiData(prev => prev ? { ...prev, listings: prev.listings.filter(l => l.id !== id) } : null);
+        if (item?.type === 'LAND') {
+          await deleteLand(String(id));
+          setFetchedLands((prev) => prev.filter((l) => l.id !== id));
         } else {
-          setLocalListings(prev => prev.filter(l => l.id !== id));
+          // PROPERTY: use deleteListingApi
+          await deleteListingApi(String(id), 'PROPERTY');
+          setFetchedProperties((prev) => prev.filter((l) => l.id !== id));
         }
       } catch {
-        setLocalListings(prev => prev.filter(l => l.id !== id));
+        // Optimistically remove from UI on error too
+        if (item?.type === 'LAND') {
+          setFetchedLands((prev) => prev.filter((l) => l.id !== id));
+        } else {
+          setFetchedProperties((prev) => prev.filter((l) => l.id !== id));
+        }
       }
     }
   };
@@ -161,20 +227,21 @@ export default function AgentDashboard({
     if (onToggleStatus) {
       onToggleStatus(id);
     } else {
-      const item = listings.find(l => l.id === id);
+      const item = allListings.find((l) => l.id === id);
       const nextStatus = item?.status === 'Active' ? 'Pending' : item?.status === 'Pending' ? 'Inactive' : 'Active';
       try {
         await updateListingStatusApi(String(id), item?.type || 'PROPERTY', nextStatus);
-        if (apiData) {
-          setApiData(prev => prev ? {
-            ...prev,
-            listings: prev.listings.map(l => l.id === id ? { ...l, status: nextStatus as any } : l)
-          } : null);
+        if (item?.type === 'LAND') {
+          setFetchedLands((prev) => prev.map((l) => l.id === id ? { ...l, status: nextStatus as any } : l));
         } else {
-          setLocalListings(prev => prev.map(l => l.id === id ? { ...l, status: nextStatus as any } : l));
+          setFetchedProperties((prev) => prev.map((l) => l.id === id ? { ...l, status: nextStatus as any } : l));
         }
       } catch {
-        setLocalListings(prev => prev.map(l => l.id === id ? { ...l, status: nextStatus as any } : l));
+        if (item?.type === 'LAND') {
+          setFetchedLands((prev) => prev.map((l) => l.id === id ? { ...l, status: nextStatus as any } : l));
+        } else {
+          setFetchedProperties((prev) => prev.map((l) => l.id === id ? { ...l, status: nextStatus as any } : l));
+        }
       }
     }
   };
@@ -493,11 +560,44 @@ export default function AgentDashboard({
 
         {/* F. Latest Listings Table */}
         <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-extrabold text-[#111827]">Latest Listings</h3>
-            <Link to="/property-listing" className="text-xs font-bold text-[#345b79] hover:underline uppercase tracking-wider">
-              View All
-            </Link>
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="text-lg font-extrabold text-[#111827]">Latest Listings</h3>
+              <p className="text-[11px] text-gray-400 font-semibold mt-0.5">
+                {allListings.length} total · {allListings.filter(l => l.type === 'PROPERTY').length} properties · {allListings.filter(l => l.type === 'LAND').length} lands
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Tab filter */}
+              <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+                {(['all', 'property', 'land'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`text-[10px] font-extrabold px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
+                      activeTab === tab
+                        ? 'bg-white text-[#345b79] shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {tab === 'all' ? 'All' : tab === 'property' ? 'Properties' : 'Lands'}
+                  </button>
+                ))}
+              </div>
+              {/* Add New buttons */}
+              <Link
+                to="/dashboard/agent/add-property"
+                className="text-[10px] font-extrabold text-white bg-[#345b79] hover:bg-[#2a4a63] px-3 py-1.5 rounded-xl transition-colors"
+              >
+                + Add Property
+              </Link>
+              <Link
+                to="/dashboard/agent/add-land"
+                className="text-[10px] font-extrabold text-white bg-[#be5d3f] hover:bg-[#a64e33] px-3 py-1.5 rounded-xl transition-colors"
+              >
+                + Add Land
+              </Link>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -516,19 +616,29 @@ export default function AgentDashboard({
                 {listings.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-gray-400 font-semibold text-xs">
-                      No active property or land listings found in the database.
+                      {activeTab === 'land'
+                        ? 'No land listings found. Click <strong>+ Add Land</strong> to create one.'
+                        : activeTab === 'property'
+                        ? 'No property listings found.'
+                        : 'No listings found yet.'}
                     </td>
                   </tr>
                 ) : (
                   listings.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
+                    <tr key={`${item.type}-${item.id}`} className="hover:bg-gray-50/80 transition-colors">
                       <td className="py-3 px-3">
                         <img src={item.imageUrl} alt={item.title} className="size-12 rounded-xl object-cover" />
                       </td>
                       <td className="py-3 px-3">
                         <h4 className="font-bold text-[#111827]">{item.title}</h4>
-                        <span className="text-[9px] font-extrabold bg-blue-50 text-[#345b79] px-2 py-0.5 rounded-md uppercase block mt-0.5 w-max">
-                          {item.type}
+                        <span
+                          className={`text-[9px] font-extrabold px-2 py-0.5 rounded-md uppercase block mt-0.5 w-max ${
+                            item.type === 'LAND'
+                              ? 'bg-orange-50 text-[#be5d3f]'
+                              : 'bg-blue-50 text-[#345b79]'
+                          }`}
+                        >
+                          {item.type === 'LAND' ? '🌱 Land' : '🏠 Property'}
                         </span>
                       </td>
                       <td className="py-3 px-3">
@@ -549,14 +659,31 @@ export default function AgentDashboard({
                       <td className="py-3 px-3 font-bold text-[#111827]">{item.saved}</td>
                       <td className="py-3 px-3 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {/* View */}
                           <button
-                            onClick={() => onViewListing && onViewListing(item.id, item.type)}
+                            onClick={() => {
+                              if (onViewListing) {
+                                onViewListing(item.id, item.type);
+                              } else if (item.type === 'LAND') {
+                                navigate(`/land/detail/${item.id}`);
+                              } else {
+                                navigate(`/property-listing/${item.id}`);
+                              }
+                            }}
                             className="size-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                             title="View Listing"
                           >
                             <img src="/svg/eye.svg" alt="View" className="size-4 opacity-70" />
                           </button>
+                          {/* Edit */}
                           <button
+                            onClick={() => {
+                              if (item.type === 'LAND') {
+                                navigate(`/dashboard/agent/add-land`);
+                              } else {
+                                navigate(`/dashboard/agent/add-property`);
+                              }
+                            }}
                             className="size-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                             title="Edit Listing"
                           >
@@ -564,6 +691,7 @@ export default function AgentDashboard({
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
+                          {/* Delete */}
                           <button
                             onClick={() => handleDelete(item.id)}
                             className="size-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"

@@ -188,6 +188,59 @@ export default function LandListing() {
     return filtered
   }, [lands, searchText, appliedLocation, appliedType, appliedPriceMax, appliedRoadAccess, sortBy])
 
+  // Pagination Constants & Logic
+  const ITEMS_PER_PAGE = 9
+
+  // Reset page to 1 when filter states change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchText, appliedLocation, appliedType, appliedPriceMax, appliedRoadAccess, sortBy])
+
+  const paginatedLands = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredLands.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredLands, currentPage])
+
+  const totalPages = Math.ceil(filteredLands.length / ITEMS_PER_PAGE) || 1
+
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisible = 5
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+      let start = Math.max(2, currentPage - 1)
+      let end = Math.min(totalPages - 1, currentPage + 1)
+      if (currentPage <= 2) {
+        end = 4
+      } else if (currentPage >= totalPages - 1) {
+        start = totalPages - 3
+      }
+      if (start > 2) {
+        pages.push('ellipsis-start')
+      }
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+      if (end < totalPages - 1) {
+        pages.push('ellipsis-end')
+      }
+      pages.push(totalPages)
+    }
+    return pages
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    const target = document.getElementById('listings-section')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <div style={{ backgroundColor: '#e6e0d4', fontFamily: 'Inter, sans-serif' }}>
 
@@ -556,7 +609,7 @@ export default function LandListing() {
             {/* Cards Grid */}
             {!loading && !error && (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredLands.map(parcel => (
+                {paginatedLands.map(parcel => (
                   <article
                     key={parcel.id}
                     id={`land-card-${parcel.id}`}
@@ -617,35 +670,51 @@ export default function LandListing() {
             )}
 
             {/* Pagination */}
-            <div className="mt-12 flex justify-center items-center gap-2">
-              <button className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50">
-                ‹
-              </button>
-              {[1, 2, 3].map(p => (
+            {totalPages > 1 && (
+              <div className="mt-12 flex justify-center items-center gap-2">
                 <button
-                  key={p}
-                  id={`page-btn-${p}`}
-                  onClick={() => setCurrentPage(p)}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-all"
-                  style={currentPage === p
-                    ? { backgroundColor: '#345b79', color: '#fff' }
-                    : { backgroundColor: '#fff', border: '1px solid #e5e7eb', color: '#1d1d1d' }
-                  }
+                  onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 transition-colors ${
+                    currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
                 >
-                  {p}
+                  ‹
                 </button>
-              ))}
-              <span className="px-2" style={{ color: '#928d64' }}>...</span>
-              <button
-                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold bg-white border border-gray-200 hover:bg-gray-50"
-                style={{ color: '#1d1d1d' }}
-              >
-                8
-              </button>
-              <button className="w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50">
-                ›
-              </button>
-            </div>
+                {getPageNumbers().map((p, idx) => {
+                  if (p === 'ellipsis-start' || p === 'ellipsis-end') {
+                    return (
+                      <span key={`ellipsis-${idx}`} className="px-2" style={{ color: '#928d64' }}>
+                        ...
+                      </span>
+                    )
+                  }
+                  return (
+                    <button
+                      key={`page-${p}`}
+                      id={`page-btn-${p}`}
+                      onClick={() => handlePageChange(Number(p))}
+                      className="w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-all cursor-pointer"
+                      style={currentPage === p
+                        ? { backgroundColor: '#345b79', color: '#fff' }
+                        : { backgroundColor: '#fff', border: '1px solid #e5e7eb', color: '#1d1d1d' }
+                      }
+                    >
+                      {p}
+                    </button>
+                  )
+                })}
+                <button
+                  onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center border border-gray-200 bg-white hover:bg-gray-50 transition-colors ${
+                    currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                >
+                  ›
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
