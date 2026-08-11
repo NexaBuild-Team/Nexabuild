@@ -18,5 +18,6 @@ model Land {
   environment     String?
   purpose         String?
   views           Int      @default(0)
+  nearbyFacilities Json?
   savedLands SavedLand[]
 }

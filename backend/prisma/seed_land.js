@@ -40,7 +40,7 @@ async function main() {
       developmentPlan: 'Build / Develop Immediately',
       images: [
         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80',
-        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&auto=format&fit=crop&q=80'
+        'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 96,
       latitude: 6.8924,
@@ -59,7 +59,8 @@ async function main() {
       environment: 'Scenic / Hill Country',
       developmentPlan: 'Build / Develop Immediately',
       images: [
-        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&auto=format&fit=crop&q=80'
+        'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=800&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1563889362-383b7afc601c?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 88,
       latitude: 7.2906,
@@ -78,7 +79,8 @@ async function main() {
       environment: 'Coastal / Beachfront',
       developmentPlan: 'Build / Develop Immediately',
       images: [
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80'
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 91,
       latitude: 7.2111,
@@ -97,6 +99,7 @@ async function main() {
       environment: 'Coastal / Beachfront',
       developmentPlan: 'Hold for Appreciation',
       images: [
+        'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 94,
@@ -116,6 +119,7 @@ async function main() {
       environment: 'City / Urban Area',
       developmentPlan: 'Build / Develop Immediately',
       images: [
+        'https://images.unsplash.com/photo-1590486803833-1c5dc8ddd4c8?w=800&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 82,
@@ -135,6 +139,7 @@ async function main() {
       environment: 'Countryside / Rural',
       developmentPlan: 'Agricultural Cultivation',
       images: [
+        'https://images.unsplash.com/photo-1621274790572-7c325d6bc67f?w=800&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 90,
@@ -154,6 +159,7 @@ async function main() {
       environment: 'City / Urban Area',
       developmentPlan: 'Build / Develop Immediately',
       images: [
+        'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 78,
@@ -173,6 +179,7 @@ async function main() {
       environment: 'City / Urban Area',
       developmentPlan: 'Build / Develop Immediately',
       images: [
+        'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&auto=format&fit=crop&q=80',
         'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&auto=format&fit=crop&q=80'
       ],
       matchScore: 85,

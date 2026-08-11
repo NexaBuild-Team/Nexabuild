@@ -122,6 +122,19 @@ export default function PropertyDetail() {
       .then(async (p) => {
         setProperty(p)
         setFetchError(null)
+
+        // ── Track page views with a 3-second throttle to prevent Strict Mode double-counts ──
+        const lastViewKey = `nexabuild_property_last_view_${id}`
+        const now = Date.now()
+        const lastViewTime = parseInt(sessionStorage.getItem(lastViewKey) || '0', 10)
+        
+        if (now - lastViewTime > 3000) {
+          sessionStorage.setItem(lastViewKey, String(now))
+          const viewKey = `nexabuild_property_views_${id}`
+          const prev = parseInt(localStorage.getItem(viewKey) || '0', 10)
+          localStorage.setItem(viewKey, String(prev + 1))
+        }
+
         // fetch similar: all properties excluding this one, limit 3
         const all = await fetchAllProperties()
         setSimilar(all.filter((x) => x.id !== p.id).slice(0, 3))
