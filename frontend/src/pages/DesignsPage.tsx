@@ -3,7 +3,7 @@
 // Architect Profile View — Silva & Associates Architecture
 
 import { useState, useEffect } from 'react'
-import { Link, } from 'react-router'
+import { Link, useParams } from 'react-router'
 import api from '../services/api'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -174,6 +174,7 @@ function Stars({ count }: { count: number }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DesignsPage() {
+  const { id } = useParams()
   // Live firm profile
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [firm, setFirm]                   = useState<any>(null)
@@ -181,8 +182,8 @@ export default function DesignsPage() {
   const [latestProjects, setLatestProjects] = useState<any[]>([])
 
   useEffect(() => {
-    // Load the silva-associates firm profile
-    api.get('/architecture/silva-associates').then((res) => setFirm(res.data)).catch(() => {})
+    // Load the firm profile — uses dynamic :id param, falls back to silva-associates
+    api.get(`/architecture/${id || 'silva-associates'}`).then((res) => setFirm(res.data)).catch(() => {})
     // Load latest project cards
     api.get('/architecture/designs').then((res) => {
       const all: any[] = res.data
@@ -190,7 +191,7 @@ export default function DesignsPage() {
         all.filter((d) => ['pearl-residence', 'ocean-breeze', 'lotus-tower-penthouse'].includes(d.id))
       )
     }).catch(() => {})
-  }, [])
+  }, [id])
 
   const featuredProject = latestProjects.find((p) => p.id === 'pearl-residence')
   const sideProjects    = latestProjects.filter((p) => p.id !== 'pearl-residence')
@@ -399,7 +400,7 @@ export default function DesignsPage() {
             {/* Featured card — left 2 columns */}
             {featuredProject && (
               <Link
-                to="villa-lumina"
+                to={`/designs/${featuredProject.id}`}
                 id={`project-featured-${featuredProject.id}`}
                 className="lg:col-span-2 relative rounded-2xl overflow-hidden group block"
                 style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.12)' }}
@@ -446,7 +447,7 @@ export default function DesignsPage() {
               {sideProjects.map((project) => (
                 <Link
                   key={project.id}
-                  to="/designs/villa-lumina"
+                  to={`/designs/${project.id}`}
                   id={`project-side-${project.id}`}
                   className="relative rounded-2xl overflow-hidden group block flex-1"
                   style={{ boxShadow: '0 4px 24px rgba(52,91,121,0.10)' }}
