@@ -219,6 +219,11 @@ export default function PropertyListing() {
     setHeroMaxBudget(maxBudgetM)
   }, [minBudgetM, maxBudgetM])
 
+  // Reset page to 1 when sort order changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [sortBy])
+
   // Sync draft states when URL params change
   useEffect(() => {
     setHeroLocation(initDistricts.length > 0 ? initDistricts.join(', ') : initQuery)
@@ -291,6 +296,7 @@ export default function PropertyListing() {
     setSearchQuery(''); setPropertyType('All Types')
     setMinBudgetM(0); setMaxBudgetM(SLIDER_MAX)
     setSelectedBeds('All'); setSelectedDistricts([]); setCurrentPage(1)
+    setSearchParams(new URLSearchParams())
   }
 
   // ── API data state ──
@@ -352,6 +358,13 @@ export default function PropertyListing() {
 
     return filtered
   }, [allProperties, searchParams, sortBy])
+
+  // ── Pagination Constants & Logic ──
+  const ITEMS_PER_PAGE = 9
+  const paginatedProperties = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredProperties.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredProperties, currentPage])
 
   // ── Budget preset ranges for the hero dropdown ──
   const BUDGET_PRESETS = [
@@ -891,9 +904,9 @@ export default function PropertyListing() {
             )}
 
             {/* 3-column grid */}
-            {!isLoading && !fetchError && filteredProperties.length > 0 ? (
+            {!isLoading && !fetchError && paginatedProperties.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filteredProperties.map((p) => (
+                {paginatedProperties.map((p) => (
                   <PropertyCard key={p.id} property={p} />
                 ))}
               </div>
@@ -905,7 +918,7 @@ export default function PropertyListing() {
                 <p className="font-semibold text-sm mb-1" style={{ color: '#1d1d1d' }}>No properties match your filters</p>
                 <p className="text-xs mb-5" style={{ color: '#928d64' }}>Try adjusting your search criteria or clearing some filters.</p>
                 <button
-                  onClick={() => { setSearchQuery(''); setPropertyType('All Types'); setMinBudgetM(0); setMaxBudgetM(SLIDER_MAX); setSelectedBeds('All'); setSelectedDistricts([]); setCurrentPage(1) }}
+                  onClick={clearAll}
                   className="text-xs font-bold px-6 py-2.5 rounded-xl text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: '#345b79' }}
                 >
@@ -916,7 +929,7 @@ export default function PropertyListing() {
 
             {/* Pagination — only when results exist */}
             {filteredProperties.length > 0 && (
-              <Pagination current={currentPage} total={Math.max(1, Math.ceil(filteredProperties.length / 6))} onChange={setCurrentPage} />
+              <Pagination current={currentPage} total={Math.max(1, Math.ceil(filteredProperties.length / ITEMS_PER_PAGE))} onChange={setCurrentPage} />
             )}
           </div>
         </div>
