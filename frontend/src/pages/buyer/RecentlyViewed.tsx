@@ -143,18 +143,8 @@ export default function RecentlyViewed({
     if (!data) {
       fetchRecentlyViewed()
         .then((res) => {
-          if (res && res.length > 0) {
-            const mapped = res.map((item: any) => ({
-              id: item.id,
-              title: item.query || '4BHK Villa Colombo 7',
-              location: item.location || 'Colombo 7',
-              price: 'LKR 28.5M',
-              type: (item.category === 'LAND' ? 'LAND' : 'PROPERTY') as 'PROPERTY' | 'LAND',
-              viewedTimeAgo: 'Just now',
-              imageUrl: item.category === 'LAND' ? '/property_card_1.png' : '/hero_property.png',
-              isSaved: false,
-            }));
-            setApiItems(mapped);
+          if (res && Array.isArray(res) && res.length > 0) {
+            setApiItems(res);
           }
         })
         .catch((err) => {

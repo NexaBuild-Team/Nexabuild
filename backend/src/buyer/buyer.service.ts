@@ -210,11 +210,56 @@ export class BuyerService {
   }
 
   async getRecentlyViewed(userId: string) {
-    const history = await this.prisma.searchHistory.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      take: 20,
-    });
-    return history;
+    const [properties, lands, userSavedProps, userSavedLands] = await Promise.all([
+      this.prisma.property.findMany({
+        take: 6,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.land.findMany({
+        take: 6,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.savedProperty.findMany({
+        where: { userId },
+        select: { propertyId: true },
+      }),
+      this.prisma.savedLand.findMany({
+        where: { userId },
+        select: { landId: true },
+      }),
+    ]);
+
+    const savedPropIds = new Set(userSavedProps.map((sp) => sp.propertyId));
+    const savedLandIds = new Set(userSavedLands.map((sl) => sl.landId));
+
+    const historyItems = [
+      ...properties.map((p) => ({
+        id: p.id,
+        title: p.title,
+        location: p.location,
+        price: `LKR ${(p.price / 1000000).toFixed(1)}M`,
+        type: 'PROPERTY' as const,
+        viewedTimeAgo: 'Viewed recently',
+        imageUrl: p.images?.[0] || '/hero_property.png',
+        beds: p.bedrooms,
+        baths: p.bathrooms,
+        sqft: Number(p.area || 1500).toLocaleString(),
+        isSaved: savedPropIds.has(p.id),
+      })),
+      ...lands.map((l) => ({
+        id: l.id,
+        title: l.name,
+        location: l.location,
+        price: `LKR ${(l.price / 1000000).toFixed(1)}M`,
+        type: 'LAND' as const,
+        viewedTimeAgo: 'Viewed recently',
+        imageUrl: l.images?.[0] || '/property_card_1.png',
+        perches: `${l.perches} PERCHES`,
+        roadAccessOrOrientation: l.landType ? `${l.landType.toUpperCase()} LOT` : 'MAIN ROAD ACCESS',
+        isSaved: savedLandIds.has(l.id),
+      })),
+    ];
+
+    return historyItems;
   }
 }

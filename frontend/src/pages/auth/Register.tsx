@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
@@ -196,6 +196,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
   };
 
   const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,7 +216,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({
       };
 
       try {
-        await authService.register({
+        await registerUser({
           email: formData.email,
           password: formData.password,
           firstName: formData.firstName,
