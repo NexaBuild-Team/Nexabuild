@@ -11,19 +11,23 @@ import { BuyerModule } from './buyer/buyer.module';
 import { AgentModule } from './agent/agent.module';
 import { ConstructionModule } from './construction/construction.module';
 import { AdminModule } from './admin/admin.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     PrismaModule,
-    PropertyModule, UserModule, AuthModule,
+    PropertyModule,
+    UserModule,
+    AuthModule,
     ArchitectureModule,
     LandModule,
     BuyerModule,
     AgentModule,
     ConstructionModule,
     AdminModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

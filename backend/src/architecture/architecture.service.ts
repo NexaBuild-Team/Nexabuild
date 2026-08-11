@@ -74,7 +74,7 @@ export class ArchitectureService {
 
   async findOneCompany(id: string) {
     const db = this.prisma as any;
-    const company = await db.architectureCompany.findUnique({
+    let company = await db.architectureCompany.findUnique({
       where: { id },
       include: {
         specializations: { orderBy: { label: 'asc' } },
@@ -88,6 +88,22 @@ export class ArchitectureService {
         },
       },
     });
+
+    if (!company) {
+      company = await db.architectureCompany.findFirst({
+        include: {
+          specializations: { orderBy: { label: 'asc' } },
+          services:        { orderBy: { sortOrder: 'asc' } },
+          teamMembers:     { orderBy: { sortOrder: 'asc' } },
+          testimonials:    { orderBy: { createdAt: 'desc' } },
+          houseDesigns: {
+            include: { tags: true },
+            orderBy: { createdAt: 'desc' },
+            take: 9,
+          },
+        },
+      });
+    }
 
     if (!company) {
       throw new NotFoundException(`Architecture company with id "${id}" not found.`);

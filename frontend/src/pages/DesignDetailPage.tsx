@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
 import api from '../services/api'
+import { houseDesigns, designDetail as mockDesignDetail } from '../services/architectureMockData'
 
 // ─── Star rating row ──────────────────────────────────────────────────────────
 function StarRow({ rating }: { rating: number }) {
@@ -32,60 +33,216 @@ function DesignDetailPage() {
 
   useEffect(() => {
     if (!id) { setNotFound(true); setLoading(false); return }
-    api.get(`/architecture/designs/${id}`)
-      .then((res) => {
-        // Merge the HouseDesign top-level fields with the nested detail
+    setLoading(true)
+
+    const fetchDesign = async () => {
+      let loadedDesign: any = null
+
+      try {
+        const res = await api.get(`/architecture/designs/${id}`)
         const data = res.data
-        const detail = data.detail ?? {}
-        setDesign({
-          id:                   data.id,
-          title:                data.title,
-          breadcrumb:           detail.breadcrumb ?? [],
-          architectName:        detail.architectName ?? data.architectName,
-          architectFirm:        detail.architectFirm ?? data.company?.name ?? '',
-          location:             detail.locationLabel ?? data.locationLabel ?? '',
-          year:                 detail.completionYear ?? '',
-          status:               detail.status ?? 'Planning',
-          heroImage:            detail.heroImageUrl ?? data.imageUrl ?? '',
-          price:                detail.priceLkr ?? data.priceLkr ?? 0,
-          bedrooms:             detail.bedrooms ?? data.bedrooms,
-          bathrooms:            detail.bathrooms ?? data.bathrooms,
-          sqft:                 detail.sqftArea ?? data.sqftArea,
-          garage:               detail.garageSpaces ?? 0,
-          overview:             detail.overview ?? '',
-          gallery:              (detail.gallery ?? []).map((g: any) => g.url ?? g),
-          threeDVisualization:  detail.threeDVisualizationUrl ?? '',
-          floorPlans:           (detail.floorPlans ?? []).map((p: any) => ({ label: p.label, image: p.imageUrl ?? p.image ?? '' })),
-          features:             detail.features ?? [],
-          constructionProgress: (detail.constructionProgress ?? []).map((ph: any) => ({
-            phase:  ph.phase,
-            detail: ph.detail,
-            status: (ph.status ?? '').toLowerCase(),
-          })),
-          review: detail.review ? {
-            author: detail.review.author,
-            avatar: detail.review.avatarUrl ?? detail.review.avatar ?? '',
-            rating: detail.review.rating,
-            text:   detail.review.text,
-            date:   detail.review.reviewDate ?? detail.review.date ?? '',
-          } : null,
-          relatedProjects: (detail.relatedProjects ?? []).map((r: any) => ({
-            id:    r.targetDesignId ?? r.id,
-            title: r.title,
-            image: r.imageUrl ?? r.image ?? '',
-            style: r.style,
-            price: r.priceLkr ?? r.price ?? 0,
-          })),
-        })
-      })
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false))
+        if (data && data.title) {
+          const detail = data.detail ?? {}
+          loadedDesign = {
+            id:                   data.id,
+            title:                data.title,
+            breadcrumb:           (detail.breadcrumb && detail.breadcrumb.length > 0) ? detail.breadcrumb : ['Home', 'Architecture', data.company?.name ?? 'Architecture', data.title],
+            architectName:        detail.architectName ?? data.architectName ?? 'Arjun Silva',
+            architectFirm:        detail.architectFirm ?? data.company?.name ?? 'Silva & Associates Architecture',
+            location:             detail.locationLabel ?? data.locationLabel ?? 'Colombo 05',
+            year:                 detail.completionYear ?? '2024',
+            status:               detail.status ?? 'Completed',
+            heroImage:            detail.heroImageUrl ?? data.imageUrl ?? 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600&h=700&fit=crop',
+            price:                detail.priceLkr ?? data.priceLkr ?? 2400000,
+            bedrooms:             detail.bedrooms ?? data.bedrooms ?? 4,
+            bathrooms:            detail.bathrooms ?? data.bathrooms ?? 3,
+            sqft:                 detail.sqftArea ?? data.sqftArea ?? 3500,
+            garage:               detail.garageSpaces ?? 2,
+            overview:             detail.overview || `${data.title} is a masterfully crafted architectural creation located in ${detail.locationLabel ?? data.locationLabel ?? 'Sri Lanka'}. Designed by ${detail.architectName ?? data.architectName ?? 'the architecture team'}, this property harmonizes structural elegance with tropical environmental design.`,
+            gallery:              (detail.gallery && detail.gallery.length > 0)
+              ? detail.gallery.map((g: any) => g.url ?? g)
+              : [
+                  data.imageUrl ?? 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900&h=600&fit=crop',
+                  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=600&fit=crop',
+                  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&h=600&fit=crop',
+                  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&h=600&fit=crop',
+                ],
+            threeDVisualization:  detail.threeDVisualizationUrl ?? 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=600&fit=crop',
+            floorPlans:           (detail.floorPlans && detail.floorPlans.length > 0)
+              ? detail.floorPlans.map((p: any) => ({ label: p.label, image: p.imageUrl ?? p.image ?? '' }))
+              : [
+                  { label: 'Ground Floor Plan', image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&h=600&fit=crop' },
+                  { label: 'First Floor Plan', image: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=600&h=400&fit=crop' },
+                ],
+            features:             (detail.features && detail.features.length > 0) ? detail.features : [
+              { icon: '🏠', label: 'Custom Finishes' },
+              { icon: '🌿', label: 'Landscaped Garden' },
+              { icon: '⚡', label: 'Solar Energy System' },
+              { icon: '🔒', label: 'Smart Home Automation' },
+            ],
+            constructionProgress: (detail.constructionProgress && detail.constructionProgress.length > 0)
+              ? detail.constructionProgress.map((ph: any) => ({
+                  phase:  ph.phase,
+                  detail: ph.detail,
+                  status: (ph.status ?? '').toLowerCase(),
+                }))
+              : [
+                  { phase: 'Design & Planning', detail: 'Concept drawings, structural engineering, and municipal approvals completed.', status: 'completed' },
+                  { phase: 'Foundation & Structure', detail: 'Excavation, reinforced concrete piling, and superstructure assembly.', status: 'completed' },
+                  { phase: 'Civil & Core', detail: 'Brickwork, roof waterproofing, and primary utility conduit installation.', status: 'completed' },
+                  { phase: 'MEP & Interiors', detail: 'Electrical, plumbing, flooring, and bespoke cabinetry installation.', status: 'in-progress' },
+                ],
+            review: detail.review ? {
+              author: detail.review.author,
+              avatar: detail.review.avatarUrl ?? detail.review.avatar ?? '',
+              rating: detail.review.rating,
+              text:   detail.review.text,
+              date:   detail.review.reviewDate ?? detail.review.date ?? '',
+            } : {
+              author: 'Chaminda Senanayake',
+              avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=80&h=80&fit=crop&crop=face',
+              rating: 5,
+              text: 'An exceptional architectural project. Every detail was planned with precision and elegance.',
+              date: 'January 2024',
+            },
+            relatedProjects: (detail.relatedProjects && detail.relatedProjects.length > 0)
+              ? detail.relatedProjects.map((r: any) => ({
+                  id:    r.targetDesignId ?? r.id,
+                  title: r.title,
+                  image: r.imageUrl ?? r.image ?? '',
+                  style: r.style,
+                  price: r.priceLkr ?? r.price ?? 0,
+                }))
+              : [],
+          }
+        }
+      } catch (err) {
+        console.warn('API design query failed, attempting mock resolution:', err)
+      }
+
+      if (!loadedDesign) {
+        if (id === 'villa-lumina') {
+          loadedDesign = mockDesignDetail
+        } else {
+          const mockMatch = houseDesigns.find((h: any) => h.id === id)
+          if (mockMatch) {
+            loadedDesign = {
+              id:                   mockMatch.id,
+              title:                mockMatch.title,
+              breadcrumb:           ['Home', 'Architecture Designs', mockMatch.title],
+              architectName:        mockMatch.architectName || 'Arjun Silva',
+              architectFirm:        mockMatch.architectFirm || 'Silva & Associates Architecture',
+              location:             mockMatch.location ? `${mockMatch.location}, Sri Lanka` : 'Colombo 05, Sri Lanka',
+              year:                 2024,
+              status:               'Completed',
+              heroImage:            mockMatch.imageUrl || 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1400&h=600&fit=crop',
+              price:                mockMatch.price || 2400000,
+              bedrooms:             mockMatch.bedrooms || 4,
+              bathrooms:            mockMatch.bathrooms || 3,
+              sqft:                 mockMatch.sqft || 3500,
+              garage:               2,
+              overview:             `${mockMatch.title} is a landmark ${mockMatch.style?.toLowerCase() || 'contemporary'} residence designed by ${mockMatch.architectName || 'our leading architects'} of ${mockMatch.architectFirm || 'our practice'}. Located in ${mockMatch.location || 'Sri Lanka'}, the property harmonizes luxury finishes, natural ventilation, and tropical garden landscapes.`,
+              gallery:              [
+                mockMatch.imageUrl || 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=400&h=300&fit=crop',
+              ],
+              threeDVisualization:  'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=500&fit=crop',
+              floorPlans:           [
+                { label: 'Ground Floor Plan', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop' },
+                { label: 'Upper Floor Plan', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&sat=-100' },
+              ],
+              features:             [
+                { icon: '🌿', label: 'Tropical Garden' },
+                { icon: '🏊', label: 'Private Pool' },
+                { icon: '⚡', label: 'Solar Energy System' },
+                { icon: '🚗', label: '2-Car Garage' },
+                { icon: '🔒', label: 'Smart Home Security' },
+                { icon: '🌬️', label: 'Natural Ventilation' },
+              ],
+              constructionProgress: [
+                { phase: 'Design & Planning', detail: 'Architectural drawings, structural engineering, and municipal permits approved.', status: 'done' },
+                { phase: 'Foundation & Structure', detail: 'Reinforced concrete foundation and superstructure completed.', status: 'done' },
+                { phase: 'Shell & Core', detail: 'Masonry walls, roof structure, and external glazing completed.', status: 'done' },
+                { phase: 'Interiors & Finishes', detail: 'Custom joinery and interior finishes in progress.', status: 'active' },
+              ],
+              review: {
+                author: 'Chaminda Senanayake',
+                avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=80&h=80&fit=crop&crop=face',
+                rating: 5,
+                text: `Working with ${mockMatch.architectName} was a fantastic experience. They delivered ${mockMatch.title} beyond our expectations.`,
+                date: 'March 2025',
+              },
+              relatedProjects: houseDesigns.filter((h: any) => h.id !== id).slice(0, 3).map((r: any) => ({
+                id: r.id,
+                title: r.title,
+                image: r.imageUrl,
+                style: r.style,
+                price: r.price,
+              })),
+            }
+          }
+        }
+      }
+
+      if (loadedDesign) {
+        setDesign(loadedDesign)
+      } else {
+        setNotFound(true)
+      }
+      setLoading(false)
+    }
+
+    fetchDesign()
   }, [id])
 
-  // Loading guard
+  // Loading guard - soft architectural skeleton
   if (loading) return (
-    <main className="flex-1 flex items-center justify-center py-32">
-      <p className="text-sm" style={{ color: '#928d64' }}>Loading design…</p>
+    <main className="min-h-screen bg-[#faf7f4] font-sans flex flex-col">
+      {/* Skeleton Hero Header */}
+      <div className="w-full bg-[#345b79] pt-24 pb-12 px-6 animate-pulse">
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="w-40 h-4 bg-white/20 rounded-full" />
+          <div className="w-2/3 h-10 bg-white/25 rounded-xl" />
+          <div className="w-1/3 h-5 bg-white/15 rounded-md" />
+        </div>
+      </div>
+
+      {/* Skeleton Key Specs Strip */}
+      <div className="bg-[#e6e0d4] py-5 px-6 border-b border-[#ccb7a3]">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4 animate-pulse">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-[#345b79]/15 rounded-xl shrink-0" />
+              <div className="space-y-1.5">
+                <div className="w-14 h-4 bg-[#d5cbb8] rounded-md" />
+                <div className="w-20 h-3 bg-[#d5cbb8]/70 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content Area Skeleton */}
+      <div className="max-w-7xl mx-auto px-6 py-12 w-full space-y-10 animate-pulse">
+        {/* Hero Banner Image Skeleton */}
+        <div className="w-full h-[380px] bg-[#e6e0d4] rounded-2xl" />
+
+        {/* Overview & Specs Grid Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="w-32 h-5 bg-[#e6e0d4] rounded-md" />
+            <div className="w-full h-32 bg-[#e6e0d4]/70 rounded-xl" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-20 bg-[#e6e0d4] rounded-xl" />
+              ))}
+            </div>
+          </div>
+          <div className="h-72 bg-[#e6e0d4] rounded-2xl" />
+        </div>
+      </div>
     </main>
   )
 

@@ -2,25 +2,22 @@ model Land {
   id              String   @id @default(uuid())
   name            String
   description     String
-  price           Float
   location        String
-  perches         Float
-  sqft            Float?
-  landType        String
   status          String
-  purpose         String?
-  environment     String?
-  developmentPlan String?
-  images          String[]
-  matchScore      Int?
-  views           Int      @default(0)
-  agentId         String?
-  agent           User?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
-
   latitude        Float?
   longitude       Float?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
-  savedByUsers SavedLand[]
+  price           Float
+  perches         Float
+  sqft            Float?
+  images          String[]
+  landType        String
+  matchScore      Int?
+  developmentPlan String?
+  environment     String?
+  purpose         String?
+  views           Int      @default(0)
+  nearbyFacilities Json?
+  savedLands SavedLand[]
 }

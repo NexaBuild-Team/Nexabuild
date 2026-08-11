@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
-import { createPropertyApi } from '../../services/agentApi';
-
+import LocationPickerMap from '../../components/LocationPickerMap';
+import {
+  createPropertyApi,
+  uploadPropertyImageApi,
+} from '../../services/agentApi';
 // ─── 1. Comprehensive Backend Interfaces ───────────────────────────────────
 
 export interface AddNewPropertyFormFields {
   title?: string;
   description?: string;
   propertyType?: string;
+  listingType?: string;
   price?: string | number;
   province?: string;
   district?: string;
   locationName?: string;
   fullAddress?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   beds?: number;
   baths?: number;
   garage?: number;
@@ -29,6 +35,11 @@ export interface AddNewPropertyFormFields {
     public: boolean;
     agentNetwork: boolean;
     featured: boolean;
+  };
+  nearbyFacilities?: {
+    schools: { name: string; distance: string }[];
+    hospitals: { name: string; distance: string }[];
+    supermarkets: { name: string; distance: string }[];
   };
 }
 
@@ -68,11 +79,15 @@ export default function AddNewProperty({
   const [description, setDescription] = useState(data?.initialFields?.description || '');
   const [propertyType, setPropertyType] = useState(data?.initialFields?.propertyType || '');
   const [price, setPrice] = useState(data?.initialFields?.price ? String(data.initialFields.price) : '');
+  const [listingType, setListingType] = useState(data?.initialFields?.listingType || 'Premium');
 
   const [province, setProvince] = useState(data?.initialFields?.province || '');
   const [district, setDistrict] = useState(data?.initialFields?.district || '');
   const [locationName, setLocationName] = useState(data?.initialFields?.locationName || '');
   const [fullAddress, setFullAddress] = useState(data?.initialFields?.fullAddress || '');
+
+  const [latitude, setLatitude] = useState<number | null>(data?.initialFields?.latitude ?? 6.9271);
+  const [longitude, setLongitude] = useState<number | null>(data?.initialFields?.longitude ?? 79.8612);
 
   const [beds, setBeds] = useState(data?.initialFields?.beds ?? 0);
   const [baths, setBaths] = useState(data?.initialFields?.baths ?? 0);
@@ -80,6 +95,52 @@ export default function AddNewProperty({
   const [floorArea, setFloorArea] = useState(data?.initialFields?.floorArea ? String(data.initialFields.floorArea) : '');
   const [landArea, setLandArea] = useState(data?.initialFields?.landArea ? String(data.initialFields.landArea) : '');
   const [yearBuilt, setYearBuilt] = useState(data?.initialFields?.yearBuilt ? String(data.initialFields.yearBuilt) : '');
+
+  const [nearbyFacilities, setNearbyFacilities] = useState<{
+    schools: { name: string; distance: string }[];
+    hospitals: { name: string; distance: string }[];
+    supermarkets: { name: string; distance: string }[];
+  }>(
+    data?.initialFields?.nearbyFacilities || {
+      schools: [
+        { name: 'Nearby International School', distance: '1.2 km' },
+        { name: 'Local College',               distance: '2.5 km' },
+        { name: 'Primary School',              distance: '0.8 km' },
+      ],
+      hospitals: [
+        { name: 'District Hospital',       distance: '2.0 km' },
+        { name: 'Private Medical Centre',  distance: '3.5 km' },
+        { name: 'Clinic',                  distance: '1.0 km' },
+      ],
+      supermarkets: [
+        { name: 'Food City',    distance: '0.5 km' },
+        { name: 'Keells Super', distance: '1.2 km' },
+        { name: 'Local Market', distance: '0.9 km' },
+      ],
+    }
+  );
+
+  const handleFacilityChange = (group: 'schools' | 'hospitals' | 'supermarkets', index: number, field: 'name' | 'distance', value: string) => {
+    setNearbyFacilities(prev => {
+      const nextGroup = [...prev[group]];
+      nextGroup[index] = { ...nextGroup[index], [field]: value };
+      return { ...prev, [group]: nextGroup };
+    });
+  };
+
+  const addFacility = (group: 'schools' | 'hospitals' | 'supermarkets') => {
+    setNearbyFacilities(prev => ({
+      ...prev,
+      [group]: [...prev[group], { name: '', distance: '' }]
+    }));
+  };
+
+  const removeFacility = (group: 'schools' | 'hospitals' | 'supermarkets', index: number) => {
+    setNearbyFacilities(prev => ({
+      ...prev,
+      [group]: prev[group].filter((_, i) => i !== index)
+    }));
+  };
 
   // Amenities
   const [amenities, setAmenities] = useState<Record<string, boolean>>(
@@ -94,9 +155,15 @@ export default function AddNewProperty({
       'Air Conditioning': false
     }
   );
+const [coverImage, setCoverImage] = useState<string | null>(
+  data?.initialFields?.coverImage ?? null
+);
 
-  const [coverImage] = useState<string | null>(data?.initialFields?.coverImage ?? null);
-  const [galleryImages] = useState<string[]>(data?.initialFields?.galleryImages || []);
+const [galleryImages, setGalleryImages] = useState<string[]>(
+  data?.initialFields?.galleryImages || []
+);
+
+const [uploadingImage, setUploadingImage] = useState(false);
 
   // Sidebar widget states
   const [status, setStatus] = useState<'Draft' | 'Active' | 'Pending Review' | 'Sold'>(data?.initialFields?.status || 'Draft');
@@ -143,15 +210,51 @@ export default function AddNewProperty({
     setAiTags(shuffled.slice(0, 5));
   };
 
-  const constructPayload = (): AddNewPropertyFormFields & { images?: string[] } => ({
+  const handleImageUpload = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    return;
+  }
+
+  setUploadingImage(true);
+
+  try {
+    const result = await uploadPropertyImageApi(file);
+
+    setGalleryImages((prev) => [...prev, result.url]);
+
+    if (!coverImage) {
+      setCoverImage(result.url);
+    }
+
+    alert('Image uploaded successfully!');
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    alert('Failed to upload image.');
+  } finally {
+    setUploadingImage(false);
+    event.target.value = '';
+  }
+};
+
+  const constructPayload = (statusOverride?: 'Draft' | 'Active' | 'Pending Review' | 'Sold'): AddNewPropertyFormFields & { images?: string[] } => ({
     title,
     description,
     propertyType,
+    listingType,
     price,
     province,
     district,
     locationName,
     fullAddress,
+    latitude,
+    longitude,
     beds,
     baths,
     garage,
@@ -162,21 +265,23 @@ export default function AddNewProperty({
     coverImage,
     galleryImages,
     images: galleryImages.length > 0 ? galleryImages : (coverImage ? [coverImage] : ['/hero_property.png']),
-    status,
+    status: statusOverride || status,
     aiTags,
-    visibility
+    visibility,
+    nearbyFacilities
   });
 
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
   const handlePublishClick = async () => {
+    const finalStatus = status === 'Draft' ? 'Active' : status;
     if (onPublish) {
-      onPublish(constructPayload());
+      onPublish(constructPayload(finalStatus));
     } else {
       setSubmitting(true);
       try {
-        await createPropertyApi(constructPayload());
+        await createPropertyApi(constructPayload(finalStatus));
         alert('Listing published successfully!');
         navigate('/dashboard');
       } catch (err) {
@@ -345,7 +450,7 @@ export default function AddNewProperty({
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Property Type</label>
                   <select 
@@ -354,11 +459,23 @@ export default function AddNewProperty({
                     className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   >
                     <option value="">Select type</option>
-                    <option value="Villa">Villa</option>
+                    <option value="House">House</option>
                     <option value="Apartment">Apartment</option>
-                    <option value="Penthouse">Penthouse</option>
-                    <option value="Townhouse">Townhouse</option>
+                    <option value="Villa">Villa</option>
                     <option value="Commercial">Commercial</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Listing Type</label>
+                  <select 
+                    value={listingType}
+                    onChange={(e) => setListingType(e.target.value)}
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                  >
+                    <option value="Premium">Premium</option>
+                    <option value="Sale">For Sale</option>
+                    <option value="Rent">For Rent</option>
                   </select>
                 </div>
 
@@ -379,62 +496,83 @@ export default function AddNewProperty({
           {/* Section 2: Location */}
           <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
             <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
-              <div className="size-10 rounded-xl bg-orange-50 text-[#be5d3f] flex items-center justify-center shrink-0">
+              <div className="size-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                 <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-extrabold text-[#111827]">Location Details</h3>
+                <h3 className="text-base font-extrabold text-[#111827]">Location</h3>
                 <p className="text-xs text-gray-500 font-medium">Where is the property located?</p>
               </div>
             </div>
 
             <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Province</label>
-                  <input 
-                    type="text"
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">PROVINCE / EMIRATE</label>
+                  <select 
                     value={province}
                     onChange={(e) => setProvince(e.target.value)}
-                    placeholder="e.g. Western"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                  />
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                  >
+                    <option value="">Select Province</option>
+                    <option value="Western Province">Western Province</option>
+                    <option value="Central Province">Central Province</option>
+                    <option value="Southern Province">Southern Province</option>
+                    <option value="North Western Province">North Western Province</option>
+                    <option value="Sabaragamuwa Province">Sabaragamuwa Province</option>
+                    <option value="North Central Province">North Central Province</option>
+                    <option value="Uva Province">Uva Province</option>
+                    <option value="Northern Province">Northern Province</option>
+                    <option value="Eastern Province">Eastern Province</option>
+                  </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">District</label>
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">DISTRICT / AREA</label>
                   <input 
                     type="text"
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="e.g. Colombo"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                    placeholder="e.g. Jumeirah, JVC"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">City / Neighborhood</label>
+                  <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">LOCATION</label>
                   <input 
                     type="text"
                     value={locationName}
                     onChange={(e) => setLocationName(e.target.value)}
-                    placeholder="e.g. Colombo 7"
-                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                    placeholder="e.g. Palm Jumeirah"
+                    className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Full Address</label>
+                <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">FULL ADDRESS</label>
                 <input 
                   type="text"
                   value={fullAddress}
                   onChange={(e) => setFullAddress(e.target.value)}
-                  placeholder="Street address..."
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
+                  placeholder="Street address, building name, floor..."
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                />
+              </div>
+
+              {/* Interactive Location Map Picker */}
+              <div className="pt-2">
+                <LocationPickerMap 
+                  latitude={latitude}
+                  longitude={longitude}
+                  onLocationSelect={(lat, lng) => {
+                    setLatitude(lat);
+                    setLongitude(lng);
+                  }}
                 />
               </div>
             </div>
@@ -558,44 +696,174 @@ export default function AddNewProperty({
             </div>
           </section>
 
-          {/* Section 5: Gallery Upload (Coming Soon) */}
-          <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 relative overflow-hidden">
-            {/* Coming Soon Overlay */}
-            <div className="absolute inset-0 bg-white/75 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center space-y-3">
-              <div className="size-12 rounded-2xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shadow-inner">
-                <svg className="size-6 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <span className="text-xs font-black tracking-widest uppercase bg-[#345b79] text-white px-3 py-1 rounded-full shadow-sm">
-                Coming Soon
-              </span>
-              <p className="text-xs font-extrabold text-gray-700 max-w-sm">
-                Image upload & Cloud storage integration is coming soon. You can publish your listing now with default property visuals!
-              </p>
-            </div>
+              {/* Section 5: Nearby Facilities */}
+              <section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+                <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+                  <div className="size-10 rounded-xl bg-blue-50 text-[#345b79] flex items-center justify-center shrink-0">
+                    <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-[#111827]">Nearby Facilities</h3>
+                    <p className="text-xs text-gray-500 font-medium">Add nearby schools, hospitals, and supermarkets with distances</p>
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100 opacity-40">
-              <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-base font-extrabold text-[#111827]">Property Photos</h3>
-                <p className="text-xs text-gray-500 font-medium">Upload high-resolution images</p>
-              </div>
-            </div>
+                <div className="space-y-6">
+                  {(['schools', 'hospitals', 'supermarkets'] as const).map(group => {
+                    const titleMap = { schools: 'Schools', hospitals: 'Hospitals', supermarkets: 'Supermarkets' };
+                    const bgColors = { schools: 'bg-[#345b79]', hospitals: 'bg-[#be5d3f]', supermarkets: 'bg-[#495d38]' };
+                    const label = titleMap[group];
+                    const list = nearbyFacilities[group];
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-40">
-              <div className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50">
-                <svg className="size-6 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                <span className="text-[10px] font-bold text-gray-500">Add Photo</span>
-              </div>
-            </div>
-          </section>
+                    return (
+                      <div key={group} className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold ${bgColors[group]}`}>
+                              {label[0]}
+                            </div>
+                            <h4 className="text-xs font-extrabold text-gray-700 uppercase tracking-wider">{label}</h4>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => addFacility(group)}
+                            className="text-[10px] font-extrabold text-[#345b79] hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            + Add {label.slice(0, -1)}
+                          </button>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {list.map((item, idx) => (
+                            <div key={idx} className="flex gap-2.5 items-center">
+                              <input
+                                type="text"
+                                placeholder="Facility Name (e.g. Food City)"
+                                value={item.name}
+                                onChange={(e) => handleFacilityChange(group, idx, 'name', e.target.value)}
+                                className="flex-1 bg-gray-50/80 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Distance (e.g. 1.2 km)"
+                                value={item.distance}
+                                onChange={(e) => handleFacilityChange(group, idx, 'distance', e.target.value)}
+                                className="w-28 bg-gray-50/80 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#345b79]/20"
+                              />
+                              {list.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeFacility(group, idx)}
+                                  className="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 cursor-pointer"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+
+          {/* Section 6: Gallery Upload */}
+<section className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+  <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
+    <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+      <svg
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+        />
+      </svg>
+    </div>
+
+    <div>
+      <h3 className="text-base font-extrabold text-[#111827]">
+        Property Photos
+      </h3>
+      <p className="text-xs text-gray-500 font-medium">
+        Upload high-resolution images
+      </p>
+    </div>
+  </div>
+
+  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    {galleryImages.map((image, index) => (
+      <div
+        key={image}
+        className="relative size-32 rounded-2xl overflow-hidden border border-gray-200"
+      >
+        <img
+          src={image}
+          alt={`Property ${index + 1}`}
+          className="w-full h-full object-cover"
+        />
+
+        {index === 0 && (
+          <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] px-2 py-1 rounded-lg">
+            Cover
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            setGalleryImages((prev) =>
+              prev.filter((_, i) => i !== index)
+            );
+
+            if (image === coverImage) {
+              setCoverImage(null);
+            }
+          }}
+          className="absolute top-1 right-1 size-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+        >
+          ×
+        </button>
+      </div>
+    ))}
+
+    <label className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50 hover:bg-gray-100 cursor-pointer transition-colors">
+      <svg
+        className="size-6 text-gray-400 mb-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+
+      <span className="text-[10px] font-bold text-gray-500">
+        {uploadingImage ? 'Uploading...' : 'Add Photo'}
+      </span>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        disabled={uploadingImage}
+        className="hidden"
+      />
+    </label>
+  </div>
+</section>
 
         </div>
 

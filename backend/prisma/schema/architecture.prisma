@@ -1,205 +1,209 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Nexabuild — Architecture Module Prisma Schema
-// Covers: ArchitecturePage, DesignsPage, DesignDetailPage
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ─── ArchitectureCompany (Firm) ───────────────────────────────────────────────
-// Displayed on: ArchitecturePage (listing cards), DesignsPage (firm profile hero)
-
 model ArchitectureCompany {
-  // ── Original fields (preserved exactly) ──
-  id        String   @id @default(uuid())
-  name      String
-  createdAt DateTime @default(now())
-
-  // ── Identity & media ──
-  avatarUrl       String          // Principal architect headshot (overlaid on cover image)
-  coverImageUrl   String          // Card / profile hero cover photo
-
-  // ── Contact ──
-  email           String          @unique
-
-  // ── Location ──
-  locationLabel   String          // e.g. "Colombo 03"  (displayed on card)
-  city            String          // e.g. "Colombo"     (used for filter pills)
-  country         String          @default("Sri Lanka")
-
-  // ── Metrics ──
-  yearsExperience       Int       // e.g. 18
-  projectCount          Int       // e.g. 143
-  awardsWon             Int?      // e.g. 14  (shown on firm profile stats bar)
-  clientSatisfactionPct Int?      // e.g. 98  (shown as "98%" on stats bar)
-  rating                Float     // e.g. 4.9
-  reviewCount           Int       // e.g. 47
-
-  // ── Description & budget ──
-  description      String         @db.Text
-  budgetRangeLabel String         // e.g. "LKR 5M – LKR 50M"
-
-  // ── Relations ──
-  specializations CompanySpecialization[]
-  houseDesigns    HouseDesign[]
-  services        FirmService[]
-  teamMembers     FirmTeamMember[]
-  testimonials    FirmTestimonial[]
-
-  updatedAt       DateTime        @updatedAt
+  id                    String                  @id @default(uuid())
+  name                  String
+  createdAt             DateTime                @default(now())
+  avatarUrl             String
+  awardsWon             Int?
+  budgetRangeLabel      String
+  city                  String
+  clientSatisfactionPct Int?
+  country               String                  @default("Sri Lanka")
+  coverImageUrl         String
+  description           String
+  email                 String                  @unique
+  locationLabel         String
+  projectCount          Int
+  rating                Float
+  reviewCount           Int
+  updatedAt             DateTime                @updatedAt
+  yearsExperience       Int
+  specializations       CompanySpecialization[]
+  services              FirmService[]
+  teamMembers           FirmTeamMember[]
+  testimonials          FirmTestimonial[]
+  houseDesigns          HouseDesign[]
 }
-
-// ─── CompanySpecialization ───────────────────────────────────────────────────
-// Stores each tag separately for queryability (e.g. "Modern", "Eco-Friendly")
 
 model CompanySpecialization {
   id        String              @id @default(uuid())
   label     String
-  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
+  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
 }
-
-// ─── FirmService ─────────────────────────────────────────────────────────────
-// DesignsPage — "Our Services" section (3×2 grid)
 
 model FirmService {
   id          String              @id @default(uuid())
-  icon        String              // emoji, e.g. "🏠"
-  title       String              // e.g. "Residential Design"
-  description String              @db.Text
+  icon        String
+  title       String
+  description String
   sortOrder   Int                 @default(0)
-  company     ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId   String
+  company     ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
 }
-
-// ─── FirmTeamMember ──────────────────────────────────────────────────────────
-// DesignsPage — "Meet Our Team" section (4-portrait grid)
 
 model FirmTeamMember {
   id        String              @id @default(uuid())
   name      String
-  title     String              // e.g. "Principal Architect"
+  title     String
   photoUrl  String
   sortOrder Int                 @default(0)
-  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
+  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
 }
-
-// ─── FirmTestimonial ─────────────────────────────────────────────────────────
-// DesignsPage — "What Our Clients Say" section
 
 model FirmTestimonial {
   id        String              @id @default(uuid())
-  rating    Int                 // 1–5
-  text      String              @db.Text
+  rating    Int
+  text      String
   author    String
-  role      String              // e.g. "Homeowner · Colombo"
+  role      String
   avatarUrl String
   createdAt DateTime            @default(now())
-  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId String
+  company   ArchitectureCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
 }
 
-// ─── HouseDesign ─────────────────────────────────────────────────────────────
-// ArchitecturePage (future grid), DesignsPage (featured/side projects)
-
 model HouseDesign {
-  id            String   @id @default(uuid())
-  title         String   // e.g. "Villa Lumina"
-  style         String   // e.g. "Modern", "Colonial"
-  priceLkr      Int      // stored in LKR
-  architectName String   // denormalised for fast card render
+  id            String              @id @default(uuid())
+  title         String
+  style         String
+  priceLkr      Int
+  architectName String
   imageUrl      String
   bedrooms      Int
   bathrooms     Int
   sqftArea      Int
-  locationLabel String   // e.g. "Colombo 05"
-  views         Int      @default(0)
-  likes         Int      @default(0)
-  status        String   @default("Active") // "Active", "Completed", "In Review", "Pending"
-  isSaved       Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  company       ArchitectureCompany? @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  companyId     String?
-  tags          HouseDesignTag[]
+  locationLabel String
+  isSaved       Boolean             @default(false)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  companyId     String
   detail        DesignDetail?
+  company       ArchitectureCompany @relation(fields: [companyId], references: [id])
+  tags          HouseDesignTag[]
 
   @@index([companyId])
   @@index([style])
   @@index([priceLkr])
 }
 
-// ─── HouseDesignTag ──────────────────────────────────────────────────────────
-
 model HouseDesignTag {
   id       String      @id @default(uuid())
-  label    String      // e.g. "Luxury", "Beachfront", "Hillside"
-  design   HouseDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  label    String
   designId String
+  design   HouseDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
 
   @@index([designId])
 }
 
-// ─── DesignDetail ────────────────────────────────────────────────────────────
-// DesignDetailPage (/designs/:id) — full detail record, 1-to-1 with HouseDesign
-
 model DesignDetail {
-  id                     String       @id @default(uuid())
-
-  design                 HouseDesign  @relation(fields: [designId], references: [id], onDelete: Cascade)
-  designId               String       @unique
-
-  // Breadcrumb navigation array e.g. ["Home","Architecture Designs","Villa Lumina"]
+  id                     String               @id @default(uuid())
+  designId               String               @unique
   breadcrumb             String[]
-
-  // Architect attribution (denormalised for fast hero render)
   architectName          String
   architectFirm          String
-
-  // Core metadata
-  locationLabel          String       // e.g. "Colombo 05, Sri Lanka"
-  completionYear         Int          // e.g. 2024
-  status                 DesignStatus @default(PLANNING)
-
-  // Hero & 3D media
+  locationLabel          String
+  completionYear         Int
+  status                 DesignStatus         @default(PLANNING)
   heroImageUrl           String
   threeDVisualizationUrl String?
-
-  // Specs (mirrored from HouseDesign for standalone API calls)
   priceLkr               Int
   bedrooms               Int
   bathrooms              Int
   sqftArea               Int
-  garageSpaces           Int          @default(0)
-
-  // Long-form project narrative
-  overview               String       @db.Text
-
-  // Design style specs shown in Overview card
-  designStyle            String?      // e.g. "Modern Minimalist"
-  structureType          String?      // e.g. "Reinforced Concrete"
-  interiorFinish         String?      // e.g. "Custom Designed"
-
-  // Relations
-  gallery                DesignGalleryImage[]
-  floorPlans             FloorPlan[]
-  features               DesignFeature[]
+  garageSpaces           Int                  @default(0)
+  overview               String
+  designStyle            String?
+  structureType          String?
+  interiorFinish         String?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
   constructionProgress   ConstructionPhase[]
+  design                 HouseDesign          @relation(fields: [designId], references: [id], onDelete: Cascade)
+  features               DesignFeature[]
+  gallery                DesignGalleryImage[]
   review                 DesignReview?
+  floorPlans             FloorPlan[]
   relatedProjects        RelatedProject[]
-
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime     @updatedAt
 }
 
-// ─── DesignStatus ────────────────────────────────────────────────────────────
+model DesignGalleryImage {
+  id        String       @id @default(uuid())
+  url       String
+  altText   String?
+  sortOrder Int          @default(0)
+  detailId  String
+  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model FloorPlan {
+  id        String       @id @default(uuid())
+  label     String
+  imageUrl  String
+  sortOrder Int          @default(0)
+  detailId  String
+  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model DesignFeature {
+  id        String       @id @default(uuid())
+  icon      String
+  label     String
+  sortOrder Int          @default(0)
+  detailId  String
+  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
+
+model ConstructionPhase {
+  id             String             @id @default(uuid())
+  phase          String
+  detail         String
+  status         ConstructionStatus @default(PENDING)
+  sortOrder      Int                @default(0)
+  designDetailId String
+  designDetail   DesignDetail       @relation(fields: [designDetailId], references: [id], onDelete: Cascade)
+
+  @@index([designDetailId])
+}
+
+model DesignReview {
+  id         String       @id @default(uuid())
+  author     String
+  avatarUrl  String
+  rating     Int
+  text       String
+  reviewDate String
+  detailId   String       @unique
+  detail     DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+}
+
+model RelatedProject {
+  id             String       @id @default(uuid())
+  targetDesignId String
+  title          String
+  imageUrl       String
+  style          String
+  priceLkr       Int
+  sortOrder      Int          @default(0)
+  detailId       String
+  detail         DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@index([detailId])
+}
 
 enum DesignStatus {
   PLANNING
@@ -207,98 +211,8 @@ enum DesignStatus {
   COMPLETED
 }
 
-// ─── DesignGalleryImage ──────────────────────────────────────────────────────
-// DesignDetailPage — 5-photo mosaic gallery section
-
-model DesignGalleryImage {
-  id        String       @id @default(uuid())
-  url       String
-  altText   String?
-  sortOrder Int          @default(0)
-  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-  detailId  String
-
-  @@index([detailId])
-}
-
-// ─── FloorPlan ───────────────────────────────────────────────────────────────
-// DesignDetailPage — "Plans" section (tab switcher)
-
-model FloorPlan {
-  id        String       @id @default(uuid())
-  label     String       // e.g. "Ground Floor Plan", "Upper Floor Plan"
-  imageUrl  String
-  sortOrder Int          @default(0)
-  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-  detailId  String
-
-  @@index([detailId])
-}
-
-// ─── DesignFeature ───────────────────────────────────────────────────────────
-// DesignDetailPage — feature icon-label grid (right sidebar)
-
-model DesignFeature {
-  id        String       @id @default(uuid())
-  icon      String       // emoji, e.g. "🌿"
-  label     String       // e.g. "Tropical Garden"
-  sortOrder Int          @default(0)
-  detail    DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-  detailId  String
-
-  @@index([detailId])
-}
-
-// ─── ConstructionPhase ───────────────────────────────────────────────────────
-// DesignDetailPage — accordion construction progress timeline
-
-model ConstructionPhase {
-  id             String             @id @default(uuid())
-  phase          String             // e.g. "Design & Planning"
-  detail         String             @db.Text
-  status         ConstructionStatus @default(PENDING)
-  sortOrder      Int                @default(0)
-  designDetail   DesignDetail       @relation(fields: [designDetailId], references: [id], onDelete: Cascade)
-  designDetailId String
-
-  @@index([designDetailId])
-}
-
-// ─── ConstructionStatus ──────────────────────────────────────────────────────
-
 enum ConstructionStatus {
   DONE
   ACTIVE
   PENDING
-}
-
-// ─── DesignReview ────────────────────────────────────────────────────────────
-// DesignDetailPage — single featured client testimonial
-
-model DesignReview {
-  id          String       @id @default(uuid())
-  author      String
-  avatarUrl   String
-  rating      Int          // 1–5
-  text        String       @db.Text
-  reviewDate  String       // e.g. "March 2025" (display label, not a timestamp)
-  detail      DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-  detailId    String       @unique
-}
-
-// ─── RelatedProject ──────────────────────────────────────────────────────────
-// DesignDetailPage — "Related Projects" tile row at the bottom of the detail page
-
-model RelatedProject {
-  id             String       @id @default(uuid())
-  targetDesignId String       // soft reference; no FK so deletion of target does not cascade
-  title          String
-  imageUrl       String
-  style          String       // e.g. "Colonial", "Luxury"
-  priceLkr       Int
-  sortOrder      Int          @default(0)
-  detail         DesignDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-  detailId       String
-
-  @@index([detailId])
 }

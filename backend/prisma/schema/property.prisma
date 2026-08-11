@@ -1,58 +1,44 @@
 model Property {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  price       Float
-  location    String
-  bedrooms    Int
-  bathrooms   Int
-  area        Float
-  propertyType String   // e.g. "House", "Apartment", "Villa"
-  listingType String    // "Buy", "Rent", "Sell"
-
-  images      String[]  // array of Cloudinary URLs
-
-  // --- AI Match Fields ---
-  // Features
-  hasPool         Boolean @default(false)
-  hasGarden       Boolean @default(false)
-  hasSeaView      Boolean @default(false)
-  hasSecurity     Boolean @default(false)
-  hasModernKitchen Boolean @default(false)
-  parkingSpaces   Int     @default(0)
-
-  // Purpose (Booleans)
-  isInvestment    Boolean @default(false)
-  isOwnHome       Boolean @default(false)
-  isVacationHome  Boolean @default(false)
-  isRentalIncome  Boolean @default(false)
-
-  // Lifestyle (Booleans)
-  isUrban         Boolean @default(false)
-  isSuburban      Boolean @default(false)
-  isCoastal       Boolean @default(false)
-  isRural         Boolean @default(false)
-  isCityCenter    Boolean @default(false)
-
-  // Priority (Booleans)
-  isNearSchools   Boolean @default(false)
-  isNearHospital  Boolean @default(false)
-  isNearHighway   Boolean @default(false)
-  isQuietArea     Boolean @default(false)
-  isNearBeach     Boolean @default(false)
-
-  matchScore     Int?     // AI recommendation score (0-100)
-  
-  views       Int      @default(0)
-  status      String   @default("Active") // "Active", "Pending", "Inactive"
-  agentId     String?
-  agent       User?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
-
-  latitude    Float?
-  longitude   Float?
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  savedByUsers SavedProperty[]
+  id               String   @id @default(uuid())
+  title            String
+  createdAt        DateTime @default(now())
+  description      String?
+  price            Float
+  location         String
+  bedrooms         Int
+  bathrooms        Int
+  area             Float
+  propertyType     String
+  listingType      String
+  images           String[]
+  matchScore       Int?
+  latitude         Float?
+  longitude        Float?
+  updatedAt        DateTime @updatedAt
+  hasGarden        Boolean  @default(false)
+  hasModernKitchen Boolean  @default(false)
+  hasPool          Boolean  @default(false)
+  hasSeaView       Boolean  @default(false)
+  hasSecurity      Boolean  @default(false)
+  isCityCenter     Boolean  @default(false)
+  isCoastal        Boolean  @default(false)
+  isInvestment     Boolean  @default(false)
+  isNearBeach      Boolean  @default(false)
+  isNearHighway    Boolean  @default(false)
+  isNearHospital   Boolean  @default(false)
+  isNearSchools    Boolean  @default(false)
+  isOwnHome        Boolean  @default(false)
+  isQuietArea      Boolean  @default(false)
+  isRentalIncome   Boolean  @default(false)
+  isRural          Boolean  @default(false)
+  isSuburban       Boolean  @default(false)
+  isUrban          Boolean  @default(false)
+  isVacationHome   Boolean  @default(false)
+  parkingSpaces    Int      @default(0)
+  views            Int      @default(0)
+  status           String   @default("Active")
+  yearBuilt        Int?
+  landArea         Float?
+  nearbyFacilities Json?
+  savedProperties SavedProperty[]
 }

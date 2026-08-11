@@ -1,0 +1,2 @@
+ALTER TABLE "Property"
+ADD COLUMN "status" TEXT NOT NULL DEFAULT 'Active';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 
 // ─── Backend Interfaces ─────────────────────────────────────────────────────
 
@@ -41,6 +41,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   onSubmit
 }) => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -91,7 +92,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
       setIsSubmitting(true);
       setErrors({});
       try {
-        await authService.login({ email, password });
+        await login({ email, password });
         setIsSubmitting(false);
         navigate('/');
       } catch (err: any) {

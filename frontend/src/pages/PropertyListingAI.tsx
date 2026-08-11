@@ -373,6 +373,7 @@ export default function PropertyListingAI() {
   const [hasGenerated, setHasGenerated] = useState(() => searchParams.get('ai') === 'true')
   const [isGenerating, setIsGenerating] = useState(false)
   const [visibleCount, setVisibleCount] = useState(6)
+  const [showAllFiltered, setShowAllFiltered] = useState(false)
 
   // Sync draft states whenever the URL parameters (searchParams) change
   useEffect(() => {
@@ -385,6 +386,7 @@ export default function PropertyListingAI() {
     setSearchQuery(initQuery)
     setHeroLocation(initDistricts.length > 0 ? initDistricts.join(', ') : initQuery)
     setVisibleCount(6)
+    setShowAllFiltered(false)
     
     if (!isGenerating) {
       setHasGenerated(searchParams.get('ai') === 'true')
@@ -768,6 +770,7 @@ export default function PropertyListingAI() {
     // 2. Reset AI state to trigger animation & show filtered results first
     setHasGenerated(false)
     setIsGenerating(true)
+    setShowAllFiltered(false)
     
     // Wait for AI to "analyze"
     await new Promise(resolve => setTimeout(resolve, 1500))
@@ -1337,9 +1340,37 @@ export default function PropertyListingAI() {
                   )}
                 </div>
 
-                {/* ── Browse All Properties ── */}
+                {/* ── Load More Filtered Results (placed before Browse All Properties) ── */}
+                {scoredPool.length > 2 && !showAllFiltered && (
+                  <div className="mb-6 mt-4 flex justify-center">
+                    <button
+                      id="ai-load-more-filtered-btn"
+                      onClick={() => setShowAllFiltered(true)}
+                      className="flex items-center gap-2 text-xs font-bold px-8 py-3 rounded-xl border-2 border-[#345b79] text-[#345b79] transition-all hover:bg-[#345b79] hover:text-white cursor-pointer active:scale-95"
+                    >
+                      <SparklesIcon />
+                      Load More Properties
+                    </button>
+                  </div>
+                )}
+
+                {showAllFiltered && scoredPool.length > 2 && (
+                  <div className="mt-4 space-y-3.5">
+                    {scoredPool.slice(2).map((p) => (
+                      <RecommendedCard
+                        key={p.id}
+                        property={p}
+                        displayScore={p._aiScore}
+                        displayReason={p._aiReason}
+                        aiMatches={p._aiMatches}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* ── Browse All Properties (always displays exactly 3 random properties) ── */}
                 {browseAll.length > 0 && (
-                  <div>
+                  <div className="pt-2">
                     <div className="flex items-center justify-between mb-3 mt-6">
                       <div>
                         <div className="flex items-center gap-2 mb-0.5">
@@ -1347,7 +1378,7 @@ export default function PropertyListingAI() {
                           <h2 className="font-bold text-sm" style={{ color: '#1d1d1d' }}>Browse All Properties</h2>
                         </div>
                         <p className="text-[10px] ml-7" style={{ color: '#928d64' }}>
-                          Showing {Math.min(visibleCount, browseAll.length)} of {browseAll.length} result{browseAll.length !== 1 ? 's' : ''}
+                          Other properties you might like
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1369,20 +1400,8 @@ export default function PropertyListingAI() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                      {browseAll.slice(0, visibleCount).map((p) => <BrowseCard key={p.id} property={p} />)}
+                      {browseAll.map((p) => <BrowseCard key={p.id} property={p} />)}
                     </div>
-
-                    {browseAll.length > visibleCount && (
-                      <div className="mb-8 mt-5 flex justify-center">
-                        <button
-                          id="ai-load-more-btn"
-                          onClick={() => setVisibleCount((prev) => prev + 6)}
-                          className="flex items-center gap-2 text-xs font-bold px-8 py-3 rounded-xl border-2 border-[#345b79] text-[#345b79] transition-all hover:bg-[#345b79] hover:text-white"
-                        >
-                          Load More Properties
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )}
               </>
