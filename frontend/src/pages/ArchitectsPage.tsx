@@ -117,7 +117,7 @@ function FirmCard({ firm }: { firm: typeof architectFirms[0] }) {
           {/* Primary — Blue */}
           <button
             id={`view-profile-${firm.id}`}
-            onClick={() => navigate(`/architects/${firm.id}`)}
+            onClick={() => navigate(`/designs/company/${firm.id || 'silva-associates'}`)}
             className="nb-btn-primary flex-1 text-sm py-2.5"
           >
             View Profile

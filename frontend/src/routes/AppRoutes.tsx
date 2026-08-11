@@ -91,8 +91,11 @@ function AppRoutes() {
 
         {/* Architecture Routes */}
         <Route path="/architecture" element={<ArchitecturePage />} />
+        <Route path="/architecture/company/:companyId" element={<DesignsPage />} />
         <Route path="/architects" element={<ArchitectsPage />} />
+        <Route path="/architects/:id" element={<DesignsPage />} />
         <Route path="/designs" element={<DesignsPage />} />
+        <Route path="/designs/company/:companyId" element={<DesignsPage />} />
         <Route path="/designs/:id" element={<DesignDetailPage />} />
 
         {/* Construction Routes */}

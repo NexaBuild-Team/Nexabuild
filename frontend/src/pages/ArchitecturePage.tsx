@@ -127,7 +127,7 @@ function FirmCard({ firm }: { firm: any }) {
         <div className="flex items-center gap-2 mt-auto">
           <button
             id={`view-profile-${firm.id}`}
-            onClick={() => navigate('/designs')}
+            onClick={() => navigate(`/designs/company/${firm.id || 'silva-associates'}`)}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
             style={{ background: '#345b79' }}
           >
@@ -250,17 +250,7 @@ function ArchitecturePage() {
     return b.rating - a.rating // Top Rated default
   })
 
-  // Loading / error guards
-  if (loading) return (
-    <main className="flex-1 flex items-center justify-center py-32">
-      <p className="text-sm" style={{ color: '#928d64' }}>Loading firms…</p>
-    </main>
-  )
-  if (error) return (
-    <main className="flex-1 flex items-center justify-center py-32">
-      <p className="text-sm" style={{ color: '#be5d3f' }}>{error}</p>
-    </main>
-  )
+
 
   return (
     <>
@@ -540,8 +530,24 @@ function ArchitecturePage() {
               </div>
             </div>
 
-            {/* Cards grid or empty state */}
-            {sorted.length === 0 ? (
+            {/* Cards grid or skeleton loading state */}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-pulse">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="bg-white border border-[#e6e0d4] rounded-2xl overflow-hidden h-[420px] flex flex-col justify-between p-4 space-y-4">
+                    <div className="h-40 bg-gray-200 rounded-xl w-full" />
+                    <div className="h-6 bg-gray-200 rounded-md w-3/4" />
+                    <div className="h-4 bg-gray-200 rounded-md w-1/2" />
+                    <div className="h-10 bg-gray-200 rounded-xl w-full" />
+                    <div className="h-10 bg-[#345b79]/20 rounded-xl w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-8 rounded-2xl text-center font-semibold">
+                {error}
+              </div>
+            ) : sorted.length === 0 ? (
               <div
                 className="rounded-2xl p-16 text-center"
                 style={{ background: '#fff', border: '1px solid #e6e0d4' }}
@@ -551,7 +557,7 @@ function ArchitecturePage() {
                 <p className="text-sm mt-1" style={{ color: '#6b879c' }}>Try different keywords or adjust your filters</p>
                 <button
                   onClick={() => { clearAll(); setSearchName(''); setSearchCompany(''); setSearchCity(''); setActiveFilter(null) }}
-                  className="mt-4 px-6 py-2 rounded-xl text-sm font-semibold text-white"
+                  className="mt-4 px-6 py-2 rounded-xl text-sm font-semibold text-white cursor-pointer"
                   style={{ background: '#345b79' }}
                 >
                   Clear All

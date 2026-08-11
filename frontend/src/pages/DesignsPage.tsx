@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router'
 import api from '../services/api'
+import { houseDesigns as fallbackHouseDesigns } from '../services/architectureMockData'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -174,27 +175,265 @@ function Stars({ count }: { count: number }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DesignsPage() {
-  const { id } = useParams()
+  const { id, companyId } = useParams()
+  const targetCompanyId = companyId || id || 'silva-associates'
+
   // Live firm profile
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [firm, setFirm]                   = useState<any>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [latestProjects, setLatestProjects] = useState<any[]>([])
+  const [loading, setLoading]             = useState(true)
 
   useEffect(() => {
-    // Load the firm profile — uses dynamic :id param, falls back to silva-associates
-    api.get(`/architecture/${id || 'silva-associates'}`).then((res) => setFirm(res.data)).catch(() => {})
-    // Load latest project cards
-    api.get('/architecture/designs').then((res) => {
-      const all: any[] = res.data
-      setLatestProjects(
-        all.filter((d) => ['pearl-residence', 'ocean-breeze', 'lotus-tower-penthouse'].includes(d.id))
-      )
-    }).catch(() => {})
-  }, [id])
+    let isMounted = true;
+    setLoading(true)
 
-  const featuredProject = latestProjects.find((p) => p.id === 'pearl-residence')
-  const sideProjects    = latestProjects.filter((p) => p.id !== 'pearl-residence')
+    const fetchFirmData = async () => {
+      try {
+        // 1. Fetch company data
+        const resCompany = await api.get(`/architecture/${targetCompanyId}`)
+        const companyData = resCompany.data
+        if (!isMounted) return
+        setFirm(companyData)
+
+        // 2. Fetch all designs
+        const resDesigns = await api.get('/architecture/designs')
+        const allDesigns: any[] = resDesigns.data ?? []
+
+        let projects = (companyData?.houseDesigns && companyData.houseDesigns.length > 0)
+          ? companyData.houseDesigns
+          : allDesigns.filter((d: any) => d.companyId === targetCompanyId || d.company?.id === targetCompanyId || d.companyId === companyData?.id)
+
+        if (!projects || projects.length === 0) {
+          projects = allDesigns.length > 0 ? allDesigns : fallbackHouseDesigns
+        }
+
+        const mapped = projects.map((d: any) => ({
+          id: d.id,
+          title: d.title || 'Villa Lumina',
+          style: d.style || 'Modern',
+          priceLkr: d.priceLkr || d.price || 2400000,
+          price: d.priceLkr || d.price || 2400000,
+          locationLabel: d.locationLabel || d.location || 'Colombo 05',
+          location: d.locationLabel || d.location || 'Colombo 05',
+          imageUrl: d.imageUrl || 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop',
+        }))
+
+        if (isMounted) setLatestProjects(mapped)
+      } catch (err) {
+        console.error('Failed to load firm profile:', err)
+        try {
+          const resAll = await api.get('/architecture/designs')
+          const dbDesigns = resAll.data ?? []
+          const list = dbDesigns.length > 0 ? dbDesigns : fallbackHouseDesigns
+          if (isMounted) {
+            setLatestProjects(list.map((d: any) => ({
+              id: d.id,
+              title: d.title || 'Villa Lumina',
+              style: d.style || 'Modern',
+              priceLkr: d.priceLkr || d.price || 2400000,
+              price: d.priceLkr || d.price || 2400000,
+              locationLabel: d.locationLabel || d.location || 'Colombo 05',
+              location: d.locationLabel || d.location || 'Colombo 05',
+              imageUrl: d.imageUrl || 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop',
+            })))
+          }
+        } catch {
+          if (isMounted) {
+            setLatestProjects(fallbackHouseDesigns.map((d: any) => ({
+              id: d.id,
+              title: d.title,
+              style: d.style,
+              priceLkr: d.price,
+              price: d.price,
+              locationLabel: d.location,
+              location: d.location,
+              imageUrl: d.imageUrl,
+            })))
+          }
+        }
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    fetchFirmData()
+
+    return () => { isMounted = false }
+  }, [targetCompanyId])
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#faf7f4] flex flex-col font-sans text-[#1d1d1d]">
+        {/* Soft Slate Blue Hero Banner Skeleton */}
+        <div className="w-full bg-[#345b79] pt-28 pb-16 px-6 animate-pulse">
+          <div className="max-w-7xl mx-auto space-y-5">
+            <div className="w-36 h-4 bg-white/20 rounded-full" />
+            <div className="w-1/2 h-10 bg-white/25 rounded-xl" />
+            <div className="flex gap-3 pt-2">
+              <div className="w-44 h-11 bg-white/20 rounded-xl" />
+              <div className="w-28 h-11 bg-white/10 rounded-xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Warm Beige Stats Bar Skeleton */}
+        <div className="bg-[#e6e0d4] py-5 px-6 border-b border-[#ccb7a3]">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 animate-pulse">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#345b79]/15 rounded-xl shrink-0" />
+                <div className="space-y-2">
+                  <div className="w-16 h-5 bg-[#d5cbb8] rounded-md" />
+                  <div className="w-24 h-3 bg-[#d5cbb8]/70 rounded-md" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Area Skeleton */}
+        <div className="max-w-7xl mx-auto px-6 py-14 w-full flex-1 space-y-12 animate-pulse">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="space-y-4">
+              <div className="w-28 h-4 bg-[#e6e0d4] rounded-full" />
+              <div className="w-2/3 h-8 bg-[#e6e0d4] rounded-lg" />
+              <div className="w-full h-24 bg-[#e6e0d4]/70 rounded-xl" />
+              <div className="flex gap-2 pt-2">
+                {[1, 2, 3].map(t => (
+                  <div key={t} className="w-20 h-7 bg-[#e6e0d4] rounded-full" />
+                ))}
+              </div>
+            </div>
+            <div className="h-72 bg-[#e6e0d4] rounded-2xl" />
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  const displayProjects = (latestProjects && latestProjects.length > 0)
+    ? latestProjects
+    : fallbackHouseDesigns.slice(0, 3).map((d: any) => ({
+        id: d.id,
+        title: d.title,
+        style: d.style,
+        priceLkr: d.price,
+        price: d.price,
+        locationLabel: d.location,
+        location: d.location,
+        imageUrl: d.imageUrl,
+      }))
+
+  const featuredProject = displayProjects[0] || {
+    id: 'villa-lumina',
+    title: 'Villa Lumina',
+    style: 'Modern',
+    priceLkr: 2400000,
+    price: 2400000,
+    locationLabel: 'Colombo 05',
+    location: 'Colombo 05',
+    imageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900&h=600&fit=crop',
+  }
+
+  const rawSide = displayProjects.slice(1)
+  const sideProjects = rawSide.length >= 2 ? rawSide.slice(0, 2) : [
+    {
+      id: 'green-haven',
+      title: 'Green Haven Residence',
+      style: 'Sustainable',
+      priceLkr: 1200000,
+      price: 1200000,
+      locationLabel: 'Kandy',
+      location: 'Kandy',
+      imageUrl: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&h=400&fit=crop',
+    },
+    {
+      id: 'ocean-breeze',
+      title: 'Ocean Breeze Villa',
+      style: 'Luxury',
+      priceLkr: 3800000,
+      price: 3800000,
+      locationLabel: 'Negombo',
+      location: 'Negombo',
+      imageUrl: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop',
+    },
+  ]
+
+  const dynamicStats = [
+    {
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M12 22V12m0 0C12 6 7 3 2 3c0 5 3 9 10 9z" />
+          <path d="M12 12c0-6 5-9 10-9 0 5-3 9-10 9z" />
+        </svg>
+      ),
+      value: firm?.yearsExperience ? `${firm.yearsExperience}+` : '18+',
+      label: 'Years Experience',
+    },
+    {
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+      ),
+      value: firm?.projectCount ? `${firm.projectCount}` : '143',
+      label: 'Projects Completed',
+    },
+    {
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+        </svg>
+      ),
+      value: firm?.awardsWon ? `${firm.awardsWon}+` : '14+',
+      label: 'Awards Won',
+    },
+    {
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+      value: firm?.clientSatisfactionPct ? `${firm.clientSatisfactionPct}%` : '98%',
+      label: 'Client Satisfaction',
+    },
+  ]
+
+  const displayServices = (firm?.services && firm.services.length > 0)
+    ? firm.services.map((s: any) => ({
+        icon: s.icon || '🏠',
+        title: s.title,
+        desc: s.description || s.desc || '',
+      }))
+    : services
+
+  const displayTestimonials = (firm?.testimonials && firm.testimonials.length > 0)
+    ? firm.testimonials.map((t: any, i: number) => ({
+        id: t.id || i,
+        rating: t.rating || 5,
+        text: t.text,
+        author: t.author,
+        role: t.role || `${firm?.city || 'Sri Lanka'}`,
+        avatar: t.avatarUrl || t.avatar || 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=80&h=80&fit=crop&crop=face',
+      }))
+    : testimonials
+
+  const displayTeam = (firm?.teamMembers && firm.teamMembers.length > 0)
+    ? firm.teamMembers.map((m: any, i: number) => ({
+        id: m.id || i,
+        name: m.name,
+        title: m.title,
+        photo: m.photoUrl || m.photo || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
+      }))
+    : teamMembers
+
+  const specializationTags = (firm?.specializations && firm.specializations.length > 0)
+    ? firm.specializations.map((s: any) => typeof s === 'string' ? s : s.label)
+    : ['Modern', 'Tropical', 'Luxury', 'Sustainable', 'Award-Winning']
 
   return (
     <>
@@ -204,8 +443,8 @@ export default function DesignsPage() {
       <section className="relative overflow-hidden" style={{ minHeight: '380px' }}>
         {/* Cover photo (absolute, behind everything) */}
         <img
-          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600&h=700&fit=crop"
-          alt="Silva &amp; Associates Architecture"
+          src={firm?.coverImageUrl || "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600&h=700&fit=crop"}
+          alt={firm?.name ?? "Silva & Associates Architecture"}
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Dark gradient overlay */}
@@ -267,7 +506,7 @@ export default function DesignsPage() {
       <section style={{ background: '#e6e0d4', borderBottom: '1px solid #ccb7a3' }}>
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0 divide-x" style={{ borderColor: '#e6e0d4' }}>
-            {stats.map((stat, i) => (
+            {dynamicStats.map((stat, i) => (
               <div key={i} className="flex items-center gap-4 px-6 first:pl-0 last:border-r-0">
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -296,20 +535,13 @@ export default function DesignsPage() {
               About the Firm
             </span>
             <h2 className="text-2xl md:text-3xl font-bold mt-2 mb-5" style={{ color: '#1d1d1d' }}>
-              About Silva &amp; Associates
+              About {firm?.name ?? 'Silva & Associates'}
             </h2>
-            <p className="text-sm leading-relaxed mb-4" style={{ color: '#928d64' }}>
-              Founded in 2006, Silva &amp; Associates Architecture is one of Sri Lanka's most celebrated contemporary
-              practices. Led by Principal Architect Arjun Silva, the studio has delivered over 143 award-winning
-              projects across residential, commercial, and hospitality sectors throughout the island.
-            </p>
-            <p className="text-sm leading-relaxed mb-7" style={{ color: '#928d64' }}>
-              The firm's design philosophy is rooted in tropical modernism — harnessing natural light,
-              cross-ventilation, and indigenous materials to create spaces that are architecturally bold yet
-              deeply connected to Sri Lanka's landscape and cultural heritage.
+            <p className="text-sm leading-relaxed mb-6" style={{ color: '#928d64' }}>
+              {firm?.description ?? "Founded in 2006, Silva & Associates Architecture is one of Sri Lanka's most celebrated contemporary practices."}
             </p>
             <div className="flex flex-wrap gap-2">
-              {['Modern', 'Tropical', 'Luxury', 'Sustainable', 'Award-Winning'].map((tag) => (
+              {specializationTags.map((tag: string) => (
                 <span
                   key={tag}
                   className="px-3 py-1.5 rounded-full text-xs font-semibold"
@@ -327,8 +559,8 @@ export default function DesignsPage() {
             style={{ height: '360px', boxShadow: '0 8px 40px rgba(52,91,121,0.12)' }}
           >
             <img
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&h=700&fit=crop"
-              alt="Silva &amp; Associates studio office"
+              src={firm?.coverImageUrl || firm?.avatarUrl || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&h=700&fit=crop"}
+              alt={`${firm?.name ?? 'Architecture Firm'} office`}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -351,7 +583,7 @@ export default function DesignsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((svc, i) => (
+            {displayServices.map((svc: any, i: number) => (
               <div
                 key={i}
                 className="rounded-2xl p-6 transition-shadow hover:shadow-md"
@@ -396,7 +628,7 @@ export default function DesignsPage() {
           </div>
 
           {/* Project mosaic */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: '440px' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[440px]">
             {/* Featured card — left 2 columns */}
             {featuredProject && (
               <Link
@@ -407,7 +639,7 @@ export default function DesignsPage() {
               >
                 <img
                   src={featuredProject.imageUrl.replace('w=600', 'w=900')}
-                  alt="Villa Lumina"
+                  alt={featuredProject.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div
@@ -424,7 +656,7 @@ export default function DesignsPage() {
                   >
                     {featuredProject.style}
                   </span>
-                  <h3 className="text-xl font-bold text-white leading-snug">Villa Lumina</h3>
+                  <h3 className="text-xl font-bold text-white leading-snug">{featuredProject.title}</h3>
                   <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.72)' }}>
                     {featuredProject.locationLabel ?? featuredProject.location} &nbsp;·&nbsp; LKR {(featuredProject.priceLkr ?? featuredProject.price ?? 0).toLocaleString()}
                   </p>
@@ -502,7 +734,7 @@ export default function DesignsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
+            {displayTestimonials.map((t: any) => (
               <div
                 key={t.id}
                 className="rounded-2xl p-6 flex flex-col"
@@ -554,7 +786,7 @@ export default function DesignsPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {teamMembers.map((member) => (
+            {displayTeam.map((member: any) => (
               <div
                 key={member.id}
                 className="rounded-2xl overflow-hidden text-center"
@@ -609,7 +841,9 @@ export default function DesignsPage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Address</p>
-                  <p className="text-sm" style={{ color: '#1d1d1d' }}>42 Galle Road, Colombo 03, Sri Lanka</p>
+                  <p className="text-sm" style={{ color: '#1d1d1d' }}>
+                    {firm?.address || (firm?.locationLabel ? `${firm.locationLabel}, ${firm.city || ''}, ${firm.country || 'Sri Lanka'}` : '42 Galle Road, Colombo 03, Sri Lanka')}
+                  </p>
                 </div>
               </li>
 
@@ -625,8 +859,8 @@ export default function DesignsPage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Phone</p>
-                  <a href="tel:+94112345678" className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
-                    +94 11 234 5678
+                  <a href={`tel:${firm?.phone || '+94112345678'}`} className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
+                    {firm?.phone || '+94 11 234 5678'}
                   </a>
                 </div>
               </li>
@@ -644,8 +878,8 @@ export default function DesignsPage() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: '#6b879c' }}>Email</p>
-                  <a href="mailto:info@silvaassociates.lk" className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
-                    info@silvaassociates.lk
+                  <a href={`mailto:${firm?.email || 'info@firm.lk'}`} className="text-sm hover:underline" style={{ color: '#1d1d1d' }}>
+                    {firm?.email || 'info@silvaassociates.lk'}
                   </a>
                 </div>
               </li>
