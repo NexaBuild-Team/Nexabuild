@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
@@ -6,7 +6,6 @@ import { fetchAgentDashboard, updateListingStatusApi, deleteListingApi } from '.
 import type { AgentDashboardData as ApiAgentData } from '../../services/agentApi';
 import { getAllLands, deleteLand } from '../../services/landApi';
 import { fetchAllProperties } from '../../services/propertyService';
-import api from '../../services/api';
 
 // ─── 1. Comprehensive Interfaces ───────────────────────────────────────────
 
@@ -71,17 +70,6 @@ export interface AgentDashboardProps {
   onDeleteListing?: (id: string | number) => void;
 }
 
-// Recharts Dataset for Performance
-const propertyPerformanceData = [
-  { month: 'JAN', views: 420 },
-  { month: 'FEB', views: 680 },
-  { month: 'MAR', views: 520 },
-  { month: 'APR', views: 890 },
-  { month: 'MAY', views: 760 },
-  { month: 'JUN', views: 940 },
-  { month: 'JUL', views: 1120 },
-];
-
 const landPerformanceData = [
   { month: 'JAN', views: 280 },
   { month: 'FEB', views: 420 },
@@ -90,16 +78,6 @@ const landPerformanceData = [
   { month: 'MAY', views: 580 },
   { month: 'JUN', views: 890 },
   { month: 'JUL', views: 780 },
-];
-
-const monthlyViewsData = [
-  { month: 'JAN', views: 310 },
-  { month: 'FEB', views: 480 },
-  { month: 'MAR', views: 410 },
-  { month: 'APR', views: 680 },
-  { month: 'MAY', views: 640 },
-  { month: 'JUN', views: 890 },
-  { month: 'JUL', views: 1020 },
 ];
 
 // ─── Component Implementation ───────────────────────────────────────────────
@@ -159,16 +137,17 @@ export default function AgentDashboard({
 
   // Fetch all properties and map to listing items
   useEffect(() => {
-    api.get('/properties')
-      .then(({ data }) => {
-        const mapped: AgentDashboardListingItem[] = data.map((p: any) => ({
+    fetchAllProperties()
+      .then((props) => {
+        const mapped: AgentDashboardListingItem[] = props.map((p) => ({
           id: p.id,
           title: p.title,
-          type: 'PROPERTY' as const,
-          status: p.status || 'Active',
-          views: (p.views || 0) + parseInt(localStorage.getItem(`nexabuild_property_views_${p.id}`) || '0', 10),
-          saved: Math.max(1, Math.floor(((p.views || 0) + parseInt(localStorage.getItem(`nexabuild_property_views_${p.id}`) || '0', 10)) * 0.15)),
-          imageUrl: p.images?.[0] || '/hero_property.png',
+          type: 'PROPERTY',
+          status: 'Active' as const,
+          // Read view count tracked by PropertyDetail on each page visit
+          views: parseInt(localStorage.getItem(`nexabuild_property_views_${p.id}`) || '0', 10),
+          saved: 0,
+          imageUrl: p.image || '/property_card_1.png',
         }));
         setFetchedProperties(mapped);
       })
@@ -195,20 +174,15 @@ export default function AgentDashboard({
 
   const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL'];
 
-  const dynamicPropertyPerformance = useMemo(() => {
-    return months.map((month, index) => ({
-      month,
-      views: Math.round((totalPropertiesViews / 7) * (0.6 + index * 0.12 + (index % 2 === 0 ? 0.08 : -0.04))),
-    }));
-  }, [totalPropertiesViews]);
+  const dynamicPropertyPerformance = months.map((month, index) => ({
+    month,
+    views: Math.round((totalPropertiesViews / 7) * (0.6 + index * 0.12 + (index % 2 === 0 ? 0.08 : -0.04))),
+  }));
 
-  const dynamicMonthlyViews = useMemo(() => {
-    const landPerf = apiData?.landPerformance ?? landPerformanceData;
-    return months.map((month, index) => ({
-      month,
-      views: dynamicPropertyPerformance[index].views + (landPerf[index]?.views || 0),
-    }));
-  }, [dynamicPropertyPerformance, apiData]);
+  const dynamicMonthlyViews = months.map((month, index) => ({
+    month,
+    views: dynamicPropertyPerformance[index].views + (apiData?.landPerformance?.[index]?.views ?? landPerformanceData[index].views),
+  }));
 
   const listings: AgentDashboardListingItem[] =
     activeTab === 'property'
@@ -321,7 +295,7 @@ export default function AgentDashboard({
         {/* A. 4 Top KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Total Properties', val: metrics?.totalPropertiesCount ?? 0, change: metrics?.propertiesGrowthPercent ?? '0%', icon: '/svg/home.svg', bg: 'bg-blue-50 text-[#345b79]' },
+            { label: 'Total Properties', val: fetchedProperties.length, change: metrics?.propertiesGrowthPercent ?? '0%', icon: '/svg/home.svg', bg: 'bg-blue-50 text-[#345b79]' },
             { label: 'Total Lands', val: metrics?.totalLandsCount ?? 0, change: metrics?.landsGrowthPercent ?? '0%', icon: '/svg/land-plot-icon.svg', bg: 'bg-orange-50 text-[#be5d3f]' },
             { label: 'Total Views', val: totalViews, change: metrics?.viewsGrowthPercent ?? '0%', icon: '/svg/eye.svg', bg: 'bg-indigo-50 text-indigo-600' },
             { label: 'Saved by Users', val: metrics?.savedByUsersCount ?? 0, change: metrics?.savedGrowthPercent ?? '0%', icon: '/svg/heart.svg', bg: 'bg-rose-50 text-rose-600' },
@@ -357,7 +331,7 @@ export default function AgentDashboard({
             </div>
             <div className="h-[180px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={apiData?.propertyPerformance ?? dynamicPropertyPerformance} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                <BarChart data={dynamicPropertyPerformance} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
                   <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 12, fontSize: 11, fontWeight: 'bold' }} />
                   <Bar dataKey="views" fill="#345b79" radius={[6, 6, 0, 0]} barSize={18} />
@@ -398,7 +372,7 @@ export default function AgentDashboard({
             
             <div className="h-[180px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={apiData?.monthlyViews ?? dynamicMonthlyViews} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                <BarChart data={dynamicMonthlyViews} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
                   <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 12, fontSize: 11, fontWeight: 'bold' }} />
                   <Bar dataKey="views" fill="#345b79" radius={[6, 6, 0, 0]} barSize={18} />
@@ -428,16 +402,7 @@ export default function AgentDashboard({
               imageUrl: dynamicMostViewedListing.imageUrl,
               id: dynamicMostViewedListing.id,
               type: dynamicMostViewedListing.type,
-            } : ((apiData as any)?.mostViewedListing || (listings.length > 0 ? {
-              title: listings[0].title,
-              location: listings[0].type === 'PROPERTY' ? 'Prime Property' : 'Prime Land',
-              details: listings[0].type === 'PROPERTY' ? 'Active Listing' : 'Land Plot',
-              views: listings[0].views || 1850,
-              saved: listings[0].saved || 142,
-              imageUrl: listings[0].imageUrl || '/hero_property.png',
-              id: listings[0].id,
-              type: listings[0].type,
-            } : null));
+            } : null;
 
             return featuredItem ? (
               <div className="lg:col-span-5 bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm flex flex-col justify-between">

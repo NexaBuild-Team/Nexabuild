@@ -48,6 +48,16 @@ export interface ApiProperty {
   yearBuilt?: number | null
   landArea?: number | null
   nearbyFacilities?: any
+  agentId?: string | null
+  agent?: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+    company: string | null
+    avatar: string | null
+  } | null
 }
 
 // ─── Frontend-friendly type used by all property pages ───────────────────────
@@ -104,6 +114,15 @@ export interface MappedProperty {
   isNearBeach: boolean
   yearBuilt?: number | null
   landArea?: number | null
+  agent?: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+    company: string | null
+    avatar: string | null
+  } | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -255,6 +274,7 @@ export function mapApiProperty(p: ApiProperty): MappedProperty {
     isNearBeach: !!p.isNearBeach,
     yearBuilt: p.yearBuilt,
     landArea: p.landArea,
+    agent: p.agent ?? null,
   }
 }
 

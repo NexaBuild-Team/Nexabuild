@@ -26,8 +26,27 @@ export class UserService {
       },
     });
 
+    await this.syncAgentProfile(user);
+
     const { password, ...result } = user;
     return result;
+  }
+
+  async syncAgentProfile(user: any) {
+    if (user.role === 'AGENT') {
+      await this.prisma.agent.upsert({
+        where: { email: user.email },
+        update: {},
+        create: {
+          firstName: user.firstName || 'New',
+          lastName: user.lastName || 'Agent',
+          email: user.email,
+          phone: user.phone || '',
+          company: 'NexaBuild Agent Partner',
+          avatar: user.avatar || '',
+        },
+      });
+    }
   }
 
   async findByEmail(email: string) {

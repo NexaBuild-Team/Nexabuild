@@ -25,6 +25,7 @@ export interface AdminUserManagementPageData {
 }
 
 export interface AdminUserManagementProps {
+  defaultRole?: string;
   data?: AdminUserManagementPageData | null;
   isLoading?: boolean;
   error?: string | null;
@@ -34,7 +35,26 @@ export interface AdminUserManagementProps {
   onExportCSV?: () => void;
 }
 
+const getRoleLabel = (role: string) => {
+  switch (role) {
+    case 'USER':
+    case 'BUYER':
+      return 'Property Buyer';
+    case 'AGENT':
+      return 'Real Estate Agent';
+    case 'ARCHITECT':
+      return 'Architect';
+    case 'CONTRACTOR':
+      return 'Construction Firm';
+    case 'ADMIN':
+      return 'Administrator';
+    default:
+      return role;
+  }
+};
+
 export default function AdminUserManagement({
+  defaultRole,
   data: propsData = null,
   isLoading: propsLoading = false,
   error: propsError = null,
@@ -50,7 +70,7 @@ export default function AdminUserManagement({
   const [error, setError] = useState<string | null>(propsError);
 
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('All Roles');
+  const [roleFilter, setRoleFilter] = useState(defaultRole || 'All Roles');
   const [statusFilter, setStatusFilter] = useState('All Statuses');
 
   // Edit Modal State
@@ -269,10 +289,11 @@ export default function AdminUserManagement({
               className="bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-extrabold text-gray-700 focus:outline-none cursor-pointer"
             >
               <option value="All Roles">All Roles</option>
-              <option value="Property Buyer">Property Buyer</option>
-              <option value="Real Estate Agent">Real Estate Agent</option>
-              <option value="Architect">Architect</option>
-              <option value="Construction Firm">Construction Firm</option>
+              <option value="USER">Property Buyer</option>
+              <option value="AGENT">Real Estate Agent</option>
+              <option value="ARCHITECT">Architect</option>
+              <option value="CONTRACTOR">Construction Firm</option>
+              <option value="ADMIN">Administrator</option>
             </select>
 
             <select
@@ -314,7 +335,7 @@ export default function AdminUserManagement({
                         <span className="text-[10px] text-gray-400 font-semibold">{u.email}</span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-3 font-bold text-gray-600">{u.role}</td>
+                    <td className="py-3.5 px-3 font-bold text-gray-600">{getRoleLabel(u.role)}</td>
                     <td className="py-3.5 px-3">
                       <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full ${
                         u.status === 'Active' ? 'bg-emerald-100 text-emerald-700' :

@@ -8,4 +8,5 @@ model Agent {
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  properties Property[]
 }

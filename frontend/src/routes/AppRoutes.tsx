@@ -156,6 +156,9 @@ function AppRoutes() {
             <Route path="users" element={<AdminUserManagement />} />
             <Route path="properties" element={<AdminPropertyManagement />} />
             <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="agents" element={<AdminUserManagement defaultRole="AGENT" />} />
+            <Route path="architects" element={<AdminUserManagement defaultRole="ARCHITECT" />} />
+            <Route path="contractors" element={<AdminUserManagement defaultRole="CONTRACTOR" />} />
           </Route>
         </Route>
       </Routes>

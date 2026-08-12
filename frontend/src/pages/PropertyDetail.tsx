@@ -115,6 +115,18 @@ export default function PropertyDetail() {
   const [saved,      setSaved]      = useState(false)
   const [agentSaved, setAgentSaved] = useState(false)
 
+  // Dynamically resolve agent details, fallback to Saman Perera
+  const agentName = property?.agent 
+    ? `${property.agent.firstName} ${property.agent.lastName}` 
+    : 'Saman Perera';
+  const agentPhone = property?.agent?.phone ?? '+94 77 123 4567';
+  const agentEmail = property?.agent?.email ?? 'saman@nexabuild.lk';
+  const agentCompany = property?.agent?.company ?? 'NexaBuild Realty';
+  const agentAvatar = property?.agent?.avatar ?? '';
+  const agentInitials = property?.agent 
+    ? `${property.agent.firstName.charAt(0)}${property.agent.lastName.charAt(0)}`.toUpperCase() 
+    : 'SP';
+
   useEffect(() => {
     if (!id) return
     setIsLoading(true)
@@ -409,15 +421,19 @@ export default function PropertyDetail() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#928d64] mb-4">Listed by Agent</p>
 
                   <div className="flex items-center gap-3 mb-4">
-                    <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #be5d3f, #345b79)' }}
-                    >
-                      SP
-                    </div>
+                    {agentAvatar ? (
+                      <img src={agentAvatar} alt={agentName} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                    ) : (
+                      <div
+                        className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                        style={{ background: 'linear-gradient(135deg, #be5d3f, #345b79)' }}
+                      >
+                        {agentInitials}
+                      </div>
+                    )}
                     <div>
-                      <p className="font-bold text-[#1d1d1d] text-sm">Saman Perera</p>
-                      <p className="text-xs text-[#928d64]">Senior Property Consultant</p>
+                      <p className="font-bold text-[#1d1d1d] text-sm">{agentName}</p>
+                      <p className="text-xs text-[#928d64]">{property?.agent ? 'Agent Partner' : 'Senior Property Consultant'}</p>
                       <StarRating />
                     </div>
                   </div>
@@ -427,19 +443,19 @@ export default function PropertyDetail() {
                       <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
-                      +94 77 123 4567
+                      {agentPhone}
                     </li>
                     <li className="flex items-center gap-2">
                       <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      saman@nexabuild.lk
+                      {agentEmail}
                     </li>
                     <li className="flex items-center gap-2">
                       <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
-                      NexaBuild Realty
+                      {agentCompany}
                     </li>
                   </ul>
 

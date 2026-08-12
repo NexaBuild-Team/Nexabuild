@@ -6,11 +6,16 @@ export class PropertyService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.property.findMany();
+    return this.prisma.property.findMany({
+      include: { agent: true },
+    });
   }
 
   async findOne(id: string) {
-    const property = await this.prisma.property.findUnique({ where: { id } });
+    const property = await this.prisma.property.findUnique({
+      where: { id },
+      include: { agent: true },
+    });
     if (!property) throw new NotFoundException(`Property with id "${id}" not found`);
     return property;
   }

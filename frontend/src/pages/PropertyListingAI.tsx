@@ -201,31 +201,65 @@ function RecommendedCard({
 
           {/* AI Reasoning */}
           <div className="mt-4 pt-3 border-t border-[#e6e0d4]">
-            <p className="text-[10px] font-bold text-[#1d1d1d] uppercase tracking-wider mb-2 flex items-center gap-1">
-              <span className="text-[#be5d3f] text-xs">✦</span>
-              ABOUT THIS PROPERTY
-            </p>
-            <p className="text-[11px] text-[#6b879c] leading-relaxed mb-4">{displayReason}</p>
-            
-            {/* AI Preferences Match Indicators */}
-            {aiMatches && (aiMatches.matched.length > 0 || aiMatches.unmatched.length > 0) && (
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {aiMatches.unmatched.map(u => (
-                  <div key={u} className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full transition-all duration-150" style={{ backgroundColor: '#e6e0d4', color: '#928d64' }}>
-                    <span>{u}</span>
-                  </div>
-                ))}
-                {aiMatches.matched.map(m => (
-                  <div key={m} className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full transition-all duration-150" style={{ backgroundColor: '#345b79', color: '#fff' }}>
-                    <span className="font-bold">✓</span> <span>{m}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <p className="text-[10px] font-bold text-[#be5d3f] uppercase tracking-wider flex items-center gap-1">
+            <p className="text-[10px] font-bold text-[#be5d3f] uppercase tracking-wider flex items-center gap-1 mb-2">
               ✨ WHY AI RECOMMENDED
             </p>
+            <p className="text-[11px] text-[#6b879c] leading-relaxed mb-3">{displayReason}</p>
+
+            {/* AI Match Breakdown */}
+            {aiMatches && (aiMatches.matched.length > 0 || aiMatches.unmatched.length > 0) && (
+              <div className="rounded-xl overflow-hidden border border-[#e6e0d4]">
+                {/* Summary header */}
+                <div className="px-3 py-2 flex items-center justify-between" style={{ backgroundColor: '#f5f3f0' }}>
+                  <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#345b79' }}>
+                    AI Preference Match
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{
+                      backgroundColor: aiMatches.matched.length === (aiMatches.matched.length + aiMatches.unmatched.length) ? 'rgba(73,149,87,0.15)' : 'rgba(52,91,121,0.12)',
+                      color: aiMatches.matched.length === (aiMatches.matched.length + aiMatches.unmatched.length) ? '#2d7a3a' : '#345b79'
+                    }}>
+                    {aiMatches.matched.length} / {aiMatches.matched.length + aiMatches.unmatched.length} matched
+                  </span>
+                </div>
+                <div className="px-3 py-2.5">
+                  {/* Matched pills */}
+                  {aiMatches.matched.length > 0 && (
+                    <div className="mb-2">
+                      <p className="text-[9px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#2d7a3a' }}>✓ What this property has</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiMatches.matched.map(m => (
+                          <div key={m} className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ backgroundColor: 'rgba(73,149,87,0.12)', color: '#2d7a3a', border: '1px solid rgba(73,149,87,0.3)' }}>
+                            <svg className="w-2.5 h-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                            {m}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Unmatched pills */}
+                  {aiMatches.unmatched.length > 0 && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#b94040' }}>✗ What's not available</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiMatches.unmatched.map(u => (
+                          <div key={u} className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                            style={{ backgroundColor: 'rgba(185,64,64,0.08)', color: '#b94040', border: '1px solid rgba(185,64,64,0.25)' }}>
+                            <svg className="w-2.5 h-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            {u}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -504,10 +538,19 @@ export default function PropertyListingAI() {
     .sort((a, b) => b.matchScore - a.matchScore)
   }, [propertyPool, searchParams])
 
+  // Live selection count (for the button label / footer text)
   const totalSelected = Object.values(aiPrefs).flat().length
 
+  // ── Committed snapshot — only updated when Generate is clicked ──────────────
+  // Scoring/matching always reads from this, never from the live aiPrefs above.
+  // This prevents results from shifting while the user is still selecting.
+  const [committedPrefs, setCommittedPrefs] = useState<Record<string, string[]>>({
+    purpose: [], features: [], lifestyle: [], priority: [],
+  })
+  const committedTotal = Object.values(committedPrefs).flat().length
+
   const togglePref = (cat: string, val: string) => {
-    setHasGenerated(false) // reset results when prefs change
+    // Do NOT reset hasGenerated — results stay locked until Generate is re-clicked
     setAiPrefs(prev => ({
       ...prev,
       [cat]: prev[cat].includes(val)
@@ -516,35 +559,28 @@ export default function PropertyListingAI() {
     }))
   }
 
-  // ── AI scoring engine ─────────────────────────────────────────────────────
+  // ── AI scoring engine — reads from committedPrefs (snapshot on Generate click) ──
   const scoreWithAI = (p: AIProperty): number => {
-    // Calculate AI Preferences Score
     const { matched } = getMatches(p)
-    const activeAiCount = totalSelected
+    const activeAiCount = committedTotal
     const matchedAiCount = matched.length
 
     if (activeAiCount === 0) {
-      return p.matchScore // fallback to original score if no AI used
+      return p.matchScore
     }
 
-    // Since standard filters strictly filter properties, 
-    // any property reaching this function has 100% matched standard filters.
-    // So we just score based on the AI preference match rate!
     let finalScore = (matchedAiCount / activeAiCount) * 100
-
-    // Add a tie-breaker based on the property's innate base score
-    // to subtly rank properties higher if they are generally better
     const tieBreaker = (p.matchScore / 100) * 5
     finalScore = finalScore > 0 ? Math.min(99, finalScore - 5 + tieBreaker) : finalScore
 
     return Math.max(10, Math.round(finalScore))
   }
 
-  // ── Dynamic reason generator ──────────────────────────────────────────────
+  // ── Dynamic reason generator — reads from committedPrefs ─────────────────
   const reasonWithAI = (p: AIProperty): string => {
-    if (totalSelected === 0) return p.reason
+    if (committedTotal === 0) return p.reason
     const reasons: string[] = []
-    const { purpose, features, lifestyle, priority } = aiPrefs
+    const { purpose, features, lifestyle, priority } = committedPrefs
     
     if (purpose.includes('Investment') && p.isInvestment)
       reasons.push('Excellent investment property')
@@ -580,11 +616,12 @@ export default function PropertyListingAI() {
     return reasons.join(' · ')
   }
 
+  // ── Match calculator — reads from committedPrefs (snapshot on Generate click) ──
   const getMatches = (p: AIProperty): { matched: string[], unmatched: string[] } => {
-    if (totalSelected === 0) return { matched: [], unmatched: [] }
+    if (committedTotal === 0) return { matched: [], unmatched: [] }
     const matched: string[] = []
     const unmatched: string[] = []
-    const { purpose, features, lifestyle, priority } = aiPrefs
+    const { purpose, features, lifestyle, priority } = committedPrefs
 
     // Purpose
     if (purpose.includes('Investment')) { p.isInvestment ? matched.push('Purpose: Investment') : unmatched.push('Purpose: Investment') }
@@ -617,7 +654,7 @@ export default function PropertyListingAI() {
     return { matched, unmatched }
   }
 
-  // ── Scored pool (re-sorts when AI recommendations generated or sortBy changes) ─────────────
+  // ── Scored pool — only re-computes when committedPrefs changes (i.e. Generate clicked) ──
   const [sortBy, setSortBy] = useState('Best Match')
 
   const scoredPool = useMemo(() => {
@@ -638,7 +675,7 @@ export default function PropertyListingAI() {
     
     return pool
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPool, propertyPool, hasGenerated, sortBy, aiPrefs])
+  }, [filteredPool, propertyPool, hasGenerated, sortBy, committedPrefs])
 
   // Top 2 → Recommended, rest → Browse All
   const recommended = scoredPool.slice(0, 2)
@@ -755,7 +792,7 @@ export default function PropertyListingAI() {
   )?.label ?? (minBudgetM > 0 || maxBudgetM < SLIDER_MAX ? `${minBudgetM}M – ${maxBudgetM >= SLIDER_MAX ? `${SLIDER_MAX}M+` : `${maxBudgetM}M`}` : 'Budget')
 
   const runAIRecommendation = async () => {
-    // 1. Apply current filters to URL (shows filtered results immediately)
+    // 1. Apply current filters to URL
     const params = new URLSearchParams()
     if (selectedDistricts.length > 0) params.set('districts', selectedDistricts.join(','))
     if (propertyTypeFilter !== 'All Types') params.set('type', propertyTypeFilter)
@@ -767,15 +804,19 @@ export default function PropertyListingAI() {
     setSearchParams(params)
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
-    // 2. Reset AI state to trigger animation & show filtered results first
+    // 2. Lock in the current selections as the committed snapshot
+    //    Results will be scored against THIS snapshot, not future live changes.
+    setCommittedPrefs({ ...aiPrefs })
+
+    // 3. Show loading state
     setHasGenerated(false)
     setIsGenerating(true)
     setShowAllFiltered(false)
     
-    // Wait for AI to "analyze"
+    // Simulate analysis delay
     await new Promise(resolve => setTimeout(resolve, 1500))
     
-    // 3. Apply AI filter with AI questions (shows AI score and reason)
+    // 4. Show results — locked to the committed snapshot above
     setHasGenerated(true)
     setIsGenerating(false)
   }
@@ -1224,7 +1265,12 @@ export default function PropertyListingAI() {
                 {/* Footer */}
                 <div className="pt-4 border-t border-[#e6e0d4] flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    {hasGenerated ? (
+                    {hasGenerated && totalSelected !== committedTotal ? (
+                      <p className="text-[10px] font-semibold flex items-center gap-1" style={{ color: '#be5d3f' }}>
+                        <span>⚠</span>
+                        Preferences changed — click Re-generate to update results
+                      </p>
+                    ) : hasGenerated ? (
                       <p className="text-[10px] font-semibold flex items-center gap-1" style={{ color: '#495d38' }}>
                         <span>✓</span>
                         AI matched {scoredPool.length} propert{scoredPool.length !== 1 ? 'ies' : 'y'} to your preferences
@@ -1232,7 +1278,7 @@ export default function PropertyListingAI() {
                     ) : totalSelected > 0 ? (
                       <p className="text-[10px]" style={{ color: '#928d64' }}>
                         <span className="font-semibold" style={{ color: '#345b79' }}>{totalSelected}</span>
-                        {' '}preference{totalSelected > 1 ? 's' : ''} selected — ready to generate
+                        {' '}preference{totalSelected > 1 ? 's' : ''} selected — click Generate to see results
                       </p>
                     ) : (
                       <p className="text-[10px]" style={{ color: '#ccb7a3' }}>
@@ -1274,7 +1320,7 @@ export default function PropertyListingAI() {
               </div>
             </div>
 
-            {hasGenerated || isGenerating || totalSelected > 0 || searchParams.get('ai') === 'true' ? (
+            {(hasGenerated || isGenerating) ? (
               <>
                 {/* ── Recommended For You ── */}
                 <div>
