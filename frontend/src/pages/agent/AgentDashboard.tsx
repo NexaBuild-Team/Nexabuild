@@ -185,6 +185,14 @@ export default function AgentDashboard({
     ...fetchedLands,
   ];
 
+  const totalPropertiesViews = fetchedProperties.reduce((sum, p) => sum + p.views, 0);
+  const totalLandsViews = fetchedLands.reduce((sum, l) => sum + l.views, 0);
+  const totalViews = totalPropertiesViews + totalLandsViews;
+
+  const dynamicMostViewedListing = allListings.length > 0 
+    ? [...allListings].sort((a, b) => b.views - a.views)[0] 
+    : null;
+
   const listings: AgentDashboardListingItem[] =
     activeTab === 'property'
       ? allListings.filter((l) => l.type === 'PROPERTY')
@@ -251,14 +259,15 @@ export default function AgentDashboard({
     return (
       <div className="p-6 lg:p-8 space-y-8 w-full max-w-[1400px] mx-auto animate-pulse">
         <div className="h-12 bg-gray-200 rounded-2xl w-1/3" />
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[1, 2, 3, 4, 5].map((i) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-28 bg-gray-200 rounded-2xl" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="h-72 bg-gray-200 rounded-2xl lg:col-span-2" />
-          <div className="h-72 bg-gray-200 rounded-2xl" />
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-72 bg-gray-200 rounded-2xl" />
+          ))}
         </div>
       </div>
     );
@@ -292,14 +301,13 @@ export default function AgentDashboard({
           <p className="text-xs sm:text-sm text-gray-500 font-semibold">Manage your properties, lands, and performance metrics</p>
         </div>
 
-        {/* A. 5 Top KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* A. 4 Top KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Total Properties', val: metrics?.totalPropertiesCount ?? 0, change: metrics?.propertiesGrowthPercent ?? '0%', icon: '/svg/home.svg', bg: 'bg-blue-50 text-[#345b79]' },
             { label: 'Total Lands', val: metrics?.totalLandsCount ?? 0, change: metrics?.landsGrowthPercent ?? '0%', icon: '/svg/land-plot-icon.svg', bg: 'bg-orange-50 text-[#be5d3f]' },
-            { label: 'Total Views', val: metrics?.totalViewsCount ?? 0, change: metrics?.viewsGrowthPercent ?? '0%', icon: '/svg/eye.svg', bg: 'bg-indigo-50 text-indigo-600' },
+            { label: 'Total Views', val: totalViews, change: metrics?.viewsGrowthPercent ?? '0%', icon: '/svg/eye.svg', bg: 'bg-indigo-50 text-indigo-600' },
             { label: 'Saved by Users', val: metrics?.savedByUsersCount ?? 0, change: metrics?.savedGrowthPercent ?? '0%', icon: '/svg/heart.svg', bg: 'bg-rose-50 text-rose-600' },
-            { label: 'Total Enquiries', val: metrics?.totalEnquiriesCount ?? 0, change: metrics?.enquiriesGrowthPercent ?? '0%', icon: '/svg/email.svg', bg: 'bg-amber-50 text-amber-700' },
           ].map((kpi, idx) => (
             <div key={idx} className="bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
               <div className="flex items-center justify-between mb-2">
@@ -318,7 +326,7 @@ export default function AgentDashboard({
           ))}
         </div>
 
-        {/* B. Performance Charts & Notifications Row */}
+        {/* B. Performance Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
           {/* Property Performance BarChart (Recharts) */}
@@ -326,7 +334,7 @@ export default function AgentDashboard({
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-base font-extrabold text-[#111827]">Property Performance</h3>
-                <p className="text-[11px] text-gray-400 font-semibold">Views & enquiries over 7 months</p>
+                <p className="text-[11px] text-gray-400 font-semibold">Views over 7 months</p>
               </div>
               <span className="size-3 rounded-full bg-[#345b79]" />
             </div>
@@ -346,7 +354,7 @@ export default function AgentDashboard({
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-base font-extrabold text-[#111827]">Land Performance</h3>
-                <p className="text-[11px] text-gray-400 font-semibold">Views & enquiries over 7 months</p>
+                <p className="text-[11px] text-gray-400 font-semibold">Views over 7 months</p>
               </div>
               <span className="size-3 rounded-full bg-[#be5d3f]" />
             </div>
@@ -361,27 +369,29 @@ export default function AgentDashboard({
             </div>
           </div>
 
-          {/* Notifications Panel */}
+          {/* Monthly Views (Recharts) & Buyer Interest */}
           <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-extrabold text-[#111827]">Notifications</h3>
-              <span className="size-5 rounded-full bg-orange-500 text-white text-[10px] font-extrabold flex items-center justify-center">
-                {notifications.length}
-              </span>
+              <div>
+                <h3 className="text-base font-extrabold text-[#111827]">Monthly Views</h3>
+                <p className="text-[11px] text-gray-400 font-semibold">Total visits over 7 months</p>
+              </div>
+              <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+34%</span>
+            </div>
+            
+            <div className="h-[180px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={apiData?.monthlyViews ?? monthlyViewsData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 12, fontSize: 11, fontWeight: 'bold' }} />
+                  <Bar dataKey="views" fill="#345b79" radius={[6, 6, 0, 0]} barSize={18} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
-            <div className="space-y-3.5 flex-1">
-              {notifications.map((n) => (
-                <div key={n.id} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="size-8 rounded-full bg-blue-50 text-[#345b79] flex items-center justify-center shrink-0 mt-0.5">
-                    <img src={n.type === 'enquiry' ? '/svg/email.svg' : n.type === 'views' ? '/svg/eye.svg' : '/svg/heart.svg'} alt="" className="size-4 opacity-80" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[#111827] leading-snug">{n.message}</p>
-                    <span className="text-[9px] font-bold text-gray-400 block mt-0.5 uppercase tracking-wider">{n.timeAgo}</span>
-                  </div>
-                </div>
-              ))}
+            <div className="bg-amber-50/60 border border-amber-200/60 p-3 rounded-xl flex items-center justify-between">
+              <span className="text-xs font-bold text-[#111827]">Buyer Interest Matches</span>
+              <span className="text-xs font-extrabold text-[#be5d3f]">+34% this month</span>
             </div>
           </div>
 
@@ -392,14 +402,25 @@ export default function AgentDashboard({
           
           {/* Featured Listing Card */}
           {(() => {
-            const featuredItem = (apiData as any)?.mostViewedListing || (listings.length > 0 ? {
+            const featuredItem = dynamicMostViewedListing ? {
+              title: dynamicMostViewedListing.title,
+              location: dynamicMostViewedListing.type === 'PROPERTY' ? 'Prime Property' : 'Prime Land',
+              details: dynamicMostViewedListing.type === 'PROPERTY' ? 'Active Listing' : 'Land Plot',
+              views: dynamicMostViewedListing.views,
+              saved: dynamicMostViewedListing.saved,
+              imageUrl: dynamicMostViewedListing.imageUrl,
+              id: dynamicMostViewedListing.id,
+              type: dynamicMostViewedListing.type,
+            } : ((apiData as any)?.mostViewedListing || (listings.length > 0 ? {
               title: listings[0].title,
               location: listings[0].type === 'PROPERTY' ? 'Prime Property' : 'Prime Land',
               details: listings[0].type === 'PROPERTY' ? 'Active Listing' : 'Land Plot',
               views: listings[0].views || 1850,
               saved: listings[0].saved || 142,
               imageUrl: listings[0].imageUrl || '/hero_property.png',
-            } : null);
+              id: listings[0].id,
+              type: listings[0].type,
+            } : null));
 
             return featuredItem ? (
               <div className="lg:col-span-5 bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm flex flex-col justify-between">
@@ -421,10 +442,28 @@ export default function AgentDashboard({
                   </div>
 
                   <div className="flex items-center gap-3 pt-2">
-                    <Link to="/property-listing" className="flex-1 bg-[#345b79] text-white text-xs font-extrabold py-2.5 rounded-xl text-center hover:bg-[#2a4a63] transition-colors">
+                    <button 
+                      onClick={() => {
+                        if (featuredItem.type === 'LAND') {
+                          navigate(`/land/detail/${featuredItem.id}`);
+                        } else {
+                          navigate(`/property-listing/${featuredItem.id}`);
+                        }
+                      }}
+                      className="flex-1 bg-[#345b79] text-white text-xs font-extrabold py-2.5 rounded-xl text-center hover:bg-[#2a4a63] transition-colors cursor-pointer"
+                    >
                       View Listing
-                    </Link>
-                    <button className="flex-1 bg-gray-100 text-[#111827] text-xs font-extrabold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-200 transition-colors">
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if (featuredItem.type === 'LAND') {
+                          navigate(`/dashboard/agent/add-land`);
+                        } else {
+                          navigate(`/dashboard/agent/add-property`);
+                        }
+                      }}
+                      className="flex-1 bg-gray-100 text-[#111827] text-xs font-extrabold py-2.5 rounded-xl border border-gray-200 hover:bg-gray-200 transition-colors cursor-pointer"
+                    >
                       Edit
                     </button>
                   </div>
@@ -475,59 +514,7 @@ export default function AgentDashboard({
 
         </div>
 
-        {/* D. Market Insights & Monthly Views Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          
-          {/* Property Market Insight */}
-          <div className="lg:col-span-4 bg-[#2a4d69] text-white rounded-[24px] p-6 shadow-md flex flex-col justify-between space-y-4">
-            <div>
-              <h3 className="text-base font-extrabold mb-1">Property Market Insight</h3>
-              <p className="text-xs text-white/80 font-medium leading-relaxed mt-2">
-                Dubai residential prices up 8.2% this quarter. High demand in JVC and Al Barsha.
-              </p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-2 rounded-xl text-[10px] font-bold tracking-wider uppercase inline-block self-start">
-              Trending: Apartment Sales
-            </div>
-          </div>
 
-          {/* Land Market Insight */}
-          <div className="lg:col-span-4 bg-[#be5d3f] text-white rounded-[24px] p-6 shadow-md flex flex-col justify-between space-y-4">
-            <div>
-              <h3 className="text-base font-extrabold mb-1">Land Market Insight</h3>
-              <p className="text-xs text-white/80 font-medium leading-relaxed mt-2">
-                Commercial plots near Expo City seeing 14% appreciation. Strong investor activity.
-              </p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-2 rounded-xl text-[10px] font-bold tracking-wider uppercase inline-block self-start">
-              Hot Zone: Dubai South
-            </div>
-          </div>
-
-          {/* Monthly Views (Recharts) & Buyer Interest */}
-          <div className="lg:col-span-4 bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex flex-col justify-between space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-extrabold text-[#111827]">Monthly Views</h3>
-              <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+34%</span>
-            </div>
-            
-            <div className="h-[120px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={apiData?.monthlyViews ?? monthlyViewsData} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 'bold' }} />
-                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: 10, fontSize: 10 }} />
-                  <Bar dataKey="views" fill="#345b79" radius={[4, 4, 0, 0]} barSize={14} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="bg-amber-50/60 border border-amber-200/60 p-3 rounded-xl flex items-center justify-between">
-              <span className="text-xs font-bold text-[#111827]">Buyer Interest Matches</span>
-              <span className="text-xs font-extrabold text-[#be5d3f]">+34% this month</span>
-            </div>
-          </div>
-
-        </div>
 
         {/* E. Bottom Views Summaries */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -538,10 +525,10 @@ export default function AgentDashboard({
               </div>
               <div>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Property Views</span>
-                <h4 className="text-2xl font-extrabold text-[#111827]">{metrics?.propertyViewsSubSummary ?? 0}</h4>
+                <h4 className="text-2xl font-extrabold text-[#111827]">{totalPropertiesViews}</h4>
               </div>
             </div>
-            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{metrics?.propertyViewsSubSummary ? '+15% this month' : '0%'}</span>
+            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{totalPropertiesViews ? '+15% this month' : '0%'}</span>
           </div>
 
           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm flex items-center justify-between">
@@ -551,10 +538,10 @@ export default function AgentDashboard({
               </div>
               <div>
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Land Views</span>
-                <h4 className="text-2xl font-extrabold text-[#111827]">{metrics?.landViewsSubSummary ?? 0}</h4>
+                <h4 className="text-2xl font-extrabold text-[#111827]">{totalLandsViews}</h4>
               </div>
             </div>
-            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{metrics?.landViewsSubSummary ? '+9% this month' : '0%'}</span>
+            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">{totalLandsViews ? '+9% this month' : '0%'}</span>
           </div>
         </div>
 
