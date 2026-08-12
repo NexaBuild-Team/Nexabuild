@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { BuyerHeaderBar } from '../../components/buyer/BuyerHeaderBar';
 import { architectureApi } from '../../services/architectureApi';
+import api from '../../services/api';
 
 export interface ArchitectureProjectDetails {
   areaSqFt?: number | string;
@@ -43,6 +44,110 @@ export interface AddArchitectureProjectProps {
   onAction?: (actionType: string, payload: any) => void;
 }
 
+// ─── Cloudinary Upload Helper ──────────────────────────────────────────────────
+
+async function uploadToCloudinary(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await api.post('/cloudinary/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data.url as string;
+}
+
+// ─── Image Upload Zone Component ──────────────────────────────────────────────
+
+function ImageUploadZone({
+  label,
+  accept = 'image/*',
+  onUploaded,
+  previewUrl,
+  onRemove,
+  uploading,
+  setUploading,
+}: {
+  label: string;
+  accept?: string;
+  onUploaded: (url: string) => void;
+  previewUrl?: string | null;
+  onRemove?: () => void;
+  uploading: boolean;
+  setUploading: (v: boolean) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadToCloudinary(file);
+      onUploaded(url);
+    } catch {
+      alert('Image upload failed. Please check your Cloudinary credentials.');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  if (previewUrl) {
+    return (
+      <div className="relative group rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 aspect-video flex items-center justify-center">
+        <img src={previewUrl} alt={label} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="bg-white text-gray-800 text-[10px] font-extrabold px-3 py-1.5 rounded-lg hover:bg-gray-100"
+          >
+            Replace
+          </button>
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="bg-red-500 text-white text-[10px] font-extrabold px-3 py-1.5 rounded-lg hover:bg-red-600"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+        <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />
+      </div>
+    );
+  }
+
+  return (
+    <label className="block cursor-pointer">
+      <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />
+      <div className={`rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-6 text-center transition-colors aspect-video
+        ${uploading ? 'border-[#345b79] bg-blue-50/60' : 'border-gray-300 bg-gray-50/50 hover:bg-gray-100/50'}`}>
+        {uploading ? (
+          <>
+            <svg className="size-7 text-[#345b79] animate-spin mb-2" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-xs font-bold text-[#345b79]">Uploading…</span>
+          </>
+        ) : (
+          <>
+            <svg className="size-7 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="text-xs font-bold text-gray-600 mb-0.5">{label}</span>
+            <span className="text-[10px] font-semibold text-gray-400">Click to upload · JPG, PNG, WEBP</span>
+          </>
+        )}
+      </div>
+    </label>
+  );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
+
 export default function AddArchitectureProject({
   data = null,
   isLoading = false,
@@ -50,38 +155,37 @@ export default function AddArchitectureProject({
   onSaveDraft: _onSaveDraft,
   onPublish: _onPublish,
   onDelete,
-  onAction
+  onAction,
 }: AddArchitectureProjectProps) {
   const navigate = useNavigate();
 
-  // Form Field States (Clean initial states without dummy data)
-  const [projectName, setProjectName] = useState(data?.projectName || "");
-  const [projectDescription, setProjectDescription] = useState(data?.projectDescription || "");
-  const [category, setCategory] = useState<string>(data?.category || "Modern");
+  // Form Field States
+  const [projectName, setProjectName] = useState(data?.projectName || '');
+  const [projectDescription, setProjectDescription] = useState(data?.projectDescription || '');
+  const [category, setCategory] = useState<string>(data?.category || 'Modern');
 
-  // Media States
-  const [_coverImage] = useState<string | null>(data?.coverImage || null);
-  const [_galleryImages] = useState<string[]>(data?.galleryImages || []);
+  // Image States
+  const [coverImage, setCoverImage] = useState<string | null>(data?.coverImage || null);
+  const [galleryImages, setGalleryImages] = useState<string[]>(data?.galleryImages || []);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
 
   // House Plan Document
   const [housePlanFile, setHousePlanFile] = useState<HousePlanDoc | null>(
     data?.housePlanFile !== undefined ? data.housePlanFile : null
   );
 
-  // 3D Render Image States
-  const [_renderImages] = useState<string[]>(data?.renderImages || []);
+  // Specs & Details
+  const [area, setArea] = useState<string>(data?.details?.areaSqFt?.toString() || '');
+  const [bedrooms, setBedrooms] = useState<string>(data?.details?.bedrooms?.toString() || '');
+  const [bathrooms, setBathrooms] = useState<string>(data?.details?.bathrooms?.toString() || '');
+  const [constructionCost, setConstructionCost] = useState<string>(data?.details?.constructionCost || '');
+  const [completionYear, setCompletionYear] = useState<string>(data?.details?.completionYear?.toString() || '');
+  const [locationLabel, setLocationLabel] = useState<string>(data?.details?.location || '');
 
-  // Specs & Details (Clean initial states)
-  const [area, setArea] = useState<string>(data?.details?.areaSqFt?.toString() || "");
-  const [bedrooms, setBedrooms] = useState<string>(data?.details?.bedrooms?.toString() || "");
-  const [bathrooms, setBathrooms] = useState<string>(data?.details?.bathrooms?.toString() || "");
-  const [constructionCost, setConstructionCost] = useState<string>(data?.details?.constructionCost || "");
-  const [completionYear, setCompletionYear] = useState<string>(data?.details?.completionYear?.toString() || "");
-  const [locationLabel, setLocationLabel] = useState<string>(data?.details?.location || "");
-
-  // Tags widget (Clean initial state)
+  // Tags
   const [tags, setTags] = useState<string[]>(data?.tags || []);
-  const [newTagInput, setNewTagInput] = useState("");
+  const [newTagInput, setNewTagInput] = useState('');
 
   // Visibility
   const [visibility, setVisibility] = useState<'Public' | 'Private' | 'Portfolio Only'>(
@@ -92,51 +196,48 @@ export default function AddArchitectureProject({
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(propsError);
 
-  // File Upload Handler (Simulated local file drop)
+  // File Upload Handler for House Plan
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setHousePlanFile({
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-      });
+      setHousePlanFile({ name: file.name, size: `${(file.size / (1024 * 1024)).toFixed(1)} MB` });
     }
   };
 
-  // Dynamic progress calculation based on real filled user inputs
-  const [progress, setProgress] = useState(0);
+  // Gallery gallery add/remove
+  const handleGalleryAdd = async (url: string) => {
+    setGalleryImages(prev => [...prev, url]);
+  };
+  const handleGalleryRemove = (url: string) => {
+    setGalleryImages(prev => prev.filter(u => u !== url));
+  };
 
+  // Progress
+  const [progress, setProgress] = useState(0);
   useEffect(() => {
     const isInfoDone = !!(projectName.trim() && projectDescription.trim() && category);
-    const isHousePlanDone = !!housePlanFile;
+    const isPhotoDone = !!(coverImage);
     const isDetailsDone = !!(area.trim() || bedrooms.trim() || bathrooms.trim());
     const isTagsDone = tags.length > 0 || !!visibility;
-
-    const completedCount = [isInfoDone, isHousePlanDone, isDetailsDone, isTagsDone].filter(Boolean).length;
+    const completedCount = [isInfoDone, isPhotoDone, isDetailsDone, isTagsDone].filter(Boolean).length;
     setProgress(Math.round((completedCount / 4) * 100));
-  }, [projectName, projectDescription, category, housePlanFile, area, bedrooms, bathrooms, tags, visibility]);
+  }, [projectName, projectDescription, category, coverImage, area, bedrooms, bathrooms, tags, visibility]);
 
   // Action Handlers
   const handleSaveDraftAction = async () => {
-    if (!projectName.trim()) {
-      setFormError('Please enter a Project Title to save a draft.');
-      return;
-    }
-
     try {
       setSubmitting(true);
       setFormError(null);
       await architectureApi.createProject({
-        title: projectName.trim(),
+        title: projectName.trim() || 'Draft Project',
         style: category || 'Modern',
-        bedrooms: bedrooms ? Number(bedrooms) : undefined,
-        bathrooms: bathrooms ? Number(bathrooms) : undefined,
-        sqftArea: area ? Number(area.replace(/,/g, '')) : undefined,
-        locationLabel: locationLabel.trim() || undefined,
-        status: 'Pending',
+        bedrooms: bedrooms ? Number(bedrooms) : 3,
+        bathrooms: bathrooms ? Number(bathrooms) : 2,
+        sqftArea: area ? Number(area.replace(/,/g, '')) : 2500,
+        locationLabel: locationLabel.trim() || 'Colombo',
+        imageUrl: coverImage || '/hero_property.png',
       });
-      alert('Project draft saved to database!');
-      navigate('/dashboard');
+      alert('Draft saved!');
     } catch (err: any) {
       console.error('Failed to save project draft:', err);
       setFormError(err.response?.data?.message || 'Failed to save project draft to backend.');
@@ -151,6 +252,10 @@ export default function AddArchitectureProject({
       setFormError('Project Title is required before publishing.');
       return;
     }
+    if (!coverImage) {
+      setFormError('Please upload a cover image before publishing.');
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -162,7 +267,8 @@ export default function AddArchitectureProject({
         bathrooms: bathrooms ? Number(bathrooms) : 2,
         sqftArea: area ? Number(area.replace(/,/g, '')) : 2500,
         locationLabel: locationLabel.trim() || 'Colombo',
-        status: 'Active',
+        imageUrl: coverImage,
+        priceLkr: constructionCost ? Number(constructionCost.replace(/,/g, '')) : 5000000,
       });
       alert('Architecture project published successfully!');
       navigate('/dashboard');
@@ -175,20 +281,21 @@ export default function AddArchitectureProject({
   };
 
   const handleDeleteAction = () => {
-    if (confirm("Are you sure you want to discard this project draft?")) {
+    if (confirm('Are you sure you want to discard this project draft?')) {
       if (onDelete) onDelete(data?.id);
       if (onAction) onAction('DELETE', { id: data?.id });
       navigate('/dashboard');
     }
   };
 
-  const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && newTagInput.trim()) {
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      if (!tags.includes(newTagInput.trim())) {
-        setTags(prev => [...prev, newTagInput.trim()]);
+      const trimmed = newTagInput.trim();
+      if (trimmed && !tags.includes(trimmed)) {
+        setTags(prev => [...prev, trimmed]);
       }
-      setNewTagInput("");
+      setNewTagInput('');
     }
   };
 
@@ -217,15 +324,16 @@ export default function AddArchitectureProject({
 
   return (
     <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8 text-[#111827] bg-[#f8fafc] min-h-screen">
-      
-      {/* Top Search & User Header Bar */}
+
       <BuyerHeaderBar searchPlaceholder="Search projects, blueprints..." />
 
       {/* Global Error Banner */}
       {formError && (
         <div className="w-full bg-red-50 border border-red-200 text-red-700 text-xs p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <img src="/svg/info.svg" alt="Error" className="size-5 shrink-0" />
+            <svg className="size-5 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             <span className="font-semibold">{formError}</span>
           </div>
           <button onClick={() => setFormError(null)} className="text-xs bg-red-100 px-3 py-1 rounded-lg hover:bg-red-200 font-bold">
@@ -247,16 +355,15 @@ export default function AddArchitectureProject({
           <p className="text-xs sm:text-sm text-gray-500 font-semibold">Publish house plans, 3D renders, and architectural specifications</p>
         </div>
 
-        {/* Header Action Controls */}
         <div className="flex items-center gap-3 self-end md:self-auto">
-          <button 
+          <button
             type="button"
             onClick={handleDeleteAction}
             className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:text-red-600 text-gray-700 text-xs font-extrabold transition-all cursor-pointer"
           >
             Discard
           </button>
-          <button 
+          <button
             type="button"
             onClick={handleSaveDraftAction}
             disabled={submitting}
@@ -264,26 +371,26 @@ export default function AddArchitectureProject({
           >
             Save Draft
           </button>
-          <button 
+          <button
             type="button"
             onClick={() => handlePublishAction()}
-            disabled={submitting}
+            disabled={submitting || coverUploading || galleryUploading}
             className="bg-[#345b79] hover:bg-[#2a4a63] text-white text-xs font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer disabled:opacity-50"
           >
             <svg className="size-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
-            <span>{submitting ? 'Publishing...' : 'Publish Project'}</span>
+            <span>{submitting ? 'Publishing…' : 'Publish Project'}</span>
           </button>
         </div>
       </div>
 
       {/* Main Form Body */}
       <form onSubmit={handlePublishAction} className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
-        
+
         {/* Left Form Segment */}
         <div className="lg:col-span-8 space-y-8">
-          
+
           {/* 1. Project Overview */}
           <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
             <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
@@ -303,7 +410,7 @@ export default function AddArchitectureProject({
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1.5">
                   Project Title <span className="text-red-500">*</span>
                 </label>
-                <input 
+                <input
                   type="text"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
@@ -324,8 +431,8 @@ export default function AddArchitectureProject({
                       type="button"
                       onClick={() => setCategory(cat)}
                       className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all border text-center cursor-pointer ${
-                        category === cat 
-                          ? 'bg-[#345b79] text-white border-[#345b79] shadow-sm' 
+                        category === cat
+                          ? 'bg-[#345b79] text-white border-[#345b79] shadow-sm'
                           : 'bg-gray-50/80 text-gray-600 border-gray-200 hover:bg-gray-100'
                       }`}
                     >
@@ -339,7 +446,7 @@ export default function AddArchitectureProject({
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1.5">
                   Description & Architectural Concept
                 </label>
-                <textarea 
+                <textarea
                   rows={4}
                   value={projectDescription}
                   onChange={(e) => setProjectDescription(e.target.value)}
@@ -350,23 +457,9 @@ export default function AddArchitectureProject({
             </div>
           </div>
 
-          {/* 2. Photo Gallery & Covers (Coming Soon Overlay) */}
-          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6 relative overflow-hidden">
-            <div className="absolute inset-0 bg-white/75 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6 text-center space-y-3">
-              <div className="size-12 rounded-2xl bg-[#345b79]/10 text-[#345b79] flex items-center justify-center shadow-inner">
-                <svg className="size-6 text-[#345b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <span className="text-xs font-black tracking-widest uppercase bg-[#345b79] text-white px-3 py-1 rounded-full shadow-sm">
-                Coming Soon
-              </span>
-              <p className="text-xs font-extrabold text-gray-700 max-w-sm">
-                Cloud image & 3D render hosting is coming soon. Projects will automatically be published with clean design visuals!
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100 opacity-40">
+          {/* 2. Photo Gallery & Cover Image — Cloudinary powered */}
+          <div className="bg-white rounded-[24px] p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+            <div className="flex items-center gap-3.5 pb-4 border-b border-gray-100">
               <div className="size-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                 <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -374,17 +467,69 @@ export default function AddArchitectureProject({
               </div>
               <div>
                 <h3 className="text-base font-extrabold text-[#111827]">Project Photos & 3D Renders</h3>
-                <p className="text-xs text-gray-500 font-medium">High-resolution architectural visuals</p>
+                <p className="text-xs text-gray-500 font-medium">Upload high-resolution architectural visuals via Cloudinary</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 opacity-40">
-              <div className="size-32 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-3 text-center bg-gray-50/50">
-                <svg className="size-6 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                </svg>
-                <span className="text-[10px] font-bold text-gray-500">Add Photo</span>
+            {/* Cover Image */}
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
+                Cover Image <span className="text-red-500">*</span>
+              </label>
+              <ImageUploadZone
+                label="Click to upload cover image"
+                onUploaded={(url) => setCoverImage(url)}
+                previewUrl={coverImage}
+                onRemove={() => setCoverImage(null)}
+                uploading={coverUploading}
+                setUploading={setCoverUploading}
+              />
+              {coverImage && (
+                <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                  <svg className="size-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  Cover image uploaded to Cloudinary
+                </p>
+              )}
+            </div>
+
+            {/* Gallery Images */}
+            <div className="space-y-3">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-gray-500">
+                Gallery Images <span className="text-gray-400 normal-case font-medium">(optional · up to 8)</span>
+              </label>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {galleryImages.map((url) => (
+                  <div key={url} className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200">
+                    <img src={url} alt="Gallery" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => handleGalleryRemove(url)}
+                        className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-1 rounded-lg"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {galleryImages.length < 8 && (
+                  <ImageUploadZone
+                    label="Add photo"
+                    onUploaded={handleGalleryAdd}
+                    uploading={galleryUploading}
+                    setUploading={setGalleryUploading}
+                  />
+                )}
               </div>
+
+              {galleryImages.length > 0 && (
+                <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                  <svg className="size-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {galleryImages.length} photo{galleryImages.length > 1 ? 's' : ''} uploaded
+                </p>
+              )}
             </div>
           </div>
 
@@ -450,68 +595,38 @@ export default function AddArchitectureProject({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Floor Area (Sqft)</label>
-                <input 
-                  type="text" 
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. 3500"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={area} onChange={(e) => setArea(e.target.value)} placeholder="e.g. 3500"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Bedrooms</label>
-                <input 
-                  type="text" 
-                  value={bedrooms}
-                  onChange={(e) => setBedrooms(e.target.value)}
-                  placeholder="e.g. 4"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} placeholder="e.g. 4"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Bathrooms</label>
-                <input 
-                  type="text" 
-                  value={bathrooms}
-                  onChange={(e) => setBathrooms(e.target.value)}
-                  placeholder="e.g. 3"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} placeholder="e.g. 3"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Est. Construction Cost (LKR)</label>
-                <input 
-                  type="text" 
-                  value={constructionCost}
-                  onChange={(e) => setConstructionCost(e.target.value)}
-                  placeholder="e.g. 25,000,000"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={constructionCost} onChange={(e) => setConstructionCost(e.target.value)} placeholder="e.g. 25,000,000"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Location / City</label>
-                <input 
-                  type="text" 
-                  value={locationLabel}
-                  onChange={(e) => setLocationLabel(e.target.value)}
-                  placeholder="e.g. Colombo 05"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={locationLabel} onChange={(e) => setLocationLabel(e.target.value)} placeholder="e.g. Colombo 05"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-[10px] font-extrabold tracking-wider text-gray-500 uppercase">Completion Year</label>
-                <input 
-                  type="text" 
-                  value={completionYear}
-                  onChange={(e) => setCompletionYear(e.target.value)}
-                  placeholder="e.g. 2025"
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none"
-                />
+                <input type="text" value={completionYear} onChange={(e) => setCompletionYear(e.target.value)} placeholder="e.g. 2025"
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 focus:outline-none" />
               </div>
             </div>
           </div>
@@ -520,7 +635,7 @@ export default function AddArchitectureProject({
 
         {/* Right Segment: Widgets & Progress */}
         <div className="lg:col-span-4 space-y-8">
-          
+
           {/* Progress Card */}
           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
@@ -532,15 +647,27 @@ export default function AddArchitectureProject({
               <div className="bg-[#345b79] h-full transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
 
-            <p className="text-xs text-gray-500 font-medium">
-              Fill in project overview, floorplan document, and specs to complete your listing.
-            </p>
+            <div className="space-y-2">
+              {[
+                { label: 'Project overview', done: !!(projectName.trim() && projectDescription.trim()) },
+                { label: 'Cover image uploaded', done: !!coverImage },
+                { label: 'Technical specs filled', done: !!(area || bedrooms || bathrooms) },
+                { label: 'Tags or visibility set', done: tags.length > 0 || !!visibility },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-2 text-xs">
+                  <div className={`size-4 rounded-full flex items-center justify-center shrink-0 ${item.done ? 'bg-emerald-500' : 'bg-gray-200'}`}>
+                    {item.done && <svg className="size-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
+                  </div>
+                  <span className={item.done ? 'text-gray-700 font-semibold' : 'text-gray-400'}>{item.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Visibility Widget */}
           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
             <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Visibility Setting</h3>
-            
+
             <div className="space-y-2">
               {(['Public', 'Private', 'Portfolio Only'] as const).map((vis) => (
                 <button
@@ -563,7 +690,7 @@ export default function AddArchitectureProject({
           {/* Tags Widget */}
           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm space-y-4">
             <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Project Tags</h3>
-            
+
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
@@ -575,8 +702,8 @@ export default function AddArchitectureProject({
               </div>
             )}
 
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={newTagInput}
               onChange={(e) => setNewTagInput(e.target.value)}
               onKeyDown={handleAddTag}

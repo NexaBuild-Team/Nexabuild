@@ -5,6 +5,14 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 export class CreateHouseDesignDto {
   @IsOptional()
   @IsString()
+  companyId?: string;
+
+  @IsOptional()
+  @IsString()
+  architectFirm?: string;
+
+  @IsOptional()
+  @IsString()
   title?: string;
 
   @IsOptional()
@@ -263,18 +271,46 @@ export class ArchitectureService {
 
   async createProject(dto: CreateHouseDesignDto) {
     const db = this.prisma as any;
+
+    let companyId = dto.companyId;
+    if (!companyId) {
+      const existing = await db.architectureCompany.findFirst();
+      if (existing) {
+        companyId = existing.id;
+      } else {
+        const newCompany = await db.architectureCompany.create({
+          data: {
+            name: dto.architectFirm || 'Silva & Associates Architecture',
+            avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
+            coverImageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&h=700&fit=crop',
+            description: 'Leading architectural practice in Sri Lanka.',
+            email: `contact-${Date.now()}@silvaassociates.lk`,
+            locationLabel: dto.locationLabel || 'Colombo 03',
+            city: 'Colombo',
+            country: 'Sri Lanka',
+            projectCount: 1,
+            rating: 4.9,
+            reviewCount: 42,
+            yearsExperience: 15,
+            budgetRangeLabel: 'LKR 2M \u2013 LKR 50M',
+          },
+        });
+        companyId = newCompany.id;
+      }
+    }
+
     return db.houseDesign.create({
       data: {
         title: dto.title || 'Untitled Design',
         style: dto.style || 'Modern',
-        priceLkr: Number(dto.priceLkr) || 5000000,
+        priceLkr: Math.round(Number(dto.priceLkr) || 5000000),
         architectName: dto.architectName || 'NexaBuild Studio',
         imageUrl: dto.imageUrl || '/hero_property.png',
-        bedrooms: Number(dto.bedrooms) || 3,
-        bathrooms: Number(dto.bathrooms) || 2,
-        sqftArea: Number(dto.sqftArea) || 2500,
+        bedrooms: Math.round(Number(dto.bedrooms) || 3),
+        bathrooms: Math.round(Number(dto.bathrooms) || 2),
+        sqftArea: Math.round(Number(dto.sqftArea) || 2500),
         locationLabel: dto.locationLabel || 'Colombo',
-        status: dto.status || 'Active',
+        company: { connect: { id: companyId } },
       }
     });
   }

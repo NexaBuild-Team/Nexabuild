@@ -64,6 +64,8 @@ export const architectureApi = {
     title: string;
     style?: string;
     priceLkr?: number;
+    architectName?: string;
+    imageUrl?: string;
     bedrooms?: number;
     bathrooms?: number;
     sqftArea?: number;
