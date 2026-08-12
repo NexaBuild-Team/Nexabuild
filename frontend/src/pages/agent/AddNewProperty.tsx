@@ -168,7 +168,7 @@ const [uploadingImage, setUploadingImage] = useState(false);
   // Sidebar widget states
   const [status, setStatus] = useState<'Draft' | 'Active' | 'Pending Review' | 'Sold'>(data?.initialFields?.status || 'Draft');
   const [aiTags, setAiTags] = useState<string[]>(
-    data?.initialFields?.aiTags || ['Luxury', 'Investment', 'Family', 'Vacation', 'School Nearby', 'Transport', 'Sea View', 'City Center']
+    data?.initialFields?.aiTags || []
   );
   const [visibility, setVisibility] = useState(
     data?.initialFields?.visibility || {
@@ -205,7 +205,8 @@ const [uploadingImage, setUploadingImage] = useState(false);
   };
 
   const handleRegenerateTags = () => {
-    const pool = ['Waterfront', 'Gated Community', 'Eco-Friendly', 'High ROI', 'Penthouse', 'Modern Architecture', 'Balcony', 'Private Gym'];
+    // Only generic, non-location-specific tags
+    const pool = ['Luxury', 'Investment', 'Family', 'Modern Architecture', 'Balcony', 'Private Gym', 'Eco-Friendly', 'High ROI', 'Gated Community'];
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     setAiTags(shuffled.slice(0, 5));
   };

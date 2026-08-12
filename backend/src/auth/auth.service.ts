@@ -35,6 +35,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    // Sync agent profile on login for existing users who registered earlier
+    await this.userService.syncAgentProfile(user);
+
     const token = this.generateToken(user.id, user.email);
     const { password, ...result } = user;
 

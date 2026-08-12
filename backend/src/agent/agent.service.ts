@@ -627,29 +627,55 @@ export class AgentService {
 
     const amenities = dto.amenities || {};
     const tags = Array.isArray(dto.aiTags) ? dto.aiTags : [];
+    const textToSearch = `${dto.title || ''} ${dto.description || ''} ${dto.location || ''} ${dto.district || ''}`.toLowerCase();
+    
+    // Check nearby facilities
+    const hasSchools = dto.nearbyFacilities && typeof dto.nearbyFacilities === 'object' && Array.isArray(dto.nearbyFacilities.schools) && dto.nearbyFacilities.schools.length > 0;
+    const hasHospitals = dto.nearbyFacilities && typeof dto.nearbyFacilities === 'object' && Array.isArray(dto.nearbyFacilities.hospitals) && dto.nearbyFacilities.hospitals.length > 0;
 
-    const hasPool = amenities['Swimming Pool'] === true || tags.includes('Pool');
-    const hasGarden = amenities['Garden'] === true || tags.includes('Garden');
-    const hasSecurity = amenities['Security'] === true || tags.includes('Security');
-    const hasModernKitchen = amenities['Smart Home'] === true || tags.includes('Modern Kitchen') || tags.includes('Kitchen');
-    const hasSeaView = tags.includes('Sea View') || tags.includes('Waterfront');
+    const hasPool = amenities['Swimming Pool'] === true || tags.includes('Pool') || textToSearch.includes('swimming pool') || textToSearch.includes('private pool');
+    const hasGarden = amenities['Garden'] === true || tags.includes('Garden') || textToSearch.includes('garden') || textToSearch.includes('lawn');
+    const hasSecurity = amenities['Security'] === true || tags.includes('Security') || textToSearch.includes('24/7 security') || textToSearch.includes('gated community');
+    const hasModernKitchen = amenities['Smart Home'] === true || tags.includes('Modern Kitchen') || tags.includes('Kitchen') || textToSearch.includes('modern kitchen') || textToSearch.includes('pantry');
+    const hasSeaView = tags.includes('Sea View') || tags.includes('Waterfront') || textToSearch.includes('sea view') || textToSearch.includes('ocean view') || textToSearch.includes('seaview');
 
-    const isInvestment = tags.includes('Investment') || tags.includes('High ROI');
-    const isOwnHome = tags.includes('Family') || tags.includes('Own Home');
-    const isVacationHome = tags.includes('Vacation') || tags.includes('Vacation Home');
-    const isRentalIncome = tags.includes('Rental Income');
+    const isInvestment = tags.includes('Investment') || tags.includes('High ROI') || textToSearch.includes('investment') || textToSearch.includes('high roi') || textToSearch.includes('rental yield');
+    const isOwnHome = tags.includes('Family') || tags.includes('Own Home') || textToSearch.includes('family home') || textToSearch.includes('own home');
+    const isVacationHome = tags.includes('Vacation') || tags.includes('Vacation Home') || textToSearch.includes('vacation home') || textToSearch.includes('holiday retreat') || dto.propertyType?.toLowerCase() === 'villa';
+    const isRentalIncome = tags.includes('Rental Income') || textToSearch.includes('rental income') || textToSearch.includes('rental yield');
 
-    const isCityCenter = tags.includes('City Center');
-    const isCoastal = tags.includes('Coastal') || tags.includes('Waterfront') || tags.includes('Sea View');
-    const isNearBeach = tags.includes('Near Beach') || tags.includes('Waterfront');
-    const isNearHighway = tags.includes('Near Highway') || tags.includes('Transport');
-    const isNearHospital = tags.includes('Near Hospital');
-    const isNearSchools = tags.includes('School Nearby') || tags.includes('Near Schools');
-    const isQuietArea = tags.includes('Quiet Area');
+    const isCityCenter = tags.includes('City Center') || textToSearch.includes('city center') || textToSearch.includes('colombo 7') || textToSearch.includes('colombo 3') || textToSearch.includes('colombo 03') || textToSearch.includes('colombo 07') || textToSearch.includes('cinnamon gardens');
+    const isCoastal = tags.includes('Coastal') || tags.includes('Waterfront') || tags.includes('Sea View') || hasSeaView || textToSearch.includes('coastal') || textToSearch.includes('beachfront') || textToSearch.includes('oceanfront');
+    const isNearBeach = tags.includes('Near Beach') || tags.includes('Waterfront') || textToSearch.includes('near beach') || textToSearch.includes('beachfront') || textToSearch.includes('steps from beach');
+    const isNearHighway = tags.includes('Near Highway') || tags.includes('Transport') || textToSearch.includes('highway') || textToSearch.includes('expressway');
+    const isNearHospital = tags.includes('Near Hospital') || hasHospitals || textToSearch.includes('near hospital') || textToSearch.includes('near medical');
+    const isNearSchools = tags.includes('School Nearby') || tags.includes('Near Schools') || hasSchools || textToSearch.includes('near school') || textToSearch.includes('school nearby');
+    const isQuietArea = tags.includes('Quiet Area') || textToSearch.includes('quiet area') || textToSearch.includes('peaceful neighbourhood') || textToSearch.includes('serene');
 
-    const isUrban = tags.includes('City Center') || tags.includes('Urban');
-    const isSuburban = tags.includes('Suburban');
-    const isRural = tags.includes('Rural');
+    const isUrban = tags.includes('City Center') || tags.includes('Urban') || isCityCenter || textToSearch.includes('urban') || textToSearch.includes('city center');
+    const isSuburban = tags.includes('Suburban') || textToSearch.includes('suburban') || textToSearch.includes('suburb');
+    const isRural = tags.includes('Rural') || textToSearch.includes('rural') || textToSearch.includes('countryside');
+
+    let agentId: string | null = null;
+    if (userId) {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (user) {
+        let agent = await this.prisma.agent.findUnique({ where: { email: user.email } });
+        if (!agent) {
+          agent = await this.prisma.agent.create({
+            data: {
+              firstName: user.firstName || 'New',
+              lastName: user.lastName || 'Agent',
+              email: user.email,
+              phone: user.phone || '',
+              company: 'NexaBuild Agent Partner',
+              avatar: user.avatar || '',
+            },
+          });
+        }
+        agentId = agent.id;
+      }
+    }
 
     return this.prisma.property.create({
       data: {
@@ -693,6 +719,7 @@ export class AgentService {
         views: 1,
         status: dto.status === 'Draft' ? 'Pending' : dto.status || 'Active',
         nearbyFacilities: dto.nearbyFacilities || undefined,
+        agentId,
       },
     });
   }
